@@ -1,0 +1,41 @@
+ABISMO|Fenda enorme
+FRONHA|Capa de fofura
+PAO|De padaria
+SORVETE|Doce gelado
+TAPETE|Cobre o piso
+ABUTRE|Come carniça
+BOTO|Mamífero rosa
+CARACOL|Tem concha
+CODORNA|Ave pequena
+ESCORPIAO|Tem ferrão
+GARCA|Ave pernalta
+GAVIAO|Ave predadora
+JUMENTO|Animal teimoso
+LEMURE|Primata de cauda
+MARMOTA|Dorminhoca
+MICO|Pequeno macaco
+MORSA|Tem presas
+PERDIZ|Ave de campo
+QUATI|Parente do guaxinim
+RAIA|Peixe chato
+ATUM|Peixe grande
+CACAU|Vira chocolate
+CAJA|Fruta de cajazeira
+CASTANHA|Do caju ou do Pará
+LICHIA|Fruta asiática
+NOZES|Frutos secos
+TORRESMO|Pururuca
+BARRANCO|Despenhadeiro
+BROTO|Planta recém-nascida
+FENDAS|Frestas
+NORTE|Oposto do sul
+PENHASCO|Rocha alta
+PLANALTO|Terra elevada
+POENTE|Ocaso
+REGATO|Ribeiro
+AVENTAL|Veste de cozinha
+CAMISOLA|Veste de dormir
+CARRINHO|Brinquedo
+GAVETEIRO|Armário de gavetas
+TERMOS|Garrafa térmica
+TRINCO|Tranqueta

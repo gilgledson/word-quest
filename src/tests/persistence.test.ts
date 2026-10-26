@@ -1,0 +1,21 @@
+import "fake-indexeddb/auto";
+import { it, expect } from "vitest";
+import { repository, initialPlayer } from "../services/repository";
+import { PuzzleEngine } from "../game/crossword-engine";
+import { levels } from "../data/catalog";
+it("restaura letras, placar, mão do oponente, moedas e perfil a partir do IndexedDB", async () => {
+  const player = structuredClone(initialPlayer);
+  player.name = "Viajante";
+  player.coins = 85;
+  const session = new PuzzleEngine(levels[0]).start("t", "medio");
+  session.letters["1,1"] = "C";
+  session.locked = ["1,1"];
+  session.scores.p = 3;
+  player.sessions["vila-1"] = session;
+  await repository.save(player);
+  const restored = await repository.load();
+  expect(restored).toEqual(player);
+  expect(restored?.sessions["vila-1"].letters["1,1"]).toBe("C");
+  expect(restored?.sessions["vila-1"].botRack).toEqual(session.botRack);
+  expect(restored?.sessions["vila-1"].versus).toEqual(session.versus);
+});

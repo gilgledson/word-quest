@@ -1,0 +1,342 @@
+EM|Dentro de
+AH|Expressa surpresa
+AU|Latido de cão
+IA|Passado de ir
+TI|Pronome: a você
+ACE|Saque sem resposta
+AIA|Babá antiga
+ALI|Naquele lugar
+ATO|Ação, feito
+BAU|Caixa de viagem
+CAO|Melhor amigo
+DAS|De + as
+DOS|De + os
+ELA|Pronome feminino
+ELE|Pronome masculino
+ELO|Anel de corrente
+ETA|Expressão de espanto
+FOI|Passado de ir
+GIZ|Escreve na lousa
+IMA|Atrai o ferro
+JIA|Rã pequena
+LEU|Passado de ler
+LIS|Flor francesa
+MAU|Contrário de bom
+MIM|Pronome de eu
+NAU|Navio antigo
+NEM|Nenhum
+NOS|Pronome de nós
+NUA|Sem roupa
+OBA|Que alegria!
+OPA|Cumprimento
+ORA|Agora; bem
+PAU|Madeira
+PIX|Pagamento rápido
+POR|Preposição
+PUS|Secreção de ferida
+ROL|Lista
+SAO|Santo
+SER|Existir
+SEU|Pronome
+SOU|Verbo ser
+SUA|Pronome
+TAL|Assim
+TEU|Pronome
+TIL|Sinal do ã
+VAI|Verbo ir
+VEM|Verbo vir
+VOU|Verbo ir
+XIS|Letra X
+AGUA|Líquido da chuva
+AMAR|Sentir carinho
+ARCA|Barco de Noé
+AREA|Superfície
+ATOR|Faz filmes
+BAIA|Enseada
+BAIO|Cavalo castanho
+BALE|Dança clássica
+BIJU|Joia falsa
+BOLA|Redonda de jogo
+BOTA|Calçado de cano alto
+CANA|Doce da garapa
+CANO|Tubo
+CARO|Que custa muito
+CHEF|Cozinheiro-chefe
+CIMA|Parte alta
+CINE|Sala de filmes
+COAR|Passar no coador
+COLO|Regaço
+CONE|Forma de sorvete
+COPO|Bebe-se nele
+COSE|Costura
+CRER|Acreditar
+DOER|Causar dor
+DONA|Senhora
+DUTO|Cano
+EIXO|Roda gira nele
+ELMO|Capacete antigo
+ENTE|Ser
+FADA|Tem varinha mágica
+FATO|Acontecimento
+FERA|Animal feroz
+FIAR|Tecer fio
+FITA|Tira de tecido
+FONE|Auricular
+FORA|Do lado de lá
+FRIO|Temperatura baixa
+FUNK|Ritmo carioca
+GALA|Festa de luxo
+GIRO|Volta
+GOLE|Um trago
+GRAO|Semente pequena
+GUIA|Orienta o turista
+ICAR|Levantar a bandeira
+ILHA|Terra cercada de água
+ISSO|Pronome
+JOGO|Partida
+JURI|Decide o caso
+LADO|Direita ou esquerda
+LAGO|Água cercada de terra
+LANA|Pelo da ovelha
+LEAL|Fiel
+LEMA|Frase de guia
+LIMA|Fruta ou ferramenta
+LOGO|Em seguida
+LUAR|Claridade da noite
+MAIS|Contrário de menos
+MANA|Irmã, informal
+MAPA|Mostra caminhos
+MATE|Chá gaúcho
+MENU|Cardápio
+MESA|Móvel de jantar
+MIAU|Voz do gato
+MIMO|Presente carinhoso
+MINA|Fonte de minério
+MIRA|Pontaria
+MOTO|Veículo de duas rodas
+MOER|Triturar
+MORA|Habita
+MUDA|Planta nova
+NEVE|Chuva branca e fria
+NOME|Como se chama
+NORA|Mulher do filho
+NOVA|Contrário de velha
+NOVE|Número depois do oito
+OBRA|Construção
+OITO|Número
+ONZE|Número
+ORAR|Rezar
+PAGA|Salário
+PARA|Preposição
+PARE|Sinal vermelho
+PECA|Parte de um jogo
+PELO|Cobre o corpo do cão
+PERA|Fruta
+PERU|Ave do Natal
+PINO|Pequena haste
+PINTA|Pequena mancha
+PISO|Chão
+PLUG|Tomada macho
+POTE|Vasilha
+PROA|Frente do barco
+PUMA|Felino americano
+RAIO|Descarga do trovão
+RAIZ|Parte da planta no solo
+REAL|Moeda do Brasil
+RENA|Puxa o trenó
+RISO|Gargalhada leve
+ROER|Morder aos poucos
+ROTA|Caminho
+SELA|Assento do cavalo
+SINA|Destino
+SITE|Página da internet
+SOAR|Produzir som
+SOPA|Prato de colher
+SURF|Esporte de ondas
+TATO|Sentido do toque
+TELA|Superfície do cinema
+TIME|Equipe
+TOCO|Resto de árvore cortada
+TOUR|Passeio turístico
+TREM|Corre nos trilhos
+TRIO|Grupo de três
+TUDO|A totalidade
+TUPI|Língua indígena
+UNIR|Juntar
+URSA|Fêmea do urso
+VALA|Pequeno canal
+VEIA|Leva sangue ao coração
+VIDA|Existência
+VIVA|Grito de alegria
+VOCE|Pronome
+ABELHA|Faz mel
+ACUCAR|Adoça o café
+AGENDA|Anota compromissos
+ALFACE|Folha da salada
+ALMOCO|Refeição do meio-dia
+AMARELO|Cor do limão
+ANTIGO|Muito velho
+APITO|Soa no jogo
+ARARA|Ave colorida
+ARROZ|Grão do prato
+ASTRO|Corpo celeste
+AVENIDA|Rua larga
+AVIAO|Voa com passageiros
+BANANA|Fruta amarela
+BANDEJA|Serve o café
+BARATA|Inseto doméstico
+BATOM|Pinta os lábios
+BEBIDA|Líquido para tomar
+BEIJO|Carinho nos lábios
+BIGODE|Pelos sobre a boca
+BOLACHA|Biscoito
+BONECA|Brinquedo de menina
+BONITO|Belo
+BORBOLETA|Inseto de asas coloridas
+BRANCO|Cor da neve
+BRINCAR|Divertir-se
+BUSSOLA|Aponta o norte
+CABELO|Cobre a cabeça
+CACHORRO|Late e abana o rabo
+CAFEZAL|Plantação de grãos
+CAIXA|Embalagem
+CALCA|Veste as pernas
+CALMA|Tranquilidade
+CAMISA|Veste com botões
+CANETA|Escreve com tinta
+CANSADO|Sem energia
+CARNE|Alimento do churrasco
+CARRO|Veículo de quatro rodas
+CARTA|Mensagem enviada
+CEBOLA|Faz chorar ao cortar
+CENOURA|Raiz alaranjada
+CHAPEU|Cobre a cabeça
+CHAMA|Parte do fogo
+CHINELO|Calçado aberto
+CIDADE|Muitas ruas e prédios
+CINEMA|Sala de filmes
+CIRCO|Palhaços e trapézio
+COELHO|Orelhudo que pula
+COMIDA|O que se come
+CORACAO|Bombeia o sangue
+CORRER|Andar depressa
+COZINHA|Cômodo do fogão
+CRIANCA|Pessoa pequena
+CUIDADO|Atenção
+DENTISTA|Cuida dos dentes
+DESENHO|Traços no papel
+DOMINGO|Dia de descanso
+DORMIR|Descansar à noite
+ELEFANTE|Tem tromba
+ESCADA|Degraus para subir
+ESCOLA|Local de estudo
+ESPADA|Arma de lâmina
+ESPELHO|Mostra o reflexo
+ESTRELA|Brilha no céu
+FAMILIA|Pais e filhos
+FANTASMA|Assombração
+FAZENDA|Terra de criação
+FEIJAO|Grão com arroz
+FESTA|Comemoração
+FIVELA|Fecha o cinto
+FOGAO|Cozinha em cima dele
+FORMIGA|Inseto trabalhador
+FUTEBOL|Esporte com gol
+GALINHA|Põe ovos
+GARAGEM|Guarda o carro
+GAROTO|Menino
+GELADO|Muito frio
+GIRAFA|Pescoço comprido
+GOSTOSO|Saboroso
+GRANDE|De tamanho maior
+GUITARRA|Instrumento de cordas
+HISTORIA|Conto
+HORARIO|Hora marcada
+JACARE|Réptil de rio
+JANELA|Abertura da parede
+JARDIM|Canteiro de flores
+JOELHO|Dobra da perna
+LARANJA|Fruta cítrica
+LEITURA|Ato de ler
+LENCOL|Cobre o colchão
+LIVRO|Tem páginas
+LOUCURA|Falta de juízo
+LUMINOSO|Cheio de luz
+MACACO|Primata ágil
+MADEIRA|Material da árvore
+MALUCO|Doido
+MANGA|Fruta ou parte da camisa
+MARTELO|Bate o prego
+MENINA|Criança do sexo feminino
+MESTRE|Professor
+MOCHILA|Bolsa de costas
+MOLHADO|Cheio de água
+MONTANHA|Grande elevação
+MORANGO|Fruta vermelha
+MOTORISTA|Dirige o carro
+MULHER|Pessoa adulta
+MUSICA|Arte dos sons
+NAVIO|Grande embarcação
+NUMERO|Algarismo
+OCEANO|Mar imenso
+OFICINA|Conserta carros
+ONIBUS|Transporte coletivo
+ORELHA|Parte para ouvir
+OVELHA|Dá lã
+PADARIA|Vende pão
+PALAVRA|Conjunto de letras
+PANELA|Cozinha o feijão
+PAPAGAIO|Ave que imita voz
+PASSARO|Voa e canta
+PEQUENO|Tamanho menor
+PERFUME|Cheiro agradável
+PIJAMA|Roupa de dormir
+PIMENTA|Tempero ardido
+PINTURA|Arte de tintas
+PIPOCA|Milho estourado
+PIRATA|Navega e rouba
+PISCINA|Tanque para nadar
+POLICIA|Garante a ordem
+PRATO|Recipiente da comida
+PREDIO|Edifício
+PRESENTE|Dádiva
+PRINCESA|Filha de rei
+PROFESSOR|Ensina na escola
+QUADRO|Moldura de pintura
+QUEIJO|Derivado do leite
+RAINHA|Esposa do rei
+RAPOSA|Animal esperto
+RECREIO|Hora de brincar
+RELOGIO|Mostra as horas
+REMEDIO|Cura doenças
+RESPOSTA|Réplica
+ROBO|Máquina que age
+SANDALIA|Calçado aberto
+SAPATO|Calçado fechado
+SEGREDO|Não pode contar
+SEMANA|Sete dias
+SERPENTE|Cobra
+SORRISO|Alegria no rosto
+SORVETE|Gelado de casquinha
+SUCESSO|Êxito
+TARTARUGA|Tem casco
+TELEFONE|Faz ligações
+TESOURO|Baú de piratas
+TIJOLO|Faz a parede
+TOALHA|Seca o corpo
+TOMATE|Fruta vermelha do molho
+TRABALHO|Emprego
+TRAVESSA|Rua estreita
+TRISTE|Sem alegria
+TROVAO|Barulho no céu
+UNHA|Cobre a ponta do dedo
+URUBU|Ave negra
+VACINA|Previne doenças
+VASSOURA|Varre o chão
+VENCER|Ganhar
+VERAO|Estação quente
+VIAGEM|Passeio longe
+VIZINHO|Mora ao lado
+VOLEI|Esporte com rede
+XICARA|Toma-se café nela
+ZEBRA|Cavalo listrado

@@ -1,0 +1,57 @@
+AR|Gás da vida
+BE|Nome da letra B
+CE|Nome da letra C
+GE|Nome da letra G
+LI|Eu fiz leitura
+PI|Número 3,14
+RI|Passado de rir
+TA|Está, informal
+VE|Enxerga
+ZE|Apelido de José
+ABC|Alfabeto resumido
+ARA|Tipo de papagaio
+ARO|Anel de metal
+ATA|Texto da reunião
+FAX|Mensagem em papel
+FAZ|Executa
+FUI|Eu parti
+MAS|Porém
+MEU|Pertence a mim
+ODA|Poema de elogio
+OLE|Grito de toureiro
+PRO|A favor de
+QUE|Pronome relativo
+RIA|Dava risada
+SEI|Eu conheço
+SEM|Oposto de com
+SET|Parte do tênis
+SOB|Debaixo de
+SOS|Pedido de socorro
+SUB|Abaixo de
+TOP|Muito bom
+UAU|Expressa admiração
+UFO|Nave de alien
+UMA|Um, no feminino
+USA|Emprega
+USE|Empregue
+USO|Ato de utilizar
+VIL|Digno de desprezo
+VIR|Chegar aqui
+ZEN|Calmo e relaxado
+SAX|Sopro de jazz
+TUA|Que é de ti
+RIM|Filtra o sangue
+BIO|Vida, em prefixo
+LHE|A ele ou a ela
+EIA|Vamos lá!
+AIS|Gritos de dor
+UNS|Alguns
+HEM|Como disse?
+MIA|Faz o gato
+PUF|Som de queda
+TEZ|Pele do rosto
+VOA|Move-se no ar
+SOA|Emite som
+DOA|Dá de graça
+SAI|Vai para fora
+DEU|Passado de dar

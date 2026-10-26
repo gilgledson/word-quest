@@ -1,0 +1,286 @@
+ABUTRE|Ave de carniça
+ACARO|Bicho do pó
+ANTILOPE|Veloz da savana
+BABUINO|Macaco de focinho
+BICHANO|Gato, em carinho
+BOTO|Golfinho do Amazonas
+BUGIO|Macaco que ruge
+CARACOL|Tem concha na costa
+CAVALA|Peixe de mar
+CHACAL|Canino africano
+COBAIA|Porquinho de teste
+CODORNA|Ave de ovos pintados
+COLIBRI|Ave que paira
+CUTIA|Roedor de quintal
+ENGUIA|Peixe de choque
+ESCORPIAO|Tem ferrão na cauda
+FAISAO|Ave de caça
+FILHOTE|Cria
+GARCA|Ave de pernas longas
+GAVIAO|Ave de rapina
+GAZELA|Antílope ágil
+GOLFINHO|Mamífero saltador
+GUAXINIM|Bicho de máscara
+HAMSTER|Roedor de gaiola
+IGUANA|Lagarto verde
+JAVALI|Porco selvagem
+JUMENTO|Burro
+LAGOSTA|Crustáceo nobre
+LEMURE|Primata de Madagascar
+LHAMA|Parente do camelo
+MAMUTE|Elefante extinto
+MANATI|Peixe-boi
+MARMOTA|Hiberna no inverno
+MICO|Macaquinho
+MORSA|Tem presas no gelo
+MUCURA|Gambá
+ORCA|Baleia assassina
+PACA|Roedor de focinho
+PATINHO|Filhote de pato
+PELICANO|Bico com bolsa
+PERDIZ|Ave de caça
+PIRANHA|Peixe de dentes
+PONEI|Cavalo pequeno
+QUATI|Bicho de rabo anelado
+RAIA|Peixe achatado
+SAGUI|Macaco pequeno
+SARDINHA|Peixe de lata
+SERIEMA|Ave do cerrado
+SURICATE|Sentinela do deserto
+TAMANDUA|Come formigas
+TEIU|Lagarto grande
+VAGALUME|Inseto que acende
+VIBORA|Cobra venenosa
+ZEBU|Boi de corcova
+ABACATEIRO|Árvore do abacate
+AGRIAO|Folha de salada
+ALCAPARRA|Conserva verde
+AMEIXA|Fruta roxa
+AMENDOIM|Petisco de festa
+ARROZAL|Plantação de arroz
+ATUM|Peixe de lata
+AZEITE|Óleo da oliva
+AZEITONA|Fruto da oliveira
+BACALHAU|Peixe salgado
+BALA|Doce de pacote
+BATATINHA|Frita ou cozida
+BEBIDA|Suco ou vinho
+BETERRABA|Raiz roxa
+BOMBOM|Chocolate recheado
+BRIGADEIRO|Doce de leite condensado
+CACAU|Semente do chocolate
+CAJA|Fruta amarela
+CALDA|Líquido do pudim
+CANELA|Pau aromático
+CARAMBOLA|Fruta de estrela
+CASTANHA|Fruto seco
+CHUCHU|Legume verde
+COALHADA|Leite talhado
+COGUMELO|Cresce na sombra
+COMPOTA|Fruta em calda
+CRAVO|Tempero em botão
+CROQUETE|Bolinho frito
+DOCE|Sobremesa
+ERVA|Tempero fresco
+FARINHA|Pó de trigo
+FIGO|Fruta de Adão
+FRANGO|Ave de forno
+GELEIA|Fruta em pasta
+GENGIBRE|Raiz picante
+GRAOS|Feijão e lentilha
+HORTELA|Folha do chá
+INHAME|Tubérculo
+JABUTICABA|Fruta preta na árvore
+KIWI|Fruta peluda
+LICHIA|Fruta de casca rosa
+LINHACA|Semente saudável
+MAIONESE|Molho de ovo
+MANDIOCA|Aipim
+MANJERICAO|Erva da pizza
+MANTEIGA|Passa no pão
+MEXERICA|Tangerina
+MILKSHAKE|Batido gelado
+NOZES|Fruto de casca dura
+OLIVA|Azeitona
+ORAGANO|Erva da pizza
+PAO|Alimento de padaria
+PAPA|Mingau
+PASTA|Massa italiana
+PATE|Creme de fígado
+PEPINO|Legume de salada
+PIMENTAO|Legume colorido
+PIPOCA|Milho estourado
+QUIABO|Legume baboso
+QUIBE|Bolinho árabe
+RAPADURA|Doce de cana
+ROMA|Fruta de grãos
+SAGU|Doce de bolinha
+SEMENTE|Dentro do fruto
+SORVETE|Gelado de casquinha
+TANGERINA|Mexerica
+TAPETE|Piso
+TORRESMO|Pele de porco frita
+UVAS|Cachos da vinha
+VINAGRE|Acre da salada
+WAFFLE|Massa de grelha
+ABISMO|Precipício
+ACAMPAR|Dormir na barraca
+AGUACEIRO|Chuva forte
+ALAGADO|Coberto de água
+ALVORADA|Nascer do sol
+ARCOIRIS|Faixas de cores no céu
+ARVORES|Formam o bosque
+ATOLEIRO|Lamaçal
+BARRANCO|Ribanceira
+BORBOLETAS|Voam nas flores
+BROTO|Planta nova
+CACHOEIRAS|Quedas d'água
+CAMPINA|Pasto pequeno
+CAPIM|Pasto
+CARVAO|Lenha queimada
+CASCALHO|Pedrinhas soltas
+CEUS|Abóbadas azuis
+CINZA|Resto do fogo
+CIRRO|Nuvem fina
+COLINAS|Morrinhos
+CORAIS|Recife vivo
+CORRENTE|Fluxo do rio
+CRATERAS|Bocas de vulcão
+DUNAS|Montes de areia
+ENCOSTA|Lado do morro
+ENSEADA|Baía pequena
+ESTIO|Verão
+FAROLETE|Luz na costa
+FENDAS|Rachaduras
+FERTIL|Terra boa
+FLORAL|De flores
+FOLHAGEM|Conjunto de folhas
+FONTES|Nascentes
+FRUTOS|Colheita da árvore
+GELEIRAS|Rios de gelo
+GOTEIRA|Pinga na chuva
+GRANITO|Pedra dura
+HORIZONTE|Linha do mar
+IGAPO|Mata alagada
+ILHAS|Terras no mar
+JATOBA|Árvore alta
+LAVA|Fogo do vulcão
+LEITO|Fundo do rio
+LUAS|Satélites
+MANGUE|Mata do litoral
+MARES|Sobe e desce
+MORRO|Elevação
+NASCENTE|Origem do rio
+NEBLINAS|Nuvens baixas
+NORTE|Direção da bússola
+OASIS|Verde no deserto
+OLIVEIRA|Árvore da azeitona
+ORVALHOS|Gotas da madrugada
+PENEDO|Rochedo
+PENHASCO|Rochedo à beira-mar
+PLANALTO|Terra alta e plana
+POCA|Água parada
+POENTE|Oeste ao pôr do sol
+PRADARIA|Campo aberto
+QUEDA|Tombo d'água
+RAMOS|Galhos
+REGATO|Riacho
+RESTINGA|Mata de areia
+RIACHO|Rio pequeno
+RIBANCEIRA|Barranco
+SAVANA|Campo da África
+SERRANIA|Cadeia de serras
+SOLSTICIO|Dia mais longo
+TEMPESTADE|Raios e trovões
+TERRAS|Solos
+TROVOES|Estrondos do céu
+TUNDRA|Terra gelada
+VARZEA|Planície de rio
+VENDAVAL|Vento forte
+VERDEJAR|Ficar verde
+VULCOES|Montanhas de fogo
+ABRIDOR|Tira a tampa
+ALMOFADAS|Enfeitam o sofá
+ARMARIOS|Guardam roupa
+AVENTAL|Protege na cozinha
+BACIAS|Vasilhas
+BALCAO|Bancada de loja
+BANQUINHO|Assento pequeno
+BARRICA|Pequeno barril
+BATEDEIRA|Bate a massa
+BEBEDOURO|Fonte de água
+BELICHE|Cama dupla
+BIBELO|Enfeite pequeno
+BISNAGA|Tubo de creme
+BLUSA|Peça de cima
+BOLSO|Guarda moedas
+BOTINA|Bota curta
+BRAGUILHA|Abertura da calça
+CABIDE|Pendura roupa
+CALCAO|Bermuda curta
+CAMISOLA|Roupa de dormir
+CANDEEIRO|Lamparina
+CAPA|Cobre o livro
+CARRINHO|Brinquedo de rodinhas
+CARTAZ|Anúncio na parede
+CHAVEIRO|Guarda chaves
+CHUVEIRO|Dá banho
+COLCHA|Cobre a cama
+COLCHAO|Fica sob o lençol
+COLHER|Talher de sopa
+COMODO|Quarto ou sala
+CORTINA|Cobre a janela
+CUMBUCA|Tigela funda
+DESPERTADOR|Toca de manhã
+DIVA|Sofá largo
+ENXADA|Capina a terra
+ESPANADOR|Tira o pó
+ESPELHOS|Refletem
+FACA|Corta o pão
+FECHADURA|Gira com a chave
+FERRAMENTA|Martelo ou chave
+FIAÇÃO|Fios da casa
+FILTRO|Limpa a água
+FRIGIDEIRA|Frita o ovo
+FRONHA|Capa do travesseiro
+FUNIL|Passa líquido
+GANCHO|Pendura coisas
+GARFO|Talher de espetar
+GAVETEIRO|Móvel de gavetas
+GUARDANAPO|Limpa a boca
+LENCO|Seca o nariz
+LIQUIDIFICADOR|Bate a vitamina
+LOUCA|Pratos e xícaras
+MACANETA|Abre a porta
+MAMADEIRA|Leite do bebê
+MANGUEIRA|Rega o jardim
+MANTA|Cobre no frio
+MESINHA|Apoio pequeno
+MOLDE|Forma de bolo
+MURAL|Painel na parede
+OCULOS|Ajudam a ver
+PALITO|Limpa os dentes
+PANO|Tecido de limpeza
+PAREDES|Sustentam o teto
+PENEIRA|Separa farinha
+PERSIANA|Controla a luz
+PIA|Lava a louça
+PLACA|Sinal na porta
+POLTRONA|Cadeira estofada
+PORTAL|Entrada grande
+PRATELEIRA|Guarda livros
+PROJETOR|Mostra o filme
+RALADOR|Desfia o queijo
+RELOGIOS|Mostram a hora
+SABONETE|Lava as mãos
+SANDUICHEIRA|Prensa o pão
+SOFAS|Estofados da sala
+TAPETES|Cobrem o piso
+TELEVISAO|Mostra a novela
+TERMOS|Garrafa que conserva
+TRAVESSEIRO|Apoia a cabeça
+TRINCO|Fecha a porta
+TUBULACAO|Cano da casa
+VELA|Luz de cera
+VENTILADORES|Refrescam o ar
+ZIPER|Fecha a calça

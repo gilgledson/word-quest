@@ -1,0 +1,520 @@
+ACENO|Gesto com a mão|2
+ALAMEDA|Rua com árvores|2
+ALCOVA|Quarto pequeno|2
+ALGAS|Plantas do mar|2
+ALPACA|Parente da lhama|2
+ALVARA|Licença oficial|2
+ANDAIME|Estrutura da obra|2
+ANGELICAL|Puro como um anjo|2
+ARAGEM|Brisa leve|2
+ARDUO|Muito difícil|2
+ARREIO|Equipa o cavalo|2
+ARROIO|Riacho pequeno|2
+AVENCA|Samambaia delicada|2
+BALAIO|Cesto grande|2
+BATUTA|Vara do maestro|2
+BEIRAL|Borda do telhado|2
+BRASAS|Carvão em fogo|2
+CACULA|Último filho|2
+CAIXAO|Leva o defunto|2
+CAMPONES|Vive no campo|2
+CARAMUJO|Molusco de concha|2
+CARDUME|Grupo de peixes|2
+CARNAVAL|Festa de fantasias|2
+CASULO|Abrigo da lagarta|2
+CEIFAR|Colher o trigo|2
+CHARCO|Poça grande|2
+CHICOTE|Açoita o animal|2
+CICLONE|Vento giratório|2
+CILADA|Armadilha|2
+CLAVA|Bastão pesado|2
+COFRE|Guarda o tesouro|2
+COVIL|Toca de feras|2
+CRUZEIRO|Viagem de navio|2
+CURRAL|Cerca o gado|2
+DIAMANTE|Pedra mais dura|2
+ESPIGA|Cabo do milho|2
+ESTABULO|Casa dos cavalos|2
+ETIQUETA|Rótulo de preço|2
+FANFARRA|Banda de metais|2
+FERRADURA|Calça o cavalo|2
+FESTIM|Banquete|2
+FOLCLORE|Cultura popular|2
+FRONTEIRA|Divisa de países|2
+GAIOLA|Casa do canário|2
+GRAVURA|Imagem gravada|2
+GUINCHO|Reboca o carro|2
+INSETO|Tem seis patas|2
+JERICO|Burrico|2
+LABIRINTO|Caminho confuso|2
+LIMOEIRO|Árvore do limão|2
+LOUSA|Quadro da aula|2
+MARMORE|Pedra polida|2
+MERGULHO|Descida na água|2
+NAVALHA|Lâmina de barbear|2
+NOVELO|Bola de lã|2
+OBELISCO|Monumento alto|2
+PAGODE|Samba de roda|2
+PAIOL|Depósito de grãos|2
+PANTANO|Terreno alagado|2
+PASTOR|Cuida do rebanho|2
+PEGADA|Marca do pé|2
+PEROLA|Joia do mar|2
+PESCADOR|Joga a rede|2
+PILAO|Soca o grão|2
+PIRAMIDE|Túmulo do Egito|2
+PONTEIRO|Marca no relógio|2
+QUINTAL|Terreno da casa|2
+REBANHO|Grupo de ovelhas|2
+REDOMA|Vidro que protege|2
+REGADOR|Molha as plantas|2
+ROBALO|Peixe saboroso|2
+ROLDANA|Roda de içar|2
+ROMANCE|Livro de amor|2
+RUINA|Restos de prédio|2
+SINFONIA|Obra de orquestra|2
+SOLDADO|Serve ao exército|2
+TABULEIRO|Base de jogo|2
+TRAPEZIO|Aparelho do circo|2
+TRENO|Desliza na neve|2
+TURBANTE|Pano na cabeça|2
+ZEPELIM|Balão dirigível|2
+VOLTAR|Retornar
+AMOR|Carinho profundo
+AJUDAR|Dar uma mão
+AMIGOS|Pessoas queridas
+GAROTA|Menina
+CRIANCAS|Meninos e meninas
+MATAR|Tirar a vida
+PENSAR|Usar a mente
+PAPAI|Pai, no carinho
+MINUTOS|Partes da hora
+ESPOSA|Mulher casada
+MORRER|Deixar de viver
+CHEGAR|Alcançar o destino
+OLHOS|Veem as cores
+MAOS|Têm dedos
+PARAR|Ficar imóvel
+MAMAE|Mãe, no carinho
+COMECAR|Dar início
+DROGA|Expressão de raiva
+ESTRANHO|Diferente do comum
+CAPITAO|Comanda o navio
+CINCO|Depois do quatro
+FORTE|Cheio de força
+SOZINHO|Sem companhia
+PASSADO|Tempo que já foi
+COLOCAR|Pôr no lugar
+HOSPITAL|Trata os doentes
+LINDA|Muito bonita
+CHAMAR|Dizer em voz alta
+ESTADO|Parte do país
+ARMAS|Espadas e pistolas
+AMIGA|Colega querida
+MENTE|Parte que pensa
+PRONTO|Já terminado
+MENINO|Garoto
+BEBER|Tomar líquido
+HOTEL|Hospeda viajantes
+ATAQUE|Investida
+FOTOS|Imagens da câmera
+ESPACO|Lugar vazio
+SERVICO|Trabalho prestado
+ROUPAS|Camisas e calças
+GOVERNO|Dirige o país
+VELHA|Idosa
+ALMA|Espírito
+CELULAR|Telefone de bolso
+OFICIAL|Aprovado pela lei
+PADRE|Celebra a missa
+ESQUERDA|Lado do coração
+CEREBRO|Órgão que pensa
+REGRAS|Normas do jogo
+SONHOS|Vêm ao dormir
+ANIMAIS|Bichos
+SILENCIO|Ausência de som
+SOCORRO|Pedido de ajuda
+VERMELHO|Cor do tomate
+CARTAO|Paga sem dinheiro
+CAMERA|Registra fotos
+PERDAO|Ato de desculpar
+LIVROS|Têm capítulos
+JUSTICA|Faz valer a lei
+LIDER|Guia o grupo
+PERNAS|Sustentam o corpo
+ESPIRITO|Alma
+IMAGINAR|Criar na mente
+LONGA|Muito comprida
+LEVAR|Carregar
+FEITO|Concluído
+CHORAR|Derramar lágrimas
+COZINHAR|Preparar a comida
+ACORDAR|Deixar de dormir
+ENCONTRAR|Achar
+PROCURAR|Buscar
+ESQUECER|Deixar de lembrar
+ESCOLHER|Optar
+REFRESCO|Bebida gelada
+AMANHA|Dia seguinte
+CABECA|Sobre o pescoço
+HOMENS|Machos adultos
+FILHA|Moça para a mãe
+RAZAO|Por que motivo
+IDEIA|Sacada nova
+SENHORA|Dona, dama
+CHANCE|Boa hora de tentar
+MULHERES|Fêmeas adultas
+MESES|Doze no ano
+CULPA|Erro assumido
+SENTIR|Tocar com a pele
+DIREITO|Lado da mão forte
+TCHAU|Até logo!
+JOGAR|Entrar na partida
+PEQUENA|Nada grande
+QUENTE|Que queima
+ACIDENTE|Batida na rua
+ADVOGADO|Fala no tribunal
+ABRIR|Tirar o fecho
+CHEIO|Lotado
+COSTAS|Oposto do peito
+CHEIRO|Perfume ou fedor
+CLUBE|Sede de sócios
+MENTIRA|Fala falsa
+SERIE|Temporada na TV
+NOTICIA|Fato do jornal
+BRACO|Membro do ombro
+VERGONHA|Rosto vermelho
+CHEIA|Lotada
+TIRAR|Pegar para fora
+CASAR|Dizer sim no altar
+VENDER|Pôr à venda
+ESCREVER|Rabiscar letras
+ACEITAR|Dizer sim a algo
+SENTAR|Usar a cadeira
+TROCAR|Mudar por outro
+DESENHAR|Fazer um esboço
+OVOS|Ninho tem alguns
+PEDIDO|Encomenda
+PLANOS|Projetos
+APESAR|Mesmo assim
+CARTAS|Vão no correio
+FELIZES|Cheios de alegria
+SAPATOS|Calçam os pés
+CARROS|Veículos de rua
+PROVAS|Testes da escola
+EVITAR|Fugir de algo
+DESTRUIR|Acabar com tudo
+MENINOS|Garotos
+SOLDADOS|Militares
+GENTIL|Muito educado
+FILMES|Passam no cinema
+LIMPAR|Tirar a sujeira
+INGLES|Língua de Londres
+ENDERECO|Rua e número
+NERVOSO|Agitado
+NATUREZA|Mato e rios
+RIDICULO|Digno de riso
+ANIMAL|Bicho
+INOCENTE|Sem culpa
+DADOS|Cubos de jogo
+VELHOS|Idosos
+ESTRELAS|Brilham de noite
+TOTAL|Soma de tudo
+DIRIGIR|Guiar o carro
+EPISODIO|Capítulo de série
+PREPARAR|Deixar pronto
+PROCESSO|Caso na justiça
+ENTREGAR|Dar em mãos
+DIABO|Demônio
+DESAFIO|Convite a competir
+MENOR|Mais pequeno
+VISITA|Hóspede
+ESCAPAR|Fugir
+MILHARES|Vários mil
+PONTOS|Marcam a partida
+BRACOS|Ombro à mão
+BRANCA|Cor do leite
+PERFEITA|Sem defeito
+MOCA|Jovem
+BANDA|Grupo musical
+DETALHES|Pequenas partes
+CAMINHAO|Veículo de carga
+DENTES|Mastigam
+BARULHO|Som alto
+CAVALOS|Relincham
+MAXIMO|O maior possível
+POLITICA|Arte de governar
+DISCUTIR|Debater
+DESISTIR|Abandonar
+LEVANTAR|Pôr em pé
+MILHAO|Mil vezes mil
+CHAVES|Abrem portas
+MACHUCAR|Ferir
+DEVER|Obrigação
+RELAXE|Fique tranquilo
+DEPENDE|Está sujeito a
+NOITES|Escuras
+RUAS|Vias da cidade
+DONO|Quem possui
+NOIVA|Vai ao altar
+CASADO|Que tem esposa
+UNIDOS|Juntos
+CORRETO|Certo
+OBTER|Conseguir
+HUMANA|Da pessoa
+CALCAS|Vestem as pernas
+ESTADOS|Partes do país
+MENTIR|Falar falso
+DEDOS|Cinco em cada mão
+ABERTA|Sem fecho
+AMEACA|Promessa de dano
+ESPERTO|Muito vivo
+CASOS|Histórias
+DECIDIU|Escolheu
+FORCAS|Poderes
+MAIORES|Mais grandes
+CENTRAL|No meio
+TAXI|Carro de aluguel
+LUZES|Iluminam
+AGIR|Tomar atitude
+ENVIAR|Mandar
+TEORIA|Ideia em estudo
+FRANCA|Sincera
+LIGADO|Acesso
+ANTIGA|De muito tempo
+VITORIA|Triunfo
+NUMEROS|Um, dois, três
+DIVERTIR|Alegrar
+COLEGA|Parceiro de turma
+PRINCIPE|Filho do rei
+NATURAL|Sem artifício
+VISITAR|Ir ver alguém
+TERCEIRO|Depois do segundo
+UNIDADE|Um só
+ARTISTA|Faz arte
+PESQUISA|Busca de dados
+PRESSA|Urgência
+MOMENTOS|Instantes
+SERVIR|Atender
+USADO|Já gasto
+QUEBROU|Partiu em pedaços
+ESCRITO|Redigido
+CASAS|Moradias
+ABERTO|Sem tranca
+CANCAO|Música cantada
+PEQUENOS|De pouco tamanho
+ATRASADO|Fora da hora
+SANTO|Venerado na igreja
+CREDITO|Saldo de confiança
+JOGOS|Partidas
+HONESTO|Que não mente
+AVISO|Alerta
+OBJETIVO|Meta
+SENSACAO|O que se sente
+MILITAR|Soldado
+BESTEIRA|Bobagem
+ROUBO|Ato de furtar
+MEMBRO|Parte do grupo
+CORREDOR|Passagem estreita
+SINAIS|Placas e gestos
+MATERIAL|Matéria usada
+PARTES|Pedaços
+PRESOS|Sem liberdade
+CARONA|Viagem de graça
+PREFEITO|Governa a cidade
+CONFUSAO|Bagunça
+INUTIL|Sem serventia
+VINGANCA|Troco por ofensa
+LICAO|Tarefa de casa
+ORIGINAL|Primeiro modelo
+IMPEDIR|Não deixar
+ARQUIVOS|Guardam papéis
+POSTO|Lugar de gasolina
+EXPLOSAO|Estouro forte
+MELHORAR|Ficar melhor
+EXPLODIR|Estourar
+OFERECER|Dar de presente
+CRESCER|Ficar maior
+PRESENCA|Ato de estar
+CIENCIA|Estuda a natureza
+DISCURSO|Fala ao público
+DIREITOS|Garantias legais
+CANCER|Doença grave
+REINO|Terra do rei
+LADRAO|Furta bens
+ACOES|Atos
+JUNTAS|Em conjunto
+FRANCES|Língua de Paris
+BOLAS|Redondas
+FUNDOS|Partes baixas
+SEGURAR|Manter firme
+GARANTIR|Assegurar
+FAMILIAR|Da família
+TOLO|Pouco esperto
+AULAS|Lições
+FAVORITO|Preferido
+SECULO|Cem anos
+VINTE|Dois vezes dez
+RESPIRAR|Puxar o ar
+OPCAO|Escolha
+VIVOS|Em vida
+EXAME|Teste médico
+EXTRA|A mais
+CLARA|Cheia de luz
+MEDICA|Doutora
+ATENDER|Servir ao cliente
+ERROS|Enganos
+DEUSES|Seres divinos
+FECHADO|Trancado
+FAMOSO|Muito conhecido
+TESTES|Provas
+PODERES|Forças
+REGISTRO|Anotação oficial
+PRENDER|Capturar
+ASSINAR|Pôr o nome
+MEXER|Mover
+CRIMES|Delitos
+VANTAGEM|Ponto a favor
+ARQUIVO|Pasta de papéis
+NOTAS|Dinheiro de papel
+PASSEIO|Volta ao ar livre
+IMAGINE|Crie na mente
+INCENDIO|Fogo grande
+VOTOS|Escolhas na urna
+BANDO|Grupo de aves
+DEMONIO|Ser do mal
+PILOTO|Conduz o avião
+MUNDIAL|De todo o planeta
+INSTANTE|Segundo
+VERMELHA|Cor do sangue
+MAGICA|Feitiço
+PANICO|Pavor
+TIPOS|Espécies
+AMANTE|Quem ama
+DEVOLVER|Entregar de volta
+MOTOR|Move a máquina
+FUNERAL|Despedida do morto
+RAZOES|Motivos
+ALERTA|Aviso
+IMAGENS|Fotos e desenhos
+ANTIGOS|De tempos idos
+BALAS|Doces ou munição
+FANTASIA|Roupa de carnaval
+DESLIGAR|Cortar a energia
+PEDACOS|Fatias
+TORRE|Prédio alto
+CIGARRO|Tem fumaça
+FUMAR|Soltar fumaça
+VERSAO|Modo de contar
+APOSTAR|Arriscar no jogo
+JORNAIS|Trazem notícias
+PESADELO|Sonho ruim
+CONTO|Narrativa curta
+BEIJAR|Dar um beijo
+ESTOMAGO|Digere a comida
+ESCUTAR|Ouvir
+OSSOS|Formam o esqueleto
+BEBIDAS|Líquidos
+COMPRAS|Itens do mercado
+DIVORCIO|Fim do casamento
+MINISTRO|Chefe de pasta
+OUVIDOS|Captam sons
+MINIMO|O menor possível
+PEDRAS|Rochas pequenas
+CANTANDO|Entoando
+SUPERIOR|Mais alto
+CALMO|Tranquilo
+PERIODO|Fase de tempo
+GARGANTA|Fica no pescoço
+MARINHA|Frota de navios
+TAREFA|Dever
+MUSICAS|Canções
+PAIXAO|Amor intenso
+MALAS|Guardam roupas
+RELAXAR|Descansar
+ESTUDIO|Local de gravação
+BAIXA|Pouco alta
+UNIFORME|Roupa igual
+PORAO|Subsolo da casa
+DEFENDER|Proteger
+PASSOS|Dados ao andar
+VIZINHOS|Moram ao lado
+PECAS|Partes de máquina
+CRIATURA|Ser vivo
+JOGADA|Lance
+MARCAS|Sinais
+CANAL|Estação de TV
+PAPEIS|Folhas
+TIROS|Disparos
+SERES|Criaturas
+ARTIGO|Texto de jornal
+APOSTA|Risco no jogo
+EDUCACAO|Ensino
+SAUDAVEL|Que faz bem
+POBRES|Sem dinheiro
+JOGADOR|Atleta
+LEIS|Normas do país
+ILEGAL|Contra a lei
+VENCEDOR|Quem ganha
+ENGANAR|Passar a perna
+SUPERAR|Passar adiante
+MOTIVOS|Causas
+ADIANTE|Para a frente
+ATITUDE|Modo de agir
+INDIA|País do Ganges
+LADOS|Faces
+CUSTA|Tem o preço de
+LENDO|Vendo as letras
+DISPOSTO|Pronto
+COLEGIO|Escola
+DESASTRE|Tragédia
+SALAO|Sala grande
+BABA|Saliva
+FECHADA|Trancada
+FISICA|Estuda a matéria
+ALCOOL|Bebida forte
+INFANCIA|Idade de criança
+CORTA|Faz fatias
+UISQUE|Bebida escocesa
+BRAVA|Zangada
+ENGANO|Equívoco
+MATO|Vegetação rasteira
+ESFORCO|Empenho
+EXPLICA|Torna claro
+LABIOS|Fecham a boca
+RICOS|Cheios de dinheiro
+MILHAS|Medida inglesa
+LOCAIS|Lugares
+MISTERIO|Enigma
+PESSIMO|Muito ruim
+SECRETA|Escondida
+PERDIDA|Que não se acha
+REGIAO|Zona
+LINHAS|Fios de costura
+COMPRA|Aquisição
+NACAO|País
+FORMAS|Contornos
+CIUMES|Medo de perder
+FRIA|Gelada
+POPULAR|Querido por todos
+PROPOSTA|Sugestão
+LAGRIMAS|Escorrem dos olhos
+TERNO|Roupa de gala
+PIORES|Mais ruins
+DEPOSITO|Armazém
+LIVRES|Soltos
+SENADOR|Político eleito
+SESSAO|Exibição no cinema
+PEIXES|Nadam no mar
+BRIGAR|Discutir feio
+CAIXAS|Guardam objetos
+GLORIA|Fama de herói
+OPCOES|Escolhas
+TROPAS|Soldados
+MAES|Têm filhos
+CURTO|Pouco comprido
+VOTAR|Escolher na urna
+RECADO|Mensagem curta
+BARATO|Preço baixo
+JOELHOS|Dobram as pernas
+EDIFICIO|Prédio

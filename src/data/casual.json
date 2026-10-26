@@ -1,0 +1,3227 @@
+{
+  "themes": [
+    {
+      "id": "animais",
+      "nome": "Animais",
+      "puzzles": [
+        {
+          "id": "casual-animais-1",
+          "number": 1,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "tartaruga",
+              "clue": "Tem casco",
+              "answer": "TARTARUGA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "pato",
+              "clue": "Ave que nada",
+              "answer": "PATO",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "osa",
+              "clue": "Fêmea do urso",
+              "answer": "OSA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "bode",
+              "clue": "Macho da cabra",
+              "answer": "BODE",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "tatu",
+              "clue": "Bicho de couraça",
+              "answer": "TATU",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "cobra",
+              "clue": "Réptil sem patas",
+              "answer": "COBRA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "galo",
+              "clue": "Canta de manhã",
+              "answer": "GALO",
+              "direction": "horizontal",
+              "startRow": 8,
+              "startCol": 2,
+              "clueRow": 8,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "escama",
+              "clue": "Cobre o peixe",
+              "answer": "ESCAMA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 7,
+              "clueRow": 1,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "leoa",
+              "clue": "Caça pelo bando",
+              "answer": "LEOA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "ave",
+              "clue": "Pássaro",
+              "answer": "AVE",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 5,
+              "clueRow": 9,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "ema",
+              "clue": "Ave que corre",
+              "answer": "EMA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 5,
+              "clueRow": 7,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "teia",
+              "clue": "Rede da aranha",
+              "answer": "TEIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-animais-2",
+          "number": 2,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "grasnar",
+              "clue": "Voz do pato",
+              "answer": "GRASNAR",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 1,
+              "clueRow": 4,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "siri",
+              "clue": "Crustáceo",
+              "answer": "SIRI",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 0,
+              "clueRow": 4,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "mula",
+              "clue": "Filha do jegue",
+              "answer": "MULA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "leao",
+              "clue": "Rei da selva",
+              "answer": "LEAO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 6,
+              "clueRow": 1,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "teiu",
+              "clue": "Lagarto grande",
+              "answer": "TEIU",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 4,
+              "clueRow": 9,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "anta",
+              "clue": "Tapir",
+              "answer": "ANTA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 4,
+              "clueRow": 0,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "rugido",
+              "clue": "Voz do leão",
+              "answer": "RUGIDO",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 2,
+              "clueRow": 3,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "bufalo",
+              "clue": "Boi selvagem",
+              "answer": "BUFALO",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "tatu",
+              "clue": "Bicho de couraça",
+              "answer": "TATU",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "bode",
+              "clue": "Macho da cabra",
+              "answer": "BODE",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "foca",
+              "clue": "Mamífero marinho",
+              "answer": "FOCA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 4,
+              "clueRow": 7,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "gnu",
+              "clue": "Antílope",
+              "answer": "GNU",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-animais-3",
+          "number": 3,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "falcoes",
+              "clue": "Aves de rapina",
+              "answer": "FALCOES",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "alce",
+              "clue": "Cervo gigante",
+              "answer": "ALCE",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "mutum",
+              "clue": "Ave de crista",
+              "answer": "MUTUM",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "muar",
+              "clue": "Da mula",
+              "answer": "MUAR",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "egua",
+              "clue": "Fêmea do cavalo",
+              "answer": "EGUA",
+              "direction": "horizontal",
+              "startRow": 8,
+              "startCol": 2,
+              "clueRow": 8,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "galo",
+              "clue": "Canta de manhã",
+              "answer": "GALO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "ourico",
+              "clue": "Cheio de espinhos",
+              "answer": "OURICO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "raia",
+              "clue": "Peixe chato",
+              "answer": "RAIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "piar",
+              "clue": "Voz do pintinho",
+              "answer": "PIAR",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "ursa",
+              "clue": "Mãe do ursinho",
+              "answer": "URSA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 6,
+              "clueRow": 1,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "osa",
+              "clue": "Fêmea do urso",
+              "answer": "OSA",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 5,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-animais-4",
+          "number": 4,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "pelagem",
+              "clue": "Pelos do animal",
+              "answer": "PELAGEM",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "cria",
+              "clue": "Filhote",
+              "answer": "CRIA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 1,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "onca",
+              "clue": "Felino pintado",
+              "answer": "ONCA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "teiu",
+              "clue": "Lagarto grande",
+              "answer": "TEIU",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 2,
+              "clueRow": 3,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "urubu",
+              "clue": "Ave de carniça",
+              "answer": "URUBU",
+              "direction": "horizontal",
+              "startRow": 3,
+              "startCol": 3,
+              "clueRow": 3,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "teia",
+              "clue": "Rede da aranha",
+              "answer": "TEIA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 4,
+              "clueRow": 7,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "polvo",
+              "clue": "Tem oito braços",
+              "answer": "POLVO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "mico",
+              "clue": "Pequeno macaco",
+              "answer": "MICO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "galo",
+              "clue": "Canta de manhã",
+              "answer": "GALO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "muar",
+              "clue": "Da mula",
+              "answer": "MUAR",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 7,
+              "clueRow": 4,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "lebre",
+              "clue": "Coelho veloz",
+              "answer": "LEBRE",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 6,
+              "clueRow": 0,
+              "clueCol": 6,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-animais-5",
+          "number": 5,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "focinho",
+              "clue": "Nariz do cão",
+              "answer": "FOCINHO",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "jacu",
+              "clue": "Ave da mata",
+              "answer": "JACU",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "pato",
+              "clue": "Ave que nada",
+              "answer": "PATO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "cria",
+              "clue": "Filhote",
+              "answer": "CRIA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "tatu",
+              "clue": "Bicho de couraça",
+              "answer": "TATU",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "boto",
+              "clue": "Mamífero rosa",
+              "answer": "BOTO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "asas",
+              "clue": "Batem para voar",
+              "answer": "ASAS",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 6,
+              "clueRow": 4,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "gaio",
+              "clue": "Pássaro azul",
+              "answer": "GAIO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "urso",
+              "clue": "Mamífero de garras",
+              "answer": "URSO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "loba",
+              "clue": "Fêmea do lobo",
+              "answer": "LOBA",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "gnu",
+              "clue": "Antílope",
+              "answer": "GNU",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "osa",
+              "clue": "Fêmea do urso",
+              "answer": "OSA",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 6,
+              "clueCol": 4,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-animais-6",
+          "number": 6,
+          "world": "animais",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "crocodilo",
+              "clue": "Réptil do Nilo",
+              "answer": "CROCODILO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "cao",
+              "clue": "Melhor amigo",
+              "answer": "CAO",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "anta",
+              "clue": "Tapir",
+              "answer": "ANTA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "rato",
+              "clue": "Roedor",
+              "answer": "RATO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 4,
+              "clueRow": 0,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "bode",
+              "clue": "Macho da cabra",
+              "answer": "BODE",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "piar",
+              "clue": "Voz do pintinho",
+              "answer": "PIAR",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "siri",
+              "clue": "Crustáceo",
+              "answer": "SIRI",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "ursos",
+              "clue": "Gostam de mel",
+              "answer": "URSOS",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "teia",
+              "clue": "Rede da aranha",
+              "answer": "TEIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "orca",
+              "clue": "Baleia assassina",
+              "answer": "ORCA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "cacar",
+              "clue": "Perseguir a presa",
+              "answer": "CACAR",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 3,
+              "clueRow": 4,
+              "clueCol": 2,
+              "arrow": "right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "comida",
+      "nome": "Comida",
+      "puzzles": [
+        {
+          "id": "casual-comida-1",
+          "number": 1,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "refeicao",
+              "clue": "Almoço ou jantar",
+              "answer": "REFEICAO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "sopa",
+              "clue": "Prato de colher",
+              "answer": "SOPA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "anis",
+              "clue": "Semente aromática",
+              "answer": "ANIS",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "grao",
+              "clue": "Semente pequena",
+              "answer": "GRAO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "bifes",
+              "clue": "Fatias de carne",
+              "answer": "BIFES",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "ervas",
+              "clue": "Temperos verdes",
+              "answer": "ERVAS",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "bebida",
+              "clue": "Suco ou vinho",
+              "answer": "BEBIDA",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 4,
+              "clueRow": 3,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "sabor",
+              "clue": "Gosto",
+              "answer": "SABOR",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 3,
+              "clueRow": 9,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "taco",
+              "clue": "Bastão do golfe",
+              "answer": "TACO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "licor",
+              "clue": "Bebida adocicada",
+              "answer": "LICOR",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 7,
+              "clueRow": 4,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "sal",
+              "clue": "Tempero básico",
+              "answer": "SAL",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 6,
+              "clueRow": 1,
+              "clueCol": 6,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-comida-2",
+          "number": 2,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "presunto",
+              "clue": "Frios do sanduíche",
+              "answer": "PRESUNTO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "oleo",
+              "clue": "Gordura líquida",
+              "answer": "OLEO",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 3,
+              "clueRow": 4,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "alho",
+              "clue": "Tempero de dente",
+              "answer": "ALHO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "canja",
+              "clue": "Sopa de galinha",
+              "answer": "CANJA",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 2,
+              "clueRow": 4,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "papa",
+              "clue": "Mingau",
+              "answer": "PAPA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "pastel",
+              "clue": "Salgado de feira",
+              "answer": "PASTEL",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "uva",
+              "clue": "Fruta do vinho",
+              "answer": "UVA",
+              "direction": "horizontal",
+              "startRow": 3,
+              "startCol": 1,
+              "clueRow": 3,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "pao",
+              "clue": "De padaria",
+              "answer": "PAO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 1,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "pure",
+              "clue": "Batata amassada",
+              "answer": "PURE",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 4,
+              "clueRow": 6,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "vagem",
+              "clue": "Legume alongado",
+              "answer": "VAGEM",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 0,
+              "clueRow": 4,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "melao",
+              "clue": "Fruta da salada",
+              "answer": "MELAO",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 7,
+              "clueRow": 4,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "agua",
+              "clue": "Líquido da chuva",
+              "answer": "AGUA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 1,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-comida-3",
+          "number": 3,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "panqueca",
+              "clue": "Massa fina",
+              "answer": "PANQUECA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "atum",
+              "clue": "Peixe grande",
+              "answer": "ATUM",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 3,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "agua",
+              "clue": "Líquido da chuva",
+              "answer": "AGUA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "cana",
+              "clue": "Doce da garapa",
+              "answer": "CANA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "nabo",
+              "clue": "Raiz branca",
+              "answer": "NABO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 1,
+              "clueRow": 9,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "vinhos",
+              "clue": "Bebidas de uva",
+              "answer": "VINHOS",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 0,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "figo",
+              "clue": "Fruta de Adão",
+              "answer": "FIGO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "acucar",
+              "clue": "Adoça o café",
+              "answer": "ACUCAR",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "erva",
+              "clue": "Tempero fresco",
+              "answer": "ERVA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "goma",
+              "clue": "Cola vegetal",
+              "answer": "GOMA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 1,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "pao",
+              "clue": "De padaria",
+              "answer": "PAO",
+              "direction": "horizontal",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "oleo",
+              "clue": "Gordura líquida",
+              "answer": "OLEO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-comida-4",
+          "number": 4,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "ensopado",
+              "clue": "Cozido com caldo",
+              "answer": "ENSOPADO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 1,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "mel",
+              "clue": "Doce de abelha",
+              "answer": "MEL",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "bolo",
+              "clue": "Doce de festa",
+              "answer": "BOLO",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "sopa",
+              "clue": "Prato de colher",
+              "answer": "SOPA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "menu",
+              "clue": "Cardápio",
+              "answer": "MENU",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "soda",
+              "clue": "Bebida com gás",
+              "answer": "SODA",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 4,
+              "clueRow": 3,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "coco",
+              "clue": "Fruto do coqueiro",
+              "answer": "COCO",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 7,
+              "clueRow": 3,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "ostras",
+              "clue": "Moluscos da pérola",
+              "answer": "OSTRAS",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "empada",
+              "clue": "Torta pequena",
+              "answer": "EMPADA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "sal",
+              "clue": "Tempero básico",
+              "answer": "SAL",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "amargo",
+              "clue": "Sabor do jiló",
+              "answer": "AMARGO",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-comida-5",
+          "number": 5,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "biscoito",
+              "clue": "Bolacha",
+              "answer": "BISCOITO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "taca",
+              "clue": "Prêmio do campeão",
+              "answer": "TACA",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 3,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "doce",
+              "clue": "Sobremesa",
+              "answer": "DOCE",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "sopa",
+              "clue": "Prato de colher",
+              "answer": "SOPA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "sabor",
+              "clue": "Gosto",
+              "answer": "SABOR",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "frutas",
+              "clue": "Maçã, uva e pera",
+              "answer": "FRUTAS",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "broa",
+              "clue": "Pão de milho",
+              "answer": "BROA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "coco",
+              "clue": "Fruto do coqueiro",
+              "answer": "COCO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 4,
+              "clueRow": 9,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "gelo",
+              "clue": "Água congelada",
+              "answer": "GELO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "grao",
+              "clue": "Semente pequena",
+              "answer": "GRAO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "bife",
+              "clue": "Fatia de carne",
+              "answer": "BIFE",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 4,
+              "clueRow": 7,
+              "clueCol": 3,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-comida-6",
+          "number": 6,
+          "world": "comida",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "espinafre",
+              "clue": "Folha do Popeye",
+              "answer": "ESPINAFRE",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "pate",
+              "clue": "Creme de fígado",
+              "answer": "PATE",
+              "direction": "horizontal",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 3,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "grao",
+              "clue": "Semente pequena",
+              "answer": "GRAO",
+              "direction": "horizontal",
+              "startRow": 8,
+              "startCol": 1,
+              "clueRow": 8,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "paes",
+              "clue": "Assados no forno",
+              "answer": "PAES",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "graos",
+              "clue": "Feijão e lentilha",
+              "answer": "GRAOS",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 4,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "pizza",
+              "clue": "Massa com queijo",
+              "answer": "PIZZA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "quibe",
+              "clue": "Bolinho árabe",
+              "answer": "QUIBE",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "soda",
+              "clue": "Bebida com gás",
+              "answer": "SODA",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 4,
+              "clueRow": 9,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "arroz",
+              "clue": "Grão do prato",
+              "answer": "ARROZ",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 6,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "cha",
+              "clue": "Infusão de ervas",
+              "answer": "CHA",
+              "direction": "vertical",
+              "startRow": 7,
+              "startCol": 7,
+              "clueRow": 6,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "mel",
+              "clue": "Doce de abelha",
+              "answer": "MEL",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "natureza",
+      "nome": "Natureza",
+      "puzzles": [
+        {
+          "id": "casual-natureza-1",
+          "number": 1,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "horizonte",
+              "clue": "Linha do mar",
+              "answer": "HORIZONTE",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "geo",
+              "clue": "Da Terra",
+              "answer": "GEO",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "rio",
+              "clue": "Curso d'água",
+              "answer": "RIO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "raios",
+              "clue": "Descargas do céu",
+              "answer": "RAIOS",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "ramo",
+              "clue": "Galho",
+              "answer": "RAMO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "safra",
+              "clue": "Colheita do ano",
+              "answer": "SAFRA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "porto",
+              "clue": "Abrigo de navios",
+              "answer": "PORTO",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 1,
+              "clueRow": 6,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "argila",
+              "clue": "Barro de oleiro",
+              "answer": "ARGILA",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 2,
+              "clueRow": 4,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "polen",
+              "clue": "Pó da flor",
+              "answer": "POLEN",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "muda",
+              "clue": "Planta nova",
+              "answer": "MUDA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "ceu",
+              "clue": "Azul lá em cima",
+              "answer": "CEU",
+              "direction": "vertical",
+              "startRow": 7,
+              "startCol": 0,
+              "clueRow": 6,
+              "clueCol": 0,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-natureza-2",
+          "number": 2,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "jardins",
+              "clue": "Canteiros floridos",
+              "answer": "JARDINS",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "ramos",
+              "clue": "Galhos",
+              "answer": "RAMOS",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 1,
+              "clueRow": 4,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "luas",
+              "clue": "Satélites",
+              "answer": "LUAS",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 0,
+              "clueRow": 4,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "brisa",
+              "clue": "Vento suave",
+              "answer": "BRISA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "capim",
+              "clue": "Pasto",
+              "answer": "CAPIM",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "orla",
+              "clue": "Beira",
+              "answer": "ORLA",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 4,
+              "clueRow": 3,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "cinza",
+              "clue": "Resto do fogo",
+              "answer": "CINZA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "solo",
+              "clue": "Terra",
+              "answer": "SOLO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 6,
+              "clueRow": 5,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "flor",
+              "clue": "Perfuma o jardim",
+              "answer": "FLOR",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 4,
+              "clueRow": 9,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "atol",
+              "clue": "Ilha de coral",
+              "answer": "ATOL",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 4,
+              "clueRow": 7,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "rio",
+              "clue": "Curso d'água",
+              "answer": "RIO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-natureza-3",
+          "number": 3,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "deserto",
+              "clue": "Terra de dunas",
+              "answer": "DESERTO",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 1,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "hera",
+              "clue": "Sobe nos muros",
+              "answer": "HERA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "mar",
+              "clue": "Água salgada",
+              "answer": "MAR",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 5,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "coral",
+              "clue": "Vive no recife",
+              "answer": "CORAL",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 0,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "solo",
+              "clue": "Terra",
+              "answer": "SOLO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "polen",
+              "clue": "Pó da flor",
+              "answer": "POLEN",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 4,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "rio",
+              "clue": "Curso d'água",
+              "answer": "RIO",
+              "direction": "vertical",
+              "startRow": 7,
+              "startCol": 7,
+              "clueRow": 6,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "granito",
+              "clue": "Pedra dura",
+              "answer": "GRANITO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 1,
+              "clueRow": 9,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "flor",
+              "clue": "Perfuma o jardim",
+              "answer": "FLOR",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "flora",
+              "clue": "Plantas da região",
+              "answer": "FLORA",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 6,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "morro",
+              "clue": "Elevação",
+              "answer": "MORRO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-natureza-4",
+          "number": 4,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "meteoro",
+              "clue": "Estrela cadente",
+              "answer": "METEORO",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 1,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "sol",
+              "clue": "Astro-rei",
+              "answer": "SOL",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "venus",
+              "clue": "Planeta brilhante",
+              "answer": "VENUS",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 4,
+              "clueRow": 0,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "luar",
+              "clue": "Claridade da noite",
+              "answer": "LUAR",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 3,
+              "clueRow": 4,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "verde",
+              "clue": "Cor da folha",
+              "answer": "VERDE",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 0,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "seiva",
+              "clue": "Líquido da planta",
+              "answer": "SEIVA",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 2,
+              "clueRow": 4,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "ilha",
+              "clue": "Cercada de mar",
+              "answer": "ILHA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "jambo",
+              "clue": "Fruta rosa",
+              "answer": "JAMBO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 1,
+              "clueRow": 9,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "cedro",
+              "clue": "Madeira nobre",
+              "answer": "CEDRO",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 7,
+              "clueRow": 4,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "ceu",
+              "clue": "Azul lá em cima",
+              "answer": "CEU",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "ramo",
+              "clue": "Galho",
+              "answer": "RAMO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-natureza-5",
+          "number": 5,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "manguezal",
+              "clue": "Mata de mangue",
+              "answer": "MANGUEZAL",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "lua",
+              "clue": "Satélite natural",
+              "answer": "LUA",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 5,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "luar",
+              "clue": "Claridade da noite",
+              "answer": "LUAR",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "mare",
+              "clue": "Subida das águas",
+              "answer": "MARE",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "alga",
+              "clue": "Planta marinha",
+              "answer": "ALGA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "hera",
+              "clue": "Sobe nos muros",
+              "answer": "HERA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "relva",
+              "clue": "Grama baixa",
+              "answer": "RELVA",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 4,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "solo",
+              "clue": "Terra",
+              "answer": "SOLO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 6,
+              "clueRow": 5,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "ilha",
+              "clue": "Cercada de mar",
+              "answer": "ILHA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "vale",
+              "clue": "Entre morros",
+              "answer": "VALE",
+              "direction": "horizontal",
+              "startRow": 8,
+              "startCol": 4,
+              "clueRow": 8,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "arvore",
+              "clue": "Tem copa",
+              "answer": "ARVORE",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-natureza-6",
+          "number": 6,
+          "world": "natureza",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "corrente",
+              "clue": "Fluxo do rio",
+              "answer": "CORRENTE",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 5,
+              "clueRow": 1,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "geo",
+              "clue": "Da Terra",
+              "answer": "GEO",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "rocha",
+              "clue": "Pedra grande",
+              "answer": "ROCHA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "atol",
+              "clue": "Ilha de coral",
+              "answer": "ATOL",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 7,
+              "clueRow": 1,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "luas",
+              "clue": "Satélites",
+              "answer": "LUAS",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 1,
+              "arrow": "down"
+            },
+            {
+              "id": "areal",
+              "clue": "Praia de areia",
+              "answer": "AREAL",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 3,
+              "clueRow": 9,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "galho",
+              "clue": "Parte da árvore",
+              "answer": "GALHO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "venus",
+              "clue": "Planeta brilhante",
+              "answer": "VENUS",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "alga",
+              "clue": "Planta marinha",
+              "answer": "ALGA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 3,
+              "clueRow": 5,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "lenha",
+              "clue": "Lasca de fogueira",
+              "answer": "LENHA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 3,
+              "clueRow": 7,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "rio",
+              "clue": "Curso d'água",
+              "answer": "RIO",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 5,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "right"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "casa",
+      "nome": "Casa e objetos",
+      "puzzles": [
+        {
+          "id": "casual-casa-1",
+          "number": 1,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "vitrine",
+              "clue": "Mostra produtos",
+              "answer": "VITRINE",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 6,
+              "clueRow": 0,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "tenis",
+              "clue": "Calçado esportivo",
+              "answer": "TENIS",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "trena",
+              "clue": "Mede com fita",
+              "answer": "TRENA",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "pias",
+              "clue": "Lavam a louça",
+              "answer": "PIAS",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "faca",
+              "clue": "Corta o pão",
+              "answer": "FACA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "escada",
+              "clue": "Tem degraus",
+              "answer": "ESCADA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 1,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "cinto",
+              "clue": "Prende a calça",
+              "answer": "CINTO",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "movel",
+              "clue": "Mesa ou cama",
+              "answer": "MOVEL",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "cera",
+              "clue": "Material da vela",
+              "answer": "CERA",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 4,
+              "clueRow": 4,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "vela",
+              "clue": "Luz de cera",
+              "answer": "VELA",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "anel",
+              "clue": "Joia do dedo",
+              "answer": "ANEL",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 4,
+              "clueRow": 7,
+              "clueCol": 3,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-casa-2",
+          "number": 2,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "fundacao",
+              "clue": "Base da casa",
+              "answer": "FUNDACAO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "saia",
+              "clue": "Peça feminina",
+              "answer": "SAIA",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "vela",
+              "clue": "Luz de cera",
+              "answer": "VELA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "fita",
+              "clue": "Tira de tecido",
+              "answer": "FITA",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 1,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "lapis",
+              "clue": "Escreve e apaga",
+              "answer": "LAPIS",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "algema",
+              "clue": "Prende os pulsos",
+              "answer": "ALGEMA",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "meia",
+              "clue": "Veste o pé",
+              "answer": "MEIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "cera",
+              "clue": "Material da vela",
+              "answer": "CERA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "placa",
+              "clue": "Sinal na porta",
+              "answer": "PLACA",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 3,
+              "clueRow": 9,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "bide",
+              "clue": "Louça do banheiro",
+              "answer": "BIDE",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "faca",
+              "clue": "Corta o pão",
+              "answer": "FACA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-casa-3",
+          "number": 3,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "vassouras",
+              "clue": "Varrem o chão",
+              "answer": "VASSOURAS",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "fios",
+              "clue": "Conduzem energia",
+              "answer": "FIOS",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "saia",
+              "clue": "Peça feminina",
+              "answer": "SAIA",
+              "direction": "horizontal",
+              "startRow": 3,
+              "startCol": 2,
+              "clueRow": 3,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "copo",
+              "clue": "Bebe-se nele",
+              "answer": "COPO",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "lixo",
+              "clue": "O que se joga fora",
+              "answer": "LIXO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "cabo",
+              "clue": "Fio elétrico",
+              "answer": "CABO",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 7,
+              "clueRow": 2,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "sapato",
+              "clue": "Calçado fechado",
+              "answer": "SAPATO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 2,
+              "clueRow": 9,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "meia",
+              "clue": "Veste o pé",
+              "answer": "MEIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "ralo",
+              "clue": "Escoa a água",
+              "answer": "RALO",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "piso",
+              "clue": "Chão",
+              "answer": "PISO",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 1,
+              "clueCol": 4,
+              "arrow": "down"
+            },
+            {
+              "id": "sofa",
+              "clue": "Assento estofado",
+              "answer": "SOFA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            }
+          ]
+        },
+        {
+          "id": "casual-casa-4",
+          "number": 4,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "campainha",
+              "clue": "Toca na porta",
+              "answer": "CAMPAINHA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "vela",
+              "clue": "Luz de cera",
+              "answer": "VELA",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 2,
+              "clueRow": 5,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "sala",
+              "clue": "Cômodo da visita",
+              "answer": "SALA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 2,
+              "clueRow": 2,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "meia",
+              "clue": "Veste o pé",
+              "answer": "MEIA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 1,
+              "arrow": "down"
+            },
+            {
+              "id": "pano",
+              "clue": "Tecido de limpeza",
+              "answer": "PANO",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "fogao",
+              "clue": "Tem 4 bocas",
+              "answer": "FOGAO",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "tetos",
+              "clue": "Cobrem a sala",
+              "answer": "TETOS",
+              "direction": "vertical",
+              "startRow": 4,
+              "startCol": 3,
+              "clueRow": 3,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "pia",
+              "clue": "Lava a louça",
+              "answer": "PIA",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 5,
+              "clueRow": 4,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "sofa",
+              "clue": "Assento estofado",
+              "answer": "SOFA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 7,
+              "clueRow": 0,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "vaso",
+              "clue": "Para flores",
+              "answer": "VASO",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 4,
+              "clueRow": 9,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "diva",
+              "clue": "Sofá largo",
+              "answer": "DIVA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-casa-5",
+          "number": 5,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "vassoura",
+              "clue": "Varre o chão",
+              "answer": "VASSOURA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 2,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "down"
+            },
+            {
+              "id": "capa",
+              "clue": "Cobre o livro",
+              "answer": "CAPA",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 1,
+              "clueRow": 2,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "bone",
+              "clue": "Tem aba",
+              "answer": "BONE",
+              "direction": "horizontal",
+              "startRow": 5,
+              "startCol": 1,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "capas",
+              "clue": "Cobrem",
+              "answer": "CAPAS",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 3,
+              "clueRow": 0,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "sala",
+              "clue": "Cômodo da visita",
+              "answer": "SALA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 5,
+              "clueRow": 5,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "placa",
+              "clue": "Sinal na porta",
+              "answer": "PLACA",
+              "direction": "horizontal",
+              "startRow": 9,
+              "startCol": 3,
+              "clueRow": 9,
+              "clueCol": 2,
+              "arrow": "right"
+            },
+            {
+              "id": "sofa",
+              "clue": "Assento estofado",
+              "answer": "SOFA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "pia",
+              "clue": "Lava a louça",
+              "answer": "PIA",
+              "direction": "horizontal",
+              "startRow": 3,
+              "startCol": 5,
+              "clueRow": 3,
+              "clueCol": 4,
+              "arrow": "right"
+            },
+            {
+              "id": "fios",
+              "clue": "Conduzem energia",
+              "answer": "FIOS",
+              "direction": "vertical",
+              "startRow": 2,
+              "startCol": 6,
+              "clueRow": 1,
+              "clueCol": 6,
+              "arrow": "down"
+            },
+            {
+              "id": "cera",
+              "clue": "Material da vela",
+              "answer": "CERA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 7,
+              "clueRow": 5,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "rodape",
+              "clue": "Faixa da parede",
+              "answer": "RODAPE",
+              "direction": "horizontal",
+              "startRow": 7,
+              "startCol": 2,
+              "clueRow": 7,
+              "clueCol": 1,
+              "arrow": "right"
+            }
+          ]
+        },
+        {
+          "id": "casual-casa-6",
+          "number": 6,
+          "world": "casa",
+          "difficulty": "casual",
+          "rows": 10,
+          "cols": 8,
+          "words": [
+            {
+              "id": "carteira",
+              "clue": "Bolsinho de notas",
+              "answer": "CARTEIRA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 5,
+              "clueRow": 0,
+              "clueCol": 5,
+              "arrow": "down"
+            },
+            {
+              "id": "lata",
+              "clue": "Embalagem de metal",
+              "answer": "LATA",
+              "direction": "horizontal",
+              "startRow": 8,
+              "startCol": 2,
+              "clueRow": 8,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "ralo",
+              "clue": "Escoa a água",
+              "answer": "RALO",
+              "direction": "horizontal",
+              "startRow": 2,
+              "startCol": 4,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "right"
+            },
+            {
+              "id": "meia",
+              "clue": "Veste o pé",
+              "answer": "MEIA",
+              "direction": "vertical",
+              "startRow": 3,
+              "startCol": 3,
+              "clueRow": 2,
+              "clueCol": 3,
+              "arrow": "down"
+            },
+            {
+              "id": "saia",
+              "clue": "Peça feminina",
+              "answer": "SAIA",
+              "direction": "vertical",
+              "startRow": 1,
+              "startCol": 0,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "bota",
+              "clue": "Calçado de cano",
+              "answer": "BOTA",
+              "direction": "horizontal",
+              "startRow": 0,
+              "startCol": 1,
+              "clueRow": 0,
+              "clueCol": 0,
+              "arrow": "right"
+            },
+            {
+              "id": "cabine",
+              "clue": "Cômodo de avião",
+              "answer": "CABINE",
+              "direction": "horizontal",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 6,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "bule",
+              "clue": "Serve chá",
+              "answer": "BULE",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 0,
+              "clueRow": 5,
+              "clueCol": 0,
+              "arrow": "down"
+            },
+            {
+              "id": "mesas",
+              "clue": "Móveis de refeição",
+              "answer": "MESAS",
+              "direction": "vertical",
+              "startRow": 5,
+              "startCol": 7,
+              "clueRow": 4,
+              "clueCol": 7,
+              "arrow": "down"
+            },
+            {
+              "id": "cesto",
+              "clue": "Vasilha de vime",
+              "answer": "CESTO",
+              "direction": "horizontal",
+              "startRow": 4,
+              "startCol": 2,
+              "clueRow": 4,
+              "clueCol": 1,
+              "arrow": "right"
+            },
+            {
+              "id": "cola",
+              "clue": "Prende papéis",
+              "answer": "COLA",
+              "direction": "vertical",
+              "startRow": 6,
+              "startCol": 2,
+              "clueRow": 5,
+              "clueCol": 2,
+              "arrow": "down"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

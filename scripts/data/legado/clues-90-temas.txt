@@ -1,0 +1,177 @@
+ANTA|Maior mamífero brasileiro
+AVESTRUZ|Maior ave do mundo
+CARNEIRO|Macho da ovelha
+CERVO|Tem chifres ramificados
+COALA|Come eucalipto
+CRIA|Filhote
+ESQUILO|Rói nozes
+GANSO|Ave de lagoa
+GAROUPA|Peixe de recife
+JAGUAR|Onça-pintada
+JEGUE|Jumento
+LAGARTA|Vira borboleta
+LINCE|Gato de olhar agudo
+LONTRA|Mamífero nadador
+MARRECO|Pato selvagem
+MOSQUITO|Transmite dengue
+MULA|Filha de égua e asno
+OURICO|Cheio de espinhos
+PANDA|Urso do bambu
+PARDAL|Passarinho comum
+PAVAO|Ave de cauda vistosa
+PIOLHO|Parasita do cabelo
+POMBA|Símbolo da paz
+POTRO|Cavalo novo
+SALMAO|Peixe que sobe o rio
+SIRI|Parente do caranguejo
+TATU|Bicho de couraça
+TRUTA|Peixe de água fria
+TUBARAO|Peixe de barbatana
+VEADO|Bambi
+ZANGAO|Abelha macho
+BEZERRO|Filhote da vaca
+COTIA|Roedor de mata
+JIBOIA|Cobra que sufoca
+LULA|Molusco de tinta
+BESOURO|Inseto de carapaça
+CARRAPATO|Parasita do boi
+LOBINHO|Filhote de lobo
+COELHA|Mãe dos coelhinhos
+GATA|Fêmea do felino
+LEOA|Caça pelo bando
+TIGRESA|Fêmea listrada
+FLAMINGO|Ave rosada
+ANDORINHA|Ave migratória
+ROUXINOL|Ave de canto belo
+AGUIA|Rainha dos ares
+ABACATE|Fruta de guacamole
+ABACAXI|Fruta de coroa
+AMENDOA|Semente de torrone
+ASSADO|Feito no forno
+AVEIA|Cereal de mingau
+BACON|Toucinho defumado
+BROA|Pão de milho
+BROCOLIS|Verdura de flores
+CHOCOLATE|Doce de cacau
+CHURRASCO|Carne na brasa
+COUVE|Folha da feijoada
+COXINHA|Salgado de frango
+CREME|Natas, nata
+CUSCUZ|Prato de fubá
+DOCES|Brigadeiro e cia
+FRITURA|Feita no óleo
+GOIABA|Fruta da goiabada
+IOGURTE|Leite fermentado
+JILO|Legume amargo
+LEGUME|Vagem ou chuchu
+LENTILHA|Grão da sorte
+MACARRAO|Massa italiana
+MAMAO|Fruta alaranjada
+MARACUJA|Fruta do suco calmante
+MELANCIA|Fruta de verão
+MOLHO|Acompanha a massa
+PAMONHA|Doce de milho verde
+PESSEGO|Fruta aveludada
+PICOLE|Gelado no palito
+SALSA|Cheiro-verde
+SANDUICHE|Lanche entre pães
+TAPIOCA|Goma de mandioca
+BISCOITO|Bolacha
+CANJICA|Doce de milho junino
+CARAMELO|Açúcar queimado
+CHICLETE|Goma de mascar
+DOCINHO|Doce de festa
+ERVILHA|Grão verde da vagem
+ESPINAFRE|Folha do Popeye
+FEIJOADA|Prato com feijão e carne
+LINGUICA|Embutido de porco
+MOELA|Parte da galinha
+MINGAU|Papa de leite
+OMELETE|Ovos batidos
+PANQUECA|Massa fina recheada
+PRESUNTO|Frios do sanduíche
+RABANETE|Raiz vermelha
+SALAME|Embutido curado
+SUSHI|Prato japonês
+TOFU|Queijo de soja
+VAGEM|Casca do feijão verde
+ARVORE|Tem tronco e copa
+BREJO|Terreno alagadiço
+CACHOEIRA|Queda d'água
+CIPO|Trepadeira do Tarzan
+COLINA|Pequeno morro
+CORREGO|Riacho
+DELTA|Foz de rio
+FLORESTA|Mata fechada
+GELEIRA|Rio de gelo
+GRAMA|Cobre o gramado
+GEADA|Gelo da madrugada
+LENHA|Madeira p/ fogueira
+MUSGO|Verde das pedras úmidas
+ORVALHO|Gotas da manhã
+PAISAGEM|Vista do campo
+PALMEIRA|Árvore do coco
+PLANETA|Terra, Marte...
+PLANICIE|Terreno plano
+SERRA|Cadeia de montes
+SOMBRA|Fresca sob a árvore
+TRONCO|Corpo da árvore
+TROPICO|Linha do Capricórnio
+TUFAO|Ciclone oriental
+VALE|Terra entre montes
+CACTO|Planta do deserto
+CEDRO|Árvore de madeira nobre
+CIPRESTE|Árvore escura e fina
+ERVA|Planta rasteira
+GRAVETO|Galho seco
+HERA|Trepadeira de muros
+ILHOTA|Ilha pequena
+LIRIO|Flor branca de Páscoa
+LOTUS|Flor sagrada d'água
+ORQUIDEA|Flor exótica
+PINHEIRO|Dá pinhão
+VIOLETA|Flor roxa
+ABAJUR|Luz de cabeceira
+ALMOFADA|Enfeite do sofá
+ASPIRADOR|Suga o pó
+AZULEJO|Revestimento da parede
+BACIA|Vasilha larga
+BALDE|Carrega água
+BANHEIRO|Cômodo do chuveiro
+BERCO|Cama do bebê
+BIDE|Louça do banheiro
+CADEIRA|Tem encosto e pernas
+CANECA|Copo com asa
+COMODA|Móvel de gavetas
+ESCOVA|Limpa dentes ou cabelo
+ESTANTE|Guarda livros
+JARRA|Serve suco
+LAMPADA|Acende no teto
+LIXO|O que se joga fora
+MOVEL|Mesa ou cama
+RODO|Puxa água do chão
+TAPETE|Cobre o piso
+TELHADO|Cobre a casa
+ALICATE|Aperta e corta fio
+ALFINETE|Prende o tecido
+CUECA|Roupa de baixo
+TENIS|Calçado esportivo
+BERMUDA|Calção
+BONE|Cobre a cabeça, com aba
+BRINCO|Enfeita a orelha
+PULSEIRA|Enfeita o braço
+ENXADA|Capina a terra
+PREGO|Martelo bate nele
+TRENA|Mede com fita
+LIXA|Alisa a madeira
+BARBANTE|Fio grosso
+CESTO|Guarda a roupa suja
+TIGELA|Bacia pequena
+BULE|Serve chá
+CHALEIRA|Ferve a água
+TABUA|Corta-se nela
+COADOR|Passa o café
+LUMINARIA|Candeeiro
+LANTERNA|Luz de mão
+ISQUEIRO|Acende cigarro
+BATERIA|Pilha grande

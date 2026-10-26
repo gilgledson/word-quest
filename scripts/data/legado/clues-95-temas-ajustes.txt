@@ -1,0 +1,45 @@
+CIPRESTE|Árvore fúnebre
+LINCE|Felino de tufos
+ANTA|Tapir
+CERVO|Tem galhada
+JAGUAR|Felino do Pantanal
+MULA|Filha do jegue
+PARDAL|Pássaro urbano
+PAVAO|Faz a roda
+SALMAO|Peixe rosado
+SIRI|Crustáceo
+COELHA|Mamãe orelhuda
+ANDORINHA|Voa no verão
+ROUXINOL|Canta à noite
+AMENDOA|Semente de bolo
+DOCES|Bala e bombom
+GOIABA|Fruta rosada
+IOGURTE|Bebida de leite
+MAMAO|Papaia
+MARACUJA|Fruta azedinha
+PAMONHA|Embrulho de milho
+SALSA|Tempero verde
+SANDUICHE|Lanche de pão
+CANJICA|Milho doce
+DOCINHO|Doce de bandeja
+ERVILHA|Bolinha verde
+FEIJOADA|Prato de sábado
+PANQUECA|Massa fina
+VAGEM|Legume alongado
+ARVORE|Tem copa
+CIPO|Corda da selva
+GRAMA|Tapete do jardim
+LENHA|Lasca de fogueira
+MUSGO|Veludo verde
+SOMBRA|Refúgio do sol
+TROPICO|Zona quente
+VALE|Entre morros
+CEDRO|Madeira nobre
+HERA|Sobe nos muros
+LIRIO|Flor de Páscoa
+LOTUS|Flor aquática
+AZULEJO|Cerâmica de parede
+CADEIRA|Tem encosto
+ESCOVA|Pentea ou limpa
+BONE|Tem aba
+CESTO|Vasilha de vime

@@ -1,0 +1,14 @@
+{
+  "animais": {
+    "nome": "Animais"
+  },
+  "comida": {
+    "nome": "Comida"
+  },
+  "natureza": {
+    "nome": "Natureza"
+  },
+  "casa": {
+    "nome": "Casa e objetos"
+  }
+}

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+*.local
+coverage/
+*.tsbuildinfo
+
+# Lista derivada do VERO (LGPLv3/MPL): gerada localmente por scripts/build-dictionary.mjs
+scripts/data/dictionary.txt
+
+# Build do APK (Capacitor)
+release/
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/

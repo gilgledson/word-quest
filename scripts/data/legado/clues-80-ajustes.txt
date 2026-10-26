@@ -1,0 +1,78 @@
+AREA|Espaço livre
+BOTA|Calçado de cano
+CEBOLA|Faz chorar
+CHAPEU|Usado na cabeça
+ESCADA|Tem degraus
+ORELHA|Parte do ouvido
+PISCINA|Local de nado
+SORVETE|Doce gelado
+FADA|Tem varinha
+FATO|Evento real
+FRIO|Oposto de quente
+ICAR|Subir bandeira
+ILHA|Cercada de mar
+LADO|Flanco
+LAGO|Água parada
+LOGO|Daqui a pouco
+MOTO|Duas rodas
+NEVE|Flocos brancos
+NOVE|Oito mais um
+OBRA|Canteiro
+ONZE|Dez mais um
+PARA|Rumo a
+PELO|Pelagem
+RAIZ|Fica na terra
+RISO|Som de alegria
+ROER|Mastigar
+ROTA|Percurso
+SINA|Sorte traçada
+TELA|Do cinema
+TOCO|Tronco cortado
+TUDO|Inteiro
+URSA|Mãe do ursinho
+VEIA|Tubo do sangue
+VIDA|Do berço ao fim
+AGENDA|Tem datas
+ALMOCO|Prato do meio-dia
+AVIAO|Voa e pousa
+BEBIDA|Suco ou vinho
+BEIJO|Selinho
+BIGODE|Pelos no lábio
+BONECA|Brinquedo de pano
+BORBOLETA|Vira de lagarta
+BRINCAR|Fazer farra
+CACHORRO|Amigo que late
+CALMA|Sossego
+CARNE|Do açougue
+CARRO|Quatro rodas
+CENOURA|Coelho adora
+CIDADE|Muitos prédios
+CIRCO|Tem palhaço
+FANTASMA|Faz buuu
+FESTA|Bolo e balão
+FOGAO|Tem 4 bocas
+FORMIGA|Carrega folha
+GRANDE|Enorme
+GUITARRA|Tem 6 cordas
+LARANJA|Fruta de suco
+MANGA|Fruta tropical
+MENINA|Garota
+MULHER|Sexo feminino
+NAVIO|Cruza o mar
+ONIBUS|Tem catraca
+PERFUME|Água de cheiro
+PRATO|Louça de mesa
+QUADRO|Fica na parede
+SANDALIA|Calçado de tiras
+TOMATE|Base do ketchup
+UNHA|Tem esmalte
+URUBU|Ave de carniça
+CAVAR|Abrir buraco
+CONDE|Título nobre
+GLACIAL|Frio extremo
+TRECHO|Fragmento
+TRIBO|Grupo indígena
+ABAFO|Calor preso
+AGIL|Ligeiro
+AGUIA|Ave de rapina
+ARDER|Pegar fogo

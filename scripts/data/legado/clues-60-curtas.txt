@@ -1,0 +1,357 @@
+ABAFO|Sensação de calor preso|3
+ABUSO|Uso excessivo|2
+ACIDO|Azedo ao paladar|2
+ACNE|Espinha no rosto|2
+ADAGA|Punhal curto|3
+AEREO|Do ar|2
+AGIL|Rápido de movimentos|2
+AGUIA|Ave de olhar penetrante|3
+ALADO|Com asas|2
+ALEGRE|Em festa|2
+ALIAS|Também chamado|3
+ALMEJO|Desejo muito|3
+ALUDE|Avalanche|3
+ALVO|Ponto de mira|2
+AMBAR|Resina fóssil|3
+AMENO|Agradável|3
+ANTRO|Caverna escura|3
+APICE|Ponto mais alto|2
+ARDER|Queimar por dentro|2
+ARDIL|Truque astuto|3
+ARIDO|Muito seco|2
+ARMAR|Montar o laço|2
+ARRAIA|Peixe achatado|3
+ASTUTO|Esperto|2
+ATOA|Sem valor|3
+ATRIO|Pátio da igreja|3
+AUDAZ|Atrevido|3
+AVIDO|Cheio de desejo|3
+AXILA|Debaixo do braço|2
+BAGA|Fruto carnudo|3
+BALIR|Voz da ovelha|2
+BANHA|Gordura de porco|2
+BARDO|Poeta antigo|3
+BEATO|Muito devoto|3
+BELDADE|Mulher bela|3
+BENTO|Abençoado|3
+BIGA|Carro romano|3
+BISAVO|Pai do avô|2
+BLEFE|Jogada de engano|2
+BORDO|Lado do navio|2
+BRADO|Grito forte|3
+BRAVIO|Selvagem|3
+BREJO|Terreno encharcado|3
+BRIO|Dignidade|3
+BRUTO|Sem delicadeza|2
+BULA|Papel do remédio|2
+BURLA|Fraude|3
+CAMBIO|Troca de moedas|3
+CANTIL|Garrafa de viagem|3
+CARPA|Peixe de lago|2
+CASTO|Puro|3
+CAUSO|Conto de roça|3
+CAVAR|Escavar|2
+CELEBRE|Muito famoso|3
+CERNE|Parte central|3
+CETIM|Tecido lustroso|3
+CHAGA|Ferida aberta|3
+CHALE|Casa de montanha|2
+CHISPA|Faísca|3
+CHOCO|Ovo no ninho|3
+CIFRA|Código ou número|2
+CINCEL|Entalha pedra|3
+CIPRESTE|Árvore de cemitério|3
+CISMA|Divisão|3
+CIUMENTO|Possessivo|3
+CLAN|Grupo familiar|2
+COBAIA|Serve a testes|2
+COCHO|Bebedouro do gado|3
+CODIGO|Conjunto de regras|2
+COESO|Unido|3
+COIVARA|Fogo na roça|3
+COMBATE|Luta|2
+CONDE|Nobre abaixo do duque|3
+CORDAO|Cordão grosso|3
+CORUJA|Ave noturna|2
+COSER|Fazer costura|3
+COTEJAR|Comparar|3
+CRAVAR|Fincar|2
+CREDO|Conjunto de crenças|3
+CRIVO|Peneira|3
+CRUEL|Sem piedade|2
+CUBICO|Em forma de dado|3
+CUNHA|Calço pontudo|3
+CUPIM|Inseto da madeira|2
+DAMAS|Jogo de tabuleiro|2
+DEBIL|Fraco|3
+DECLIVE|Ladeira|3
+DEGELO|Fim do gelo|3
+DELEGAR|Passar a tarefa|3
+DENGO|Manha|3
+DESPEJO|Retirada de inquilino|3
+DICA|Pista|1
+DIGNO|Honrado|2
+DOCIL|Manso|2
+DOLO|Fraude|3
+DONZELA|Moça nobre|3
+DOTE|Bens da noiva|3
+DRAMA|Peça séria|2
+DUBIO|Incerto|3
+DUCTO|Cano de ar|3
+EBRIO|Embriagado|3
+ECLIPSE|Sombra do astro|3
+EDEN|Paraíso|3
+EFEITO|Resultado|2
+ELOS|Partes da corrente|2
+EMBATE|Choque|3
+EMPECILHO|Entrave|3
+ENXOFRE|Mineral amarelo|3
+ERMO|Deserto|3
+ESBELTO|Elegante e magro|3
+ESCOPO|Alvo de um projeto|3
+ESTRIA|Sulco fino|3
+ETICO|Honesto|2
+ETNIA|Povo|3
+EXATO|Preciso|2
+EXCESSO|Demais|2
+FACIL|Sem esforço|1
+FAIXA|Tira de pano|2
+FALHA|Defeito|2
+FARTURA|Abundância|3
+FASTIO|Tédio|3
+FAUNO|Deus rural|3
+FEBRE|Temperatura alta|2
+FEIXE|Molho de varas|3
+FERAZ|Selvagem|3
+FERTIL|Que produz muito|3
+FIEL|Leal|2
+FINGIR|Fazer de conta|2
+FLUXO|Corrente|3
+FOGOSO|Ardente|3
+FOLEGO|Ar nos pulmões|3
+FRESTA|Abertura estreita|3
+FUGIR|Escapar|2
+FURTO|Roubo sem violência|3
+FUSO|Faixa de hora|2
+GALPAO|Depósito grande|2
+GANCHO|Pendura coisas|2
+GARBO|Elegância|3
+GEMIDO|Lamento|3
+GENIAL|Brilhante|3
+GERME|Origem|3
+GIBI|Revista de quadrinhos|2
+GLOSA|Nota explicativa|3
+GRACA|Charme|2
+GREGO|De Atenas|2
+GRILHAO|Corrente de preso|3
+GUARNICAO|Tropa de um forte|3
+HABIL|Competente|2
+HASTE|Pau de bandeira|3
+HEDIONDO|Repulsivo|3
+HIATO|Intervalo|3
+HIENA|Riso da savana|2
+HINDU|Da Índia|3
+HOSTIL|Inimigo|3
+HUMOR|Estado de ânimo|2
+ICONE|Imagem de culto|2
+IDEAL|Perfeito|2
+IMPETO|Ímpeto|3
+INCOLUME|Ileso|3
+INFAME|Desonroso|3
+INGENUO|Sem malícia|3
+INIMIGO|Opositor|2
+ISCAR|Pôr o anzol|3
+JAULA|Prisão de leão|2
+JEJUM|Falta de comida|3
+JOIO|Erva daninha|3
+JUGO|Canga|3
+JURAR|Prometer|2
+LABIL|Instável|3
+LACRE|Selo de cera|3
+LAMINA|Parte cortante|2
+LAPIDAR|Polir gema|3
+LARGAR|Soltar|2
+LASSO|Frouxo|3
+LAUDO|Parecer técnico|3
+LEGADO|Herança|3
+LEIGO|Sem formação|3
+LENTE|Corrige a visão|2
+LESTE|Nascente|2
+LIDAR|Trabalhar com|2
+LINCE|Gato de olhar agudo|3
+LIRA|Instrumento de Apolo|3
+LOUVOR|Elogio|3
+LUCIDO|Claro de mente|3
+LUSCO|Hora do entardecer|3
+MACIO|Suave ao toque|2
+MALHA|Tecido de tricô|2
+MANHOSO|Chorão|3
+MARCIAL|De guerra|3
+MARGEM|Borda|2
+MATIZ|Tom de cor|3
+MEDIAR|Ficar no meio|3
+MELINDRE|Susceptibilidade|3
+MERITO|Valor|3
+METICULOSO|Muito cuidadoso|3
+MIMAR|Fazer carinho|2
+MINERAR|Extrair do solo|3
+MIRAGEM|Ilusão no deserto|3
+MISERO|Pobre demais|3
+MODESTO|Humilde|2
+MOLEZA|Moleza|3
+MORAL|Ensinamento|2
+MORDAZ|Ferino|3
+MORRO|Pequeno monte|2
+MUDEZ|Falta de voz|3
+MULTA|Pena em dinheiro|2
+NASAL|Do nariz|2
+NATIVO|Nascido no local|3
+NEBULA|Nuvem espacial|3
+NEFASTO|Funesto|3
+NEXO|Ligação|3
+NICHO|Cavidade na parede|3
+NIVEL|Plano de altura|2
+NOCIVO|Prejudicial|3
+NODOA|Mancha|3
+NUCLEO|Parte central|3
+NUDEZ|Falta de roupa|2
+OBESO|Muito gordo|2
+OBRIGAR|Impor|2
+OCIOSO|Sem fazer nada|3
+ODIO|Raiva profunda|2
+OLFATO|Sentido do nariz|2
+ONIX|Pedra preta|3
+OPACO|Sem brilho|2
+OPTAR|Escolher|2
+ORBE|Esfera|3
+ORDEIRO|Pacato|3
+ORLAR|Contornar|3
+OSTRA|Vive na concha|2
+OUSADO|Arrojado|3
+OVAL|Forma de ovo|2
+PAGEM|Jovem criado|3
+PAJE|Criado de corte|3
+PALIO|Dossel|3
+PANTE|Panteão|3
+PARCO|Escasso|3
+PASMO|Atônito|3
+PATETA|Bobo|2
+PAVOR|Terror|2
+PECHA|Defeito moral|3
+PEDRA|Rocha pequena|1
+PELEJA|Combate|3
+PENSAO|Hospedagem|2
+PERITO|Especialista|3
+PERNIL|Corte de porco|3
+PESTE|Doença que mata|2
+PIEDOSO|Compassivo|3
+PIQUE|Brincadeira de pega|2
+PLEITO|Eleição|3
+PLENO|Inteiro|2
+POMPA|Luxo|3
+PORVIR|Futuro|3
+POSTAR|Colocar no lugar|2
+PRECE|Oração|2
+PRENDA|Habilidade doméstica|3
+PRESTO|Rápido|3
+PRIMAZ|Arcebispo|3
+PRUDENTE|Cauteloso|3
+PUDOR|Recato|3
+PUIDO|Gasto|3
+QUASAR|Astro distante|3
+QUEBRAR|Partir|2
+QUIETO|Parado|2
+QUIOSQUE|Banca de rua|3
+RANCOR|Mágoa|3
+RAPIDO|Veloz|2
+REDIL|Curral|3
+REGIME|Sistema de governo|2
+REPTIL|Cobra ou lagarto|2
+RESINA|Seiva grudenta|3
+RETIRO|Lugar afastado|3
+REVEZ|Contratempo|3
+RIGIDO|Duro|2
+RISCAR|Fazer traços|2
+ROBUSTO|Forte|2
+ROSNAR|Voz do cão bravo|3
+ROTEIRO|Plano de viagem|2
+RUDE|Grosseiro|2
+RUSTICO|Do campo|3
+SABATINA|Entrevista de prova|3
+SAGAZ|Perspicaz|3
+SALMO|Cântico bíblico|3
+SANAR|Curar|3
+SARNA|Doença da pele|3
+SAUDAR|Cumprimentar|2
+SEBO|Livraria de usados|3
+SEDE|Vontade de beber|2
+SENDA|Caminho estreito|3
+SERENO|Calmo|2
+SESTA|Cochilo da tarde|3
+SIGLA|Letras de uma entidade|2
+SISMO|Terremoto|3
+SOBRIO|Que não bebe|3
+SOLENE|Cerimonioso|3
+SOLTAR|Libertar|2
+SONDAR|Investigar|3
+SORVER|Beber aos goles|3
+SUBLIME|Elevado|3
+SUCATA|Ferro velho|2
+SUTIL|Delicado|3
+TALCO|Pó macio|2
+TALHA|Vaso de barro|3
+TANGER|Tocar instrumento|3
+TARDIO|Que vem tarde|3
+TEDIO|Falta de ânimo|3
+TELAR|Máquina de tecer|3
+TEMOR|Medo|2
+TENAZ|Persistente|3
+TENUE|Fino e leve|3
+TERSO|Conciso|3
+TETRICO|Sombrio|3
+TINIR|Soar metal|3
+TOLDO|Cobertura de pano|2
+TORPE|Vil|3
+TOSCO|Sem acabamento|3
+TRAMAR|Conspirar|3
+TRAPO|Pano velho|2
+TRAUMA|Choque emocional|2
+TRECHO|Parte|2
+TREGUA|Pausa na guerra|3
+TRIBO|Povo nativo|2
+TRUCO|Jogo de cartas|2
+TUMULO|Sepultura|3
+TURVO|Sem transparência|3
+UFANO|Orgulhoso|3
+ULTRA|Além|3
+UNGIR|Passar óleo sagrado|3
+UNIDO|Junto|2
+URDIR|Armar trama|3
+URGIR|Ser necessário|3
+USURA|Juro abusivo|3
+UTOPIA|Sociedade ideal|3
+VACUO|Espaço vazio|3
+VADIO|Preguiçoso|3
+VAGAR|Andar sem rumo|3
+VALAS|Buracos longos|3
+VAPOR|Gás da água|2
+VARAO|Barra comprida|3
+VASTO|Muito amplo|3
+VEDAR|Fechar bem|3
+VEIGA|Várzea|3
+VELADO|Encoberto|3
+VENAL|Que se compra|3
+VENIAL|Pecado leve|3
+VERBA|Dinheiro destinado|3
+VETAR|Proibir lei|3
+VEXAME|Vergonha|3
+VIGOR|Força|2
+VILAO|Antagonista|2
+VINCULO|Laço|3
+VISAR|Mirar|3
+VIVAZ|Esperto|3
+VOGA|Moda|3
+VULGAR|Comum|2
+ZARPAR|Partir de barco|3
+ZELAR|Cuidar|2
+ZINIR|Zumbir|3
