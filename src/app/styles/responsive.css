@@ -1,0 +1,199 @@
+/* Two compact home cards fit once their labels have enough horizontal room. */
+@media (min-width: 400px) {
+  .home-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .daily-card,
+  .map-card {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 12px;
+    gap: 0;
+  }
+  .icon-badge {
+    align-self: flex-start;
+    margin-bottom: 12px;
+  }
+  .home-grid h2 {
+    font-size: 19px;
+  }
+  .home-grid p {
+    font-size: 12px;
+  }
+  .home-grid .text-link {
+    font-size: 12px;
+  }
+  .brand {
+    font-size: 28px;
+  }
+  .wallet > span {
+    font-size: 14px;
+    min-height: 38px;
+  }
+}
+/* Tablets keep the portrait game composition instead of stretching into a dashboard. */
+@media (min-width: 600px) {
+  .app {
+    padding-inline: 32px;
+    padding-bottom: calc(124px + env(safe-area-inset-bottom));
+  }
+  header {
+    min-height: 108px;
+  }
+  .brand {
+    font-size: 36px;
+    gap: 12px;
+  }
+  .brand-icon {
+    width: 50px;
+    height: 56px;
+  }
+  .brand small {
+    font-size: 9px;
+    padding: 7px;
+  }
+  .wallet {
+    gap: 10px;
+  }
+  .wallet > span {
+    font-size: 18px;
+    padding: 8px 15px;
+  }
+  .wallet svg {
+    width: 23px;
+    height: 23px;
+  }
+  .welcome {
+    padding: 24px 0 180px;
+  }
+  .welcome p {
+    font-size: 16px;
+    padding: 12px 18px;
+  }
+  .home-landscape {
+    height: 600px;
+  }
+  .adventure-card {
+    padding: 24px;
+    border-radius: 30px;
+  }
+  .scene-label {
+    min-height: 150px;
+  }
+  .scene-label h2 {
+    font-size: 34px;
+  }
+  .scene-label p {
+    font-size: 16px;
+    max-width: 60%;
+  }
+  .world-preview {
+    height: 185px;
+  }
+  .adventure-action strong {
+    font-size: 18px;
+  }
+  .adventure-action strong span {
+    font-size: 14px;
+  }
+  .journey-progress {
+    height: 24px;
+    margin-top: 14px;
+  }
+  .journey-progress > strong {
+    font-size: 14px;
+    line-height: 22px;
+  }
+  .continue-button {
+    min-height: 80px;
+    font-size: 29px;
+    margin-top: 24px;
+  }
+  .home-grid {
+    gap: 18px;
+  }
+  .daily-card,
+  .map-card {
+    padding: 22px;
+    display: grid;
+    grid-template-columns: 54px 1fr;
+    column-gap: 14px;
+  }
+  .icon-badge {
+    width: 52px;
+    height: 62px;
+    align-self: center;
+    grid-row: 1/5;
+    margin: 0;
+  }
+  .home-grid h2 {
+    font-size: 23px;
+  }
+  .home-grid p {
+    font-size: 14px;
+  }
+  .reward-tag {
+    grid-column: 2;
+  }
+  .home-grid .text-link {
+    font-size: 14px;
+  }
+  .bottom-nav a {
+    min-height: 68px;
+    font-size: 14px;
+  }
+  .bottom-nav svg {
+    width: 29px;
+    height: 29px;
+  }
+  .page-heading {
+    padding: 32px 0;
+  }
+  .page-heading h1 {
+    font-size: 38px;
+  }
+  .calendar-card,
+  .profile-card {
+    padding: 28px;
+  }
+  .calendar {
+    gap: 8px;
+  }
+  .calendar-title h2 {
+    font-size: 21px;
+  }
+  .board-card {
+    padding: 18px;
+  }
+  .board {
+    gap: 4px;
+  }
+  .clue span {
+    font-size: 12px;
+  }
+  .letter-bank {
+    gap: 12px;
+  }
+  .letter-bank button {
+    width: 54px;
+    height: 58px;
+  }
+  .puzzle-tools {
+    gap: 12px;
+  }
+  .gentle-note strong {
+    font-size: 14px;
+  }
+  .gentle-note p {
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

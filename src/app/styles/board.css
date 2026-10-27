@@ -1,0 +1,536 @@
+/* Fixed 8×10 board: useFitGrid sets --cell so the grid always keeps 8:10 and never scrolls. */
+.board-area {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.app-playing .board-card {
+  padding: 6px;
+}
+.app-playing .board {
+  display: grid;
+  flex-shrink: 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+}
+.app-playing .cell {
+  width: var(--cell);
+  height: var(--cell);
+  min-height: 0;
+  aspect-ratio: auto;
+  padding: 0;
+  overflow: hidden;
+}
+.app-playing .letter {
+  font-size: calc(var(--cell) * 0.58);
+}
+.app-playing .clue {
+  padding: 2px 1px;
+  line-height: 1.05;
+  justify-content: center;
+}
+.app-playing .clue span {
+  font-size: clamp(6px, calc(var(--cell) * 0.2), 13px);
+  overflow-wrap: break-word;
+  hyphens: none;
+}
+.app-playing .clue b {
+  position: absolute;
+  right: 2px;
+  bottom: 1px;
+  font-size: calc(var(--cell) * 0.3);
+}
+.app-playing .clue .game-art {
+  width: calc(var(--cell) * 0.46);
+  height: calc(var(--cell) * 0.46);
+}
+.app-playing .puzzle-tools {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.app-playing .puzzle-tools small {
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.1;
+  opacity: 0.85;
+}
+.app-playing .letter-bank {
+  flex-wrap: nowrap;
+}
+.settings-button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: linear-gradient(#35b3ff, #1678ee);
+  border: 2px solid #b8e4ff;
+  color: white;
+}
+.settings-button svg {
+  width: 22px;
+  height: 22px;
+}
+.swap-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #1d2c3d99;
+}
+.swap-dialog {
+  width: min(100%, 360px);
+  display: grid;
+  gap: 10px;
+  padding: 18px;
+  text-align: center;
+  background: #fffaf0;
+  border: 3px solid #fff3d2;
+  border-radius: 20px;
+  box-shadow: 0 6px 0 #b5ab80;
+  color: #122544;
+}
+.swap-dialog h2 {
+  font-size: 22px;
+}
+.swap-dialog p {
+  font-size: 13px;
+  color: #5f6f52;
+}
+.swap-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.swap-tiles button {
+  width: 48px;
+  height: 54px;
+  font-size: 26px;
+  font-weight: 900;
+  border: 2px solid #ffedc0;
+  border-radius: 12px;
+  background: linear-gradient(#fff8dd, #ffdfa2);
+  box-shadow: 0 3px 0 #b68b42;
+}
+.swap-tiles button[aria-pressed="true"] {
+  background: linear-gradient(#35b3ff, #1678ee);
+  border-color: #b8e4ff;
+  box-shadow: 0 3px 0 #0b52b0;
+  color: white;
+}
+.swap-cost {
+  font-weight: 900;
+}
+.swap-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.swap-actions button {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 800;
+  background: #edf3f9;
+  color: #17529a;
+}
+.swap-actions button.primary {
+  background: linear-gradient(#ffe88a, #ffc93c);
+  color: #6b3b0a;
+}
+.swap-actions button:disabled {
+  opacity: 0.45;
+}
+/* Compact chrome around the board: the grid gets priority over headings and copy. */
+.app-playing .puzzle-status {
+  padding: 6px 10px;
+}
+.app-playing .puzzle-status .puzzle-top h2 {
+  font-size: 20px;
+}
+.app-playing .puzzle-status .round-button {
+  width: 34px;
+  height: 34px;
+}
+.app-playing .selected-word {
+  padding: 5px 10px;
+}
+.app-playing .selected-word h2 {
+  font-size: 16px;
+  margin: 2px 0;
+}
+.app-playing .selected-word p {
+  min-height: 0;
+}
+.app-playing .puzzle-tools button {
+  min-height: 54px;
+}
+.app-playing .clue span {
+  font-size: clamp(6px, calc(var(--cell) * 0.195), 13px);
+}
+/* Clue cells hold one clue, or two stacked halves (→ on top, ↓ below). */
+.app-playing .cell.clue {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+}
+.app-playing .clue-half {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 2px;
+  line-height: 1.05;
+  text-align: center;
+  color: inherit;
+}
+.app-playing .clue.double .clue-half + .clue-half {
+  border-top: 1px solid #7fa07a;
+}
+.app-playing .clue.double .clue-half span {
+  font-size: clamp(5.5px, calc(var(--cell) * 0.175), 11px);
+  line-height: 1;
+}
+.app-playing .clue.double .clue-half b {
+  font-size: calc(var(--cell) * 0.22);
+}
+/* Pending (unconfirmed) tiles look like the bank tiles; locked letters show their owner. */
+.app-playing .letter.pending {
+  background: linear-gradient(#fff8dd, #ffdfa2);
+  box-shadow: inset 0 0 0 2px #e0a840;
+}
+.app-playing .letter.owner-p {
+  color: #1678ee;
+}
+.app-playing .letter.owner-ai {
+  color: #7a3f9d;
+}
+.app-playing .puzzle-tools {
+  grid-template-columns: 1fr 1.5fr 1fr;
+}
+.app-playing .puzzle-tools button.confirm-button {
+  background: linear-gradient(#35b3ff, #1678ee);
+  border-color: #b8e4ff;
+  box-shadow: 0 3px 0 #0b52b0;
+  color: white;
+}
+.app-playing .puzzle-tools button.confirm-button svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 3;
+}
+.app-playing .puzzle-tools button.confirm-button small {
+  font-size: 11px;
+  opacity: 1;
+}
+.versus-score {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  border-radius: 14px;
+  border: 2px solid #e2b73c;
+  background: linear-gradient(#fff9e6, #fdeebb);
+  color: #12264a;
+  font-weight: 800;
+}
+.duelist {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.duelist.rival {
+  flex-direction: row-reverse;
+}
+.duelist-info {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+  justify-items: start;
+}
+.duelist.rival .duelist-info {
+  justify-items: end;
+}
+.duelist-frame {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 50px;
+  height: 50px;
+  box-sizing: border-box;
+  border-radius: 50%;
+  border: 2px solid #e2b73c;
+  background: #fff;
+  box-shadow: 0 0 0 2px var(--ring, #1678ee);
+  transition: box-shadow 0.2s;
+}
+.duelist.player {
+  --ring: #2589ff;
+}
+.duelist.rival {
+  --ring: #7045c8;
+}
+.duelist.turn .duelist-frame {
+  box-shadow:
+    0 0 0 2px var(--ring),
+    0 0 10px 3px var(--ring);
+}
+.duelist-frame .opponent-portrait {
+  margin: 0;
+  border-radius: 50%;
+}
+.duelist-frame .opponent-avatar {
+  border-radius: 50%;
+  box-shadow: none;
+  object-fit: cover;
+  transform: scale(1.04);
+}
+.duelist-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 8px;
+  border-radius: 9px;
+  background: var(--ring);
+  color: #fff;
+}
+.duelist-score strong {
+  font-size: 15px;
+  line-height: 20px;
+}
+.duelist-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  line-height: 14px;
+}
+.versus-center {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+}
+.vs-badge {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  background: linear-gradient(#ffe27a, #e2a516);
+  border: 2px solid #b87d0b;
+  font-size: 13px;
+  font-weight: 900;
+  color: #5b3a00;
+}
+.turn-arrow {
+  font-size: 10px;
+  font-weight: 800;
+  color: #17529a;
+  white-space: nowrap;
+}
+.turn-arrow.ai {
+  color: #5a35a8;
+}
+.level-picker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.level-picker button {
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 800;
+  background: #edf3f9;
+  color: #17529a;
+}
+.level-picker button.selected {
+  background: linear-gradient(#35b3ff, #1678ee);
+  color: white;
+}
+.puzzle-top .round-button.rotate-board {
+  width: 34px;
+  height: 34px;
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+.puzzle-top .rotate-board svg {
+  width: 18px;
+  height: 18px;
+}
+.opponent-setting {
+  display: grid;
+  gap: 6px;
+  font-weight: 800;
+}
+/* Higher contrast on the board: darker grid lines, saturated clue cells, owner-tinted letters. */
+.app-playing .board {
+  border: 2px solid #1f3a3d;
+  background: #1f3a3d;
+}
+.app-playing .cell {
+  border-right: 1px solid #5b7473;
+  border-bottom: 1px solid #5b7473;
+}
+.app-playing .blocked {
+  background: repeating-linear-gradient(
+    135deg,
+    #8da99c,
+    #8da99c 5px,
+    #82a092 5px,
+    #82a092 6px
+  );
+  opacity: 1;
+}
+.app-playing .clue {
+  background: linear-gradient(#bfe3ad, #9fd088);
+  color: #08200f;
+}
+.app-playing .clue span {
+  font-size: clamp(6.5px, calc(var(--cell) * 0.2), 14px);
+  font-weight: 900;
+  color: #08200f;
+}
+.app-playing .clue.double .clue-half span {
+  font-size: clamp(6px, calc(var(--cell) * 0.18), 11px);
+}
+.app-playing .clue b {
+  color: #0a5a2a;
+  font-weight: 900;
+}
+.app-playing .clue.double .clue-half + .clue-half {
+  border-top: 1px solid #3f7a4d;
+}
+.app-playing .selected-clue,
+.app-playing .selected-clue span,
+.app-playing .selected-clue b {
+  color: #fff;
+}
+.app-playing .letter {
+  background: #ffffff;
+  color: #08142b;
+}
+.app-playing .letter.active {
+  background: #cfe3ff;
+  box-shadow: inset 0 0 0 1px #5d94dd;
+}
+.app-playing .letter.cursor {
+  background: #9cc9ff;
+  box-shadow: inset 0 0 0 3px #0d6df0;
+}
+.app-playing .letter.correct.owner-p {
+  background: #d3e6ff;
+  color: #0a4fbf;
+}
+.app-playing .letter.correct.owner-ai {
+  background: #ecd9f7;
+  color: #62178c;
+}
+.app-playing .letter.correct {
+  background: #dcefd3;
+}
+.app-playing .letter.pending {
+  background: #ffe9a8;
+  box-shadow: inset 0 0 0 2px #d99a1c;
+  color: #3a2300;
+}
+.app-playing .puzzle-tools button:disabled {
+  opacity: 1;
+  filter: grayscale(0.55) brightness(0.97);
+}
+.app-playing .puzzle-tools button.confirm-button:disabled {
+  background: #8aa3b5;
+  border-color: #c3d2dc;
+  box-shadow: 0 3px 0 #5f7688;
+  color: #f3f8fb;
+}
+.app-playing .selected-word {
+  background: #fffdf6;
+  border-color: #e8d9a5;
+}
+.app-playing .selected-word p,
+.app-playing .selected-word .eyebrow {
+  color: #34452a;
+}
+.test-sound {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-weight: 800;
+  background: #edf3f9;
+  color: #17529a;
+}
+.test-sound:disabled {
+  opacity: 0.5;
+}
+.board-card {
+  position: relative;
+}
+.score-float {
+  position: absolute;
+  z-index: 30;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  white-space: nowrap;
+  font-weight: 900;
+  font-size: 24px;
+  line-height: 1;
+  color: #ffe27a;
+  -webkit-text-stroke: 1.5px #7a4a00;
+  paint-order: stroke fill;
+  text-shadow: 0 2px 0 #7a4a00;
+}
+.score-float.ai {
+  color: #e9c8ff;
+  -webkit-text-stroke-color: #4b1670;
+  text-shadow: 0 2px 0 #4b1670;
+}
+.score-float.penalty {
+  color: #ff9d9d;
+  -webkit-text-stroke-color: #7a1212;
+  text-shadow: 0 2px 0 #7a1212;
+}
+.score-float.bonus {
+  font-size: 18px;
+  color: #b9ffb0;
+  -webkit-text-stroke-color: #14612a;
+  text-shadow: 0 2px 0 #14612a;
+}
+.app-playing .letter.flash {
+  animation: cell-flash 0.9s ease-out;
+}
+@keyframes cell-flash {
+  0% {
+    box-shadow:
+      inset 0 0 0 3px #ffd23c,
+      0 0 12px 3px #ffd23c;
+    transform: scale(1.12);
+    z-index: 3;
+  }
+  100% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-playing .letter.flash {
+    animation: none;
+  }
+}

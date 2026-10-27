@@ -1,0 +1,339 @@
+/* Home uses the viewport as its layout budget; navigation occupies its own row. */
+.app-home {
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  gap: clamp(8px, 1.5dvh, 16px);
+  padding: env(safe-area-inset-top) 16px max(10px, env(safe-area-inset-bottom));
+  overflow: clip;
+}
+.app-home > header {
+  min-height: 0;
+  padding: 8px 0 0;
+  flex-wrap: nowrap;
+}
+.app-home .brand {
+  min-width: 0;
+  gap: 0;
+}
+.app-home .art-book {
+  width: 38px;
+  height: 50px;
+}
+.app-home .brand-wordmark {
+  width: clamp(120px, 34vw, 235px);
+  max-width: 100%;
+}
+.app-home .wallet > span {
+  padding: 4px 7px;
+  min-height: 30px;
+  font-size: 12px;
+}
+.app-home > main {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(120px, 1fr) auto auto auto;
+  gap: clamp(10px, 1.6dvh, 18px);
+}
+.app-home .welcome {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: clamp(8px, 2dvh, 22px) 0 0;
+}
+.app-home .welcome h1 {
+  font-size: clamp(26px, 6.8vw, 42px);
+  -webkit-text-stroke: 1.4px #15365e;
+  line-height: 1.15;
+}
+.app-home .welcome em {
+  background: none;
+  color: #ffcc47;
+  -webkit-text-fill-color: #ffcc47;
+}
+.app-home .welcome p {
+  margin-top: 12px;
+  padding: 7px 10px;
+  font-size: clamp(10px, 2.6vw, 14px);
+}
+.app-home .adventure-card {
+  padding: 12px 14px 14px;
+  border-width: 3px;
+  border-radius: 22px;
+}
+.app-home .scene-label {
+  min-height: 102px;
+}
+.app-home .scene-label h2 {
+  font-size: clamp(21px, 5.6vw, 30px);
+  margin: 7px 0 5px;
+}
+.app-home .scene-label p {
+  font-size: 11px;
+  max-width: 65%;
+}
+.app-home .world-preview {
+  height: 116px;
+  width: 58%;
+}
+.app-home .adventure-action {
+  margin-top: 3px;
+}
+.app-home .adventure-action strong {
+  font-size: 12px;
+}
+.app-home .adventure-action strong span {
+  font-size: 10px;
+}
+.app-home .journey-progress {
+  height: 17px;
+  margin-top: 8px;
+}
+.app-home .journey-progress > strong {
+  font-size: 11px;
+  line-height: 15px;
+}
+/* The progress fill selector previously painted over the chest sprite. */
+.app-home .journey-progress > .art-chest {
+  background-color: transparent;
+  background-image: url("/art/game-icons-v1.png");
+  border-radius: 0;
+  width: 31px;
+  height: 41px;
+  top: -15px;
+}
+.app-home .continue-button {
+  min-height: 54px;
+  margin: 0 2px 3px;
+  padding: 9px 12px;
+  border-width: 3px;
+  font-size: clamp(18px, 5vw, 25px);
+  border-radius: 20px;
+}
+.app-home .home-grid {
+  min-width: 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 4px;
+}
+.app-home .daily-card,
+.app-home .map-card {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  align-content: center;
+  column-gap: 6px;
+  padding: 10px 8px;
+  border-width: 2px;
+  border-radius: 18px;
+  min-height: 104px;
+}
+.app-home .home-grid > a > .game-art {
+  grid-row: 1 / 4;
+  width: 32px;
+  height: 43px;
+  align-self: center;
+  margin: 0;
+}
+.app-home .home-grid h2 {
+  font-size: clamp(13px, 3.4vw, 19px);
+  line-height: 1.2;
+}
+.app-home .home-grid p,
+.app-home .home-grid .eyebrow {
+  display: none;
+}
+.app-home .home-grid .text-link {
+  font-size: 10px;
+  margin: 5px 0 0;
+  min-height: 22px;
+  gap: 3px;
+}
+.app-home .home-grid .text-link svg {
+  width: 12px;
+}
+.app-home .reward-tag {
+  grid-column: 2;
+  margin-top: 3px;
+  font-size: 10px;
+  gap: 3px;
+}
+.app-home .reward-tag svg {
+  width: 12px;
+  height: 12px;
+}
+.app-home .gentle-note,
+.app-home > footer {
+  display: none;
+}
+.app-home > .bottom-nav {
+  position: relative;
+  inset: auto;
+  transform: none;
+  width: 100%;
+  max-width: none;
+  padding: 4px;
+  border-width: 2px;
+  border-radius: 20px;
+  margin: 0;
+}
+.app-home .bottom-nav a {
+  min-height: 50px;
+  padding: 4px;
+  font-size: 11px;
+}
+.app-home .bottom-nav svg {
+  width: 22px;
+  height: 22px;
+}
+.app-home > .error {
+  position: absolute;
+  z-index: 30;
+  inset: 64px 12px auto;
+  margin: 0;
+}
+@media (min-width: 600px) and (min-height: 700px) {
+  .app-home {
+    padding-inline: 28px;
+  }
+  .app-home > header {
+    padding-top: 12px;
+  }
+  .app-home .art-book {
+    width: 52px;
+    height: 69px;
+  }
+  .app-home .brand-wordmark {
+    width: 255px;
+  }
+  .app-home .wallet > span {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+  .app-home .scene-label {
+    min-height: 128px;
+  }
+  .app-home .scene-label p {
+    font-size: 14px;
+  }
+  .app-home .adventure-card {
+    padding: 18px 20px;
+  }
+  .app-home .world-preview {
+    height: 150px;
+  }
+  .app-home .continue-button {
+    min-height: 68px;
+  }
+  .app-home .home-grid > a {
+    min-height: 126px;
+    grid-template-columns: 48px minmax(0, 1fr);
+    padding: 14px;
+    gap: 8px;
+  }
+  .app-home .home-grid > a > .game-art {
+    width: 48px;
+    height: 64px;
+  }
+  .app-home .home-grid .text-link,
+  .app-home .reward-tag {
+    font-size: 13px;
+  }
+  .app-home .bottom-nav a {
+    min-height: 64px;
+    font-size: 13px;
+  }
+}
+@media (max-height: 650px) {
+  .app-home {
+    gap: 6px;
+    padding-bottom: max(6px, env(safe-area-inset-bottom));
+  }
+  .app-home > main {
+    grid-template-rows: minmax(86px, 1fr) auto auto auto;
+    gap: 8px;
+  }
+  .app-home .welcome {
+    padding-top: 2px;
+  }
+  .app-home .welcome h1 {
+    font-size: 25px;
+  }
+  .app-home .welcome p {
+    font-size: 9px;
+    margin-top: 7px;
+    padding: 5px 7px;
+  }
+  .app-home .scene-label {
+    min-height: 75px;
+  }
+  .app-home .scene-label p {
+    display: none;
+  }
+  .app-home .world-preview {
+    height: 90px;
+  }
+  .app-home .adventure-card {
+    padding: 9px 12px 11px;
+  }
+  .app-home .home-grid > a {
+    min-height: 82px;
+  }
+  .app-home .continue-button {
+    min-height: 48px;
+  }
+  .app-home .bottom-nav a {
+    min-height: 44px;
+  }
+}
+@media (max-height: 500px) and (min-width: 600px) {
+  .app-home {
+    max-width: 960px;
+    grid-template-rows: 44px minmax(0, 1fr) 50px;
+  }
+  .app-home .art-book {
+    height: 40px;
+    width: 30px;
+  }
+  .app-home .brand-wordmark {
+    width: 160px;
+  }
+  .app-home > main {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 10px 18px;
+  }
+  .app-home .welcome {
+    grid-area: 1 / 1;
+    justify-content: center;
+  }
+  .app-home .adventure-card {
+    grid-area: 1 / 2;
+    align-self: center;
+  }
+  .app-home .continue-button {
+    grid-area: 2 / 1;
+    align-self: center;
+  }
+  .app-home .home-grid {
+    grid-area: 2 / 2;
+  }
+  .app-home .home-grid > a {
+    min-height: 62px;
+  }
+  .app-home .reward-tag {
+    display: none;
+  }
+  .app-home .bottom-nav a {
+    flex-direction: row;
+    min-height: 36px;
+    gap: 8px;
+  }
+}
+.app-home .journey-progress > .art-chest {
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  background-repeat: no-repeat;
+}

@@ -1,0 +1,87 @@
+:root {
+  font-family: "Nunito", sans-serif;
+  color: #243657;
+  background: #dceade;
+  font-synthesis: none;
+  font-weight: 600;
+  --blue: #3689f5;
+  --gold: #ffcc47;
+  --muted: #607083;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  min-width: 320px;
+}
+/* Aplicativo, não documento: textos não são selecionáveis (nem por toque longo ou arraste). */
+html,
+body {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+img,
+svg {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+/* Campos de digitação continuam editáveis e selecionáveis. */
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+}
+button,
+input,
+a {
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+}
+button,
+a {
+  touch-action: manipulation;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button {
+  border: 0;
+  cursor: pointer;
+}
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #1765c4;
+  outline-offset: 4px;
+}
+h1,
+h2,
+p {
+  margin: 0;
+}
+h1 {
+  font-size: clamp(28px, 7vw, 42px);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: -1px;
+}
+h2 {
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+p {
+  line-height: 1.55;
+}
+svg {
+  flex-shrink: 0;
+}

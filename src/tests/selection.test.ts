@@ -1,7 +1,13 @@
 import fs from "node:fs";
 import { describe, it, expect } from "vitest";
 
-const css = fs.readFileSync("src/app/styles.css", "utf8");
+// styles.css só importa os arquivos de src/app/styles/, então as regras são lidas de todos eles.
+const dir = "src/app/styles";
+const css = fs
+  .readdirSync(dir)
+  .filter((f) => f.endsWith(".css"))
+  .map((f) => fs.readFileSync(`${dir}/${f}`, "utf8"))
+  .join("\n");
 
 describe("Seleção de texto", () => {
   it("o aplicativo inteiro desliga a seleção e o menu de toque longo", () => {

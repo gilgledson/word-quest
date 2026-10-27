@@ -9,15 +9,7 @@ import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
 import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Lightbulb,
-  RotateCw,
-  Shuffle,
-} from "lucide-react";
-import { motion } from "motion/react";
+import { ArrowLeft, RotateCw } from "lucide-react";
 import {
   levels,
   casualPuzzles,
@@ -51,19 +43,13 @@ import { useAnimationPrefs } from "../animations/hooks/useAnimationPrefs";
 import { useGameAnimations } from "../animations/hooks/useGameAnimations";
 import { FxLayer } from "../animations/components/FxLayer";
 import { TurnThinkingEffect } from "../animations/components/TurnThinkingEffect";
-import {
-  VictoryBadge,
-  VictoryStars,
-} from "../animations/components/VictoryCelebration";
 import { measureElement } from "../animations/utils/animationGeometry";
-interface ScoreFloat {
-  id: number;
-  text: string;
-  x: number;
-  y: number;
-  kind: "p" | "ai" | "bonus" | "penalty";
-}
-let floatId = 0;
+import { ScoreFloats } from "./puzzle/ScoreFloats";
+import { SwapDialog } from "./puzzle/SwapDialog";
+import { TurnControls } from "./puzzle/TurnControls";
+import { VictoryPanel } from "./puzzle/VictoryPanel";
+import { settleSession } from "./puzzle/settleSession";
+import { useScoreFloats } from "./puzzle/useScoreFloats";
 const HINT_MESSAGE = "Arraste as letras até as casas ou toque para preencher.";
 const BOARD_KEY = "wordquest-board";
 const readMode = (): BoardMode => {
@@ -155,8 +141,10 @@ function Duel() {
   const drop = useRef<(tileId: string, cell: string | null) => void>(() => {});
   const botStep = useRef<() => void>(() => {});
   const cardRef = useRef<HTMLDivElement>(null);
-  const [floats, setFloats] = useState<ScoreFloat[]>([]);
-  const [flash, setFlash] = useState<string[]>([]);
+  const { floats, flash, popScore, popPenalty } = useScoreFloats(
+    cardRef,
+    player.animations,
+  );
   const letterDrag = useLetterDrag((tileId, cell) =>
     drop.current(tileId, cell),
   );
@@ -253,116 +241,17 @@ function Duel() {
   const swapResult = swapping?.length
     ? engine.swap(session, swapping, word)
     : undefined;
-  const commit = (next: Session, cost = 0) => {
-    const settled = { ...next };
-    update((p) => {
-      if (p.coins < cost) return p;
-      let coins = p.coins - cost;
-      let stars = p.stars;
-      let days = p.daily;
-      let duels = p.duels;
-      if (engine.complete(settled) && !settled.claimed) {
-        const { p: mine, ai } = settled.scores;
-        const result = mine > ai ? "win" : mine === ai ? "draw" : "loss";
-        if (daily) {
-          // Desafio do dia: só a vitória conta, uma vez por dia.
-          if (result === "win" && !days.includes(date)) {
-            coins += economy.daily;
-            days = [...days, date];
-          }
-        } else if (!(sessionKey in duels)) {
-          coins += economy.duel[result];
-          duels = { ...duels, [sessionKey]: result };
-        }
-        // Vencer o oponente conclui a fase e libera a próxima (o modo casual não tem progresso).
-        if (result === "win" && !daily && !casual)
-          stars = {
-            ...stars,
-            [puzzle.id]: Math.max(
-              stars[puzzle.id] ?? 0,
-              economy.duelStars[settled.versus.level],
-            ),
-          };
-        settled.claimed = true;
-      }
-      return {
-        ...p,
-        coins,
-        stars,
-        daily: days,
-        duels,
-        sessions: { ...p.sessions, [sessionKey]: settled },
-      };
-    });
-  };
-  /** Mostra "−N" sobre as casas das letras erradas devolvidas ao banco. */
-  const popPenalty = (cells: string[], points: number) => {
-    if (!player.animations || !cells.length || !points) return;
-    const card = cardRef.current;
-    const box = card?.getBoundingClientRect();
-    const rects = cells
-      .map((k) =>
-        card?.querySelector(`[data-cell="${k}"]`)?.getBoundingClientRect(),
-      )
-      .filter((r): r is DOMRect => !!r);
-    const x = rects.length
-      ? rects.reduce((n, r) => n + r.left + r.width / 2, 0) / rects.length -
-        (box?.left ?? 0)
-      : (box?.width ?? 0) / 2;
-    const y = rects.length
-      ? rects.reduce((n, r) => n + r.top + r.height / 2, 0) / rects.length -
-        (box?.top ?? 0)
-      : (box?.height ?? 0) / 2;
-    const made: ScoreFloat[] = [
-      { id: ++floatId, text: `−${points}`, x, y, kind: "penalty" },
-    ];
-    setFloats((f) => [...f, ...made]);
-    window.setTimeout(
-      () => setFloats((f) => f.filter((x) => !made.some((m) => m.id === x.id))),
-      1100,
+  const commit = (next: Session, cost = 0) =>
+    update((p) =>
+      settleSession(p, next, cost, {
+        engine,
+        puzzleId: puzzle.id,
+        sessionKey,
+        daily,
+        casual,
+        date,
+      }),
     );
-  };
-  /** Mostra "+N" sobre as casas que acabaram de pontuar e dá um brilho nelas. */
-  const popScore = (
-    cells: string[],
-    points: number,
-    bonus: number,
-    owner: "p" | "ai",
-  ) => {
-    if (!player.animations || !cells.length) return;
-    const card = cardRef.current;
-    const box = card?.getBoundingClientRect();
-    const rects = cells
-      .map((k) =>
-        card?.querySelector(`[data-cell="${k}"]`)?.getBoundingClientRect(),
-      )
-      .filter((r): r is DOMRect => !!r);
-    const x = rects.length
-      ? rects.reduce((n, r) => n + r.left + r.width / 2, 0) / rects.length -
-        (box?.left ?? 0)
-      : (box?.width ?? 0) / 2;
-    const y = rects.length
-      ? rects.reduce((n, r) => n + r.top + r.height / 2, 0) / rects.length -
-        (box?.top ?? 0)
-      : (box?.height ?? 0) / 2;
-    const made: ScoreFloat[] = [
-      { id: ++floatId, text: `+${points}`, x, y, kind: owner },
-    ];
-    if (bonus)
-      made.push({
-        id: ++floatId,
-        text: `Palavra! +${bonus}`,
-        x,
-        y: y - 30,
-        kind: "bonus",
-      });
-    setFloats((f) => [...f, ...made]);
-    setFlash((f) => [...f, ...cells]);
-    window.setTimeout(() => {
-      setFloats((f) => f.filter((x) => !made.some((m) => m.id === x.id)));
-      setFlash((f) => f.filter((k) => !cells.includes(k)));
-    }, 1100);
-  };
   botStep.current = () => {
     const turn = opponentTurn(engine, session);
     commit(turn.session);
@@ -574,6 +463,10 @@ function Duel() {
       : session.scores.p > session.scores.ai
         ? "win"
         : "loss";
+  const nextTo =
+    !daily && !casual && winner === "win" && puzzle.number < levels.length
+      ? `/play/${levels[puzzle.number].id}`
+      : undefined;
   return (
     <div className="puzzle-page" ref={setFxHost}>
       <section className="puzzle-status" aria-label="Progresso da fase">
@@ -631,19 +524,7 @@ function Duel() {
         />
       </section>
       <div className="board-card" ref={cardRef}>
-        {floats.map((f) => (
-          <motion.span
-            key={f.id}
-            className={`score-float ${f.kind}`}
-            style={{ left: f.x, top: f.y }}
-            aria-hidden="true"
-            initial={{ opacity: 0, y: 10, scale: 0.6 }}
-            animate={{ opacity: [0, 1, 1, 0], y: -46, scale: [0.6, 1.2, 1, 1] }}
-            transition={{ duration: 1, times: [0, 0.2, 0.7, 1] }}
-          >
-            {f.text}
-          </motion.span>
-        ))}
+        <ScoreFloats floats={floats} />
         <div className="board-area" ref={grid.ref}>
           <div
             className="board"
@@ -723,73 +604,28 @@ function Duel() {
         </div>
       </div>
       {complete ? (
-        <motion.section
-          initial={player.animations ? { opacity: 0, y: 15 } : false}
-          animate={{ opacity: 1, y: 0 }}
-          className="victory"
-        >
-          {winner === "win" && !daily && !casual && (
-            <VictoryBadge enabled={prefs.enabled} />
-          )}
-          <h2>
-            {winner === "win"
-              ? "Você venceu o duelo!"
-              : winner === "draw"
-                ? "Empate!"
-                : `${rival.name} venceu`}
-          </h2>
-          <p>
-            Você {session.scores.p} × {session.scores.ai} {rival.name}
-          </p>
-          <p>
-            {daily
-              ? winner === "win"
-                ? `Recompensa diária: ${economy.daily} moedas`
-                : "Vença o oponente para concluir o desafio do dia."
-              : `Recompensa do duelo: ${economy.duel[winner]} moedas`}
-            {!daily && !casual && winner === "win" && (
-              <>
-                {" · "}
-                <VictoryStars
-                  count={economy.duelStars[versus.level]}
-                  enabled={prefs.enabled}
-                />
-              </>
-            )}
-          </p>
-          {!daily &&
-            !casual &&
-            winner === "win" &&
-            puzzle.number < levels.length && (
-              <Link
-                className="button primary"
-                to={`/play/${levels[puzzle.number].id}`}
-                onClick={() => setSelected("")}
-              >
-                Próxima descoberta <ArrowRight size={18} />
-              </Link>
-            )}
-          <Link className="text-link" to={backTo}>
-            {casual ? "Escolher outro tema" : "Voltar à jornada"}
-          </Link>
-          <button
-            className="text-link"
-            onClick={() => {
-              const fresh = engine.start(
-                `${sessionKey}:${Date.now()}`,
-                botLevel,
-              );
-              update((p) => ({
-                ...p,
-                sessions: { ...p.sessions, [sessionKey]: fresh },
-              }));
-              setSelected("");
-              setMessage("Toque em uma pista para começar de novo.");
-            }}
-          >
-            Jogar novamente
-          </button>
-        </motion.section>
+        <VictoryPanel
+          result={winner}
+          daily={daily}
+          casual={casual}
+          rivalName={rival.name}
+          scores={session.scores}
+          level={versus.level}
+          animated={player.animations}
+          fxEnabled={prefs.enabled}
+          nextTo={nextTo}
+          backTo={backTo}
+          onNext={() => setSelected("")}
+          onReplay={() => {
+            const fresh = engine.start(`${sessionKey}:${Date.now()}`, botLevel);
+            update((p) => ({
+              ...p,
+              sessions: { ...p.sessions, [sessionKey]: fresh },
+            }));
+            setSelected("");
+            setMessage("Toque em uma pista para começar de novo.");
+          }}
+        />
       ) : (
         <>
           <section className="selected-word">
@@ -808,124 +644,33 @@ function Duel() {
             </h2>
             <p aria-live="polite">{message}</p>
           </section>
-          <div
-            className="letter-bank"
-            role="group"
-            aria-label="Letras do banco"
-          >
-            {rack.map((t) => (
-              <motion.button
-                {...letterDrag.bind(t.id, t.letter)}
-                className={
-                  letterDrag.drag?.tileId === t.id ? "drag-source" : ""
-                }
-                draggable={false}
-                disabled={!mine}
-                initial={player.animations ? { scale: 0.6, opacity: 0 } : false}
-                animate={{ scale: 1, opacity: 1 }}
-                whileTap={prefs.enabled ? { scale: 1.07, y: -4 } : undefined}
-                key={t.id}
-                data-tile={t.id}
-                onClick={(event) => {
-                  if (letterDrag.clickAllowed(event.detail === 0)) insert(t.id);
-                }}
-                aria-label={`Inserir letra ${t.letter}`}
-              >
-                {t.letter}
-              </motion.button>
-            ))}
-          </div>
-          <div className="puzzle-tools">
-            <button
-              disabled={!mine || !rack.length}
-              onClick={() => setSwapping([])}
-              aria-label="Trocar"
-            >
-              <Shuffle />
-              Trocar <span>{economy.swap} ◉</span>
-            </button>
-            <motion.button
-              className="confirm-button"
-              disabled={!mine}
-              onClick={confirm}
-              whileTap={prefs.enabled ? { scale: 0.94 } : undefined}
-              aria-label={hasPending ? "Confirmar" : "Passar a vez"}
-            >
-              <Check />
-              <small>{hasPending ? "Confirmar" : "Passar"}</small>
-              {prefs.enabled && pulse > 0 && (
-                <span
-                  key={pulse}
-                  className="confirm-pulse"
-                  aria-hidden="true"
-                />
-              )}
-            </motion.button>
-            <button
-              className={hinting ? "fx-hint-btn" : ""}
-              disabled={!mine}
-              onClick={hint}
-              aria-label="Dica"
-            >
-              <Lightbulb />
-              Dica <span>{economy.hint} ◉</span>
-            </button>
-          </div>
+          <TurnControls
+            rack={rack}
+            letterDrag={letterDrag}
+            mine={mine}
+            animated={player.animations}
+            fxEnabled={prefs.enabled}
+            hasPending={hasPending}
+            pulse={pulse}
+            hinting={hinting}
+            onInsert={insert}
+            onSwap={() => setSwapping([])}
+            onConfirm={confirm}
+            onHint={hint}
+          />
         </>
       )}
       {swapping && (
-        <motion.div
-          className="swap-backdrop"
-          initial={prefs.enabled ? { opacity: 0 } : false}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.15 }}
-          onKeyDown={(e) => e.key === "Escape" && setSwapping(null)}
-        >
-          <motion.div
-            className="swap-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Trocar letras"
-            initial={prefs.enabled ? { opacity: 0, scale: 0.94, y: 8 } : false}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 0.18 }}
-          >
-            <h2>Trocar letras</h2>
-            <p>
-              Escolha até {economy.swapMax} peças · {economy.swap} moedas cada
-            </p>
-            <div className="swap-tiles">
-              {rack.map((t) => (
-                <button
-                  key={t.id}
-                  aria-pressed={swapping.includes(t.id)}
-                  aria-label={`Trocar letra ${t.letter}`}
-                  onClick={() => toggleSwap(t.id)}
-                >
-                  {t.letter}
-                </button>
-              ))}
-            </div>
-            <p className="swap-cost" aria-live="polite">
-              Custo: {swapCost} moedas
-            </p>
-            <div className="swap-actions">
-              <button onClick={() => setSwapping(null)}>Cancelar</button>
-              <button
-                className="primary"
-                disabled={!swapping.length || !swapResult}
-                onClick={confirmSwap}
-              >
-                Confirmar troca
-              </button>
-            </div>
-            {!!swapping.length && !swapResult && (
-              <p role="status" className="swap-note">
-                Não há letras diferentes e úteis para esta troca.
-              </p>
-            )}
-          </motion.div>
-        </motion.div>
+        <SwapDialog
+          rack={rack}
+          selected={swapping}
+          cost={swapCost}
+          canSwap={!!swapResult}
+          animated={prefs.enabled}
+          onToggle={toggleSwap}
+          onCancel={() => setSwapping(null)}
+          onConfirm={confirmSwap}
+        />
       )}
       {letterDrag.drag &&
         createPortal(
@@ -957,14 +702,7 @@ function Duel() {
               ? economy.duelStars[versus.level]
               : 0
           }
-          nextTo={
-            !daily &&
-            !casual &&
-            winner === "win" &&
-            puzzle.number < levels.length
-              ? `/play/${levels[puzzle.number].id}`
-              : undefined
-          }
+          nextTo={nextTo}
           enabled={prefs.enabled}
           onClose={() => setResultOpen(false)}
         />
