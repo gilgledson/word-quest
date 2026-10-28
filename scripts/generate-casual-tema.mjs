@@ -6,7 +6,7 @@
 // tema), monta a grade colocando só palavras do tema, uma a uma, sempre cruzando letras já postas: cada
 // palavra tem a casa de pista logo antes (à esquerda ou acima) e nenhuma sequência de letras pode formar
 // palavra que não esteja na lista. As casas que sobram viram blocos. Por isso a grade do casual é mais
-// aberta que a das fases (ver `casualLayoutErrors` em src/game/crossword-engine.ts).
+// aberta que a das fases (ver `casualLayoutErrors` em src/game/engine/validator.ts).
 import fs from "node:fs";
 import path from "node:path";
 import { ROWS, COLS, rng } from "./lib/arrowword.mjs";

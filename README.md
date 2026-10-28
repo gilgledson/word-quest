@@ -14,7 +14,7 @@ npm run preview
 
 ## Organização
 
-- `src/game/crossword-engine.ts`: domínio sem React (validação, matriz por coordenadas, inventário de peças `RackManager`, confirmação ✓, pontuação e recompensas).
+- `src/game/crossword-engine.ts`: fachada do domínio sem React; o código fica em `src/game/engine/` (`types`, `grid`, `validator`, `rack` com o inventário de peças `RackManager`, `engine` com a matriz, confirmação ✓, pontuação e recompensas).
 - `src/game/opponent.ts`: bot local do modo duelo (TypeScript puro, sem IA generativa nem rede).
 - `src/data/levels.json`: fases geradas e verificadas nos testes (ver `scripts/README.md`).
 - `scripts/`: gerador das grades densas, catálogo de pistas e verificadores. Fora do app; ver `scripts/README.md` (inclui a licença do vocabulário VERO).
