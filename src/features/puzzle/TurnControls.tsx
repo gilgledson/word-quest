@@ -1,4 +1,4 @@
-import { Check, Lightbulb, Shuffle } from "lucide-react";
+import { Check, Lightbulb, Shuffle, SkipForward } from "lucide-react";
 import { motion } from "motion/react";
 import { economy, type Tile } from "../../game/crossword-engine";
 import type { useLetterDrag } from "../../hooks/useLetterDrag";
@@ -68,14 +68,14 @@ export function TurnControls({
           Trocar <span>{economy.swap} ◉</span>
         </button>
         <motion.button
-          className="confirm-button"
+          className={`confirm-button ${hasPending ? "" : "is-pass"}`}
           disabled={!mine}
           onClick={onConfirm}
           whileTap={fxEnabled ? { scale: 0.94 } : undefined}
           aria-label={hasPending ? "Confirmar" : "Passar a vez"}
         >
-          <Check />
-          <small>{hasPending ? "Confirmar" : "Passar"}</small>
+          {hasPending ? <Check /> : <SkipForward />}
+          <small>{hasPending ? "Confirmar" : "Passar a vez"}</small>
           {fxEnabled && pulse > 0 && (
             <span key={pulse} className="confirm-pulse" aria-hidden="true" />
           )}

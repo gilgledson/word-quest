@@ -61,9 +61,14 @@ export function VersusPanel({
   return (
     <div className="versus-score" aria-label="Placar">
       {side(player, "p")}
-      <div className="versus-center" aria-hidden="true">
-        <span className="vs-badge">VS</span>
-        <span className={`turn-arrow ${finished ? "done" : turn}`}>
+      <div className="versus-center">
+        <span className="vs-badge" aria-hidden="true">
+          VS
+        </span>
+        <span
+          className={`turn-arrow ${finished ? "done" : turn}`}
+          role="status"
+        >
           {finished ? "FIM" : turn === "p" ? "◀ sua vez" : "vez dele ▶"}
         </span>
       </div>

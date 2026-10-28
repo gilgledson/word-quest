@@ -5,6 +5,8 @@ interface Props {
   rack: Tile[];
   selected: string[];
   cost: number;
+  /** Moedas do jogador, para mostrar o saldo depois da troca. */
+  coins: number;
   /** Existe uma troca possível para a seleção atual. */
   canSwap: boolean;
   animated: boolean;
@@ -16,6 +18,7 @@ export function SwapDialog({
   rack,
   selected,
   cost,
+  coins,
   canSwap,
   animated,
   onToggle,
@@ -55,8 +58,16 @@ export function SwapDialog({
             </button>
           ))}
         </div>
+        <p className="swap-count" aria-live="polite">
+          {selected.length}/{economy.swapMax} selecionadas
+        </p>
         <p className="swap-cost" aria-live="polite">
           Custo: {cost} moedas
+          <span className={coins < cost ? "short" : ""}>
+            {coins < cost
+              ? `Saldo insuficiente (você tem ${coins})`
+              : `Saldo depois: ${coins - cost}`}
+          </span>
         </p>
         <div className="swap-actions">
           <button onClick={onCancel}>Cancelar</button>

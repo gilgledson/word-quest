@@ -534,3 +534,110 @@
     animation: none;
   }
 }
+/* Sprint 1 de UX: turno explícito, Passar distinto de Confirmar, pista maior, troca mais clara. */
+.turn-arrow {
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  background: #fff;
+  font-size: 11px;
+  line-height: 14px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.turn-arrow.p {
+  background: #2589ff;
+  border-color: #17529a;
+  color: #fff;
+}
+.turn-arrow.ai {
+  background: #7045c8;
+  border-color: #4a2a94;
+  color: #fff;
+}
+.turn-arrow.done {
+  background: #fff;
+  color: #5b3a00;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .turn-arrow.p,
+  .turn-arrow.ai {
+    animation: turn-pulse 1.6s ease-in-out infinite;
+  }
+}
+@keyframes turn-pulse {
+  50% {
+    transform: scale(1.06);
+  }
+}
+.versus-score {
+  gap: 2px;
+  padding: 4px 6px;
+}
+.duelist-name {
+  font-size: 11.5px;
+}
+.app-playing .puzzle-tools button.confirm-button.is-pass {
+  background: linear-gradient(#fffdf7, #e9eef4);
+  border-color: #ffffff;
+  box-shadow: 0 3px 0 #9aa8b6;
+  color: #3d5169;
+}
+.app-playing .puzzle-tools button.confirm-button.is-pass svg {
+  width: 26px;
+  height: 26px;
+  stroke-width: 2.5;
+}
+.app-playing .selected-word .eyebrow {
+  font-size: 10px;
+}
+.app-playing .selected-word h2 {
+  font-size: 23px;
+  line-height: 1.1;
+}
+.app-playing .selected-word p {
+  font-size: 12px;
+}
+.swap-tiles button {
+  position: relative;
+}
+.swap-tiles button[aria-pressed="true"]::after {
+  content: "✓";
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1fa45a;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+}
+.swap-count {
+  font-weight: 800;
+}
+.swap-cost span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #5f6f52;
+}
+.swap-cost span.short {
+  color: #b3261e;
+}
+/* O selo de turno fica sobre a borda de baixo do painel: libera largura para os nomes. */
+.versus-score {
+  position: relative;
+  margin-bottom: 12px;
+}
+.versus-score .turn-arrow {
+  position: absolute;
+  left: 50%;
+  bottom: -12px;
+  translate: -50% 0;
+  box-shadow: 0 2px 0 #24365740;
+}

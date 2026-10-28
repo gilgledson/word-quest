@@ -532,6 +532,7 @@ function Duel() {
           rack={rack}
           selected={swapping}
           cost={swapCost}
+          coins={player.coins}
           canSwap={!!swapResult}
           animated={prefs.enabled}
           onToggle={toggleSwap}

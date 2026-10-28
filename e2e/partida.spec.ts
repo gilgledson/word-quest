@@ -57,6 +57,16 @@ test("a fase cabe na tela de 360×800, sem rolagem", async ({ page }) => {
     await expect(page.getByRole("button", { name })).toBeVisible();
   await expect(score(page, "player")).toHaveText("0");
   await expect(score(page, "rival")).toHaveText("0");
+  // O selo de turno é explícito e os nomes cabem inteiros no placar.
+  await expect(
+    page.getByRole("status").filter({ hasText: "sua vez" }),
+  ).toBeVisible();
+  const clipped = await page.evaluate(() =>
+    [...document.querySelectorAll(".duelist-name")].some(
+      (e) => e.scrollWidth > e.clientWidth,
+    ),
+  );
+  expect(clipped).toBe(false);
 });
 
 test("joga um turno: coloca letras, confirma, o oponente responde e o progresso persiste", async ({
@@ -112,6 +122,14 @@ test("troca de letras abre e fecha; girar o tabuleiro mantém a grade na tela", 
   await page.getByRole("button", { name: "Trocar", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Trocar letras" });
   await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("0/5 selecionadas");
+  await dialog
+    .getByRole("button", { name: /Trocar letra/ })
+    .first()
+    .click();
+  await expect(dialog).toContainText("1/5 selecionadas");
+  await expect(dialog).toContainText("Custo: 10 moedas");
+  await expect(dialog).toContainText("Saldo depois: 90");
   await dialog.getByRole("button", { name: "Cancelar" }).click();
   await expect(dialog).toBeHidden();
 
