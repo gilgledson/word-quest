@@ -1,0 +1,56 @@
+/* Mapas: chefe de cada mundo. Vitória: progresso do mundo e mundo desbloqueado. */
+.level-node .boss-crown {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  translate: -50% 0;
+  padding: 2px;
+  border-radius: 50%;
+  background: #ffcc47;
+  border: 2px solid #b87d0b;
+  color: #5b3a00;
+}
+.map-stop.boss .level-node {
+  box-shadow:
+    0 0 0 3px #ffcc47,
+    0 5px 0 #b87d0b;
+}
+.map-stop.boss .stop-tag {
+  background: #5b3a00;
+  color: #ffe27a;
+}
+.result-progress {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  font-size: 13px;
+  font-weight: 800;
+  color: #3a4b2f;
+}
+.result-progress .bar {
+  display: block;
+  height: 10px;
+  border-radius: 6px;
+  background: #e7dcb8;
+  overflow: hidden;
+}
+.result-progress .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(#63d9a0, #2fa56d);
+}
+.result-unlocked {
+  margin: 0;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: #d7f5df;
+  color: #1c6b43;
+  font-size: 14px;
+}
+.result-next {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #5f6f52;
+}

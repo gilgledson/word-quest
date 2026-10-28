@@ -1,0 +1,135 @@
+/* Páginas secundárias (Casual, Diário, Perfil): cabeçalho numa linha, ornamento sutil e progresso. */
+.app-secondary .brand {
+  gap: 0;
+  min-width: 0;
+}
+.app-secondary .art-book {
+  width: 38px;
+  height: 50px;
+}
+.app-secondary .brand-wordmark {
+  width: clamp(120px, 34vw, 235px);
+  max-width: 100%;
+}
+.app-secondary .wallet > span {
+  padding: 4px 7px;
+  min-height: 30px;
+  font-size: 12px;
+}
+@media (min-width: 600px) {
+  .app-secondary .brand-wordmark {
+    width: 255px;
+  }
+  .app-secondary .wallet > span {
+    font-size: 16px;
+    padding: 6px 12px;
+  }
+}
+/* A paisagem da home aparece esmaecida no topo, ligando as telas à mesma identidade. */
+.app-secondary .home-landscape {
+  inset: 0 0 auto;
+  height: 300px;
+  opacity: 0.28;
+  -webkit-mask-image: linear-gradient(#000 30%, transparent);
+  mask-image: linear-gradient(#000 30%, transparent);
+}
+.app-secondary .page-heading {
+  padding: 12px 0 16px;
+}
+.app-secondary .page-heading h1,
+.app-secondary .page-heading p,
+.app-secondary .page-heading .eyebrow {
+  color: #1c2f4d;
+  text-shadow: 0 1px 0 #ffffffd0;
+}
+.theme-progress {
+  display: block;
+  width: 84%;
+  height: 8px;
+  border-radius: 6px;
+  background: #e7dcb8;
+  overflow: hidden;
+}
+.theme-progress i {
+  display: block;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(#63d9a0, #2fa56d);
+}
+.calendar .future {
+  opacity: 0.4;
+}
+.calendar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  margin: 8px 0 12px;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  font-weight: 700;
+  color: #607083;
+}
+.calendar-legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.calendar-legend svg {
+  color: #2fa56d;
+}
+.calendar-legend .dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #3689f5;
+}
+.calendar-legend .dot.future {
+  background: #cfd6dc;
+}
+.profile-stats {
+  margin-bottom: 14px;
+  padding: 14px;
+  border: 3px solid #fff2c9;
+  border-radius: 20px;
+  background: linear-gradient(#fffef5, #fff1d2);
+  box-shadow: 0 4px 0 #c9b985;
+}
+.profile-stats h2 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 10px;
+  font-size: 18px;
+  color: #12264a;
+}
+.profile-stats h2 svg {
+  color: #e2a516;
+}
+.profile-stats dl {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.profile-stats dl > div {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  padding: 8px 4px;
+  border-radius: 12px;
+  background: #fff;
+  text-align: center;
+}
+.profile-stats dd {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #17529a;
+}
+.profile-stats dt {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6d5f36;
+}

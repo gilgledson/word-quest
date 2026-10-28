@@ -18,6 +18,8 @@ import {
   Shapes,
   Music,
   Vibrate,
+  Crown,
+  Trophy,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
 import road from "../data/map-road.json";
@@ -32,7 +34,12 @@ import {
   type CasualTheme,
 } from "../data/catalog";
 import { OPPONENT_LEVELS, OPPONENT_STYLES } from "../game/opponent";
-import { OPPONENTS, randomOpponent } from "../game/opponents";
+import {
+  OPPONENTS,
+  OPPONENT_BY_LEVEL,
+  opponentById,
+  randomOpponent,
+} from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
 import { OpponentAvatar } from "../components/OpponentAvatar";
 import { playSfx } from "../services/sound";
@@ -164,6 +171,9 @@ export function Campaign({ world = "vila" }: { world?: string }) {
   const unlockedLevel = (l: (typeof list)[number]) =>
     l.number === 1 || !!p.stars[levels[l.number - 2].id];
   const worldDone = list.every((l) => p.stars[l.id]);
+  const remaining = list.filter((l) => !p.stars[l.id]).length;
+  const worldStars = list.reduce((n, l) => n + (p.stars[l.id] ?? 0), 0);
+  const rivalOf = (number: number) => opponentById(OPPONENT_BY_LEVEL[number]);
   // As posições dependem do tamanho real da tela.
   const [box, setBox] = useState({ w: 360, h: 640 });
   const section = useRef<HTMLElement>(null);
@@ -267,7 +277,11 @@ export function Campaign({ world = "vila" }: { world?: string }) {
           <LockKeyhole size={18} />
           <span>
             {nextMap ? nextMap.nome : "Novos mundos"}
-            <small>{nextMap ? "Vença este mundo" : "Em breve"}</small>
+            <small>
+              {nextMap
+                ? `Faltam ${remaining} ${remaining === 1 ? "fase" : "fases"} · ★ ${worldStars}/${list.length * 3}`
+                : "Em breve"}
+            </small>
           </span>
         </div>
       )}
@@ -279,27 +293,36 @@ export function Campaign({ world = "vila" }: { world?: string }) {
             : unlocked
               ? "current"
               : "locked";
+          const rival = rivalOf(l.number);
+          const boss = !!rival?.boss;
           return (
             <li
               key={l.id}
-              className={`map-stop ${state}`}
+              className={`map-stop ${state} ${boss ? "boss" : ""}`}
               style={{ left: onRoad(stopY(i)), top: stopY(i) }}
             >
               <Link
                 aria-disabled={!unlocked}
-                aria-label={`Fase ${l.number}${p.stars[l.id] ? `, ${p.stars[l.id]} estrelas` : unlocked ? ", disponível" : ", bloqueada"}`}
+                aria-label={`Fase ${l.number}${boss ? `, chefe ${rival?.name}` : ""}${p.stars[l.id] ? `, ${p.stars[l.id]} estrelas` : unlocked ? ", disponível" : ", bloqueada"}`}
                 onClick={(e) => !unlocked && e.preventDefault()}
                 className={`level-node ${state}`}
                 to={`/play/${l.id}`}
               >
                 {unlocked ? l.number : <LockKeyhole />}
+                {boss && (
+                  <Crown className="boss-crown" size={18} aria-hidden="true" />
+                )}
               </Link>
               <strong className="stop-tag">
                 {state === "complete"
                   ? "★".repeat(p.stars[l.id])
                   : state === "current"
-                    ? "Você está aqui"
-                    : "Bloqueada"}
+                    ? boss
+                      ? `Chefe: ${rival?.name}`
+                      : "Você está aqui"
+                    : boss
+                      ? "Chefe"
+                      : "Bloqueada"}
               </strong>
             </li>
           );
@@ -368,6 +391,18 @@ export function Casual() {
               <small>
                 {finished} de {t.puzzles.length} grades vencidas
               </small>
+              <span
+                className="theme-progress"
+                role="progressbar"
+                aria-label={`Progresso em ${t.nome}`}
+                aria-valuenow={finished}
+                aria-valuemin={0}
+                aria-valuemax={t.puzzles.length}
+              >
+                <i
+                  style={{ width: `${(finished / t.puzzles.length) * 100}%` }}
+                />
+              </span>
             </button>
           );
         })}
@@ -381,6 +416,14 @@ export function Daily() {
   const p = usePlayer((s) => s.player);
   const days = new Date(year, month, 0).getDate();
   const offset = new Date(year, month - 1, 1).getDay();
+  const iso = (n: number) =>
+    `${year}-${String(month).padStart(2, "0")}-${String(n).padStart(2, "0")}`;
+  // Sequência: dias seguidos concluídos até hoje (ou até ontem, se hoje ainda não foi jogado).
+  let streak = 0;
+  for (let n = p.daily.includes(iso(day)) ? day : day - 1; n >= 1; n--) {
+    if (!p.daily.includes(iso(n))) break;
+    streak++;
+  }
   return (
     <>
       <div className="page-heading">
@@ -408,19 +451,29 @@ export function Daily() {
           ))}
           {Array.from({ length: days }, (_, i) => {
             const n = i + 1;
-            const completed = p.daily.includes(
-              `${year}-${String(month).padStart(2, "0")}-${String(n).padStart(2, "0")}`,
-            );
+            const completed = p.daily.includes(iso(n));
             return (
               <span
-                className={`${n === day ? "today" : ""} ${completed ? "done" : ""}`}
+                className={`${n === day ? "today" : ""} ${completed ? "done" : ""} ${n > day ? "future" : ""}`}
                 key={n}
+                aria-label={`Dia ${n}: ${completed ? "concluído" : n === day ? "disponível hoje" : n > day ? "ainda indisponível" : "não concluído"}`}
               >
                 {completed ? <Check size={20} /> : n}
               </span>
             );
           })}
         </div>
+        <ul className="calendar-legend" aria-hidden="true">
+          <li>
+            <Check size={14} /> concluído
+          </li>
+          <li>
+            <i className="dot today" /> hoje
+          </li>
+          <li>
+            <i className="dot future" /> indisponível
+          </li>
+        </ul>
         <Link className="button primary" to="/play/daily">
           {p.daily.includes(date)
             ? "Revisitar desafio"
@@ -434,8 +487,10 @@ export function Daily() {
       <div className="notice">
         <Sparkles />
         <p>
-          {p.daily.length} desafios concluídos. O catálogo inicial alterna entre
-          as três cruzadinhas da primeira expedição.
+          {p.daily.length}{" "}
+          {p.daily.length === 1 ? "desafio concluído" : "desafios concluídos"}
+          {streak > 1 ? ` · ${streak} dias seguidos` : ""}. Um novo enigma chega
+          todo dia; perder um dia não tira nada do que você ganhou.
         </p>
       </div>
     </>
@@ -449,6 +504,7 @@ export function Profile() {
         <span className="eyebrow">CADA EXPLORADOR TEM UMA HISTÓRIA</span>
         <h1>Seu perfil</h1>
       </div>
+      <ProfileStats />
       <section className="profile-card">
         <div className="avatar">
           <OpponentAvatar opponent={avatarOf(p.avatar)} size={76} />
@@ -603,5 +659,38 @@ export function Profile() {
         </p>
       </section>
     </>
+  );
+}
+/** Resumo do progresso do jogador: fases, estrelas, duelos e desafios do dia. */
+function ProfileStats() {
+  const p = usePlayer((s) => s.player);
+  const results = Object.values(p.duels);
+  const wins = results.filter((r) => r === "win").length;
+  const draws = results.filter((r) => r === "draw").length;
+  const losses = results.filter((r) => r === "loss").length;
+  const stars = Object.values(p.stars).reduce((a, b) => a + b, 0);
+  const done = Object.keys(p.stars).length;
+  const items: [string, string][] = [
+    ["Fases", `${done}/${levels.length}`],
+    ["Estrelas", `${stars}/${levels.length * 3}`],
+    ["Vitórias", String(wins)],
+    ["Empates", String(draws)],
+    ["Derrotas", String(losses)],
+    ["Desafios do dia", String(p.daily.length)],
+  ];
+  return (
+    <section className="profile-stats" aria-label="Suas conquistas">
+      <h2>
+        <Trophy size={20} aria-hidden="true" /> Suas conquistas
+      </h2>
+      <dl>
+        {items.map(([label, value]) => (
+          <div key={label}>
+            <dt>{label}</dt>
+            <dd>{value}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
   );
 }

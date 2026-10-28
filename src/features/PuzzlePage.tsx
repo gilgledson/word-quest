@@ -4,7 +4,7 @@ import { useLetterDrag } from "../hooks/useLetterDrag";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCw } from "lucide-react";
-import { levels } from "../data/catalog";
+import { levels, maps, mapOf, worldLevels } from "../data/catalog";
 import {
   PuzzleValidator,
   economy,
@@ -21,7 +21,12 @@ import { ResultPopup } from "./ResultPopup";
 import { VersusPanel } from "../components/VersusPanel";
 import { useOpponentMood } from "../animations/hooks/useOpponentMood";
 import { avatarOf } from "../game/avatars";
-import { opponentOfSession, shortName } from "../game/opponents";
+import {
+  OPPONENT_BY_LEVEL,
+  opponentById,
+  opponentOfSession,
+  shortName,
+} from "../game/opponents";
 import { useAnimationPrefs } from "../animations/hooks/useAnimationPrefs";
 import { useGameAnimations } from "../animations/hooks/useGameAnimations";
 import { FxLayer } from "../animations/components/FxLayer";
@@ -405,6 +410,24 @@ function Duel() {
   const tutorial =
     !player.tutorialDone && !daily && !casual && puzzle.number === 1;
   const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
+  // Vitória na campanha: progresso do mundo, rival seguinte e, se for o caso, mundo novo.
+  const campaignWin = !daily && !casual && winner === "win";
+  const world = mapOf(puzzle.world);
+  const worldList = worldLevels(world.id);
+  const worldDone = worldList.filter((l) => player.stars[l.id]).length;
+  const nextWorld = maps[maps.indexOf(world) + 1];
+  const progress = campaignWin
+    ? {
+        world: world.nome,
+        done: worldDone,
+        total: worldList.length,
+        stars: worldList.reduce((n, l) => n + (player.stars[l.id] ?? 0), 0),
+      }
+    : undefined;
+  const unlocked =
+    campaignWin && nextWorld && worldDone === worldList.length
+      ? nextWorld.nome
+      : undefined;
   const nextTo =
     !daily && !casual && winner === "win" && puzzle.number < levels.length
       ? `/play/${levels[puzzle.number].id}`
@@ -598,6 +621,13 @@ function Duel() {
               : 0
           }
           nextTo={nextTo}
+          nextRival={
+            nextTo
+              ? opponentById(OPPONENT_BY_LEVEL[puzzle.number + 1])?.name
+              : undefined
+          }
+          progress={progress}
+          unlocked={unlocked}
           enabled={prefs.enabled}
           onClose={() => setResultOpen(false)}
         />

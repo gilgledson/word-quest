@@ -51,11 +51,12 @@ export function Layout() {
   const home = pathname === "/";
   const playing = pathname.startsWith("/play/");
   const map = pathname.startsWith("/map");
+  const secondary = !home && !playing && !map;
   return (
     <div
-      className={`app ${home ? "app-home" : ""} ${playing ? "app-playing" : ""} ${map ? "app-map" : ""}`}
+      className={`app ${home ? "app-home" : ""} ${playing ? "app-playing" : ""} ${map ? "app-map" : ""} ${secondary ? "app-secondary" : ""}`}
     >
-      {(home || playing) && (
+      {(home || playing || secondary) && (
         <div className="home-landscape" aria-hidden="true">
           <Scenery />
         </div>

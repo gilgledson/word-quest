@@ -63,7 +63,7 @@ describe("Navegação entre os mundos", () => {
     expect(
       screen.queryByRole("link", { name: /Deserto dos Mistérios/ }),
     ).toBeNull();
-    expect(screen.getByText("Vença este mundo")).toBeInTheDocument();
+    expect(screen.getByText(/Faltam 5 fases/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole("link", { name: /Vila das Palavras/ }));
     expect(where()).toBe("/map");
   });

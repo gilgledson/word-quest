@@ -20,6 +20,12 @@ interface Props {
   stars: number;
   /** Rota da próxima fase, quando há. */
   nextTo?: string;
+  /** Nome do oponente da próxima fase. */
+  nextRival?: string;
+  /** Progresso do mundo e das estrelas (vitória na campanha). */
+  progress?: { world: string; done: number; total: number; stars: number };
+  /** Nome do mundo que acabou de ser desbloqueado, se foi o caso. */
+  unlocked?: string;
   enabled: boolean;
   onClose: () => void;
 }
@@ -53,6 +59,9 @@ export function ResultPopup({
   coins,
   stars,
   nextTo,
+  nextRival,
+  progress,
+  unlocked,
   enabled,
   onClose,
 }: Props) {
@@ -117,6 +126,34 @@ export function ResultPopup({
         {coins > 0 && <p className="result-coins">+{coins} moedas</p>}
         {stars > 0 && (
           <VictoryStars count={stars} enabled={enabled} decorative />
+        )}
+        {progress && (
+          <div className="result-progress">
+            <span>
+              {progress.world} · {progress.done}/{progress.total} fases · ★{" "}
+              {progress.stars}
+            </span>
+            <span
+              className="bar"
+              role="progressbar"
+              aria-label={`Progresso em ${progress.world}`}
+              aria-valuenow={progress.done}
+              aria-valuemin={0}
+              aria-valuemax={progress.total}
+            >
+              <i
+                style={{ width: `${(progress.done / progress.total) * 100}%` }}
+              />
+            </span>
+          </div>
+        )}
+        {unlocked && (
+          <p className="result-unlocked" role="status">
+            Novo mundo aberto: <b>{unlocked}</b>!
+          </p>
+        )}
+        {nextTo && nextRival && (
+          <p className="result-next">Próximo rival: {nextRival}</p>
         )}
         <div className="result-actions">
           {nextTo && (
