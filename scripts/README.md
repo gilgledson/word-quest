@@ -110,3 +110,12 @@ O gerador usa busca em feixe (`--beam`, `--branch`; `--shortw` favorece palavras
 que surgem do encontro de letras valem se forem do tema e ganham a própria casa de pista. Sem encostar palavras
 paralelas, o teto medido é de 11 a 12 palavras por grade 8×10; mais que isso exigiria trechos densos, que pedem
 muitas palavras de 2 letras do tema. Catálogo atual: 3.706 palavras (322 a 365 por tema).
+
+## Ícone e splash (`build-icons.mjs`)
+
+`node scripts/build-icons.mjs` gera o ícone do app e a splash a partir da arte de `public/art` (livro azul do
+sprite, logo e vila), usando o Chromium do Playwright: mipmaps do Android (legado, redondo e primeiro plano
+adaptativo), `drawable*/splash.jpg` (retrato e paisagem, só Android 11 ou anterior) e os PNGs do PWA em
+`public/`. O fundo do ícone adaptativo é `ic_launcher_background` (dourado); no Android 12+ o sistema mostra o
+ícone sobre esse fundo (`windowSplashScreenBackground`) e a tela "Preparando sua aventura…" do app continua o
+mesmo dourado.

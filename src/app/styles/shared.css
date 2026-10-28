@@ -883,8 +883,13 @@ footer {
 .loading {
   height: 100dvh;
   display: grid;
-  place-items: center;
-  color: #3689f5;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  /* Continua a splash do app (fundo dourado com o livro), sem um "pulo" de cor. */
+  background: radial-gradient(circle at 50% 30%, #fff3bd, #ffc83d 68%, #f5a300);
+  color: #5b3a00;
+  font-weight: 800;
 }
 .error {
   background: #ffe5df;

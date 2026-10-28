@@ -52,7 +52,13 @@ function App() {
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
-  if (!ready) return <div className="loading">Preparando sua aventura…</div>;
+  if (!ready)
+    return (
+      <div className="loading">
+        <span className="game-art art-book" aria-hidden="true" />
+        Preparando sua aventura…
+      </div>
+    );
   return (
     <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
       <BrowserRouter>
