@@ -58,7 +58,11 @@ export function Home() {
         </h1>
         <p>Desvende pistas. Descubra caminhos. Viva a aventura.</p>
       </section>
-      <section className="adventure-card">
+      <Link
+        className="adventure-card"
+        to={mapOf(next.world).path}
+        aria-label="Ver o mapa da Vila das Palavras"
+      >
         <div className="world-preview" aria-hidden="true">
           <Scenery />
         </div>
@@ -93,45 +97,10 @@ export function Home() {
           </strong>
           <span className="game-art art-chest" aria-hidden="true" />
         </div>
-      </section>
+      </Link>
       <Link className="button primary continue-button" to={`/play/${next.id}`}>
         Continuar aventura <ArrowRight size={24} />
       </Link>
-      <div className="home-grid">
-        <Link to="/daily" className="daily-card">
-          <span className="game-art art-calendar" aria-hidden="true" />
-          <span className="eyebrow">UM NOVO ENIGMA A CADA DIA</span>
-          <h2>Desafio do Dia</h2>
-          <p>
-            Uma pausa para a mente.
-            <br />
-            Uma recompensa para a jornada.
-          </p>
-          <span className="text-link">
-            {p.daily.includes(today()) ? "Concluído hoje" : "Aceitar desafio"}{" "}
-            <ArrowRight size={17} />
-          </span>
-          <span className="reward-tag">
-            <Sparkles size={15} /> +70 moedas
-          </span>
-        </Link>
-        <Link to={mapOf(next.world).path} className="map-card">
-          <span className="game-art art-map" aria-hidden="true" />
-          <span className="eyebrow">CADA PASSO CONTA</span>
-          <h2>Explore o mapa</h2>
-          <p>
-            {Object.keys(p.stars).length} de {levels.length} fases concluídas.
-            <br />
-            Seu próximo destino espera.
-          </p>
-          <span className="text-link">
-            Ver minha jornada <ArrowRight size={17} />
-          </span>
-          <div className="mini-path">
-            ● ┄┄ ● ┄┄ <Flag size={24} />
-          </div>
-        </Link>
-      </div>
       <div className="gentle-note">
         <Compass size={23} />
         <div>

@@ -5,7 +5,7 @@ import { Home, Profile } from "../features/pages";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 afterEach(cleanup);
-it("oferece continuar a primeira fase e acessar o diário", () => {
+it("oferece continuar a primeira fase e abrir o mapa pelo cartão da jornada", () => {
   render(
     <MemoryRouter>
       <Home />
@@ -14,10 +14,12 @@ it("oferece continuar a primeira fase e acessar o diário", () => {
   expect(
     screen.getByRole("link", { name: /Continuar aventura/ }),
   ).toHaveAttribute("href", "/play/vila-1");
-  expect(screen.getByRole("link", { name: /Desafio do Dia/ })).toHaveAttribute(
+  expect(screen.getByRole("link", { name: /Ver o mapa/ })).toHaveAttribute(
     "href",
-    "/daily",
+    "/map",
   );
+  // Os cards soltos de Desafio do Dia e mapa saíram da home (o Diário fica no menu).
+  expect(screen.queryByRole("link", { name: /Desafio do Dia/ })).toBeNull();
 });
 it("a fase não tem escolha de oponente: o link da campanha é só o da fase", () => {
   usePlayer.setState({
