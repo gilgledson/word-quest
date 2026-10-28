@@ -337,3 +337,72 @@
   background-position: 100% 50%;
   background-repeat: no-repeat;
 }
+/* Home refinada: subtítulo sem placa, cartões leves, botão sem moldura dourada, menu translúcido. */
+.app-home .welcome p {
+  display: block;
+  max-width: 72%;
+  text-wrap: balance;
+  margin-top: 10px;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  transform: none;
+  color: #fff;
+  font-size: clamp(12px, 3.5vw, 16px);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-shadow:
+    0 1px 3px #12365acc,
+    0 0 10px #12365a66;
+}
+.app-home .adventure-card {
+  border: 2px solid #fffdf4;
+  border-radius: 24px;
+  box-shadow: 0 8px 22px #1b3a5c3a;
+}
+.app-home .adventure-action .eyebrow {
+  display: none;
+}
+.app-home .adventure-action > div {
+  justify-content: flex-end;
+}
+.app-home .adventure-action strong {
+  color: #3b4a5c;
+}
+.app-home .journey-progress {
+  border-color: #cfdcea;
+  background: #e2ebf4;
+}
+.app-home .continue-button {
+  outline: none;
+  border: 2px solid #a9dcff;
+  box-shadow:
+    0 4px 0 #0f58b8,
+    0 10px 18px #0b3a8a40;
+}
+.app-home .daily-card,
+.app-home .map-card {
+  min-height: 84px;
+  border: 2px solid #ffffffb3;
+  box-shadow: 0 6px 16px #1b3a5c2e;
+}
+.app-home .reward-tag {
+  display: none;
+}
+.app-home .home-grid .text-link {
+  justify-content: flex-start;
+  white-space: nowrap;
+}
+.app-home > .bottom-nav {
+  background: #ffffffe0;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid #ffffffb3;
+  box-shadow: 0 6px 18px #1b3a5c33;
+}
+.app-home .bottom-nav a.active {
+  background: #dcebff;
+  box-shadow: none;
+}

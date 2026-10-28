@@ -5,7 +5,6 @@ import {
   Shapes,
   CalendarDays,
   UserRound,
-  Coins,
   Star,
   Settings,
   ArrowLeft,
@@ -14,6 +13,24 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { usePlayer } from "../stores/player";
+/** Moeda dourada do jogo (substitui o ícone de linha para combinar com a arte). */
+function CoinIcon() {
+  return (
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+      <circle cx="12" cy="12" r="10.5" fill="#f0a500" />
+      <circle cx="12" cy="11.4" r="10" fill="#ffd34e" />
+      <circle
+        cx="12"
+        cy="11.4"
+        r="7.2"
+        fill="none"
+        stroke="#e29a00"
+        strokeWidth="1.6"
+      />
+      <path d="M12.6 6.8h-1.7l-1.7 2.2v1.4h2.3v3.3h1.1z" fill="#c77d00" />
+    </svg>
+  );
+}
 export function Wallet() {
   const p = usePlayer((s) => s.player);
   return (
@@ -23,7 +40,7 @@ export function Wallet() {
         {Object.values(p.stars).reduce((a, b) => a + b, 0)}
       </span>
       <span>
-        <Coins size={18} />
+        <CoinIcon />
         {p.coins}
       </span>
     </div>
