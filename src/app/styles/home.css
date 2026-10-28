@@ -99,7 +99,7 @@
 /* The progress fill selector previously painted over the chest sprite. */
 .app-home .journey-progress > .art-chest {
   background-color: transparent;
-  background-image: url("/art/game-icons-v1.png");
+  background-image: url("/art/game-icons-v1.webp");
   border-radius: 0;
   width: 31px;
   height: 41px;

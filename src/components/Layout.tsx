@@ -65,7 +65,7 @@ export function Layout() {
           <span className="game-art art-book" aria-hidden="true" />
           <img
             className="brand-wordmark"
-            src="/art/wordquest-logo-v1.png"
+            src="/art/wordquest-logo-v1.webp"
             alt="WordQuest — A Jornada das Palavras"
             width="210"
             height="70"

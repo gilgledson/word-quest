@@ -137,7 +137,7 @@ describe("OpponentPortrait", () => {
     const p = screen.getByTestId("opponent-portrait");
     expect(p).toHaveClass("mood-angry", "animated");
     expect(p.querySelector("img")!.getAttribute("src")).toBe(
-      "/art/opponents/polvo-angry.png",
+      "/art/opponents/polvo-angry.webp",
     );
     expect(p.querySelector(".portrait-bubble")).toBeInTheDocument();
   });
@@ -154,7 +154,7 @@ describe("OpponentPortrait", () => {
       .getByTestId("opponent-portrait")
       .querySelector("img") as HTMLImageElement;
     fireEvent.error(img);
-    expect(img.src).toContain("polvo-neutral.png");
+    expect(img.src).toContain("polvo-neutral.webp");
   });
 });
 

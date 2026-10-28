@@ -4,7 +4,7 @@ import type { BotLevel, BotStyle } from "./crossword-engine";
  * Elenco de oponentes. Cada fase da campanha tem um oponente fixo (`OPPONENT_BY_LEVEL`), com um
  * chefe na última fase de cada mundo; o modo casual e o Desafio do Dia sorteiam. O nível define
  * a força geral (`OPPONENT_LEVELS`) e o estilo, o jeito de jogar (`OPPONENT_STYLES`). Cada
- * personagem tem um rosto por humor em public/art/opponents/<id>-<humor>.png (folhas geradas no
+ * personagem tem um rosto por humor em public/art/opponents/<id>-<humor>.webp (folhas geradas no
  * Leonardo.ai e cortadas em seis expressões).
  */
 export interface OpponentProfile {
@@ -232,4 +232,4 @@ export const randomOpponent = (): OpponentProfile =>
   OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
 
 export const opponentFace = (id: string, mood: Mood = "neutral") =>
-  `/art/opponents/${id}-${mood}.png`;
+  `/art/opponents/${id}-${mood}.webp`;

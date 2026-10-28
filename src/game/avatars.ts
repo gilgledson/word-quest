@@ -1,5 +1,5 @@
 /**
- * Avatares do jogador. Cada um tem os seis humores em public/art/opponents/<id>-<humor>.png
+ * Avatares do jogador. Cada um tem os seis humores em public/art/opponents/<id>-<humor>.webp
  * (o mesmo formato dos rivais), então o rosto reage igual na partida.
  */
 export interface PlayerAvatar {

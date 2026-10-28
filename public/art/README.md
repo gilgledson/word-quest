@@ -10,9 +10,9 @@ Gerada com a ferramenta integrada image_gen, usando a imagem aprovada pelo autor
 
 ## Integração
 
-- village-approved-v1.png: cenário da Home, miniatura do mundo e mapa.
-- game-icons-v1.png: sprites de livro, calendário, mapa e baú.
-- wordquest-logo-v1.png: marca no cabeçalho.
+- village-approved-v1.webp: cenário da Home, miniatura do mundo e mapa.
+- game-icons-v1.webp: sprites de livro, calendário, mapa e baú.
+- wordquest-logo-v1.webp: marca no cabeçalho.
 
 As imagens foram inspecionadas individualmente. Não se trata de reprodução pixel a pixel do mockup completo: textos dinâmicos, cartões e controles continuam componentes HTML responsivos. A campanha disponível continua com 3 fases reais, por isso o indicador não usa o 0/30 ilustrativo do mockup.
 

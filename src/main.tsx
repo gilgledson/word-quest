@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { useEffect } from "react";
@@ -16,7 +16,10 @@ import {
   Daily,
   Profile,
 } from "./features/pages";
-import { PuzzlePage } from "./features/PuzzlePage";
+// A partida (motor, animações, confete) só é baixada ao abrir uma fase.
+const PuzzlePage = lazy(() =>
+  import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
+);
 import { usePlayer } from "./stores/player";
 import "./app/styles.css";
 import "./animations/animations.css";
@@ -38,7 +41,11 @@ for (const type of ["pointerdown", "touchend", "click", "keydown"])
 keepScreenOn();
 function GameRoute() {
   const { pathname, search } = useLocation();
-  return <PuzzlePage key={pathname + search} />;
+  return (
+    <Suspense fallback={<div className="loading">Abrindo a fase…</div>}>
+      <PuzzlePage key={pathname + search} />
+    </Suspense>
+  );
 }
 function App() {
   const { ready, hydrate, player } = usePlayer();
