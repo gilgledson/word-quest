@@ -8,7 +8,7 @@ import {
 import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
-import { Link, Navigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useParams, useSearchParams } from "react-router-dom";
 import { ArrowLeft, RotateCw } from "lucide-react";
 import {
   levels,
@@ -34,7 +34,6 @@ import { playSfx, type EffectName } from "../services/sound";
 import { celebrate } from "../services/confetti";
 import { buzz } from "../services/haptics";
 import { ResultPopup } from "./ResultPopup";
-import { OpponentPortrait } from "../components/OpponentPortrait";
 import { VersusPanel } from "../components/VersusPanel";
 import { useOpponentMood } from "../animations/hooks/useOpponentMood";
 import { avatarOf } from "../game/avatars";

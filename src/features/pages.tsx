@@ -25,7 +25,6 @@ import { usePlayer } from "../stores/player";
 import {
   levels,
   today,
-  worlds,
   maps,
   mapOf,
   worldLevels,
@@ -38,7 +37,6 @@ import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
 import { OpponentAvatar } from "../components/OpponentAvatar";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
-import type { BotLevel } from "../game/crossword-engine";
 export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
