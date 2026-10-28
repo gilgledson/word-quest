@@ -2,6 +2,7 @@ node_modules/
 dist/
 *.local
 coverage/
+.DS_Store
 *.tsbuildinfo
 
 # Lista derivada do VERO (LGPLv3/MPL): gerada localmente por scripts/build-dictionary.mjs
