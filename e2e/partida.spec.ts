@@ -116,6 +116,43 @@ test("arrasta uma peça do banco até uma casa da grade", async ({ page }) => {
   await expect(bank(page).getByRole("button")).toHaveCount(4);
 });
 
+test("tutorial da fase 1 não muda o tamanho da grade e some depois do rival", async ({
+  page,
+}) => {
+  const cols = () =>
+    page.evaluate(
+      () =>
+        getComputedStyle(
+          document.querySelector(".board")!,
+        ).gridTemplateColumns.split(" ").length,
+    );
+  const height = () =>
+    page.evaluate(() => document.querySelector(".board-area")!.clientHeight);
+  const tip = page.getByRole("note");
+  await expect(tip).toContainText("1/3");
+  const h0 = await height();
+  expect(await cols()).toBe(8);
+  await bank(page).getByRole("button").first().click();
+  await expect(tip).toContainText("2/3");
+  expect(await height()).toBe(h0);
+  await page.getByRole("button", { name: "Confirmar" }).click();
+  await expect(page.getByText("◀ sua vez")).toBeVisible({ timeout: 15_000 });
+  await expect(tip).toHaveCount(0);
+  // Sem a dica a grade continua do mesmo tamanho e em pé.
+  expect(await height()).toBe(h0);
+  expect(await cols()).toBe(8);
+});
+
+test("tocar numa casa define onde a próxima peça entra", async ({ page }) => {
+  const { word, letters } = await pickWord(page);
+  await clue(page, word.clue).first().click();
+  const third = page.locator(`.cell.letter[data-words~="${word.id}"]`).nth(2);
+  await third.click();
+  await tile(page, letters[0]).first().click();
+  await expect(third).toHaveText(letters[0]);
+  await expect(third).toHaveClass(/pending/);
+});
+
 test("troca de letras abre e fecha; girar o tabuleiro mantém a grade na tela", async ({
   page,
 }) => {

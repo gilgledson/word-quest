@@ -641,3 +641,97 @@
   translate: -50% 0;
   box-shadow: 0 2px 0 #24365740;
 }
+/* Sprint 2: estados da grade que não dependem só de cor. */
+.app-playing .letter.pending {
+  outline: 2px dashed #8a5a00;
+  outline-offset: -4px;
+}
+.app-playing .letter.active::before {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 3px;
+  height: 3px;
+  border-radius: 2px;
+  background: #2f6fc2;
+  pointer-events: none;
+}
+.app-playing .letter.correct i {
+  width: 7px;
+  height: 7px;
+  bottom: 3px;
+  right: 3px;
+  background: currentColor;
+}
+.app-playing .letter.owner-ai i {
+  border-radius: 1px;
+  rotate: 45deg;
+}
+.app-playing .letter.correct:not(.owner-p):not(.owner-ai) i {
+  background: transparent;
+  border: 2px solid currentColor;
+}
+/* Tutorial da fase 1. */
+.message-slot {
+  position: relative;
+}
+/* A dica cobre a linha de mensagem (sem mudar a altura do painel, para a grade não girar). */
+.tutorial-tip {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 6px;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff1b8;
+  border: 1px solid #e2a516;
+  color: #4a3000;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 15px;
+}
+.tutorial-tip.quiet {
+  display: none;
+}
+.tutorial-tip b {
+  flex-shrink: 0;
+  padding: 0 6px;
+  border-radius: 8px;
+  background: #e2a516;
+  color: #fff;
+}
+.tutorial-tip span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tutorial-tip button {
+  flex-shrink: 0;
+  padding: 8px 6px;
+  margin: -8px -2px;
+  background: transparent;
+  color: #17529a;
+  font-size: 11px;
+  font-weight: 800;
+  text-decoration: underline;
+}
+@keyframes tutorial-glow {
+  50% {
+    box-shadow: 0 0 0 5px #ffd45acc;
+  }
+}
+[data-tutorial="1"] .letter-bank button,
+[data-tutorial="2"] .confirm-button {
+  outline: 3px solid #ffb400;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-tutorial="1"] .letter-bank button,
+  [data-tutorial="2"] .confirm-button {
+    animation: tutorial-glow 1.2s ease-in-out infinite;
+  }
+}

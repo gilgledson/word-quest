@@ -32,6 +32,7 @@ import { Board } from "./puzzle/Board";
 import { ScoreFloats } from "./puzzle/ScoreFloats";
 import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
+import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
@@ -74,6 +75,8 @@ function Duel() {
       puzzle?.words.find((w) => session && !PuzzleValidator.correct(w, session))
         ?.id ?? "",
   );
+  // Casa tocada na grade: a próxima peça entra nela (e não na primeira vazia da palavra).
+  const [target, setTarget] = useState<string | null>(null);
   const [message, setMessage] = useState(HINT_MESSAGE);
   const [swapping, setSwapping] = useState<string[] | null>(null);
   const [boardMode, setBoardMode] = useState<BoardMode>(readMode);
@@ -170,7 +173,9 @@ function Duel() {
   const active = word ? positions(word) : [];
   const solved = engine.solved(session);
   const complete = engine.complete(session);
-  const current = active.find((c) => !session.letters[c.key]);
+  const current =
+    active.find((c) => c.key === target && !session.letters[c.key]) ??
+    active.find((c) => !session.letters[c.key]);
   const pending = (cell: string) =>
     !!session.letters[cell] && !session.locked.includes(cell);
   const hasPending = session.history.some(pending);
@@ -226,9 +231,10 @@ function Duel() {
     sfx("error");
     return false;
   };
-  const choose = (wordId: string) => {
+  const choose = (wordId: string, cell?: string) => {
     const w = puzzle.words.find((w) => w.id === wordId)!;
     setSelected(wordId);
+    setTarget(cell ?? null);
     setMessage(
       engine.solved(session).some((s) => s.id === wordId)
         ? "Palavra descoberta! Escolha outra pista."
@@ -246,6 +252,7 @@ function Duel() {
     const next = engine.insert(session, word.id, tileId, cellKey);
     if (next === session) return false;
     setMessage("Confirme com ✓ quando terminar a jogada.");
+    setTarget(null);
     commit(next);
     sfx("place");
     return true;
@@ -278,6 +285,7 @@ function Duel() {
       return;
     }
     setSelected(w.id);
+    setTarget(null);
     setMessage(
       pending(cell)
         ? "Letra trocada. Confirme com ✓ quando terminar a jogada."
@@ -289,6 +297,7 @@ function Duel() {
   const unplace = (cell: string) => {
     const next = engine.remove(session, word, cell);
     if (!next) return;
+    setTarget(null);
     commit(next);
     sfx("remove");
     setMessage("Letra devolvida ao banco.");
@@ -296,6 +305,7 @@ function Duel() {
   const confirm = () => {
     if (!mine || complete) return;
     const r = engine.confirm(session, "p");
+    setTarget(null);
     setPulse((n) => n + 1);
     fx.emit(
       r.wrongCells.map((cellId) => ({
@@ -391,12 +401,20 @@ function Duel() {
       : session.scores.p > session.scores.ai
         ? "win"
         : "loss";
+  // Tutorial da fase 1 (só na campanha, para quem ainda não o concluiu).
+  const tutorial =
+    !player.tutorialDone && !daily && !casual && puzzle.number === 1;
+  const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
   const nextTo =
     !daily && !casual && winner === "win" && puzzle.number < levels.length
       ? `/play/${levels[puzzle.number].id}`
       : undefined;
   return (
-    <div className="puzzle-page" ref={setFxHost}>
+    <div
+      className="puzzle-page"
+      ref={setFxHost}
+      data-tutorial={tutorial && !complete ? tutorialStep : undefined}
+    >
       <section className="puzzle-status" aria-label="Progresso da fase">
         <div className="puzzle-top">
           <Link className="round-button" aria-label="Voltar" to={backTo}>
@@ -509,7 +527,16 @@ function Duel() {
                 : (word?.clue ?? "Escolha por onde começar")}
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
-            <p aria-live="polite">{message}</p>
+            <div className="message-slot">
+              <p aria-live="polite">{message}</p>
+              {tutorial && (
+                <TutorialTip
+                  step={tutorialStep}
+                  botTurn={botTurn}
+                  onDone={() => update((p) => ({ ...p, tutorialDone: true }))}
+                />
+              )}
+            </div>
           </section>
           <TurnControls
             rack={rack}

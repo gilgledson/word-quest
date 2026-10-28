@@ -27,7 +27,8 @@ interface Props {
   flash: string[];
   placedCells: Set<string>;
   revealedCells: Set<string>;
-  onChoose: (wordId: string) => void;
+  /** Escolhe a palavra; `cell` é a casa tocada (a próxima peça entra nela). */
+  onChoose: (wordId: string, cell?: string) => void;
   /** Devolve ao banco a letra pendente da casa. */
   onUnplace: (cell: string) => void;
 }
@@ -138,6 +139,7 @@ export function Board({
                 else
                   onChoose(
                     (belongs.find((w) => w.id !== selected) ?? belongs[0]).id,
+                    ck,
                   );
               }}
             >

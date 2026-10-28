@@ -22,6 +22,8 @@ export interface Player {
   /** Vibração ao jogar (padrão: ligada). */
   vibration: boolean;
   animations: boolean;
+  /** O tutorial da fase 1 já foi concluído ou pulado. */
+  tutorialDone: boolean;
 }
 export const initialPlayer: Player = {
   name: "Explorador",
@@ -38,6 +40,7 @@ export const initialPlayer: Player = {
   music: true,
   vibration: true,
   animations: true,
+  tutorialDone: false,
 };
 export interface PlayerRepository {
   load(): Promise<Player | undefined>;

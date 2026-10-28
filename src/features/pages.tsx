@@ -590,6 +590,14 @@ export function Profile() {
             }
           />
         </label>
+        <button
+          className="test-sound"
+          disabled={!p.tutorialDone}
+          onClick={() => update((s) => ({ ...s, tutorialDone: false }))}
+        >
+          <Sparkles size={18} />{" "}
+          {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo na Fase 1"}
+        </button>
         <p className="caption">
           Seu progresso fica neste navegador. Não é necessário criar uma conta.
         </p>
