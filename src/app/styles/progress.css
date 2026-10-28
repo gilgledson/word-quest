@@ -54,3 +54,6 @@
   font-weight: 700;
   color: #5f6f52;
 }
+.result-actions .text-link {
+  justify-self: center;
+}
