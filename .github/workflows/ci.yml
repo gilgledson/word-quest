@@ -25,3 +25,13 @@ jobs:
         run: npm test
       - name: Build
         run: npm run build
+      - name: Instalar o navegador do Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Testes de ponta a ponta (360×800)
+        run: npm run test:e2e
+      - name: Relatório do Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
