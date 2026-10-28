@@ -14,7 +14,8 @@
     "react-hooks/exhaustive-deps": "warn",
     "no-unused-vars": "warn",
     "react/set-state-in-effect": "off",
-    "react/purity": "off"
+    "react/purity": "off",
+    "react/preserve-manual-memoization": "off"
   },
   "ignorePatterns": [
     "dist",

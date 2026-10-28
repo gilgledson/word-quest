@@ -1,31 +1,15 @@
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
-import { Link, useParams, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCw } from "lucide-react";
+import { levels } from "../data/catalog";
 import {
-  levels,
-  casualPuzzles,
-  casualThemes,
-  dailyPuzzle,
-  mapOf,
-  today,
-} from "../data/catalog";
-import {
-  PuzzleEngine,
   PuzzleValidator,
   economy,
   normalize,
   positions,
-  type BotLevel,
-  type PuzzleWord,
   type Session,
 } from "../game/crossword-engine";
 import { OPPONENT_LEVELS, opponentTurn } from "../game/opponent";
@@ -37,12 +21,14 @@ import { ResultPopup } from "./ResultPopup";
 import { VersusPanel } from "../components/VersusPanel";
 import { useOpponentMood } from "../animations/hooks/useOpponentMood";
 import { avatarOf } from "../game/avatars";
-import { opponentFor, opponentOfSession, shortName } from "../game/opponents";
+import { opponentOfSession, shortName } from "../game/opponents";
 import { useAnimationPrefs } from "../animations/hooks/useAnimationPrefs";
 import { useGameAnimations } from "../animations/hooks/useGameAnimations";
 import { FxLayer } from "../animations/components/FxLayer";
 import { TurnThinkingEffect } from "../animations/components/TurnThinkingEffect";
 import { measureElement } from "../animations/utils/animationGeometry";
+import { useDuelSetup } from "./puzzle/useDuelSetup";
+import { Board } from "./puzzle/Board";
 import { ScoreFloats } from "./puzzle/ScoreFloats";
 import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
@@ -64,59 +50,23 @@ export function PuzzlePage() {
   return <Duel />;
 }
 function Duel() {
-  const { id } = useParams();
-  const [search] = useSearchParams();
   const { player, update } = usePlayer();
   const sfx = (name: EffectName, count?: number) => {
     playSfx(player.sound, name, count);
     buzz(player.vibration, name);
   };
-  const daily = id === "daily";
-  const date = today();
-  const casual = !daily && !!id?.startsWith("casual-");
-  const puzzle = daily
-    ? dailyPuzzle(date)
-    : casual
-      ? casualPuzzles.find((p) => p.id === id)
-      : levels.find((p) => p.id === id);
-  const backTo = daily
-    ? "/daily"
-    : casual
-      ? "/casual"
-      : mapOf(puzzle?.world).path;
-  const theme = casual
-    ? casualThemes.find((t) => t.puzzles.some((p) => p.id === puzzle?.id))
-    : undefined;
-  // Quem enfrenta: a fase fixa o oponente (chefe na última do mundo); casual e diário sorteiam.
-  // O parâmetro `vs` da URL força um oponente (ou nível); o app nunca o gera na campanha.
-  const assigned = puzzle
-    ? opponentFor({
-        puzzleId: puzzle.id,
-        number: puzzle.number,
-        mode: daily ? "daily" : casual ? "casual" : "campaign",
-        date,
-        override: search.get("vs"),
-      })
-    : undefined;
-  const botLevel: BotLevel = assigned?.level ?? "medio";
-  const engine = useMemo(
-    () => (puzzle ? new PuzzleEngine(puzzle) : undefined),
-    [puzzle],
-  );
-  const sessionKey = daily
-    ? `daily:${date}:${botLevel}`
-    : `vs:${puzzle?.id}:${botLevel}`;
-  const stored = player.sessions[sessionKey];
-
-  // Sessions saved before the duel/confirm flow existed cannot be resumed.
-  const session: Session | undefined = engine
-    ? stored?.owners && stored.botRack && stored.versus
-      ? stored
-      : engine.start(sessionKey, botLevel, {
-          style: assigned?.style,
-          opponent: assigned?.id,
-        })
-    : undefined;
+  const {
+    daily,
+    casual,
+    date,
+    puzzle,
+    backTo,
+    theme,
+    botLevel,
+    engine,
+    sessionKey,
+    session,
+  } = useDuelSetup();
   // Quem joga esta partida: o personagem gravado na sessão (partidas antigas usam o padrão do nível).
   const rival = opponentOfSession(session?.versus);
   const [selected, setSelected] = useState(
@@ -223,8 +173,6 @@ function Duel() {
   const current = active.find((c) => !session.letters[c.key]);
   const pending = (cell: string) =>
     !!session.letters[cell] && !session.locked.includes(cell);
-  const tileOf = (cell: string) =>
-    Object.values(session.tiles).find((t) => t.cell === cell);
   const hasPending = session.history.some(pending);
   const effectCells = (type: "LETTER_PLACED" | "HINT_REVEALED") =>
     new Set(
@@ -437,25 +385,6 @@ function Duel() {
             ? [...sel, tileId]
             : sel,
     );
-  // A quarter turn counter-clockwise: words that ran right now run up, and down becomes right.
-  const arrowGlyph = (arrow: PuzzleWord["arrow"]) =>
-    arrow === "right" ? (grid.rotated ? "↑" : "→") : grid.rotated ? "→" : "↓";
-  const place = (r: number, c: number): CSSProperties | undefined =>
-    grid.rotated ? { gridRow: puzzle.cols - c, gridColumn: r + 1 } : undefined;
-  const clueHalf = (w: PuzzleWord) => (
-    <button
-      key={w.id}
-      className={`clue-half ${selected === w.id ? "selected-clue" : ""}`}
-      onClick={() => choose(w.id)}
-      aria-label={`Pista: ${w.clue}, ${w.direction === "horizontal" ? "horizontal" : "vertical"}`}
-    >
-      {w.icon && (
-        <span className={`game-art art-${w.icon}`} aria-hidden="true" />
-      )}
-      <span>{w.clue}</span>
-      <b>{arrowGlyph(w.arrow)}</b>
-    </button>
-  );
   const winner =
     session.scores.p === session.scores.ai
       ? "draw"
@@ -524,83 +453,22 @@ function Duel() {
       </section>
       <div className="board-card" ref={cardRef}>
         <ScoreFloats floats={floats} />
-        <div className="board-area" ref={grid.ref}>
-          <div
-            className="board"
-            style={
-              {
-                "--cell": `${grid.cell}px`,
-                gridTemplateColumns: `repeat(${grid.rotated ? puzzle.rows : puzzle.cols}, ${grid.cell}px)`,
-                gridTemplateRows: `repeat(${grid.rotated ? puzzle.cols : puzzle.rows}, ${grid.cell}px)`,
-              } as CSSProperties
-            }
-          >
-            {engine.matrix().map((cell) => {
-              const { row: r, col: c, key: ck } = cell;
-              if (cell.kind === "clue") {
-                const halves = [...cell.words].sort(
-                  (a, b) =>
-                    Number(a.arrow === "down") - Number(b.arrow === "down"),
-                );
-                return (
-                  <div
-                    className={`cell clue ${halves.length > 1 ? "double" : ""}`}
-                    key={ck}
-                    style={place(r, c)}
-                  >
-                    {halves.map(clueHalf)}
-                  </div>
-                );
-              }
-              const belongs =
-                cell.kind === "letter"
-                  ? puzzle.words.filter((w) => cell.wordIds.includes(w.id))
-                  : [];
-              if (!belongs.length)
-                return (
-                  <div
-                    className="cell blocked"
-                    key={ck}
-                    style={place(r, c)}
-                    aria-hidden="true"
-                  />
-                );
-              const isActive = active.some((p) => p.key === ck);
-              const locked = session.locked.includes(ck);
-              const owner = session.owners[ck];
-              return (
-                <button
-                  {...(mine && pending(ck)
-                    ? letterDrag.bind(tileOf(ck)?.id ?? "", session.letters[ck])
-                    : {})}
-                  className={`cell letter ${isActive ? "active sweep" : ""} ${current?.key === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
-                  data-cell={ck}
-                  style={
-                    {
-                      ...place(r, c),
-                      "--i": active.findIndex((a) => a.key === ck),
-                    } as CSSProperties
-                  }
-                  data-words={belongs.map((w) => w.id).join(" ")}
-                  key={ck}
-                  aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${session.letters[ck] ?? "vazia"}`}
-                  onClick={(event) => {
-                    if (!letterDrag.clickAllowed(event.detail === 0)) return;
-                    if (mine && pending(ck)) unplace(ck);
-                    else
-                      choose(
-                        (belongs.find((w) => w.id !== selected) ?? belongs[0])
-                          .id,
-                      );
-                  }}
-                >
-                  {session.letters[ck]}
-                  {locked && <i />}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+        <Board
+          puzzle={puzzle}
+          engine={engine}
+          session={session}
+          grid={grid}
+          letterDrag={letterDrag}
+          selected={selected}
+          active={active}
+          currentKey={current?.key}
+          mine={mine}
+          flash={flash}
+          placedCells={placedCells}
+          revealedCells={revealedCells}
+          onChoose={choose}
+          onUnplace={unplace}
+        />
       </div>
       {complete ? (
         <VictoryPanel
