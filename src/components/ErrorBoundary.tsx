@@ -31,7 +31,7 @@ export class ErrorBoundary extends Component<Props, State> {
     if (!this.state.failed) return this.props.children;
     return (
       <div className="error-screen" role="alert">
-        <span className="game-art art-book" aria-hidden="true" />
+        <img className="loading-icon" src="/icon-192.png" alt="" />
         <h1>Ops, algo deu errado</h1>
         <p>Seu progresso está salvo neste dispositivo. Tente de novo.</p>
         <div className="error-actions">

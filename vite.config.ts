@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => ({
         name: "WordQuest — A Jornada das Palavras",
         short_name: "WordQuest",
         theme_color: "#3689f5",
-        background_color: "#fff5de",
+        background_color: "#e6f3fe",
         display: "standalone",
         icons: [
           {

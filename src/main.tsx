@@ -62,7 +62,7 @@ function App() {
   }, [hydrate]);
   const loading = (
     <div className="loading">
-      <span className="game-art art-book" aria-hidden="true" />
+      <img className="loading-icon" src="/icon-192.png" alt="" />
       Preparando sua aventura…
     </div>
   );

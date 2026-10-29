@@ -21,8 +21,8 @@ const ICON =
   fs
     .readFileSync(path.join(root, "scripts/assets/icon-master.webp"))
     .toString("base64");
-const GOLD =
-  "radial-gradient(circle at 50% 30%, #fff3bd, #ffc83d 68%, #f5a300)";
+// Azul bebê chapado do fundo do ícone (medido na arte gerada; o fundo adaptativo do Android usa a mesma cor).
+const GOLD = "#e6f3fe";
 
 const page = (w, h, body, bg = "transparent") =>
   `<body style="margin:0;width:${w}px;height:${h}px;overflow:hidden;position:relative;background:${bg}">${body}</body>`;
@@ -31,12 +31,10 @@ const assets = [];
 const add = (file, w, h, html, transparent = false) =>
   assets.push({ file, w, h, html, transparent });
 
-// --- Ícone: arte gerada (livro dourado num botão azul, peças W e Q, brilhos) em scripts/assets/icon-master.webp.
-/** A arte inteira, quadrada e sem cantos; `k` < 1 a encolhe e esmaece as bordas no fundo dourado. */
+// --- Ícone: arte gerada (livro aberto com W e Q, uma letra em cada página) em scripts/assets/icon-master.webp.
+/** A arte inteira, quadrada; `k` < 1 a encolhe. O fundo da arte é do mesmo azul chapado do resto, então não há emenda. */
 const iconArt = (s, k = 1) =>
-  k === 1
-    ? `<img src="${ICON}" style="position:absolute;inset:0;width:100%;height:100%">`
-    : `<img src="${ICON}" style="position:absolute;left:${(s * (1 - k)) / 2}px;top:${(s * (1 - k)) / 2}px;width:${s * k}px;height:${s * k}px;-webkit-mask-image:radial-gradient(closest-side,#000 80%,transparent);mask-image:radial-gradient(closest-side,#000 80%,transparent)">`;
+  `<img src="${ICON}" style="position:absolute;left:${(s * (1 - k)) / 2}px;top:${(s * (1 - k)) / 2}px;width:${s * k}px;height:${s * k}px">`;
 const tile = (s, k, radius) =>
   page(
     s,
@@ -55,7 +53,7 @@ for (const [d, k] of Object.entries(densities)) {
     `${dir}/ic_launcher_foreground.png`,
     f,
     f,
-    page(f, f, iconArt(f, 0.68)),
+    page(f, f, iconArt(f, 0.58)),
     true,
   );
 }

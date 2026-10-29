@@ -83,3 +83,9 @@
   width: min(78%, 260px);
   height: auto;
 }
+.loading-icon {
+  width: 96px;
+  height: 96px;
+  border-radius: 22%;
+  box-shadow: 0 6px 14px #17356b33;
+}

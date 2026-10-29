@@ -185,8 +185,8 @@
   gap: 10px;
   padding: 24px;
   text-align: center;
-  background: radial-gradient(circle at 50% 30%, #fff3bd, #ffc83d 68%, #f5a300);
-  color: #3d2a00;
+  background: #e6f3fe;
+  color: #17356b;
 }
 .error-screen h1 {
   margin: 0;
