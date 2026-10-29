@@ -78,6 +78,8 @@ describe("Créditos", () => {
       </MemoryRouter>,
     );
     const box = screen.getByLabelText("Créditos");
+    expect(screen.getByAltText("Lunara Games")).toBeInTheDocument();
+    expect(box).toHaveTextContent("jogo da Lunara Games");
     expect(box).toHaveTextContent("VERO");
     expect(box).toHaveTextContent("LGPLv3");
     expect(box).toHaveTextContent("Raimundo Santos Moura");

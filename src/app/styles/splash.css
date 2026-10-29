@@ -1,0 +1,85 @@
+/* Abertura do app: marca do estúdio (fundo preto) e depois a tela do jogo. */
+.studio-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: #000;
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+.studio-splash.leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-game {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+}
+.splash-village {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.splash-game::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(#1b3f8a55, #1b3f8a22 45%, #0a1a4a66);
+}
+.splash-game .art-book {
+  width: 76px;
+  height: 100px;
+  transform: none;
+  filter: drop-shadow(0 4px 8px #0008);
+}
+.splash-logo {
+  width: min(78vw, 360px);
+  height: auto;
+}
+.splash-studio {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: #000;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.splash-studio.on {
+  opacity: 1;
+}
+.splash-studio img {
+  width: min(82vw, 420px);
+  height: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-splash,
+  .splash-studio {
+    transition: none;
+  }
+}
+.credits .credits-studio {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  background: #000;
+  border-color: #3a2f12;
+  box-shadow: none;
+}
+.credits .credits-studio h2,
+.credits .credits-studio p {
+  color: #f3e3b0;
+}
+.credits-studio img {
+  width: min(78%, 260px);
+  height: auto;
+}

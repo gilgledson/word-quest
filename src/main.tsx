@@ -9,6 +9,7 @@ import "@fontsource/nunito/latin-700.css";
 import "@fontsource/nunito/latin-800.css";
 import { Layout } from "./components/Layout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
+import { StudioSplash } from "./components/StudioSplash";
 import {
   Home,
   Campaign,
@@ -59,34 +60,40 @@ function App() {
   useEffect(() => {
     void hydrate();
   }, [hydrate]);
-  if (!ready)
-    return (
-      <div className="loading">
-        <span className="game-art art-book" aria-hidden="true" />
-        Preparando sua aventura…
-      </div>
-    );
+  const loading = (
+    <div className="loading">
+      <span className="game-art art-book" aria-hidden="true" />
+      Preparando sua aventura…
+    </div>
+  );
   return (
-    <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
-      <BrowserRouter>
-        <MusicController />
-        <Guarded>
-          <Routes>
-            <Route element={<Layout />}>
-              <Route index element={<Home />} />
-              <Route path="map" element={<Campaign />} />
-              <Route path="map/:world" element={<WorldMap />} />
-              <Route path="casual" element={<Casual />} />
-              <Route path="daily" element={<Daily />} />
-              <Route path="profile" element={<Profile />} />
-              <Route path="credits" element={<Credits />} />
-              <Route path="play/:id" element={<GameRoute />} />
-              <Route path="*" element={<Home />} />
-            </Route>
-          </Routes>
-        </Guarded>
-      </BrowserRouter>
-    </MotionConfig>
+    <>
+      <StudioSplash ready={ready} />
+      {ready ? (
+        <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
+          <BrowserRouter>
+            <MusicController />
+            <Guarded>
+              <Routes>
+                <Route element={<Layout />}>
+                  <Route index element={<Home />} />
+                  <Route path="map" element={<Campaign />} />
+                  <Route path="map/:world" element={<WorldMap />} />
+                  <Route path="casual" element={<Casual />} />
+                  <Route path="daily" element={<Daily />} />
+                  <Route path="profile" element={<Profile />} />
+                  <Route path="credits" element={<Credits />} />
+                  <Route path="play/:id" element={<GameRoute />} />
+                  <Route path="*" element={<Home />} />
+                </Route>
+              </Routes>
+            </Guarded>
+          </BrowserRouter>
+        </MotionConfig>
+      ) : (
+        loading
+      )}
+    </>
   );
 }
 ReactDOM.createRoot(document.getElementById("root")!).render(

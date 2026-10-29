@@ -16,6 +16,11 @@ export function Credits() {
         <h1>Créditos e licenças</h1>
       </div>
       <section className="credits" aria-label="Créditos">
+        <article className="credits-studio">
+          <h2>Estúdio</h2>
+          <img src="/art/studio-lunara.webp" alt="Lunara Games" width="260" />
+          <p>WordQuest é um jogo da Lunara Games.</p>
+        </article>
         <article>
           <h2>Vocabulário</h2>
           <p>
