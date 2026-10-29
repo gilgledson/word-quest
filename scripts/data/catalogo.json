@@ -2479,7 +2479,7 @@
   },
   {
     "palavra": "BLOCO",
-    "pista": "Cubo de pedra",
+    "pista": "Peça maciça",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -2491,7 +2491,7 @@
   },
   {
     "palavra": "BOA",
-    "pista": "Cobra gigante",
+    "pista": "Cobra sem veneno",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -3582,7 +3582,7 @@
     "nivel": "facil",
     "tipo": "casa"
   },
-  { "palavra": "CAPAS", "pista": "Cobrem", "nivel": "facil", "tipo": "casa" },
+  { "palavra": "CAPAS", "pista": "Protegem o sofá", "nivel": "facil", "tipo": "casa" },
   {
     "palavra": "CAPATAZ",
     "pista": "Chefe da fazenda",
@@ -5728,7 +5728,7 @@
   },
   {
     "palavra": "DE",
-    "pista": "Indica posse",
+    "pista": "Posse ou origem",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -7953,7 +7953,7 @@
   },
   {
     "palavra": "FIGO",
-    "pista": "Fruta de Adão",
+    "pista": "Fruta da figueira",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -10856,7 +10856,7 @@
   },
   {
     "palavra": "LENHA",
-    "pista": "Lasca de fogueira",
+    "pista": "Pau para queimar",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -11562,7 +11562,7 @@
   },
   {
     "palavra": "MAIORES",
-    "pista": "Mais grandes",
+    "pista": "De maior tamanho",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -13365,7 +13365,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "OBRA", "pista": "Canteiro", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "OBRA", "pista": "Reforma da casa", "nivel": "facil", "tipo": "geral" },
   { "palavra": "OBRIGAR", "pista": "Impor", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "OBSTACULO",
@@ -13381,7 +13381,7 @@
   },
   {
     "palavra": "OCA",
-    "pista": "Casa de índio",
+    "pista": "Casa indígena",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -18010,7 +18010,7 @@
   },
   {
     "palavra": "TACA",
-    "pista": "Prêmio do campeão",
+    "pista": "Serve sorvete",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -18022,7 +18022,7 @@
   },
   {
     "palavra": "TACO",
-    "pista": "Bastão do golfe",
+    "pista": "Prato mexicano",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -19271,7 +19271,7 @@
   },
   {
     "palavra": "URSO",
-    "pista": "Mamífero de garras",
+    "pista": "Come mel e peixe",
     "nivel": "facil",
     "tipo": "animais"
   },

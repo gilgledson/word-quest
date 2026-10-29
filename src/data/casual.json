@@ -648,7 +648,7 @@
             },
             {
               "id": "urso",
-              "clue": "Mamífero de garras",
+              "clue": "Come mel e peixe",
               "answer": "URSO",
               "direction": "vertical",
               "startRow": 1,
@@ -927,7 +927,7 @@
             },
             {
               "id": "taco",
-              "clue": "Bastão do golfe",
+              "clue": "Prato mexicano",
               "answer": "TACO",
               "direction": "vertical",
               "startRow": 1,
@@ -1178,7 +1178,7 @@
             },
             {
               "id": "figo",
-              "clue": "Fruta de Adão",
+              "clue": "Fruta da figueira",
               "answer": "FIGO",
               "direction": "horizontal",
               "startRow": 0,
@@ -1396,7 +1396,7 @@
             },
             {
               "id": "taca",
-              "clue": "Prêmio do campeão",
+              "clue": "Serve sorvete",
               "answer": "TACA",
               "direction": "horizontal",
               "startRow": 5,
@@ -2407,7 +2407,7 @@
             },
             {
               "id": "lenha",
-              "clue": "Lasca de fogueira",
+              "clue": "Pau para queimar",
               "answer": "LENHA",
               "direction": "horizontal",
               "startRow": 7,
@@ -3002,7 +3002,7 @@
             },
             {
               "id": "capas",
-              "clue": "Cobrem",
+              "clue": "Protegem o sofá",
               "answer": "CAPAS",
               "direction": "horizontal",
               "startRow": 0,

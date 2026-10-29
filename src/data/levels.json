@@ -810,7 +810,7 @@
       },
       {
         "id": "boa",
-        "clue": "Cobra gigante",
+        "clue": "Cobra sem veneno",
         "answer": "BOA",
         "direction": "vertical",
         "startRow": 1,
@@ -3298,7 +3298,7 @@
       },
       {
         "id": "obra",
-        "clue": "Canteiro",
+        "clue": "Reforma da casa",
         "answer": "OBRA",
         "direction": "horizontal",
         "startRow": 5,
@@ -3474,7 +3474,7 @@
       },
       {
         "id": "bloco",
-        "clue": "Cubo de pedra",
+        "clue": "Peça maciça",
         "answer": "BLOCO",
         "direction": "vertical",
         "startRow": 5,
@@ -3704,7 +3704,7 @@
       },
       {
         "id": "oca",
-        "clue": "Casa de índio",
+        "clue": "Casa indígena",
         "answer": "OCA",
         "direction": "vertical",
         "startRow": 7,
@@ -5403,7 +5403,7 @@
       },
       {
         "id": "oca",
-        "clue": "Casa de índio",
+        "clue": "Casa indígena",
         "answer": "OCA",
         "direction": "horizontal",
         "startRow": 8,
@@ -5622,7 +5622,7 @@
       },
       {
         "id": "de",
-        "clue": "Indica posse",
+        "clue": "Posse ou origem",
         "answer": "DE",
         "direction": "horizontal",
         "startRow": 2,
@@ -5633,7 +5633,7 @@
       },
       {
         "id": "maiores",
-        "clue": "Mais grandes",
+        "clue": "De maior tamanho",
         "answer": "MAIORES",
         "direction": "horizontal",
         "startRow": 3,
@@ -6214,7 +6214,7 @@
       },
       {
         "id": "taca",
-        "clue": "Prêmio do campeão",
+        "clue": "Serve sorvete",
         "answer": "TACA",
         "direction": "horizontal",
         "startRow": 4,
@@ -6488,7 +6488,7 @@
       },
       {
         "id": "oca",
-        "clue": "Casa de índio",
+        "clue": "Casa indígena",
         "answer": "OCA",
         "direction": "horizontal",
         "startRow": 3,
@@ -6751,7 +6751,7 @@
       },
       {
         "id": "de",
-        "clue": "Indica posse",
+        "clue": "Posse ou origem",
         "answer": "DE",
         "direction": "horizontal",
         "startRow": 4,
