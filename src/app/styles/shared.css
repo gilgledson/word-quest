@@ -440,7 +440,7 @@ footer {
   gap: 3px;
   min-height: 58px;
   border-radius: 18px;
-  color: #74818a;
+  color: #5a6872;
   font-size: 12px;
   font-weight: 900;
 }
@@ -450,7 +450,7 @@ footer {
 }
 .bottom-nav a.active {
   background: linear-gradient(#d2e5ff, #edf6ff);
-  color: #2181f8;
+  color: #124fb5;
   box-shadow: inset 0 2px 0 #bcd6fd;
 }
 .page-heading {
@@ -538,7 +538,7 @@ footer {
   color: #607568;
 }
 .calendar .today {
-  background: #3689f5;
+  background: #1b66d4;
   color: white;
   box-shadow: 0 3px 0 #216cc2;
 }
@@ -652,7 +652,7 @@ footer {
   gap: 14px;
   align-items: center;
   background: #eaf0e7;
-  color: #62745f;
+  color: #4a5c46;
   padding: 16px;
   border-radius: 12px;
   margin: 16px 0;

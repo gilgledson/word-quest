@@ -56,8 +56,10 @@
   border-radius: 6px;
   background: linear-gradient(#63d9a0, #2fa56d);
 }
+/* Dias futuros: cinza mais claro que os demais, mas ainda com contraste de 4,5:1. */
 .calendar .future {
-  opacity: 0.4;
+  color: #657183;
+  font-weight: 600;
 }
 .calendar-legend {
   display: flex;

@@ -425,6 +425,7 @@ export function Daily() {
               <span
                 className={`${n === day ? "today" : ""} ${completed ? "done" : ""} ${n > day ? "future" : ""}`}
                 key={n}
+                role="img"
                 aria-label={`Dia ${n}: ${completed ? "concluído" : n === day ? "disponível hoje" : n > day ? "ainda indisponível" : "não concluído"}`}
               >
                 {completed ? <Check size={20} /> : n}
