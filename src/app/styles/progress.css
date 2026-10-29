@@ -57,7 +57,7 @@
 .result-actions .text-link {
   justify-self: center;
 }
-/* Baú do mundo (vitória sobre o chefe). */
+/* Baú do mundo (aberto na tela inicial). */
 .chest-reward {
   display: grid;
   justify-items: center;
@@ -99,21 +99,100 @@
   font-weight: 900;
   color: #8a4b00;
 }
-.boss-prize {
+/* Baú da tela inicial: um a cada 5 vitórias, aberto tocando nele. */
+.adventure-link {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+.journey {
+  position: relative;
+}
+.journey-progress::after {
+  /* marcos a cada 5 vitórias (1/5 da barra de 25 fases) */
+  content: "";
   position: absolute;
-  white-space: nowrap;
-  width: max-content;
-  top: -12px;
-  left: calc(50% + 18px);
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 1px 6px 1px 3px;
-  border-radius: 999px;
-  background: #5b3a00;
-  border: 2px solid #ffcc47;
-  color: #ffe27a;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0 calc(20% - 2px),
+    #6f8aa66e calc(20% - 2px) 20%
+  );
+  pointer-events: none;
+}
+.journey-chest {
+  position: absolute;
+  right: -5px;
+  top: -18px;
+  z-index: 2;
+  width: 36px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  background-color: transparent;
+  cursor: pointer;
+  filter: grayscale(0.4) drop-shadow(0 2px 1px #24365730);
+  opacity: 0.9;
+}
+.journey-chest:disabled {
+  cursor: default;
+}
+.journey-chest.ready {
+  filter: drop-shadow(0 0 6px #ffcc47) drop-shadow(0 0 2px #fff);
+  opacity: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .journey-chest.ready {
+    animation: chest-ready 1.4s ease-in-out infinite;
+  }
+}
+@keyframes chest-ready {
+  0%,
+  100% {
+    transform: rotate(0) scale(1);
+  }
+  20% {
+    transform: rotate(-9deg) scale(1.1);
+  }
+  40% {
+    transform: rotate(8deg) scale(1.1);
+  }
+  60% {
+    transform: rotate(-5deg) scale(1.06);
+  }
+}
+.chest-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  background: #d8381f;
+  border: 2px solid #fff;
+  color: #fff;
+  font-size: 11px;
+  line-height: 1;
+}
+.chest-hint {
   font-size: 12px;
-  font-weight: 900;
-  line-height: 1.2;
+  font-weight: 700;
+  color: #4d5c6e;
+}
+.chest-hint.ready {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffe49a;
+  border: 1px solid #e2a516;
+  color: #5b3a00;
+  font-weight: 800;
+}
+.chest-dialog {
+  gap: 14px;
+}
+.chest-dialog .chest-reward {
+  border-width: 3px;
 }

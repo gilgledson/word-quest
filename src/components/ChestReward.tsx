@@ -1,7 +1,7 @@
 import { motion } from "motion/react";
 import { CoinIcon } from "./CoinIcon";
 
-/** Baú do mundo aberto ao vencer o chefe: balança, abre e solta moedas (parado se as animações estiverem desligadas). */
+/** Baú aberto na tela inicial: balança, abre e solta moedas (parado se as animações estiverem desligadas). */
 export function ChestReward({
   coins,
   animated,
@@ -44,7 +44,7 @@ export function ChestReward({
             </motion.span>
           ))}
       </div>
-      <span className="chest-title">Baú do mundo aberto!</span>
+      <span className="chest-title">Baú aberto!</span>
       <b className="chest-prize">
         <CoinIcon size={18} /> +{coins} moedas
       </b>

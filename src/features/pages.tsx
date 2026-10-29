@@ -21,8 +21,8 @@ import {
   Crown,
   Trophy,
 } from "lucide-react";
-import { CoinIcon } from "../components/CoinIcon";
 import { Scenery } from "../components/Scenery";
+import { ChestHint, HomeChest } from "./HomeChest";
 import road from "../data/map-road.json";
 import { usePlayer } from "../stores/player";
 import {
@@ -43,12 +43,12 @@ import {
 } from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
 import { OpponentAvatar } from "../components/OpponentAvatar";
-import { economy } from "../game/crossword-engine";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
+  const wins = Object.keys(p.stars).length;
   return (
     <>
       <section className="welcome">
@@ -60,46 +60,46 @@ export function Home() {
         </h1>
         <p>Desvende pistas. Descubra caminhos. Viva a aventura.</p>
       </section>
-      <Link
-        className="adventure-card"
-        to={mapOf(next.world).path}
-        aria-label="Ver o mapa da Vila das Palavras"
-      >
-        <div className="world-preview" aria-hidden="true">
-          <Scenery />
-        </div>
-        <div className="scene-label">
-          <span className="pill">MUNDO 01</span>
-          <h2>Vila das Palavras</h2>
-          <p>Grandes jornadas começam com pequenas descobertas.</p>
-        </div>
+      <section className="adventure-card">
+        <Link
+          className="adventure-link"
+          to={mapOf(next.world).path}
+          aria-label="Ver o mapa da Vila das Palavras"
+        >
+          <div className="world-preview" aria-hidden="true">
+            <Scenery />
+          </div>
+          <div className="scene-label">
+            <span className="pill">MUNDO 01</span>
+            <h2>Vila das Palavras</h2>
+            <p>Grandes jornadas começam com pequenas descobertas.</p>
+          </div>
+        </Link>
         <div className="adventure-action">
           <div>
-            <span className="eyebrow">SUA JORNADA</span>
+            <ChestHint wins={wins} />
             <strong>
               Fase {next.number} <span>· {next.difficulty}</span>
             </strong>
           </div>
         </div>
-        <div
-          className="journey-progress"
-          role="progressbar"
-          aria-label="Fases concluídas"
-          aria-valuenow={Object.keys(p.stars).length}
-          aria-valuemin={0}
-          aria-valuemax={levels.length}
-        >
-          <span
-            style={{
-              width: `${(Object.keys(p.stars).length / levels.length) * 100}%`,
-            }}
-          />
-          <strong>
-            {Object.keys(p.stars).length} / {levels.length}
-          </strong>
-          <span className="game-art art-chest" aria-hidden="true" />
+        <div className="journey">
+          <div
+            className="journey-progress"
+            role="progressbar"
+            aria-label="Fases concluídas"
+            aria-valuenow={wins}
+            aria-valuemin={0}
+            aria-valuemax={levels.length}
+          >
+            <span style={{ width: `${(wins / levels.length) * 100}%` }} />
+            <strong>
+              {wins} / {levels.length}
+            </strong>
+          </div>
+          <HomeChest wins={wins} />
         </div>
-      </Link>
+      </section>
       <Link className="button primary continue-button" to={`/play/${next.id}`}>
         Continuar aventura <ArrowRight size={24} />
       </Link>
@@ -144,9 +144,6 @@ export function Campaign({ world = "vila" }: { world?: string }) {
   const worldDone = list.every((l) => p.stars[l.id]);
   const remaining = list.filter((l) => !p.stars[l.id]).length;
   const worldStars = list.reduce((n, l) => n + (p.stars[l.id] ?? 0), 0);
-  // O baú do mundo (moedas) abre ao vencer o chefe pela primeira vez.
-  const chestCoins = economy.chest[maps.indexOf(map)];
-  const chestOpen = !!p.chests?.includes(map.id);
   const rivalOf = (number: number) => opponentById(OPPONENT_BY_LEVEL[number]);
   // As posições dependem do tamanho real da tela.
   const [box, setBox] = useState({ w: 360, h: 640 });
@@ -277,7 +274,7 @@ export function Campaign({ world = "vila" }: { world?: string }) {
             >
               <Link
                 aria-disabled={!unlocked}
-                aria-label={`Fase ${l.number}${boss ? `, chefe ${rival?.name}${chestOpen ? "" : `, baú de ${chestCoins} moedas`}` : ""}${p.stars[l.id] ? `, ${p.stars[l.id]} estrelas` : unlocked ? ", disponível" : ", bloqueada"}`}
+                aria-label={`Fase ${l.number}${boss ? `, chefe ${rival?.name}` : ""}${p.stars[l.id] ? `, ${p.stars[l.id]} estrelas` : unlocked ? ", disponível" : ", bloqueada"}`}
                 onClick={(e) => !unlocked && e.preventDefault()}
                 className={`level-node ${state}`}
                 to={`/play/${l.id}`}
@@ -285,11 +282,6 @@ export function Campaign({ world = "vila" }: { world?: string }) {
                 {unlocked ? l.number : <LockKeyhole />}
                 {boss && (
                   <Crown className="boss-crown" size={18} aria-hidden="true" />
-                )}
-                {boss && !chestOpen && (
-                  <span className="boss-prize" aria-hidden="true">
-                    <CoinIcon size={13} />+{chestCoins}
-                  </span>
                 )}
               </Link>
               <strong className="stop-tag">
@@ -300,7 +292,7 @@ export function Campaign({ world = "vila" }: { world?: string }) {
                       ? `Chefe: ${rival?.name}`
                       : "Você está aqui"
                     : boss
-                      ? `Chefe`
+                      ? "Chefe"
                       : "Bloqueada"}
               </strong>
             </li>

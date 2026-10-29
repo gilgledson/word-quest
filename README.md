@@ -68,8 +68,6 @@ As 25 fases estão em cinco mundos de cinco fases; mundos além das Ilhas do Con
 
 PWA: o build gera service worker para cache da aplicação, fontes e ilustração locais. Funcionamento offline após o primeiro carregamento servido via HTTPS ou localhost. Ícone SVG provisório; ícones PNG e validação de instalação em aparelhos físicos ainda pendentes.
 
-**Baú do mundo:** vencer o chefe (a 5ª fase de cada mundo) abre o baú daquele mundo, uma única vez, com um prêmio fixo em moedas que cresce a cada mundo: 50 (Vila), 75 (Floresta), 100 (Deserto), 125 (Reino) e 150 (Ilhas), somado às moedas normais do duelo. A abertura aparece na janela de vitória (baú que balança e solta moedas; parado com Animações desligadas) e a lista `player.chests` guarda os mundos já abertos, então jogar o chefe de novo não paga outra vez. No mapa, o chefe mostra um selo com o prêmio enquanto o baú está fechado. Os valores ficam em `economy.chest` (`src/game/engine/types.ts`) e o pagamento em `settleSession`.
-
 As fases podem ser revisitadas; recompensas da campanha não são pagas novamente. A preferência de movimento reduzido do sistema é respeitada. Limpar os dados do navegador remove o progresso. Sessões salvas antes do fluxo de confirmação (✓) são descartadas; estrelas e moedas permanecem.
 
 ## APK Android (Capacitor)

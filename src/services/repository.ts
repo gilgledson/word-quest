@@ -24,8 +24,8 @@ export interface Player {
   animations: boolean;
   /** O tutorial da fase 1 já foi concluído ou pulado. */
   tutorialDone: boolean;
-  /** Mundos cujo baú já foi aberto (ids de `maps`). */
-  chests: string[];
+  /** Baús da tela inicial já abertos (um a cada 5 vitórias). */
+  chestsOpened: number;
 }
 export const initialPlayer: Player = {
   name: "Explorador",
@@ -43,7 +43,7 @@ export const initialPlayer: Player = {
   vibration: true,
   animations: true,
   tutorialDone: false,
-  chests: [],
+  chestsOpened: 0,
 };
 export interface PlayerRepository {
   load(): Promise<Player | undefined>;

@@ -1,201 +1,145 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { afterEach, describe, expect, it } from "vitest";
-import { Campaign } from "../features/pages";
-import { ResultPopup } from "../features/ResultPopup";
-import { VictoryPanel } from "../features/puzzle/VictoryPanel";
-import { settleSession } from "../features/puzzle/settleSession";
-import { levels, maps, worldLevels } from "../data/catalog";
-import { OPPONENTS } from "../game/opponents";
-import { PuzzleEngine, economy, type Session } from "../game/crossword-engine";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { Home } from "../features/pages";
+import {
+  chestPrize,
+  chestsEarned,
+  chestsReady,
+  winsToNextChest,
+} from "../game/chest";
+import { economy } from "../game/crossword-engine";
+import { levels } from "../data/catalog";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 
-afterEach(cleanup);
-
-/** Sessão já terminada com vitória do jogador (todas as casas travadas e placar 20×3). */
-function wonSession(puzzleIndex: number) {
-  const puzzle = levels[puzzleIndex];
-  const engine = new PuzzleEngine(puzzle);
-  const s = engine.start(`vs:${puzzle.id}:facil`, "facil");
-  for (const k of Object.keys(engine.rack.solution))
-    engine.rack.lockCell(s, k, "p");
-  s.scores = { p: 20, ai: 3 };
-  return { engine, puzzle, s: s as Session };
-}
-const ctx = (
-  e: PuzzleEngine,
-  id: string,
-  chest?: { world: string; coins: number },
-) => ({
-  engine: e,
-  puzzleId: id,
-  sessionKey: `vs:${id}:facil`,
-  daily: false,
-  casual: false,
-  date: "2026-10-28",
-  chest,
-});
-const bossChest = (i: number) => ({
-  world: maps[i].id,
-  coins: economy.chest[i],
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
 });
 
-describe("baú do mundo", () => {
-  it("os prêmios são fixos e crescem a cada mundo", () => {
-    expect(economy.chest).toEqual([50, 75, 100, 125, 150]);
-    expect(economy.chest).toHaveLength(maps.length);
-  });
-  it("vencer o chefe abre o baú: moedas do duelo + moedas do baú, uma vez por mundo", () => {
-    const vila = worldLevels("vila");
-    const boss = vila[vila.length - 1];
-    const { engine, s } = wonSession(levels.indexOf(boss));
-    const before = { ...structuredClone(initialPlayer), coins: 100 };
-    const after = settleSession(
-      before,
-      s,
-      0,
-      ctx(engine, boss.id, bossChest(0)),
-    );
-    expect(after.coins).toBe(100 + economy.duel.win + 50);
-    expect(after.chests).toEqual(["vila"]);
-    expect(after.sessions[`vs:${boss.id}:facil`].chest).toBe(50);
-  });
-  it("jogar o chefe de novo depois de aberto não paga o baú outra vez", () => {
-    const vila = worldLevels("vila");
-    const boss = vila[vila.length - 1];
-    const { engine, s } = wonSession(levels.indexOf(boss));
-    const jaAberto = {
+/** Jogador com `wins` fases concluídas (as primeiras da campanha). */
+const open = (wins: number, patch = {}) => {
+  usePlayer.setState({
+    player: {
       ...structuredClone(initialPlayer),
-      coins: 100,
-      chests: ["vila"],
-    };
-    const after = settleSession(
-      jaAberto,
-      s,
-      0,
-      ctx(engine, boss.id, bossChest(0)),
-    );
-    expect(after.coins).toBe(100 + economy.duel.win);
-    expect(after.chests).toEqual(["vila"]);
-    expect(after.sessions[`vs:${boss.id}:facil`].chest).toBeUndefined();
+      stars: Object.fromEntries(levels.slice(0, wins).map((l) => [l.id, 1])),
+      ...patch,
+    },
+    ready: true,
   });
-  it("derrota ou empate no chefe não abre o baú", () => {
-    const vila = worldLevels("vila");
-    const boss = vila[vila.length - 1];
-    const { engine, s } = wonSession(levels.indexOf(boss));
-    s.scores = { p: 5, ai: 9 };
-    const after = settleSession(
-      structuredClone(initialPlayer),
-      s,
-      0,
-      ctx(engine, boss.id, bossChest(0)),
-    );
-    expect(after.chests).toEqual([]);
-    expect(after.coins).toBe(initialPlayer.coins + economy.duel.loss);
+  render(
+    <MemoryRouter>
+      <Home />
+    </MemoryRouter>,
+  );
+};
+const chestButton = () =>
+  screen.getByRole("button", { name: /^(Abrir baú|Baú fechado)/ });
+const player = () => usePlayer.getState().player;
+
+describe("regras do baú", () => {
+  it("um baú a cada 5 vitórias, até 5 baús, com prêmio fixo e crescente", () => {
+    expect(economy.chest).toEqual([50, 75, 100, 125, 150]);
+    expect(economy.chestEvery).toBe(5);
+    expect([0, 4, 5, 9, 10, 24, 25].map(chestsEarned)).toEqual([
+      0, 0, 1, 1, 2, 4, 5,
+    ]);
+    expect(chestsReady(10, 1)).toBe(1);
+    expect(chestsReady(10, 2)).toBe(0);
+    expect(chestsReady(3, 5)).toBe(0);
+    expect([0, 1, 2, 3, 4].map(chestPrize)).toEqual([50, 75, 100, 125, 150]);
   });
-  it("fases comuns (sem baú no contexto) não abrem baú", () => {
-    const { engine, puzzle, s } = wonSession(0);
-    const after = settleSession(
-      structuredClone(initialPlayer),
-      s,
-      0,
-      ctx(engine, puzzle.id),
-    );
-    expect(after.chests).toEqual([]);
-    expect(after.sessions[`vs:${puzzle.id}:facil`].chest).toBeUndefined();
+  it("vitórias que faltam para o próximo baú", () => {
+    expect(winsToNextChest(0, 0)).toBe(5);
+    expect(winsToNextChest(3, 0)).toBe(2);
+    expect(winsToNextChest(5, 0)).toBe(0); // já há um pronto
+    expect(winsToNextChest(7, 1)).toBe(3);
+    expect(winsToNextChest(25, 5)).toBeNull(); // todos abertos
   });
-  it("jogadores salvos antes do baú (sem a lista) continuam funcionando", () => {
-    const vila = worldLevels("vila");
-    const boss = vila[vila.length - 1];
-    const { engine, s } = wonSession(levels.indexOf(boss));
-    const antigo = { ...structuredClone(initialPlayer), coins: 10 } as Partial<
+});
+
+describe("baú na tela inicial", () => {
+  it("fechado enquanto faltam vitórias, com a contagem", () => {
+    open(3);
+    expect(chestButton()).toBeDisabled();
+    expect(screen.getByText("Baú em 2 vitórias")).toBeInTheDocument();
+  });
+  it("com 5 vitórias o baú fica pronto; tocar abre, paga as moedas e conta uma abertura", () => {
+    open(5);
+    expect(screen.getByText("Baú pronto! Toque nele")).toBeInTheDocument();
+    expect(chestButton()).toBeEnabled();
+    expect(chestButton()).toHaveAccessibleName("Abrir baú: 50 moedas");
+    const before = player().coins;
+    fireEvent.click(chestButton());
+    const dialog = screen.getByRole("dialog", { name: "Baú aberto" });
+    expect(dialog).toHaveTextContent("Baú aberto!");
+    expect(dialog).toHaveTextContent("+50 moedas");
+    expect(player().coins).toBe(before + 50);
+    expect(player().chestsOpened).toBe(1);
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    expect(screen.queryByRole("dialog")).toBeNull();
+    // Depois de aberto, o baú fecha de novo até as próximas 5 vitórias.
+    expect(chestButton()).toBeDisabled();
+    expect(screen.getByText("Baú em 5 vitórias")).toBeInTheDocument();
+  });
+  it("não paga duas vezes: o baú aberto não abre de novo", () => {
+    open(5);
+    fireEvent.click(chestButton());
+    const coins = player().coins;
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    expect(chestButton()).toBeDisabled();
+    fireEvent.click(chestButton());
+    expect(player().coins).toBe(coins);
+    expect(player().chestsOpened).toBe(1);
+  });
+  it("o prêmio cresce a cada baú: o segundo vale 75 moedas", () => {
+    open(10, { chestsOpened: 1 });
+    expect(chestButton()).toHaveAccessibleName("Abrir baú: 75 moedas");
+    const before = player().coins;
+    fireEvent.click(chestButton());
+    expect(player().coins).toBe(before + 75);
+    expect(player().chestsOpened).toBe(2);
+  });
+  it("vários baús prontos: mostra a quantidade e abre um por vez", () => {
+    open(10);
+    expect(screen.getByText("2 baús prontos!")).toBeInTheDocument();
+    fireEvent.click(chestButton());
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+    expect(player().chestsOpened).toBe(1);
+    expect(chestButton()).toBeEnabled();
+    expect(screen.getByText("Baú pronto! Toque nele")).toBeInTheDocument();
+  });
+  it("com os 5 baús abertos, avisa que acabaram", () => {
+    open(25, { chestsOpened: 5 });
+    expect(screen.getByText("Todos os baús abertos")).toBeInTheDocument();
+    expect(chestButton()).toBeDisabled();
+  });
+  it("saves antigos, sem o contador de baús, começam com zero abertos", () => {
+    const antigo = { ...structuredClone(initialPlayer) } as Partial<
       typeof initialPlayer
     >;
-    delete antigo.chests;
-    const after = settleSession(
-      antigo as typeof initialPlayer,
-      s,
-      0,
-      ctx(engine, boss.id, bossChest(0)),
-    );
-    expect(after.chests).toEqual(["vila"]);
-  });
-});
-
-describe("abertura do baú na tela", () => {
-  const base = {
-    result: "win" as const,
-    rival: OPPONENTS[0],
-    mood: "happy" as const,
-    moodKey: 1,
-    scores: { p: 20, ai: 3 },
-    coins: 50,
-    stars: 1,
-    enabled: false,
-    onClose: () => {},
-  };
-  it("a janela de vitória mostra o baú aberto com as moedas", () => {
-    render(
-      <MemoryRouter>
-        <ResultPopup {...base} chest={75} />
-      </MemoryRouter>,
-    );
-    const baú = screen
-      .getByText("Baú do mundo aberto!")
-      .closest(".chest-reward")!;
-    expect(baú).toHaveTextContent("+75 moedas");
-  });
-  it("sem baú, a janela fica como antes", () => {
-    render(
-      <MemoryRouter>
-        <ResultPopup {...base} />
-      </MemoryRouter>,
-    );
-    expect(screen.queryByText("Baú do mundo aberto!")).toBeNull();
-  });
-  it("o painel de vitória também mostra o baú", () => {
-    render(
-      <MemoryRouter>
-        <VictoryPanel
-          result="win"
-          daily={false}
-          casual={false}
-          rivalName="Cuco"
-          scores={{ p: 20, ai: 3 }}
-          level="facil"
-          animated={false}
-          fxEnabled={false}
-          chest={50}
-          backTo="/map"
-          onNext={() => {}}
-          onReplay={() => {}}
-        />
-      </MemoryRouter>,
-    );
-    expect(screen.getByText("Baú do mundo aberto!")).toBeInTheDocument();
-  });
-  it("o mapa avisa do baú no chefe e some depois de aberto", () => {
-    usePlayer.setState({ player: structuredClone(initialPlayer), ready: true });
-    const { unmount } = render(
-      <MemoryRouter>
-        <Campaign world="vila" />
-      </MemoryRouter>,
-    );
-    expect(document.querySelector(".boss-prize")).toHaveTextContent("+50");
-    expect(
-      screen.getByRole("link", { name: /chefe .*baú de 50 moedas/ }),
-    ).toBeInTheDocument();
-    unmount();
+    delete antigo.chestsOpened;
     usePlayer.setState({
-      player: { ...structuredClone(initialPlayer), chests: ["vila"] },
+      player: {
+        ...(antigo as typeof initialPlayer),
+        stars: Object.fromEntries(levels.slice(0, 5).map((l) => [l.id, 1])),
+      },
       ready: true,
     });
     render(
       <MemoryRouter>
-        <Campaign world="vila" />
+        <Home />
       </MemoryRouter>,
     );
-    expect(document.querySelector(".boss-prize")).toBeNull();
+    expect(chestButton()).toBeEnabled();
+    act(() => void fireEvent.click(chestButton()));
+    expect(player().chestsOpened).toBe(1);
   });
 });
