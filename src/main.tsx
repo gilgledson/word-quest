@@ -8,6 +8,7 @@ import "@fontsource/nunito/latin-600.css";
 import "@fontsource/nunito/latin-700.css";
 import "@fontsource/nunito/latin-800.css";
 import { Layout } from "./components/Layout";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import {
   Home,
   Campaign,
@@ -16,6 +17,7 @@ import {
   Daily,
   Profile,
 } from "./features/pages";
+import { Credits } from "./features/Credits";
 // A partida (motor, animações, confete) só é baixada ao abrir uma fase.
 const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
@@ -47,6 +49,11 @@ function GameRoute() {
     </Suspense>
   );
 }
+/** Uma tela que quebra não derruba as outras: o erro some quando o jogador navega. */
+function Guarded({ children }: { children: React.ReactNode }) {
+  const { pathname } = useLocation();
+  return <ErrorBoundary resetKey={pathname}>{children}</ErrorBoundary>;
+}
 function App() {
   const { ready, hydrate, player } = usePlayer();
   useEffect(() => {
@@ -63,24 +70,29 @@ function App() {
     <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
       <BrowserRouter>
         <MusicController />
-        <Routes>
-          <Route element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="map" element={<Campaign />} />
-            <Route path="map/:world" element={<WorldMap />} />
-            <Route path="casual" element={<Casual />} />
-            <Route path="daily" element={<Daily />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="play/:id" element={<GameRoute />} />
-            <Route path="*" element={<Home />} />
-          </Route>
-        </Routes>
+        <Guarded>
+          <Routes>
+            <Route element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="map" element={<Campaign />} />
+              <Route path="map/:world" element={<WorldMap />} />
+              <Route path="casual" element={<Casual />} />
+              <Route path="daily" element={<Daily />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="credits" element={<Credits />} />
+              <Route path="play/:id" element={<GameRoute />} />
+              <Route path="*" element={<Home />} />
+            </Route>
+          </Routes>
+        </Guarded>
       </BrowserRouter>
     </MotionConfig>
   );
 }
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </React.StrictMode>,
 );

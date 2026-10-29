@@ -135,3 +135,76 @@
   font-weight: 700;
   color: #6d5f36;
 }
+/* Créditos e tela de erro. */
+.credits {
+  display: grid;
+  gap: 10px;
+}
+.credits article {
+  padding: 12px 14px;
+  border: 2px solid #fff2c9;
+  border-radius: 16px;
+  background: linear-gradient(#fffef5, #fff6dd);
+  box-shadow: 0 3px 0 #c9b985;
+  color: #12264a;
+}
+.credits h2 {
+  margin: 0 0 4px;
+  font-size: 16px;
+}
+.credits p,
+.credits li {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #3a4b5f;
+}
+.credits ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.credits small {
+  color: #4f5d6e;
+  font-weight: 700;
+}
+.credits-link,
+.credits-back {
+  justify-content: center;
+  margin-top: 8px;
+}
+.credits-back {
+  display: flex;
+  gap: 6px;
+  margin: 16px 0;
+}
+.error-screen {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 10px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 30%, #fff3bd, #ffc83d 68%, #f5a300);
+  color: #3d2a00;
+}
+.error-screen h1 {
+  margin: 0;
+  font-size: 26px;
+}
+.error-screen p {
+  margin: 0;
+  max-width: 280px;
+  font-weight: 700;
+}
+.error-actions {
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  margin-top: 8px;
+}
+.error-actions .text-link {
+  color: #124fb5;
+  font-weight: 800;
+  text-decoration: underline;
+}

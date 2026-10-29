@@ -624,6 +624,9 @@ export function Profile() {
           <Sparkles size={18} />{" "}
           {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo na Fase 1"}
         </button>
+        <Link className="text-link credits-link" to="/credits">
+          Créditos e licenças
+        </Link>
         <p className="caption">
           Seu progresso fica neste navegador. Não é necessário criar uma conta.
         </p>
