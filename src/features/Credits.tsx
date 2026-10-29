@@ -43,8 +43,8 @@ export function Credits() {
           <h2>Arte</h2>
           <p>
             Cenários, mapas, personagens, ícones e logo foram criados com
-            ferramentas de inteligência artificial (Leonardo.ai e um gerador de
-            imagens integrado) e ajustados para o jogo.
+            ferramentas de inteligência artificial (Leonardo.ai, ChatGPT e um
+            gerador de imagens integrado) e ajustados para o jogo.
           </p>
         </article>
         <article>

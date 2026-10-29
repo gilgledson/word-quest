@@ -56,12 +56,8 @@ export function StudioSplash({ ready }: { ready: boolean }) {
       onClick={skip}
     >
       <div className="splash-game" aria-hidden="true">
-        <img
-          className="splash-village"
-          src="/art/village-approved-v1.webp"
-          alt=""
-        />
-        <span className="game-art art-book" />
+        <img className="splash-village" src="/art/splash-vila-v2.webp" alt="" />
+        <img className="splash-emblem" src="/icon-512.png" alt="" />
         <img className="splash-logo" src="/art/wordquest-logo-v1.webp" alt="" />
       </div>
       <div
