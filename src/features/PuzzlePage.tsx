@@ -198,6 +198,18 @@ function Duel() {
   const swapResult = swapping?.length
     ? engine.swap(session, swapping, word)
     : undefined;
+  // Chefe do mundo (última fase da campanha de cada mapa): vencê-lo abre o baú com moedas.
+  const bossWorld = mapOf(puzzle.world);
+  const worldList = worldLevels(bossWorld.id);
+  const chest =
+    !daily && !casual && worldList[worldList.length - 1]?.id === puzzle.id
+      ? {
+          world: bossWorld.id,
+          coins:
+            economy.chest[maps.indexOf(bossWorld)] ??
+            economy.chest[economy.chest.length - 1],
+        }
+      : undefined;
   const commit = (next: Session, cost = 0) =>
     update((p) =>
       settleSession(p, next, cost, {
@@ -207,6 +219,7 @@ function Duel() {
         daily,
         casual,
         date,
+        chest,
       }),
     );
   botStep.current = () => {
@@ -412,8 +425,7 @@ function Duel() {
   const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
   // Vitória na campanha: progresso do mundo, rival seguinte e, se for o caso, mundo novo.
   const campaignWin = !daily && !casual && winner === "win";
-  const world = mapOf(puzzle.world);
-  const worldList = worldLevels(world.id);
+  const world = bossWorld;
   const worldDone = worldList.filter((l) => player.stars[l.id]).length;
   const nextWorld = maps[maps.indexOf(world) + 1];
   const progress = campaignWin
@@ -522,6 +534,7 @@ function Duel() {
           animated={player.animations}
           fxEnabled={prefs.enabled}
           nextTo={nextTo}
+          chest={session.chest}
           backTo={backTo}
           onNext={() => setSelected("")}
           onReplay={() => {
@@ -628,6 +641,7 @@ function Duel() {
           }
           progress={progress}
           unlocked={unlocked}
+          chest={session.chest}
           enabled={prefs.enabled}
           onClose={() => setResultOpen(false)}
         />

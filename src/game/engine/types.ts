@@ -42,6 +42,8 @@ export const economy = {
   wrongLetter: 1,
   swap: 10,
   daily: 70,
+  /** Baú do mundo, aberto ao vencer o chefe pela primeira vez: moedas por mundo, em ordem (Vila a Ilhas). */
+  chest: [50, 75, 100, 125, 150],
   rackStart: 5,
   rackMax: 5,
   swapMax: 5,
@@ -66,6 +68,8 @@ export interface Session {
   letters: Record<string, string>;
   locked: string[];
   claimed: boolean;
+  /** Moedas do baú do mundo abertas nesta partida (vitória sobre o chefe na campanha, uma vez por mundo). */
+  chest?: number;
   tiles: Record<string, Tile>;
   /** Peças ainda não distribuídas (reserva virtual), em ordem de entrega. */
   supply: string[];

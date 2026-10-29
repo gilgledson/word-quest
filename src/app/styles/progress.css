@@ -57,3 +57,63 @@
 .result-actions .text-link {
   justify-self: center;
 }
+/* Baú do mundo (vitória sobre o chefe). */
+.chest-reward {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  width: 100%;
+  padding: 6px 8px 8px;
+  border-radius: 14px;
+  background: linear-gradient(#fff6d0, #ffe49a);
+  border: 2px solid #e2a516;
+  color: #5b3a00;
+}
+.chest-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 64px;
+}
+.chest-sprite {
+  width: 48px;
+  height: 64px;
+  filter: drop-shadow(0 3px 6px #5b3a0055);
+}
+.chest-coin {
+  position: absolute;
+  left: 50%;
+  top: 40%;
+  margin-left: -8px;
+  pointer-events: none;
+}
+.chest-title {
+  font-size: 13px;
+  font-weight: 800;
+}
+.chest-prize {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+  font-weight: 900;
+  color: #8a4b00;
+}
+.boss-prize {
+  position: absolute;
+  white-space: nowrap;
+  width: max-content;
+  top: -12px;
+  left: calc(50% + 18px);
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 6px 1px 3px;
+  border-radius: 999px;
+  background: #5b3a00;
+  border: 2px solid #ffcc47;
+  color: #ffe27a;
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.2;
+}

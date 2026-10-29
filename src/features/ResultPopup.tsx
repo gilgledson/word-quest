@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { Frown, Handshake, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
+import { ChestReward } from "../components/ChestReward";
 import { OpponentPortrait } from "../components/OpponentPortrait";
 import type { Mood, OpponentProfile } from "../game/opponents";
 
@@ -26,6 +27,8 @@ interface Props {
   progress?: { world: string; done: number; total: number; stars: number };
   /** Nome do mundo que acabou de ser desbloqueado, se foi o caso. */
   unlocked?: string;
+  /** Moedas do baú do mundo abertas agora (vitória sobre o chefe). */
+  chest?: number;
   enabled: boolean;
   onClose: () => void;
 }
@@ -62,6 +65,7 @@ export function ResultPopup({
   nextRival,
   progress,
   unlocked,
+  chest,
   enabled,
   onClose,
 }: Props) {
@@ -124,6 +128,7 @@ export function ResultPopup({
           </span>
         </div>
         {coins > 0 && <p className="result-coins">+{coins} moedas</p>}
+        {chest ? <ChestReward coins={chest} animated={enabled} /> : null}
         {stars > 0 && (
           <VictoryStars count={stars} enabled={enabled} decorative />
         )}

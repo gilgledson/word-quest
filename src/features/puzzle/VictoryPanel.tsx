@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import { economy, type BotLevel } from "../../game/crossword-engine";
+import { ChestReward } from "../../components/ChestReward";
 import {
   VictoryBadge,
   VictoryStars,
@@ -20,6 +21,8 @@ interface Props {
   fxEnabled: boolean;
   /** Rota da próxima fase da campanha, quando há. */
   nextTo?: string;
+  /** Moedas do baú do mundo abertas nesta partida. */
+  chest?: number;
   backTo: string;
   onNext: () => void;
   onReplay: () => void;
@@ -35,6 +38,7 @@ export function VictoryPanel({
   animated,
   fxEnabled,
   nextTo,
+  chest,
   backTo,
   onNext,
   onReplay,
@@ -73,6 +77,7 @@ export function VictoryPanel({
           </>
         )}
       </p>
+      {chest ? <ChestReward coins={chest} animated={false} /> : null}
       {nextTo && (
         <Link className="button primary" to={nextTo} onClick={onNext}>
           Próxima descoberta <ArrowRight size={18} />
