@@ -1347,7 +1347,7 @@
       },
       {
         "id": "vo",
-        "clue": "Mãe do pai",
+        "clue": "Mãe de um dos pais",
         "answer": "VO",
         "direction": "vertical",
         "startRow": 8,
@@ -5633,7 +5633,7 @@
       },
       {
         "id": "maiores",
-        "clue": "De maior tamanho",
+        "clue": "Acima em tamanho",
         "answer": "MAIORES",
         "direction": "horizontal",
         "startRow": 3,

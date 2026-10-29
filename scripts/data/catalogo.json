@@ -462,7 +462,7 @@
   },
   {
     "palavra": "ALCOOL",
-    "pista": "Bebida forte",
+    "pista": "Líquido da pinga",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -692,7 +692,7 @@
   },
   {
     "palavra": "AMADOR",
-    "pista": "Sem profissão",
+    "pista": "Quem faz por gosto",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -765,7 +765,7 @@
   },
   {
     "palavra": "AMENDOA",
-    "pista": "Semente de bolo",
+    "pista": "Base do marzipã",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -1285,7 +1285,7 @@
   },
   {
     "palavra": "ARROZAL",
-    "pista": "Plantação de arroz",
+    "pista": "Lavoura alagada",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -1333,7 +1333,7 @@
   },
   {
     "palavra": "ARVOREDO",
-    "pista": "Grupo de árvores",
+    "pista": "Conjunto de copas",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -1680,7 +1680,7 @@
   { "palavra": "AVISO", "pista": "Alerta", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "AVO",
-    "pista": "Pai do pai",
+    "pista": "Pai de um dos pais",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -2220,7 +2220,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "BEIJO", "pista": "Selinho", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "BEIJO", "pista": "Toque de lábios", "nivel": "facil", "tipo": "geral" },
   { "palavra": "BEIRA", "pista": "Margem", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "BEIRAL",
@@ -3385,7 +3385,7 @@
   },
   {
     "palavra": "CAMPONES",
-    "pista": "Vive no campo",
+    "pista": "Homem da roça",
     "nivel": "medio",
     "tipo": "geral"
   },
@@ -3415,7 +3415,7 @@
   },
   {
     "palavra": "CANAVIAL",
-    "pista": "Plantação de cana",
+    "pista": "Lavoura do açúcar",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -3719,9 +3719,9 @@
   },
   {
     "palavra": "CAROLA",
-    "pista": "Ave de cerrado",
+    "pista": "Devota em excesso",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "geral"
   },
   {
     "palavra": "CARONA",
@@ -3951,7 +3951,7 @@
   },
   {
     "palavra": "CAVALEIRO",
-    "pista": "Anda a cavalo",
+    "pista": "Nobre de armadura",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -4871,7 +4871,7 @@
   },
   {
     "palavra": "COLHEITA",
-    "pista": "Hora de colher",
+    "pista": "Fim do plantio",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -5093,7 +5093,7 @@
   },
   {
     "palavra": "COPA",
-    "pista": "Torneio mundial",
+    "pista": "Topo da árvore",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -5394,7 +5394,7 @@
   },
   {
     "palavra": "CREME",
-    "pista": "Natas, nata",
+    "pista": "Cobertura do doce",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -5575,7 +5575,7 @@
   },
   {
     "palavra": "CULPA",
-    "pista": "Erro assumido",
+    "pista": "Falha de alguém",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -5671,7 +5671,7 @@
   },
   {
     "palavra": "CUTIA",
-    "pista": "Roedor de quintal",
+    "pista": "Enterra sementes",
     "nivel": "facil",
     "tipo": "animais"
   },
@@ -6076,7 +6076,7 @@
   },
   {
     "palavra": "DEZEMBRO",
-    "pista": "Mês do verão",
+    "pista": "Começo do verão",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -6151,7 +6151,7 @@
   },
   {
     "palavra": "DIREITO",
-    "pista": "Lado da mão forte",
+    "pista": "Oposto de esquerdo",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -6804,7 +6804,7 @@
   },
   {
     "palavra": "ENGUIA",
-    "pista": "Peixe de choque",
+    "pista": "Peixe comprido",
     "nivel": "facil",
     "tipo": "animais"
   },
@@ -7070,7 +7070,7 @@
   },
   {
     "palavra": "ESCULTOR",
-    "pista": "Esculpe pedra",
+    "pista": "Artista da pedra",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -7186,7 +7186,7 @@
   },
   {
     "palavra": "ESPIGA",
-    "pista": "Cabo do milho",
+    "pista": "Cacho do milho",
     "nivel": "medio",
     "tipo": "geral"
   },
@@ -7265,7 +7265,7 @@
   },
   {
     "palavra": "ESTACAO",
-    "pista": "Parada do trem",
+    "pista": "Inverno ou verão",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -7283,9 +7283,9 @@
   },
   {
     "palavra": "ESTAGIO",
-    "pista": "Fase da lua",
+    "pista": "Treino no emprego",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "geral"
   },
   {
     "palavra": "ESTALEIRO",
@@ -7381,7 +7381,7 @@
     "palavra": "ESTRELA",
     "pista": "Brilha no céu",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "natureza"
   },
   {
     "palavra": "ESTRELAS",
@@ -8463,7 +8463,7 @@
   },
   {
     "palavra": "FRONHA",
-    "pista": "Capa de fofura",
+    "pista": "Capa de almofada",
     "nivel": "facil",
     "tipo": "casa"
   },
@@ -8720,7 +8720,7 @@
     "palavra": "GAMBA",
     "pista": "Perna, em gíria",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "geral"
   },
   {
     "palavra": "GANCHO",
@@ -11022,7 +11022,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "LIGADO", "pista": "Acesso", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "LIGADO", "pista": "Aceso, em uso", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "LIGAR",
     "pista": "Telefonar",
@@ -11483,7 +11483,7 @@
   },
   {
     "palavra": "MACAS",
-    "pista": "Frutas vermelhas",
+    "pista": "Frutas do pomar",
     "nivel": "facil",
     "tipo": "comida"
   },
@@ -11562,7 +11562,7 @@
   },
   {
     "palavra": "MAIORES",
-    "pista": "De maior tamanho",
+    "pista": "Acima em tamanho",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -13488,7 +13488,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "OITO", "pista": "Número", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "OITO", "pista": "Depois do sete", "nivel": "facil", "tipo": "geral" },
   { "palavra": "OLA", "pista": "Saudação", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "OLARIA",
@@ -17415,7 +17415,7 @@
   },
   {
     "palavra": "SENTIR",
-    "pista": "Tocar com a pele",
+    "pista": "Ter uma emoção",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -18115,7 +18115,7 @@
     "palavra": "TAPETE",
     "pista": "Cobre o piso",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "casa"
   },
   {
     "palavra": "TAPETES",
@@ -18921,7 +18921,7 @@
   },
   {
     "palavra": "TRIGAL",
-    "pista": "Plantação de trigo",
+    "pista": "Campo dourado",
     "nivel": "facil",
     "tipo": "natureza"
   },
@@ -19908,7 +19908,7 @@
   },
   {
     "palavra": "VINTE",
-    "pista": "Dois vezes dez",
+    "pista": "Duas vezes dez",
     "nivel": "facil",
     "tipo": "geral"
   },
@@ -20047,7 +20047,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "VO", "pista": "Mãe do pai", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "VO", "pista": "Mãe de um dos pais", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "VOA",
     "pista": "Move-se no ar",
@@ -20124,7 +20124,7 @@
   },
   {
     "palavra": "VOVO",
-    "pista": "Mãe da mãe",
+    "pista": "Avó, no carinho",
     "nivel": "facil",
     "tipo": "geral"
   },
