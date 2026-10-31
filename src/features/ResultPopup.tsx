@@ -5,6 +5,9 @@ import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
 import { OpponentPortrait } from "../components/OpponentPortrait";
 import type { Mood, OpponentProfile } from "../game/opponents";
+import type { GameRecord } from "../services/repository";
+import { MatchRecap } from "./puzzle/MatchRecap";
+import type { MatchSummary } from "./puzzle/summary";
 
 export type DuelResult = "win" | "draw" | "loss";
 
@@ -26,6 +29,9 @@ interface Props {
   progress?: { world: string; done: number; total: number; stars: number };
   /** Nome do mundo que acabou de ser desbloqueado, se foi o caso. */
   unlocked?: string;
+  /** Resumo da partida e histórico (opcionais). */
+  summary?: MatchSummary;
+  history?: GameRecord[];
   enabled: boolean;
   onClose: () => void;
 }
@@ -62,6 +68,8 @@ export function ResultPopup({
   nextRival,
   progress,
   unlocked,
+  summary,
+  history = [],
   enabled,
   onClose,
 }: Props) {
@@ -151,6 +159,13 @@ export function ResultPopup({
           <p className="result-unlocked" role="status">
             Novo mundo aberto: <b>{unlocked}</b>!
           </p>
+        )}
+        {summary && (
+          <MatchRecap
+            rivalName={rival.name}
+            summary={summary}
+            history={history}
+          />
         )}
         {nextTo && nextRival && (
           <p className="result-next">Próximo rival: {nextRival}</p>

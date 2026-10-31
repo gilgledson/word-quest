@@ -23,6 +23,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
+import { wordsFoundCount } from "../game/chest";
 import { ChestHint, HomeChest } from "./HomeChest";
 import road from "../data/map-road.json";
 import { usePlayer } from "../stores/player";
@@ -50,6 +51,7 @@ export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
   const wins = Object.keys(p.stars).length;
+  const words = wordsFoundCount(p.wordsFound);
   return (
     <>
       <section className="welcome">
@@ -78,7 +80,7 @@ export function Home() {
         </Link>
         <div className="adventure-action">
           <div>
-            <ChestHint wins={wins} />
+            <ChestHint words={words} />
             <strong>
               Fase {next.number} <span>· {next.difficulty}</span>
             </strong>
@@ -98,7 +100,7 @@ export function Home() {
               {wins} / {levels.length}
             </strong>
           </div>
-          <HomeChest wins={wins} />
+          <HomeChest words={words} />
         </div>
       </section>
       <Link className="button primary continue-button" to={`/play/${next.id}`}>

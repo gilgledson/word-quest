@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { initialPlayer, repository, type Player } from "../services/repository";
 import { defaultOpponent, opponentById } from "../game/opponents";
+import { levels } from "../data/catalog";
 interface Store {
   player: Player;
   ready: boolean;
@@ -26,6 +27,14 @@ export const usePlayer = create<Store>((set) => ({
           tutorialDone: saved ? (saved.tutorialDone ?? true) : false,
           // O tour de apresentação também só vale para quem ainda não fez o tutorial.
           tourDone: saved ? (saved.tourDone ?? true) : false,
+          // Quem já tinha fases vencidas ganha, como descobertas, as palavras dessas fases.
+          wordsFound:
+            saved?.wordsFound ??
+            Object.fromEntries(
+              levels
+                .filter((l) => saved?.stars?.[l.id])
+                .map((l) => [l.id, l.words.map((w) => w.id)]),
+            ),
           // Quem só tinha o nível passa a enfrentar o oponente cuidadoso daquele nível.
           opponent:
             opponentById(saved?.opponent)?.id ??

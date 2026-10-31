@@ -40,6 +40,7 @@ import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
 import { GameTour, JokerTour } from "./puzzle/GameTour";
 import { confirmMessage } from "./puzzle/messages";
+import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
@@ -833,6 +834,8 @@ function Duel() {
           }
           progress={progress}
           unlocked={unlocked}
+          summary={summarize(session)}
+          history={player.history}
           enabled={prefs.enabled}
           onClose={() => setResultOpen(false)}
         />

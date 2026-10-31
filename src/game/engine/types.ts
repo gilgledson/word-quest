@@ -42,9 +42,9 @@ export const economy = {
   wrongLetter: 1,
   swap: 10,
   daily: 70,
-  /** Baús da tela inicial: um a cada 5 vitórias na campanha; prêmio fixo e crescente, em moedas, na ordem de abertura. */
+  /** Baús da tela inicial: um a cada 25 palavras descobertas (sem repetir fases); prêmio crescente, em moedas, na ordem de abertura (o último vale para os seguintes). */
   chest: [50, 75, 100, 125, 150],
-  chestEvery: 5,
+  chestWords: 25,
   rackStart: 5,
   rackMax: 5,
   swapMax: 5,

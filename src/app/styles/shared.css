@@ -898,3 +898,82 @@ footer {
   border-radius: 12px;
   margin-top: 15px;
 }
+/* Resumo da partida, medalhas e histórico na janela de resultado (compacto). */
+.result-dialog .match-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  width: 100%;
+  margin: 6px 0 2px;
+}
+.result-dialog .match-stats div {
+  background: #fff;
+  border: 1px solid #eee2bc;
+  border-radius: 10px;
+  padding: 3px 2px;
+}
+.result-dialog .match-stats dt {
+  font-size: 10px;
+  line-height: 1.2;
+  color: #6d5d33;
+}
+.result-dialog .match-stats dd {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #3a2f12;
+}
+.result-dialog .medals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+  margin: 4px 0;
+  padding: 0;
+  list-style: none;
+}
+.result-dialog .medals li {
+  background: #ffe9a8;
+  border: 2px solid #d99a1c;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #3a2300;
+}
+.result-dialog .medals small {
+  display: none;
+}
+.result-dialog .match-history {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #6d5d33;
+}
+.result-dialog .match-history summary {
+  cursor: pointer;
+  font-weight: 700;
+}
+.result-dialog .match-history ol {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.result-dialog .match-history [data-result="win"] b {
+  color: #1d7a2e;
+}
+.result-dialog .match-history [data-result="loss"] b {
+  color: #b3261e;
+}
+@media (max-height: 700px) {
+  .result-backdrop {
+    padding-top: 44px;
+  }
+  .result-dialog .result-icon {
+    width: 60px;
+    height: 60px;
+    margin-top: -40px;
+  }
+  .result-dialog .result-quote {
+    display: none;
+  }
+}

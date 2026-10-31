@@ -32,7 +32,21 @@ export interface Player {
   jokerTourDone: boolean;
   /** Baús da tela inicial já abertos (um a cada 5 vitórias). */
   chestsOpened: number;
+  /** Palavras descobertas pelo jogador em cada fase (ids); a fase refeita não conta de novo. */
+  wordsFound: Record<string, string[]>;
+  /** Últimas partidas concluídas (a mais recente primeiro). */
+  history: GameRecord[];
 }
+export interface GameRecord {
+  puzzleId: string;
+  /** Id do oponente (`OPPONENTS`), quando a partida o registrou. */
+  opponent?: string;
+  result: "win" | "draw" | "loss";
+  p: number;
+  ai: number;
+  date: string;
+}
+export const HISTORY_MAX = 10;
 export const initialPlayer: Player = {
   name: "Explorador",
   avatar: "jogador",
@@ -53,6 +67,8 @@ export const initialPlayer: Player = {
   tourDone: false,
   jokerTourDone: false,
   chestsOpened: 0,
+  wordsFound: {},
+  history: [],
 };
 export interface PlayerRepository {
   load(): Promise<Player | undefined>;

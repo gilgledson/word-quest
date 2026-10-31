@@ -1,44 +1,42 @@
 import { useState } from "react";
 import { ChestReward } from "../components/ChestReward";
-import { chestPrize, chestsReady, winsToNextChest } from "../game/chest";
+import { chestPrize, chestsReady, wordsToNextChest } from "../game/chest";
 import { usePlayer } from "../stores/player";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 
 /** Texto curto sobre o próximo baú (vira o aviso "Baú pronto!" quando há um para abrir). */
-export function ChestHint({ wins }: { wins: number }) {
+export function ChestHint({ words }: { words: number }) {
   const opened = usePlayer((s) => s.player.chestsOpened ?? 0);
-  const ready = chestsReady(wins, opened);
-  const left = winsToNextChest(wins, opened);
+  const ready = chestsReady(words, opened);
+  const left = wordsToNextChest(words, opened);
   return (
     <span className={`chest-hint ${ready ? "ready" : ""}`}>
       {ready
         ? ready > 1
           ? `${ready} baús prontos!`
           : "Baú pronto! Toque nele"
-        : left === null
-          ? "Todos os baús abertos"
-          : `Baú em ${left} ${left === 1 ? "vitória" : "vitórias"}`}
+        : `Baú em ${left} ${left === 1 ? "palavra" : "palavras"}`}
     </span>
   );
 }
 
 /**
- * Baú do fim da barra de progresso: a cada 5 vitórias um baú fica pronto; ao tocar nele as moedas
+ * Baú do fim da barra de progresso: a cada 25 palavras descobertas um baú fica pronto; ao tocar nele as moedas
  * entram no saldo e a abertura aparece numa janela.
  */
-export function HomeChest({ wins }: { wins: number }) {
+export function HomeChest({ words }: { words: number }) {
   const player = usePlayer((s) => s.player);
   const update = usePlayer((s) => s.update);
   const [prize, setPrize] = useState<number | null>(null);
   const opened = player.chestsOpened ?? 0;
-  const ready = chestsReady(wins, opened);
+  const ready = chestsReady(words, opened);
   const open = () => {
     if (!ready) return;
     const coins = chestPrize(opened);
     update((p) =>
       // Confere de novo dentro da atualização: dois toques seguidos não pagam duas vezes.
-      chestsReady(wins, p.chestsOpened ?? 0) > 0
+      chestsReady(words, p.chestsOpened ?? 0) > 0
         ? {
             ...p,
             coins: p.coins + chestPrize(p.chestsOpened ?? 0),
@@ -60,7 +58,7 @@ export function HomeChest({ wins }: { wins: number }) {
         aria-label={
           ready
             ? `Abrir baú: ${chestPrize(opened)} moedas`
-            : "Baú fechado: vença mais fases para abrir"
+            : "Baú fechado: descubra mais palavras para abrir"
         }
       >
         {ready > 1 && <b className="chest-count">{ready}</b>}

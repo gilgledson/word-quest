@@ -599,7 +599,7 @@
   z-index: 35;
   display: grid;
   place-items: center;
-  padding: 16px;
+  padding: 56px 16px 16px;
   background: #1d2c3d99;
 }
 .result-dialog {
