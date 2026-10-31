@@ -1084,3 +1084,17 @@
   user-select: none;
   will-change: transform;
 }
+
+/* Na vez do rival os controles parecem desligados (apagados e "afundados"), não só sem clique. */
+.app-playing .puzzle-tools button:disabled {
+  opacity: 0.78;
+  filter: grayscale(0.92) brightness(0.92);
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #7d8a93;
+}
+/* A animação das peças fixa opacity: 1; o apagado do banco na vez do rival vai por filtro. */
+.app-playing
+  .letter-bank
+  button:disabled:not(.slot-empty):not(.in-flight):not(.drag-source) {
+  filter: grayscale(0.9) brightness(0.9);
+}

@@ -39,6 +39,7 @@ import { ScoreFloats } from "./puzzle/ScoreFloats";
 import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
 import { GameTour, JokerTour } from "./puzzle/GameTour";
+import { confirmMessage } from "./puzzle/messages";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
@@ -98,6 +99,8 @@ function Duel() {
   const [target, setTarget] = useState<string | null>(null);
   const [message, setMessage] = useState(HINT_MESSAGE);
   const [feedback, setFeedback] = useState(false);
+  // O jogador escolheu uma pista enquanto o rival joga (planejando a próxima jogada).
+  const [chosenWhileWaiting, setChosenWhileWaiting] = useState(false);
   useEffect(() => {
     // Um aviso de rotina encerra o aviso de resultado na hora (não espera o tempo acabar).
     if (isRoutineHint(message)) {
@@ -166,6 +169,9 @@ function Duel() {
     enabled: prefs.enabled,
     who: "p",
   });
+  useEffect(() => {
+    if (!botTurn) setChosenWhileWaiting(false);
+  }, [botTurn]);
   const finished = !!engine && !!session && engine.complete(session);
   const wasFinished = useRef(finished);
   useEffect(() => {
@@ -247,7 +253,9 @@ function Duel() {
   // Progresso da palavra escolhida: letras já na grade (confirmadas ou não) e o que fechar vale.
   const filled = active.filter((c) => session.letters[c.key]).length;
   const wordClosed = !!word && solved.some((w) => w.id === word.id);
-  const showMessage = botTurn || feedback || !word;
+  // Na vez do rival, a pista escolhida pelo jogador aparece no painel; sem escolha, vale o último aviso.
+  const waitingPreview = botTurn && chosenWhileWaiting && !!word && !wordClosed;
+  const showMessage = feedback || !word || (botTurn && !waitingPreview);
   const current =
     active.find((c) => c.key === target && !session.letters[c.key]) ??
     active.find((c) => !session.letters[c.key]);
@@ -328,6 +336,7 @@ function Duel() {
   };
   const choose = (wordId: string, cell?: string) => {
     const w = puzzle.words.find((w) => w.id === wordId)!;
+    if (botTurn) setChosenWhileWaiting(true);
     setSelected(wordId);
     setTarget(cell ?? null);
     setMessage(
@@ -477,16 +486,13 @@ function Duel() {
     else sfx("wrong");
     if (r.passed) setMessage("Você passou a vez.");
     else {
-      const won = r.gained + r.bonus;
-      const parts = [
-        won ? `+${won} ponto${won > 1 ? "s" : ""}` : "Nenhuma letra certa",
-        r.penalty
-          ? `−${r.penalty} ponto${r.penalty > 1 ? "s" : ""} por letra errada`
-          : "",
-        r.returned ? `${r.returned} voltaram ao banco` : "",
-        engine.complete(r.session) ? "" : `vez de ${rival.name}`,
-      ].filter(Boolean);
-      setMessage(parts.join(" · "));
+      setMessage(
+        confirmMessage({
+          won: r.gained + r.bonus,
+          penalty: r.penalty,
+          returned: r.returned,
+        }),
+      );
     }
   };
   const firstOpen = () =>
@@ -710,6 +716,11 @@ function Duel() {
                 <p className="word-progress" data-testid="word-progress">
                   {wordClosed ? (
                     "Palavra completa ✓"
+                  ) : waitingPreview ? (
+                    <>
+                      Sua pista: <b>{word.clue}</b>
+                      {` · ${filled}/${active.length}`}
+                    </>
                   ) : (
                     <>
                       <b>

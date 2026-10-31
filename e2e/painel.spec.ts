@@ -101,3 +101,39 @@ test("as setas encostam na linha da grade e ficam centradas na pista", async ({
   const text = await page.locator(".cell.clue").first().innerText();
   expect(text).not.toMatch(/[→↓↑]/);
 });
+
+test("na vez do rival os controles ficam apagados e dá para escolher a próxima pista", async ({
+  page,
+}) => {
+  await page.goto("/play/vila-1?vs=dificil");
+  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await dismissTour(page);
+  await page.getByRole("button", { name: "Pular" }).click();
+  await page.getByRole("button", { name: "Passar a vez" }).click();
+  const trocar = page.getByRole("button", { name: "Trocar", exact: true });
+  await expect(trocar).toBeDisabled();
+  // Apagados de verdade: sem cor, não só sem clique.
+  const filter = await trocar.evaluate((el) => getComputedStyle(el).filter);
+  expect(filter).toContain("grayscale(0.92)");
+  // As letras do banco também ficam apagadas.
+  const tileFilter = await page
+    .getByRole("button", { name: /^Inserir letra/ })
+    .first()
+    .evaluate((el) => getComputedStyle(el).filter);
+  expect(tileFilter).toContain("grayscale(0.9)");
+  // Escolhe uma pista enquanto o rival pensa.
+  const clue = page.getByRole("button", { name: /^Pista: Burro/ });
+  await clue.click();
+  await expect(page.getByTestId("word-progress")).toContainText(
+    "Sua pista: Burro",
+  );
+  await expect(clue).toHaveClass(/selected-clue/);
+  // Quando a vez volta, o painel passa a mostrar o progresso normal da pista escolhida.
+  await expect(page.getByRole("button", { name: "Dica" })).toBeEnabled({
+    timeout: 8000,
+  });
+  await expect(page.getByTestId("word-progress")).not.toContainText(
+    "Sua pista",
+  );
+  await expect(clue).toHaveClass(/selected-clue/);
+});

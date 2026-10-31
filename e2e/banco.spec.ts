@@ -21,14 +21,17 @@ const open = async (page: Page) => {
 };
 const tiles = (page: Page) =>
   page.getByRole("button", { name: /^Inserir letra/ });
-/** Posição horizontal de cada casa do banco (peça ou espaço vazio), da esquerda para a direita. */
+/**
+ * Posição horizontal de cada casa do banco (peça ou espaço vazio), da esquerda para a direita.
+ * Usa a posição de layout (`offsetLeft`), que não muda durante a animação de entrada das peças.
+ */
 const slotsX = (page: Page) =>
   page.evaluate(() =>
     [...document.querySelectorAll<HTMLElement>(".letter-bank [data-slot]")].map(
       (el) => ({
         slot: el.dataset.slot,
         empty: el.classList.contains("slot-empty"),
-        x: Math.round(el.getBoundingClientRect().x),
+        x: el.offsetLeft,
       }),
     ),
   );

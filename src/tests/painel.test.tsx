@@ -95,3 +95,54 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
     expect(progress()).toHaveTextContent("Palavra completa ✓");
   });
 });
+
+describe("Vez do rival: controles desligados e pista escolhida", () => {
+  const pass = () =>
+    fireEvent.click(screen.getByRole("button", { name: "Passar a vez" }));
+  const clues = () => screen.getAllByRole("button", { name: /^Pista:/ });
+  const clueText = (el: HTMLElement) =>
+    el
+      .getAttribute("aria-label")!
+      .replace(/^Pista: /, "")
+      .replace(/, (horizontal|vertical)$/, "");
+
+  it("Trocar, Dica e Confirmar ficam desabilitados enquanto o rival joga", () => {
+    vi.useFakeTimers();
+    open();
+    pass();
+    for (const name of ["Trocar", "Dica", "Passar a vez"]) {
+      const b = screen.getByRole("button", { name });
+      expect(b, name).toBeDisabled();
+    }
+    for (const t of screen.getAllByRole("button", { name: /^Inserir letra/ }))
+      expect(t).toBeDisabled();
+  });
+  it("tocar numa pista na vez do rival mostra 'Sua pista' no painel e destaca a palavra", () => {
+    vi.useFakeTimers();
+    open();
+    pass();
+    const target = clues()[3];
+    fireEvent.click(target);
+    expect(target).toHaveClass("selected-clue");
+    expect(progress()).toHaveTextContent(`Sua pista: ${clueText(target)}`);
+    expect(document.querySelectorAll(".cell.active").length).toBeGreaterThan(0);
+  });
+  it("sem escolher pista, o painel segue mostrando o último aviso; ao voltar a vez, o progresso normal", () => {
+    vi.useFakeTimers();
+    open();
+    pass();
+    expect(progress()).toBeNull();
+    fireEvent.click(clues()[3]);
+    expect(progress()).toHaveTextContent("Sua pista:");
+    // O rival joga (até uns 3 s); só depois o aviso do resultado dele passa a contar 4,5 s.
+    act(() => {
+      vi.advanceTimersByTime(4000);
+    });
+    act(() => {
+      vi.advanceTimersByTime(5000);
+    });
+    expect(screen.getByRole("button", { name: "Dica" })).toBeEnabled();
+    expect(progress()).not.toHaveTextContent("Sua pista:");
+    expect(progress()).toHaveTextContent(/\d+\/\d+ · /);
+  });
+});

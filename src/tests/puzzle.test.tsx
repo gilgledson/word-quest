@@ -164,6 +164,8 @@ it("as letras ficam pendentes até ✓, e ✓ devolve ao banco as erradas", () =
   expect(rackLetters()).toContain(letter);
   expect(session().scores.p).toBe(0);
   expect(screen.getByText(/Nenhuma letra certa/)).toBeInTheDocument();
+  expect(screen.getByText(/1 letra voltou ao banco/)).toBeInTheDocument();
+  expect(screen.queryByText(/voltaram/)).toBeNull();
 });
 it("letra errada confirmada custa 1 ponto, avisa na mensagem e não pinta nada de vermelho", () => {
   const key = "vs:vila-1:medio";
@@ -185,7 +187,11 @@ it("letra errada confirmada custa 1 ponto, avisa na mensagem e não pinta nada d
   fireEvent.click(confirmButton());
   expect(document.querySelector(".incorrect, .word-error")).toBeNull();
   expect(session().scores.p).toBe(2);
-  expect(screen.getByText(/−1 ponto por letra errada/)).toBeInTheDocument();
+  expect(
+    screen.getByText(
+      "Nenhuma letra certa · −1 ponto · 1 letra voltou ao banco",
+    ),
+  ).toBeInTheDocument();
 });
 it("letras certas travam no ✓ e rendem pontos", () => {
   open();
