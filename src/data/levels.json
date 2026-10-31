@@ -162,9 +162,9 @@
         "arrow": "down"
       },
       {
-        "id": "aval",
-        "clue": "Garantia",
-        "answer": "AVAL",
+        "id": "oval",
+        "clue": "Forma de ovo",
+        "answer": "OVAL",
         "direction": "vertical",
         "startRow": 6,
         "startCol": 1,
@@ -459,7 +459,7 @@
       },
       {
         "id": "icar",
-        "clue": "Subir bandeira",
+        "clue": "Erguer bandeira",
         "answer": "ICAR",
         "direction": "vertical",
         "startRow": 1,
@@ -732,9 +732,9 @@
         "arrow": "right"
       },
       {
-        "id": "lapa",
-        "clue": "Gruta",
-        "answer": "LAPA",
+        "id": "lata",
+        "clue": "Embalagem de metal",
+        "answer": "LATA",
         "direction": "horizontal",
         "startRow": 9,
         "startCol": 4,
@@ -2015,9 +2015,9 @@
         "arrow": "down"
       },
       {
-        "id": "ze",
-        "clue": "Apelido de José",
-        "answer": "ZE",
+        "id": "pe",
+        "clue": "Base da perna",
+        "answer": "PE",
         "direction": "vertical",
         "startRow": 3,
         "startCol": 7,
@@ -2388,7 +2388,7 @@
       },
       {
         "id": "icar",
-        "clue": "Subir bandeira",
+        "clue": "Erguer bandeira",
         "answer": "ICAR",
         "direction": "horizontal",
         "startRow": 4,
@@ -3693,7 +3693,7 @@
       },
       {
         "id": "afago",
-        "clue": "Carícia leve",
+        "clue": "Carinho com a mão",
         "answer": "AFAGO",
         "direction": "vertical",
         "startRow": 1,
@@ -3792,7 +3792,7 @@
       },
       {
         "id": "egide",
-        "clue": "Escudo divino",
+        "clue": "Amparo, proteção",
         "answer": "EGIDE",
         "direction": "vertical",
         "startRow": 1,
@@ -6083,7 +6083,7 @@
       },
       {
         "id": "icar",
-        "clue": "Subir bandeira",
+        "clue": "Erguer bandeira",
         "answer": "ICAR",
         "direction": "vertical",
         "startRow": 1,
@@ -6290,9 +6290,9 @@
         "arrow": "right"
       },
       {
-        "id": "aia",
-        "clue": "Babá antiga",
-        "answer": "AIA",
+        "id": "aba",
+        "clue": "Parte do chapéu",
+        "answer": "ABA",
         "direction": "horizontal",
         "startRow": 9,
         "startCol": 1,
@@ -6642,7 +6642,7 @@
       },
       {
         "id": "bio",
-        "clue": "Vida, em prefixo",
+        "clue": "Resumo do perfil",
         "answer": "BIO",
         "direction": "vertical",
         "startRow": 1,
@@ -7069,7 +7069,7 @@
       },
       {
         "id": "cia",
-        "clue": "Empresa",
+        "clue": "Empresa (abrev.)",
         "answer": "CIA",
         "direction": "horizontal",
         "startRow": 4,

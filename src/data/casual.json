@@ -199,9 +199,9 @@
               "arrow": "down"
             },
             {
-              "id": "teiu",
-              "clue": "Lagarto grande",
-              "answer": "TEIU",
+              "id": "peru",
+              "clue": "Ave do Natal",
+              "answer": "PERU",
               "direction": "horizontal",
               "startRow": 9,
               "startCol": 4,
@@ -319,9 +319,9 @@
               "arrow": "right"
             },
             {
-              "id": "mutum",
-              "clue": "Ave de crista",
-              "answer": "MUTUM",
+              "id": "sagui",
+              "clue": "Macaco pequeno",
+              "answer": "SAGUI",
               "direction": "horizontal",
               "startRow": 2,
               "startCol": 3,
@@ -330,9 +330,9 @@
               "arrow": "right"
             },
             {
-              "id": "muar",
-              "clue": "Da mula",
-              "answer": "MUAR",
+              "id": "bode",
+              "clue": "Macho da cabra",
+              "answer": "BODE",
               "direction": "vertical",
               "startRow": 6,
               "startCol": 0,
@@ -461,9 +461,9 @@
               "arrow": "down"
             },
             {
-              "id": "teiu",
-              "clue": "Lagarto grande",
-              "answer": "TEIU",
+              "id": "leao",
+              "clue": "Rei da selva",
+              "answer": "LEAO",
               "direction": "vertical",
               "startRow": 4,
               "startCol": 2,
@@ -570,9 +570,9 @@
               "arrow": "down"
             },
             {
-              "id": "jacu",
-              "clue": "Ave da mata",
-              "answer": "JACU",
+              "id": "onca",
+              "clue": "Felino pintado",
+              "answer": "ONCA",
               "direction": "horizontal",
               "startRow": 5,
               "startCol": 1,
@@ -636,9 +636,9 @@
               "arrow": "down"
             },
             {
-              "id": "gaio",
-              "clue": "Pássaro azul",
-              "answer": "GAIO",
+              "id": "bode",
+              "clue": "Macho da cabra",
+              "answer": "BODE",
               "direction": "vertical",
               "startRow": 1,
               "startCol": 0,
@@ -1707,9 +1707,9 @@
               "arrow": "right"
             },
             {
-              "id": "safra",
-              "clue": "Colheita do ano",
-              "answer": "SAFRA",
+              "id": "cedro",
+              "clue": "Madeira nobre",
+              "answer": "CEDRO",
               "direction": "vertical",
               "startRow": 1,
               "startCol": 0,
@@ -1925,9 +1925,9 @@
               "arrow": "right"
             },
             {
-              "id": "hera",
-              "clue": "Sobe nos muros",
-              "answer": "HERA",
+              "id": "neve",
+              "clue": "Flocos brancos",
+              "answer": "NEVE",
               "direction": "vertical",
               "startRow": 1,
               "startCol": 2,
@@ -2100,9 +2100,9 @@
               "arrow": "down"
             },
             {
-              "id": "seiva",
-              "clue": "Líquido da planta",
-              "answer": "SEIVA",
+              "id": "brisa",
+              "clue": "Vento suave",
+              "answer": "BRISA",
               "direction": "vertical",
               "startRow": 5,
               "startCol": 2,
@@ -2122,9 +2122,9 @@
               "arrow": "right"
             },
             {
-              "id": "jambo",
-              "clue": "Fruta rosa",
-              "answer": "JAMBO",
+              "id": "galho",
+              "clue": "Parte da árvore",
+              "answer": "GALHO",
               "direction": "horizontal",
               "startRow": 9,
               "startCol": 1,
@@ -2318,9 +2318,9 @@
               "arrow": "down"
             },
             {
-              "id": "geo",
-              "clue": "Da Terra",
-              "answer": "GEO",
+              "id": "ceu",
+              "clue": "Azul lá em cima",
+              "answer": "CEU",
               "direction": "vertical",
               "startRow": 3,
               "startCol": 2,
@@ -2362,9 +2362,9 @@
               "arrow": "down"
             },
             {
-              "id": "areal",
-              "clue": "Praia de areia",
-              "answer": "AREAL",
+              "id": "areia",
+              "clue": "Cobre a praia",
+              "answer": "AREIA",
               "direction": "horizontal",
               "startRow": 9,
               "startCol": 3,

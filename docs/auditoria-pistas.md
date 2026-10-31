@@ -65,3 +65,16 @@ Temas corrigidos sem mudar a pista: **ESTRELA** (animais para natureza), **TAPET
   "Pequeno tijolo", LARANJADA "Suco de laranja"...). Em palavra derivada isso é comum e aceitável, então ficaram.
 - **FAVELA** ("Bairro de morro") e **INDIO** ("Povo nativo") valem uma decisão sua sobre o tom desejado.
 - O catálogo expandido (`catalogo_expandido_corrigido.json`) ainda não foi revisado nem incorporado.
+
+## Revisão de vocabulário cotidiano (30/10/2026)
+
+Critério: palavras do dia a dia, fáceis de reconhecer; o desafio deve estar nas letras e na corrida contra o rival.
+
+- 607 respostas distintas em 910 usos; cerca de 50 palavras pouco cotidianas, em 78 usos (mundos 2 a 5 e modo casual).
+- 16 usos trocados por palavras comuns que cabem nos mesmos cruzamentos: AVAL→OVAL, LAPA→LATA, ZE→PE, AIA→ABA
+  (fases) e TEIU→PERU/LEAO, MUTUM→SAGUI, MUAR/GAIO→BODE, JACU→ONCA, SAFRA→CEDRO, HERA→NEVE, SEIVA→BRISA,
+  JAMBO→GALHO, GEO→CEU, AREAL→AREIA (casual, sempre do mesmo tema).
+- Pistas mais claras: ICAR, BIO, CIA, EGIDE, AFAGO.
+- As 44 palavras pouco cotidianas ficaram marcadas como `medio` no catálogo (o gerador ainda não filtra por nível).
+- Pendentes: palavras totalmente cruzadas que não têm substituto sem regerar a fase (EPOPEIA, IGAPO, OBOLO, EGIDE,
+  MERCE, MOER, CAPATAZ…) e itens do casual sem opção do mesmo tema (ANIS, GEO, ATOL, HERA, RELVA).

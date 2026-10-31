@@ -267,8 +267,8 @@
   { "palavra": "AEREO", "pista": "Do ar", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "AFAGO",
-    "pista": "Carícia leve",
-    "nivel": "facil",
+    "pista": "Carinho com a mão",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -360,7 +360,7 @@
   {
     "palavra": "AIA",
     "pista": "Babá antiga",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -372,7 +372,7 @@
   {
     "palavra": "AIS",
     "pista": "Gritos de dor",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   { "palavra": "AJUDA", "pista": "Auxílio", "nivel": "facil", "tipo": "geral" },
@@ -875,7 +875,7 @@
   {
     "palavra": "ANIS",
     "pista": "Semente aromática",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "comida"
   },
   {
@@ -1040,7 +1040,7 @@
   {
     "palavra": "ARA",
     "pista": "Tipo de papagaio",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -1148,7 +1148,7 @@
   {
     "palavra": "AREAL",
     "pista": "Praia de areia",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -1503,7 +1503,7 @@
   {
     "palavra": "ATOL",
     "pista": "Ilha de coral",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -1563,7 +1563,7 @@
   {
     "palavra": "AUGE",
     "pista": "Ponto máximo",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -1603,7 +1603,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "AVAL", "pista": "Garantia", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "AVAL", "pista": "Garantia", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "AVAREZA",
     "pista": "Apego ao dinheiro",
@@ -2169,7 +2169,7 @@
   {
     "palavra": "BE",
     "pista": "Nome da letra B",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -2220,7 +2220,12 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "BEIJO", "pista": "Toque de lábios", "nivel": "facil", "tipo": "geral" },
+  {
+    "palavra": "BEIJO",
+    "pista": "Toque de lábios",
+    "nivel": "facil",
+    "tipo": "geral"
+  },
   { "palavra": "BEIRA", "pista": "Margem", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "BEIRAL",
@@ -2418,8 +2423,8 @@
   },
   {
     "palavra": "BIO",
-    "pista": "Vida, em prefixo",
-    "nivel": "facil",
+    "pista": "Resumo do perfil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -3582,11 +3587,16 @@
     "nivel": "facil",
     "tipo": "casa"
   },
-  { "palavra": "CAPAS", "pista": "Protegem o sofá", "nivel": "facil", "tipo": "casa" },
+  {
+    "palavra": "CAPAS",
+    "pista": "Protegem o sofá",
+    "nivel": "facil",
+    "tipo": "casa"
+  },
   {
     "palavra": "CAPATAZ",
     "pista": "Chefe da fazenda",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -4475,7 +4485,12 @@
     "nivel": "facil",
     "tipo": "casa"
   },
-  { "palavra": "CIA", "pista": "Empresa", "nivel": "facil", "tipo": "geral" },
+  {
+    "palavra": "CIA",
+    "pista": "Empresa (abrev.)",
+    "nivel": "medio",
+    "tipo": "geral"
+  },
   {
     "palavra": "CICLONE",
     "pista": "Vento giratório",
@@ -5292,7 +5307,7 @@
   {
     "palavra": "COTIA",
     "pista": "Roedor de mata",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   {
@@ -6396,7 +6411,7 @@
   {
     "palavra": "DRAGA",
     "pista": "Limpa o rio",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -6547,8 +6562,8 @@
   },
   {
     "palavra": "EGIDE",
-    "pista": "Escudo divino",
-    "nivel": "facil",
+    "pista": "Amparo, proteção",
+    "nivel": "medio",
     "tipo": "geral"
   },
   { "palavra": "EGO", "pista": "Vaidade", "nivel": "facil", "tipo": "geral" },
@@ -6672,7 +6687,7 @@
   {
     "palavra": "EMBLEMA",
     "pista": "Símbolo",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -6904,7 +6919,7 @@
   {
     "palavra": "EPOPEIA",
     "pista": "Poema heroico",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -8617,7 +8632,7 @@
   {
     "palavra": "GAIO",
     "pista": "Pássaro azul",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   {
@@ -8892,7 +8907,7 @@
   {
     "palavra": "GE",
     "pista": "Nome da letra G",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -8989,7 +9004,7 @@
   {
     "palavra": "GEO",
     "pista": "Da Terra",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -9679,8 +9694,8 @@
   },
   {
     "palavra": "ICAR",
-    "pista": "Subir bandeira",
-    "nivel": "facil",
+    "pista": "Erguer bandeira",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -9729,7 +9744,7 @@
   {
     "palavra": "IGAPO",
     "pista": "Mata alagada",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -10050,7 +10065,7 @@
   {
     "palavra": "JACU",
     "pista": "Ave da mata",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   {
@@ -10062,7 +10077,7 @@
   {
     "palavra": "JAMBO",
     "pista": "Fruta rosa",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -10545,7 +10560,7 @@
     "nivel": "facil",
     "tipo": "casa"
   },
-  { "palavra": "LAPA", "pista": "Gruta", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "LAPA", "pista": "Gruta", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "LAPIDAR",
     "pista": "Polir gema",
@@ -11022,7 +11037,12 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "LIGADO", "pista": "Aceso, em uso", "nivel": "facil", "tipo": "geral" },
+  {
+    "palavra": "LIGADO",
+    "pista": "Aceso, em uso",
+    "nivel": "facil",
+    "tipo": "geral"
+  },
   {
     "palavra": "LIGAR",
     "pista": "Telefonar",
@@ -11153,7 +11173,7 @@
   {
     "palavra": "LIS",
     "pista": "Flor francesa",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -12143,7 +12163,7 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "MERCE", "pista": "Graça", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "MERCE", "pista": "Graça", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "MERENDA",
     "pista": "Lanche escolar",
@@ -12500,7 +12520,7 @@
     "nivel": "facil",
     "tipo": "comida"
   },
-  { "palavra": "MOER", "pista": "Triturar", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "MOER", "pista": "Triturar", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "MOINHO",
     "pista": "Tritura grãos",
@@ -12777,7 +12797,7 @@
   {
     "palavra": "MUAR",
     "pista": "Da mula",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   {
@@ -12911,7 +12931,7 @@
   {
     "palavra": "MUTUM",
     "pista": "Ave de crista",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   { "palavra": "NA", "pista": "Em + a", "nivel": "facil", "tipo": "geral" },
@@ -13203,7 +13223,7 @@
   {
     "palavra": "NORA",
     "pista": "Mulher do filho",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   { "palavra": "NORMAL", "pista": "Comum", "nivel": "facil", "tipo": "geral" },
@@ -13362,10 +13382,15 @@
   {
     "palavra": "OBOLO",
     "pista": "Pequena oferta",
+    "nivel": "medio",
+    "tipo": "geral"
+  },
+  {
+    "palavra": "OBRA",
+    "pista": "Reforma da casa",
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "OBRA", "pista": "Reforma da casa", "nivel": "facil", "tipo": "geral" },
   { "palavra": "OBRIGAR", "pista": "Impor", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "OBSTACULO",
@@ -13430,13 +13455,13 @@
   {
     "palavra": "ODA",
     "pista": "Poema de elogio",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
     "palavra": "ODE",
     "pista": "Poema de louvor",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -13488,7 +13513,12 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "OITO", "pista": "Depois do sete", "nivel": "facil", "tipo": "geral" },
+  {
+    "palavra": "OITO",
+    "pista": "Depois do sete",
+    "nivel": "facil",
+    "tipo": "geral"
+  },
   { "palavra": "OLA", "pista": "Saudação", "nivel": "facil", "tipo": "geral" },
   {
     "palavra": "OLARIA",
@@ -16355,7 +16385,7 @@
   {
     "palavra": "RELVA",
     "pista": "Grama baixa",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -16519,7 +16549,7 @@
   {
     "palavra": "RIA",
     "pista": "Dava risada",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -16622,7 +16652,7 @@
     "tipo": "geral"
   },
   { "palavra": "ROBUSTO", "pista": "Forte", "nivel": "medio", "tipo": "geral" },
-  { "palavra": "ROCA", "pista": "Campo", "nivel": "facil", "tipo": "geral" },
+  { "palavra": "ROCA", "pista": "Campo", "nivel": "medio", "tipo": "geral" },
   {
     "palavra": "ROCHA",
     "pista": "Pedra grande",
@@ -16914,13 +16944,13 @@
   {
     "palavra": "SAFRA",
     "pista": "Colheita do ano",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
     "palavra": "SAGA",
     "pista": "Longa narrativa",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -17320,7 +17350,7 @@
   {
     "palavra": "SEIVA",
     "pista": "Líquido da planta",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "natureza"
   },
   {
@@ -18182,7 +18212,7 @@
   {
     "palavra": "TEAR",
     "pista": "Fabrica tecidos",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
@@ -18213,7 +18243,7 @@
   {
     "palavra": "TEIU",
     "pista": "Lagarto grande",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "animais"
   },
   {
@@ -20047,7 +20077,12 @@
     "nivel": "facil",
     "tipo": "geral"
   },
-  { "palavra": "VO", "pista": "Mãe de um dos pais", "nivel": "facil", "tipo": "geral" },
+  {
+    "palavra": "VO",
+    "pista": "Mãe de um dos pais",
+    "nivel": "facil",
+    "tipo": "geral"
+  },
   {
     "palavra": "VOA",
     "pista": "Move-se no ar",
@@ -20205,7 +20240,7 @@
   {
     "palavra": "ZE",
     "pista": "Apelido de José",
-    "nivel": "facil",
+    "nivel": "medio",
     "tipo": "geral"
   },
   {
