@@ -75,3 +75,32 @@ it("refazer a fase não conta as mesmas palavras de novo, mas as novas sim", () 
     puzzle.words[1].id,
   ]);
 });
+/** Trava só as casas dadas (parte de uma palavra), com o dono indicado. */
+const lockSome = (s: Session, keys: string[], who: Owner): Session => ({
+  ...s,
+  locked: [...new Set([...s.locked, ...keys])],
+  owners: {
+    ...s.owners,
+    ...Object.fromEntries(
+      keys.filter((k) => !s.locked.includes(k)).map((k) => [k, who]),
+    ),
+  },
+});
+it("só conta para quem joga a última letra: o oponente fecha, não conta", () => {
+  const cells = positions(puzzle.words[0]).map((c) => c.key);
+  const start = fresh();
+  // O jogador coloca todas menos a última; o oponente fecha a palavra.
+  const partial = lockSome(start, cells.slice(0, -1), "p");
+  let p = settleSession(player({ sessions: { k: start } }), partial, 0, ctx);
+  expect(p.wordsFound).toEqual({});
+  p = settleSession(p, lockSome(partial, cells.slice(-1), "ai"), 0, ctx);
+  expect(p.wordsFound).toEqual({});
+});
+it("o oponente coloca as primeiras e o jogador fecha: conta para o jogador", () => {
+  const cells = positions(puzzle.words[0]).map((c) => c.key);
+  const start = fresh();
+  const partial = lockSome(start, cells.slice(0, -1), "ai");
+  let p = settleSession(player({ sessions: { k: start } }), partial, 0, ctx);
+  p = settleSession(p, lockSome(partial, cells.slice(-1), "p"), 0, ctx);
+  expect(p.wordsFound[puzzle.id]).toEqual([puzzle.words[0].id]);
+});
