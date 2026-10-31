@@ -29,6 +29,8 @@ interface Props {
   revealedCells: Set<string>;
   /** Letras que o rival está colocando agora, uma a uma (ainda não confirmadas na sessão). */
   botReveal?: Record<string, string>;
+  /** Peças em voo: a letra fica invisível na casa até chegar. */
+  flying?: ReadonlySet<string>;
   /** Escolhe a palavra; `cell` é a casa tocada (a próxima peça entra nela). */
   onChoose: (wordId: string, cell?: string) => void;
   /** Devolve ao banco a letra pendente da casa. */
@@ -49,6 +51,7 @@ export function Board({
   placedCells,
   revealedCells,
   botReveal,
+  flying,
   onChoose,
   onUnplace,
 }: Props) {
@@ -127,7 +130,7 @@ export function Board({
               {...(mine && pending(ck)
                 ? letterDrag.bind(tileOf(ck)?.id ?? "", session.letters[ck])
                 : {})}
-              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
+              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
               data-cell={ck}
               style={
                 {

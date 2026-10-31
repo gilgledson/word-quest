@@ -1,6 +1,7 @@
 import { Check, Lightbulb, Shuffle, SkipForward } from "lucide-react";
 import { motion } from "motion/react";
 import { economy, type Tile } from "../../game/crossword-engine";
+import { useRackSlots } from "../../hooks/useRackSlots";
 import type { useLetterDrag } from "../../hooks/useLetterDrag";
 
 interface Props {
@@ -15,6 +16,8 @@ interface Props {
   hasPending: boolean;
   pulse: number;
   hinting: boolean;
+  /** Peças em voo (da grade para o banco ou o contrário): ficam invisíveis até a letra chegar. */
+  flying?: ReadonlySet<string>;
   onInsert: (tileId: string) => void;
   onSwap: () => void;
   onConfirm: () => void;
@@ -30,35 +33,57 @@ export function TurnControls({
   hasPending,
   pulse,
   hinting,
+  flying,
   onInsert,
   onSwap,
   onConfirm,
   onHint,
 }: Props) {
+  const slots = useRackSlots(
+    rack.map((t) => t.id),
+    economy.rackMax,
+  );
+  const byId = new Map(rack.map((t) => [t.id, t]));
   return (
     <>
       <div className="letter-bank" role="group" aria-label="Letras do banco">
-        {rack.map((t) => (
-          <motion.button
-            {...letterDrag.bind(t.id, t.joker ? "★" : t.letter)}
-            className={`${t.joker ? "joker" : ""} ${letterDrag.drag?.tileId === t.id ? "drag-source" : ""}`}
-            draggable={false}
-            disabled={!mine}
-            initial={animated ? { scale: 0.6, opacity: 0 } : false}
-            animate={{ scale: 1, opacity: 1 }}
-            whileTap={fxEnabled ? { scale: 1.07, y: -4 } : undefined}
-            key={t.id}
-            data-tile={t.id}
-            onClick={(event) => {
-              if (letterDrag.clickAllowed(event.detail === 0)) onInsert(t.id);
-            }}
-            aria-label={
-              t.joker ? "Inserir curinga" : `Inserir letra ${t.letter}`
-            }
-          >
-            {t.joker ? "★" : t.letter}
-          </motion.button>
-        ))}
+        {slots.map((id, slot) => {
+          const t = id ? byId.get(id) : undefined;
+          if (!t)
+            return (
+              <button
+                type="button"
+                className="slot-empty"
+                disabled
+                tabIndex={-1}
+                aria-hidden="true"
+                data-slot={slot}
+                key={`slot-${slot}`}
+              />
+            );
+          return (
+            <motion.button
+              {...letterDrag.bind(t.id, t.joker ? "★" : t.letter)}
+              className={`${t.joker ? "joker" : ""} ${letterDrag.drag?.tileId === t.id ? "drag-source" : ""} ${flying?.has(t.id) ? "in-flight" : ""}`}
+              draggable={false}
+              disabled={!mine}
+              initial={animated ? { scale: 0.6, opacity: 0 } : false}
+              animate={{ scale: 1, opacity: 1 }}
+              whileTap={fxEnabled ? { scale: 1.07, y: -4 } : undefined}
+              key={t.id}
+              data-tile={t.id}
+              data-slot={slot}
+              onClick={(event) => {
+                if (letterDrag.clickAllowed(event.detail === 0)) onInsert(t.id);
+              }}
+              aria-label={
+                t.joker ? "Inserir curinga" : `Inserir letra ${t.letter}`
+              }
+            >
+              {t.joker ? "★" : t.letter}
+            </motion.button>
+          );
+        })}
       </div>
       <div className="puzzle-tools">
         <button

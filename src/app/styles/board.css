@@ -1045,3 +1045,42 @@
 .app-playing .clue-half.selected-clue {
   color: #fff;
 }
+
+/* Casa vazia do banco: a peça foi para a grade (ou está no ar) e o lugar dela espera a volta. */
+.app-playing .letter-bank button.slot-empty,
+.app-playing .letter-bank button.in-flight {
+  color: transparent;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  opacity: 1;
+  transform: none;
+  animation: none;
+  filter: none;
+}
+.app-playing .letter.in-flight {
+  color: transparent;
+}
+
+/* Letra em voo entre o banco e a grade. */
+.tile-flight {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  width: 54px;
+  height: 58px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  border: 2px solid #fff3d2;
+  border-radius: 12px;
+  background: linear-gradient(#fff8dd, #ffda8c);
+  box-shadow: 0 9px 18px #24365755;
+  font:
+    900 30px Nunito,
+    sans-serif;
+  color: #122544;
+  user-select: none;
+  will-change: transform;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
+import { TileFlights, useTileFlights } from "../hooks/useTileFlights";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCw } from "lucide-react";
@@ -133,6 +134,9 @@ function Duel() {
     cardRef,
     player.animations,
   );
+  const tileFlights = useTileFlights(player.animations);
+  const rectOf = (selector: string) =>
+    document.querySelector(selector)?.getBoundingClientRect();
   const letterDrag = useLetterDrag((tileId, cell) =>
     drop.current(tileId, cell),
   );
@@ -372,7 +376,11 @@ function Duel() {
     if (next === session) return false;
     setMessage("Confirme com ✓ quando terminar a jogada.");
     setTarget(null);
+    const from = rectOf(`[data-tile="${tileId}"]`);
     commit(next);
+    tileFlights.launch(tileId, session.tiles[tileId].letter, from, () =>
+      rectOf(`[data-cell="${cellKey}"]`),
+    );
     sfx("place");
     return true;
   };
@@ -421,7 +429,13 @@ function Duel() {
     const next = engine.remove(session, word, cell);
     if (!next) return;
     setTarget(null);
+    const tile = Object.values(session.tiles).find((t) => t.cell === cell);
+    const from = rectOf(`[data-cell="${cell}"]`);
     commit(next);
+    if (tile)
+      tileFlights.launch(tile.id, tile.letter, from, () =>
+        rectOf(`[data-tile="${tile.id}"]`),
+      );
     sfx("remove");
     setMessage("Letra devolvida ao banco.");
   };
@@ -440,7 +454,16 @@ function Duel() {
     const next: Session = engine.complete(r.session)
       ? r.session
       : { ...r.session, versus: { ...versus, turn: "ai" } };
+    // Letras erradas voltam ao banco voando, da casa até o lugar delas.
+    const rejected = r.wrongCells.flatMap((cellId) => {
+      const tile = Object.values(session.tiles).find((t) => t.cell === cellId);
+      return tile ? [{ tile, from: rectOf(`[data-cell="${cellId}"]`) }] : [];
+    });
     commit(next);
+    for (const { tile, from } of rejected)
+      tileFlights.launch(tile.id, tile.letter, from, () =>
+        rectOf(`[data-tile="${tile.id}"]`),
+      );
     if (r.gained)
       popScore(
         r.session.locked.filter((k) => !session.locked.includes(k)),
@@ -631,6 +654,7 @@ function Duel() {
           flash={flash}
           placedCells={placedCells}
           botReveal={botReveal ?? undefined}
+          flying={tileFlights.flying}
           revealedCells={revealedCells}
           onChoose={choose}
           onUnplace={unplace}
@@ -729,6 +753,7 @@ function Duel() {
             hasPending={hasPending}
             pulse={pulse}
             hinting={hinting}
+            flying={tileFlights.flying}
             onInsert={insert}
             onSwap={() => setSwapping([])}
             onConfirm={confirm}
@@ -736,6 +761,7 @@ function Duel() {
           />
         </>
       )}
+      <TileFlights flights={tileFlights.flights} land={tileFlights.land} />
       <GameTour
         run={inTutorial && !player.tourDone && !complete}
         onFinish={() => update((p) => ({ ...p, tourDone: true }))}
