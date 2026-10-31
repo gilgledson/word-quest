@@ -47,6 +47,14 @@ const TURN_SECONDS = 25;
 /** Intervalo entre as letras que o rival coloca na grade. */
 const BOT_LETTER_MS = 260;
 const HINT_MESSAGE = "Arraste as letras até as casas ou toque para preencher.";
+/** Avisos de rotina: o painel mostra o progresso da palavra no lugar deles (continuam lidos pelo leitor de tela). */
+const isRoutineHint = (m: string) =>
+  m === HINT_MESSAGE ||
+  m.startsWith("Confirme com ✓") ||
+  m === "Letra devolvida ao banco." ||
+  m.startsWith("Letra trocada.");
+/** Quanto tempo um aviso de resultado (pontos, erro, rival) fica visível antes de voltar ao progresso. */
+const FEEDBACK_MS = 4500;
 const BOARD_KEY = "wordquest-board";
 const readMode = (): BoardMode => {
   try {
@@ -88,6 +96,17 @@ function Duel() {
   // Casa tocada na grade: a próxima peça entra nela (e não na primeira vazia da palavra).
   const [target, setTarget] = useState<string | null>(null);
   const [message, setMessage] = useState(HINT_MESSAGE);
+  const [feedback, setFeedback] = useState(false);
+  useEffect(() => {
+    // Um aviso de rotina encerra o aviso de resultado na hora (não espera o tempo acabar).
+    if (isRoutineHint(message)) {
+      setFeedback(false);
+      return;
+    }
+    setFeedback(true);
+    const t = window.setTimeout(() => setFeedback(false), FEEDBACK_MS);
+    return () => window.clearTimeout(t);
+  }, [message]);
   const [swapping, setSwapping] = useState<string[] | null>(null);
   const [boardMode, setBoardMode] = useState<BoardMode>(readMode);
   const grid = useFitGrid(puzzle?.cols ?? 8, puzzle?.rows ?? 10, boardMode);
@@ -221,6 +240,10 @@ function Duel() {
   const active = word ? positions(word) : [];
   const solved = engine.solved(session);
   const complete = engine.complete(session);
+  // Progresso da palavra escolhida: letras já na grade (confirmadas ou não) e o que fechar vale.
+  const filled = active.filter((c) => session.letters[c.key]).length;
+  const wordClosed = !!word && solved.some((w) => w.id === word.id);
+  const showMessage = botTurn || feedback || !word;
   const current =
     active.find((c) => c.key === target && !session.letters[c.key]) ??
     active.find((c) => !session.letters[c.key]);
@@ -653,7 +676,29 @@ function Duel() {
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
             <div className="message-slot">
-              <p aria-live="polite">{message}</p>
+              <p
+                aria-live="polite"
+                className={showMessage ? undefined : "message-hidden"}
+              >
+                {message}
+              </p>
+              {!showMessage && word && (
+                <p className="word-progress" data-testid="word-progress">
+                  {wordClosed ? (
+                    "Palavra completa ✓"
+                  ) : (
+                    <>
+                      <b>
+                        {filled}/{active.length}
+                      </b>
+                      {filled === active.length
+                        ? " · confirme com ✓"
+                        : ` · ${active.length - filled === 1 ? "resta 1" : `restam ${active.length - filled}`}`}
+                      {` · +${active.length} ao completar`}
+                    </>
+                  )}
+                </p>
+              )}
               {tutorial && (
                 <TutorialTip
                   step={tutorialStep}

@@ -36,27 +36,41 @@ test("a letra levantada deixa o lugar vazio e volta voando quando a soltura é r
   expect(await t.evaluate((el) => getComputedStyle(el).color)).toBe(
     "rgba(0, 0, 0, 0)",
   );
+  // Registra cada mudança de posição do fantasma, para não depender de amostragem por tempo.
+  const before = await page.evaluate(() => {
+    const el = document.querySelector<HTMLElement>(".drag-letter-ghost")!;
+    const log: { transform: string; transition: string }[] = [];
+    (window as unknown as { __ghost: typeof log }).__ghost = log;
+    new MutationObserver(() =>
+      log.push({
+        transform: el.style.transform,
+        transition: el.style.transition,
+      }),
+    ).observe(el, { attributes: true, attributeFilter: ["style"] });
+    return el.style.transform;
+  });
   await page.mouse.up();
-  // Voo de volta: o fantasma se aproxima do lugar de origem até chegar.
-  const dist = async () => {
-    // Sem esperar: se o fantasma já chegou e saiu, não há mais o que medir.
-    const b = await ghost(page)
-      .boundingBox({ timeout: 100 })
-      .catch(() => null);
-    if (!b) return null;
-    const c = centre(b);
-    return Math.hypot(c.x - home.x, c.y - home.y);
-  };
-  const first = (await dist())!;
-  expect(first).toBeGreaterThan(200);
-  const samples: number[] = [first];
-  for (let i = 0; i < 12; i++) {
-    await page.waitForTimeout(25);
-    const d = await dist();
-    if (d === null) break;
-    samples.push(d);
-  }
-  expect(Math.min(...samples)).toBeLessThan(first * 0.5);
+  // Voo de volta: o fantasma sai do ponto da soltura e termina centrado no lugar de origem.
+  await expect(ghost(page)).toHaveCount(0);
+  const log = await page.evaluate(
+    () =>
+      (
+        window as unknown as {
+          __ghost: { transform: string; transition: string }[];
+        }
+      ).__ghost,
+  );
+  const flight = log.at(-1)!;
+  expect(flight.transition).toContain("240ms");
+  // O fantasma ancora 12 px abaixo do centro da peça (GHOST_LIFT no hook); a peça levantada
+  // pelo toque está uns 4 px acima do repouso, então a tolerância é de 6 px.
+  const [fx, fy] = flight.transform
+    .match(/translate3d\(([-\d.]+)px, ([-\d.]+)px/)!
+    .slice(1)
+    .map(Number);
+  expect(Math.abs(fx - home.x)).toBeLessThan(6);
+  expect(Math.abs(fy - (home.y + 12))).toBeLessThan(6);
+  expect(flight.transform).not.toBe(before);
   await expect(ghost(page)).toHaveCount(0);
   await expect(t).not.toHaveClass(/drag-source/);
   await expect(t).toHaveText(label!);

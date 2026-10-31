@@ -39,7 +39,7 @@ export function VersusPanel({
           opponent={s.face}
           mood={s.mood}
           moodKey={s.moodKey}
-          size={46}
+          size={38}
           animate={animate}
         />
       </span>

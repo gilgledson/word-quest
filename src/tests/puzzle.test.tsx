@@ -139,8 +139,10 @@ it("cada metade de uma pista dupla seleciona a sua própria palavra", () => {
   const double = document.querySelector(".cell.clue.double")!;
   const halves = [...double.querySelectorAll<HTMLElement>(".clue-half")];
   expect(halves).toHaveLength(2);
-  expect(halves[0]).toHaveTextContent("→");
-  expect(halves[1]).toHaveTextContent("↓");
+  // As setas ficam na borda da casa, uma por pista, apontando para a resposta.
+  expect(halves[0].querySelector(".clue-arrow")).toHaveClass("to-right");
+  expect(halves[1].querySelector(".clue-arrow")).toHaveClass("to-down");
+  expect(halves[0]).not.toHaveTextContent("→");
   fireEvent.click(halves[1]);
   expect(halves[1]).toHaveClass("selected-clue");
   expect(halves[0]).not.toHaveClass("selected-clue");
@@ -487,11 +489,12 @@ it("gira só o tabuleiro: 10×8, setas viradas e o resto da tela igual", () => {
   const el = screen.getByLabelText(label);
   expect(el.style.gridRow).toBe(String(level.cols - c));
   expect(el.style.gridColumn).toBe(String(r + 1));
-  const arrows = [...document.querySelectorAll(".clue-half b")].map(
-    (b) => b.textContent,
-  );
-  expect(arrows).toContain("↑");
-  expect(arrows).not.toContain("↓");
+  // Girado, "→" vira "↑" e "↓" vira "→".
+  expect(document.querySelector(".clue-half .clue-arrow.to-up")).not.toBeNull();
+  expect(
+    document.querySelector(".clue-half .clue-arrow.to-right"),
+  ).not.toBeNull();
+  expect(document.querySelector(".clue-half .clue-arrow.to-down")).toBeNull();
   // O restante do jogo não muda: banco, ações e jogo continuam iguais.
   expect(rackButtons()).toHaveLength(5);
   expect(screen.getByRole("button", { name: "Dica" })).toBeInTheDocument();

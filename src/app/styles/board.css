@@ -11,6 +11,7 @@
   padding: 6px;
 }
 .app-playing .board {
+  --grid-line: #5b7473;
   display: grid;
   flex-shrink: 0;
   width: auto;
@@ -383,8 +384,8 @@
   background: #1f3a3d;
 }
 .app-playing .cell {
-  border-right: 1px solid #5b7473;
-  border-bottom: 1px solid #5b7473;
+  border-right: 1px solid var(--grid-line);
+  border-bottom: 1px solid var(--grid-line);
 }
 .app-playing .blocked {
   background: repeating-linear-gradient(
@@ -839,4 +840,208 @@
   box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
   animation: none;
   filter: none;
+}
+
+/* Progresso da palavra escolhida (no lugar do aviso fixo); o aviso continua para o leitor de tela. */
+.message-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.app-playing .selected-word p.word-progress {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #34452a;
+}
+.word-progress b {
+  color: #124fb5;
+  font-weight: 900;
+}
+
+/* Cabeçalho compacto: devolve altura e largura à grade (casas e pistas maiores) sem zoom nem rolagem. */
+.app-playing {
+  gap: 4px;
+  padding-inline: 8px;
+}
+.app-playing > header {
+  padding: 4px 3px 0;
+  gap: 6px;
+}
+.app-playing .art-book {
+  width: 28px;
+  height: 36px;
+}
+.app-playing .brand-wordmark {
+  width: clamp(100px, 30vw, 150px);
+}
+.app-playing .wallet > span {
+  min-height: 26px;
+  padding: 2px 7px;
+}
+.app-playing .settings-button {
+  width: 34px;
+  height: 34px;
+}
+.app-playing .puzzle-page {
+  gap: 5px;
+}
+.app-playing .puzzle-status {
+  padding: 4px 8px;
+  border-radius: 16px;
+}
+.app-playing .puzzle-status .puzzle-top {
+  gap: 8px;
+}
+.app-playing .puzzle-status .puzzle-top h2 {
+  font-size: 17px;
+  line-height: 1.05;
+}
+.app-playing .puzzle-status .round-button {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+}
+.app-playing .puzzle-status .pill {
+  font-size: 13px;
+  padding: 3px 8px;
+}
+.app-playing .versus-score {
+  position: relative;
+  margin: 3px 0 0;
+  padding: 3px 6px;
+  border-radius: 12px;
+}
+.app-playing .duelist-frame {
+  width: 42px;
+  height: 42px;
+}
+.app-playing .vs-badge {
+  width: 26px;
+  height: 26px;
+  font-size: 11px;
+}
+/* A faixa de turno fica dentro do painel, sob o selo VS. */
+.app-playing .versus-score .turn-arrow {
+  bottom: 2px;
+  font-size: 9px;
+  padding: 1px 7px;
+}
+.app-playing .board-card {
+  padding: 4px;
+  border-width: 2px;
+  border-radius: 16px;
+}
+.app-playing .selected-word {
+  padding: 4px 8px;
+}
+.app-playing .selected-word h2 {
+  font-size: 17px;
+  margin: 1px 0;
+}
+.app-playing .selected-word .eyebrow {
+  font-size: 9px;
+}
+.app-playing .letter-bank {
+  min-height: 46px;
+}
+.app-playing .letter-bank button {
+  height: 46px;
+  font-size: 26px;
+}
+.app-playing .puzzle-tools button {
+  min-height: 50px;
+  padding: 3px;
+}
+/* Selo VS no alto e faixa de turno embaixo, sem se cobrirem. */
+.app-playing .versus-center {
+  align-self: start;
+  margin-top: 1px;
+}
+.app-playing .vs-badge {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+/* Em telas altas sobra altura: devolve tamanho confortável ao banco e aos botões. */
+@media (min-height: 760px) {
+  .app-playing .selected-word {
+    padding: 6px 10px;
+  }
+  .app-playing .letter-bank {
+    min-height: 52px;
+  }
+  .app-playing .letter-bank button {
+    height: 50px;
+  }
+  .app-playing .puzzle-tools button {
+    min-height: 58px;
+  }
+}
+.app-playing .versus-center {
+  margin-top: 0;
+}
+.app-playing .vs-badge {
+  width: 22px;
+  height: 22px;
+  font-size: 9.5px;
+}
+.app-playing .versus-score .turn-arrow {
+  padding: 0 7px;
+  line-height: 16px;
+}
+
+/* Seta da pista na borda da casa (como nas cruzadinhas de revista), apontando para dentro da resposta. */
+.app-playing .cell.clue {
+  overflow: visible;
+  z-index: 6;
+}
+.app-playing .clue-half {
+  overflow: visible;
+}
+.clue-arrow {
+  position: absolute;
+  z-index: 2;
+  /* Pequena como nas cruzadinhas de revista: 12% da casa de profundidade e 17% de abertura. */
+  --depth: calc(var(--cell) * 0.12);
+  --span: calc(var(--cell) * 0.17);
+  /* Mesma cor da linha da grade, para a seta parecer parte dela. */
+  background: var(--grid-line);
+  pointer-events: none;
+  mask: var(--arrow) center / 100% 100% no-repeat;
+  -webkit-mask: var(--arrow) center / 100% 100% no-repeat;
+}
+.clue-arrow.to-right {
+  --arrow: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2010%2010'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0.4%200.6%20L9.6%205%20L0.4%209.4%20Z'%20fill='black'%20stroke='black'%20stroke-width='0.8'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  width: var(--depth);
+  height: var(--span);
+  right: calc(var(--depth) * -1);
+  top: 50%;
+  translate: 0 -50%;
+}
+.clue-arrow.to-down {
+  --arrow: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2010%2010'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0.6%200.4%20L9.4%200.4%20L5%209.6%20Z'%20fill='black'%20stroke='black'%20stroke-width='0.8'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  width: var(--span);
+  height: var(--depth);
+  bottom: calc(var(--depth) * -1);
+  left: 50%;
+  translate: -50% 0;
+}
+.clue-arrow.to-up {
+  --arrow: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2010%2010'%20preserveAspectRatio='none'%3E%3Cpath%20d='M0.6%209.6%20L9.4%209.6%20L5%200.4%20Z'%20fill='black'%20stroke='black'%20stroke-width='0.8'%20stroke-linejoin='round'/%3E%3C/svg%3E");
+  width: var(--span);
+  height: var(--depth);
+  top: calc(var(--depth) * -1);
+  left: 50%;
+  translate: -50% 0;
+}
+.app-playing .clue-half {
+  color: #0a5a2a;
+}
+.app-playing .clue-half.selected-clue {
+  color: #fff;
 }

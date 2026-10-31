@@ -58,8 +58,9 @@ export function Board({
   const tileOf = (cell: string) =>
     Object.values(session.tiles).find((t) => t.cell === cell);
   // A quarter turn counter-clockwise: words that ran right now run up, and down becomes right.
-  const arrowGlyph = (arrow: PuzzleWord["arrow"]) =>
-    arrow === "right" ? (rotated ? "↑" : "→") : rotated ? "→" : "↓";
+  // A seta fica na borda da casa da pista, apontando para dentro da resposta.
+  const arrowTo = (arrow: PuzzleWord["arrow"]) =>
+    arrow === "right" ? (rotated ? "up" : "right") : rotated ? "right" : "down";
   const place = (r: number, c: number): CSSProperties | undefined =>
     rotated ? { gridRow: puzzle.cols - c, gridColumn: r + 1 } : undefined;
   const clueHalf = (w: PuzzleWord) => (
@@ -73,7 +74,7 @@ export function Board({
         <span className={`game-art art-${w.icon}`} aria-hidden="true" />
       )}
       <span>{w.clue}</span>
-      <b>{arrowGlyph(w.arrow)}</b>
+      <i className={`clue-arrow to-${arrowTo(w.arrow)}`} aria-hidden="true" />
     </button>
   );
   return (
