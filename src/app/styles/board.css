@@ -1105,3 +1105,25 @@
   button:disabled:not(.slot-empty):not(.in-flight):not(.drag-source) {
   filter: grayscale(0.9) brightness(0.9);
 }
+/* Contador de letras pendentes no canto do botão Confirmar. */
+.app-playing .puzzle-tools button.confirm-button {
+  position: relative;
+}
+.app-playing .puzzle-tools button.confirm-button .pending-count {
+  position: absolute;
+  top: -8px;
+  right: -6px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 5px;
+  border-radius: 11px;
+  background: #ffcf40;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 0 #b07a00;
+  color: #3a2300;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 18px;
+  text-align: center;
+  pointer-events: none;
+}

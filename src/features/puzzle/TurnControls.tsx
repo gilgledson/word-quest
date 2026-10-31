@@ -13,7 +13,8 @@ interface Props {
   animated: boolean;
   /** Animações ligadas e sem "reduzir movimento" (toque, pulso do ✓). */
   fxEnabled: boolean;
-  hasPending: boolean;
+  /** Letras colocadas na grade e ainda não confirmadas. */
+  pendingCount: number;
   pulse: number;
   hinting: boolean;
   /** Peças em voo (da grade para o banco ou o contrário): ficam invisíveis até a letra chegar. */
@@ -30,7 +31,7 @@ export function TurnControls({
   mine,
   animated,
   fxEnabled,
-  hasPending,
+  pendingCount,
   pulse,
   hinting,
   flying,
@@ -43,6 +44,7 @@ export function TurnControls({
     rack.map((t) => t.id),
     economy.rackMax,
   );
+  const hasPending = pendingCount > 0;
   const byId = new Map(rack.map((t) => [t.id, t]));
   return (
     <>
@@ -103,6 +105,15 @@ export function TurnControls({
         >
           {hasPending ? <Check /> : <SkipForward />}
           <small>{hasPending ? "Confirmar" : "Passar a vez"}</small>
+          {hasPending && (
+            <span
+              className="pending-count"
+              data-testid="pending-count"
+              aria-hidden="true"
+            >
+              {pendingCount}
+            </span>
+          )}
           {fxEnabled && pulse > 0 && (
             <span key={pulse} className="confirm-pulse" aria-hidden="true" />
           )}

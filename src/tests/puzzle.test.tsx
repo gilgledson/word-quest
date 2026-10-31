@@ -274,6 +274,14 @@ it("✓ sem peças pendentes vira Passar a vez", () => {
   fireEvent.click(rackButtons()[0]);
   expect(confirmButton()).toHaveAccessibleName("Confirmar");
 });
+it("o botão Confirmar mostra quantas letras estão pendentes", () => {
+  open();
+  expect(screen.queryByTestId("pending-count")).toBeNull();
+  fireEvent.click(rackButtons()[0]);
+  expect(screen.getByTestId("pending-count")).toHaveTextContent("1");
+  fireEvent.click(rackButtons()[0]);
+  expect(screen.getByTestId("pending-count")).toHaveTextContent("2");
+});
 it("a fase fixa o oponente: a fase 1 é contra o Bolota (fácil), sem escolha do jogador", () => {
   usePlayer.setState({
     player: { ...structuredClone(initialPlayer), botLevel: "dificil" },

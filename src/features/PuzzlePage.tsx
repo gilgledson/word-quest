@@ -261,7 +261,8 @@ function Duel() {
     active.find((c) => !session.letters[c.key]);
   const pending = (cell: string) =>
     !!session.letters[cell] && !session.locked.includes(cell);
-  const hasPending = session.history.some(pending);
+  const pendingCount = session.history.filter(pending).length;
+  const hasPending = pendingCount > 0;
   const effectCells = (type: "LETTER_PLACED" | "HINT_REVEALED") =>
     new Set(
       fx.effects.flatMap(({ event }) =>
@@ -761,7 +762,7 @@ function Duel() {
             mine={mine}
             animated={player.animations}
             fxEnabled={prefs.enabled}
-            hasPending={hasPending}
+            pendingCount={pendingCount}
             pulse={pulse}
             hinting={hinting}
             flying={tileFlights.flying}
