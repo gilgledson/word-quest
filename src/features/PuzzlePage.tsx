@@ -37,10 +37,15 @@ import { Board } from "./puzzle/Board";
 import { ScoreFloats } from "./puzzle/ScoreFloats";
 import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
+import { GameTour, JokerTour } from "./puzzle/GameTour";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
+/** Duração do relógio opcional do turno do jogador. */
+const TURN_SECONDS = 25;
+/** Intervalo entre as letras que o rival coloca na grade. */
+const BOT_LETTER_MS = 260;
 const HINT_MESSAGE = "Arraste as letras até as casas ou toque para preencher.";
 const BOARD_KEY = "wordquest-board";
 const readMode = (): BoardMode => {
@@ -95,8 +100,15 @@ function Duel() {
       /* Preference is optional. */
     }
   };
-  const drop = useRef<(tileId: string, cell: string | null) => void>(() => {});
+  const drop = useRef<(tileId: string, cell: string | null) => boolean>(
+    () => false,
+  );
   const botStep = useRef<() => void>(() => {});
+  const botTimers = useRef<number[]>([]);
+  const expireTurn = useRef<() => void>(() => {});
+  const [botReveal, setBotReveal] = useState<Record<string, string> | null>(
+    null,
+  );
   const cardRef = useRef<HTMLDivElement>(null);
   const { floats, flash, popScore, popPenalty } = useScoreFloats(
     cardRef,
@@ -146,12 +158,43 @@ function Duel() {
   }, [finished]);
   useEffect(() => {
     if (!botTurn) return;
-    const timer = setTimeout(
-      () => botStep.current(),
-      player.animations ? 900 : 0,
-    );
-    return () => clearTimeout(timer);
+    botStep.current();
+    return () => {
+      botTimers.current.forEach((t) => window.clearTimeout(t));
+      botTimers.current = [];
+      setBotReveal(null);
+    };
   }, [botTurn, session?.versus?.rngCount, sessionKey, player.animations]);
+  // Avisa uma vez quando o curinga chega ao banco.
+  const hasJoker = !!session?.rack.some((id) => session.tiles[id].joker);
+  const hadJoker = useRef(hasJoker);
+  useEffect(() => {
+    if (hasJoker && !hadJoker.current) {
+      sfx("hint");
+      setMessage(
+        "Chegou o curinga ★! Arraste-o para qualquer casa: ele vira a letra certa.",
+      );
+    }
+    hadJoker.current = hasJoker;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasJoker]);
+  // Relógio opcional: ao zerar, a jogada pendente é confirmada (ou a vez passa).
+  const inTutorial =
+    !player.tutorialDone && !daily && !casual && puzzle?.number === 1;
+  const timerActive =
+    player.turnTimer &&
+    !inTutorial &&
+    !!engine &&
+    session?.versus.turn === "p" &&
+    !engine.complete(session);
+  useEffect(() => {
+    if (!timerActive) return;
+    const t = window.setTimeout(
+      () => expireTurn.current(),
+      TURN_SECONDS * 1000,
+    );
+    return () => window.clearTimeout(t);
+  }, [timerActive, session?.versus?.rngCount, sessionKey]);
   if (!puzzle || !engine || !session)
     return (
       <div className="page-heading">
@@ -211,24 +254,44 @@ function Duel() {
     );
   botStep.current = () => {
     const turn = opponentTurn(engine, session);
-    commit(turn.session);
-    const total = turn.gained + turn.bonus;
-    if (turn.gained)
-      popScore(
-        turn.session.locked.filter((k) => !session.locked.includes(k)),
-        turn.gained,
-        turn.bonus,
-        "ai",
-      );
-    if (turn.gained) sfx(turn.bonus ? "word" : "botMove", turn.gained);
-    else sfx("botPass");
-    setMessage(
-      turn.plan.wordId === null
-        ? `${rival.name} passou a vez.`
-        : turn.gained
-          ? `${rival.name} confirmou ${turn.gained} letra${turn.gained > 1 ? "s" : ""} (+${total}). Sua vez!`
-          : `${rival.name} errou e passou a vez. Sua vez!`,
+    const fresh = turn.session.locked.filter(
+      (k) => !session.locked.includes(k),
     );
+    const animated = player.animations && fresh.length > 0;
+    const finish = () => {
+      setBotReveal(null);
+      commit(turn.session);
+      const total = turn.gained + turn.bonus;
+      if (turn.gained) popScore(fresh, turn.gained, turn.bonus, "ai");
+      if (turn.gained) {
+        if (turn.bonus) sfx("word", turn.gained);
+        else if (!animated) sfx("botMove", turn.gained);
+      } else sfx("botPass");
+      setMessage(
+        turn.plan.wordId === null
+          ? `${rival.name} passou a vez.`
+          : turn.gained
+            ? `${rival.name} confirmou ${turn.gained} letra${turn.gained > 1 ? "s" : ""} (+${total}). Sua vez!`
+            : `${rival.name} errou e passou a vez. Sua vez!`,
+      );
+    };
+    const at = (ms: number, fn: () => void) =>
+      botTimers.current.push(window.setTimeout(fn, ms));
+    if (!player.animations) {
+      at(0, finish);
+      return;
+    }
+    // O rival "pensa" mais quando a jogada é maior e coloca as letras uma a uma.
+    const think = fresh.length
+      ? 500 + 130 * Math.min(fresh.length, 4)
+      : 700 + (turn.plan.wordId === null ? 0 : 150);
+    fresh.forEach((cell, i) =>
+      at(think + BOT_LETTER_MS * i, () => {
+        setBotReveal((r) => ({ ...r, [cell]: turn.session.letters[cell] }));
+        sfx("botMove", 1);
+      }),
+    );
+    at(think + BOT_LETTER_MS * fresh.length + (fresh.length ? 320 : 0), finish);
   };
   const afford = (cost: number) => {
     if (player.coins >= cost) return true;
@@ -247,8 +310,36 @@ function Duel() {
     );
     return w;
   };
+  /** Curinga: a casa recebe a letra certa e trava na hora; o turno continua. */
+  const playJoker = (tileId: string, cell: string, wordId?: string) => {
+    const r = engine.joker(session, tileId, cell, "p");
+    if (!r) {
+      setMessage(
+        "O curinga entra numa casa ainda não confirmada e sem a letra certa.",
+      );
+      sfx("error");
+      return false;
+    }
+    if (wordId) setSelected(wordId);
+    setTarget(null);
+    commit(r.session);
+    popScore([cell], r.gained, r.bonus, "p");
+    sfx(r.bonus ? "word" : "correct", r.gained);
+    setMessage(
+      `Curinga virou ${r.session.letters[cell]}! +${r.gained + r.bonus} ponto${r.gained + r.bonus > 1 ? "s" : ""}. Confirme com ✓ quando terminar a jogada.`,
+    );
+    return true;
+  };
   const insert = (tileId: string, cellKey = current?.key) => {
     if (!mine) return false;
+    if (session.tiles[tileId]?.joker) {
+      if (!word) {
+        setMessage("Toque em uma pista e use o curinga na palavra.");
+        return false;
+      }
+      if (!cellKey || complete) return false;
+      return playJoker(tileId, cellKey, word.id);
+    }
     if (!word) {
       setMessage("Toque em uma pista para começar.");
       return false;
@@ -265,7 +356,7 @@ function Duel() {
   // Soltar uma letra vale para qualquer casa não confirmada: seleciona a palavra dela e
   // substitui uma letra pendente que já esteja lá.
   drop.current = (tileId, cell) => {
-    if (!mine || complete) return;
+    if (!mine || complete) return false;
     const target = engine.matrix().find((c) => c.key === cell);
     const belongs =
       target?.kind === "letter"
@@ -273,21 +364,24 @@ function Duel() {
         : [];
     if (!cell || !belongs.length || session.locked.includes(cell)) {
       setMessage("Solte em uma casa que ainda não foi confirmada.");
-      return;
+      return false;
     }
     const w =
       belongs.find((x) => x.id === selected) ??
       belongs.find((x) => !solved.some((s) => s.id === x.id)) ??
       belongs[0];
+    if (session.tiles[tileId]?.joker) {
+      return playJoker(tileId, cell, w.id);
+    }
     // Letra já colocada (ainda não confirmada) é movida; letra do banco é inserida.
     const from = session.tiles[tileId]?.cell;
-    if (from === cell) return;
+    if (from === cell) return true;
     const next = from
       ? engine.relocate(session, w.id, from, cell!)
       : engine.insert(session, w.id, tileId, cell);
     if (next === session) {
       setMessage("Solte em uma casa que ainda não foi confirmada.");
-      return;
+      return false;
     }
     setSelected(w.id);
     setTarget(null);
@@ -298,6 +392,7 @@ function Duel() {
     );
     commit(next);
     sfx(pending(cell) ? "replace" : "place");
+    return true;
   };
   const unplace = (cell: string) => {
     const next = engine.remove(session, word, cell);
@@ -406,6 +501,12 @@ function Duel() {
       : session.scores.p > session.scores.ai
         ? "win"
         : "loss";
+  expireTurn.current = () => {
+    if (!mine || complete) return;
+    setSwapping(null);
+    confirm();
+    setMessage((m) => `Tempo esgotado. ${m}`);
+  };
   // Tutorial da fase 1 (só na campanha, para quem ainda não o concluiu).
   const tutorial =
     !player.tutorialDone && !daily && !casual && puzzle.number === 1;
@@ -506,6 +607,7 @@ function Duel() {
           mine={mine}
           flash={flash}
           placedCells={placedCells}
+          botReveal={botReveal ?? undefined}
           revealedCells={revealedCells}
           onChoose={choose}
           onUnplace={unplace}
@@ -560,6 +662,18 @@ function Duel() {
                 />
               )}
             </div>
+            {timerActive && (
+              <div
+                className="turn-timer"
+                role="timer"
+                aria-label={`Relógio do turno: ${TURN_SECONDS} segundos`}
+              >
+                <i
+                  key={session.versus.rngCount}
+                  style={{ animationDuration: `${TURN_SECONDS}s` }}
+                />
+              </div>
+            )}
           </section>
           <TurnControls
             rack={rack}
@@ -577,6 +691,14 @@ function Duel() {
           />
         </>
       )}
+      <GameTour
+        run={inTutorial && !player.tourDone && !complete}
+        onFinish={() => update((p) => ({ ...p, tourDone: true }))}
+      />
+      <JokerTour
+        run={hasJoker && mine && !player.jokerTourDone}
+        onFinish={() => update((p) => ({ ...p, jokerTourDone: true }))}
+      />
       {swapping && (
         <SwapDialog
           rack={rack}

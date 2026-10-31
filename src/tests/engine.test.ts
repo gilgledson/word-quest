@@ -236,24 +236,25 @@ describe("Inventário de peças", () => {
           (n, l) => ({ ...n, [l]: (n[l] ?? 0) + 1 }),
           {},
         );
-      expect(Object.keys(s.tiles)).toHaveLength(Object.keys(solution).length);
-      expect(frequency(Object.values(s.tiles).map((t) => t.letter))).toEqual(
+      const plain = Object.values(s.tiles).filter((t) => !t.joker);
+      expect(plain).toHaveLength(Object.keys(solution).length);
+      expect(frequency(plain.map((t) => t.letter))).toEqual(
         frequency(Object.values(solution)),
       );
       expect(s.rack).toHaveLength(economy.rackStart);
       expect(s.botRack).toHaveLength(economy.rackStart);
+      // A reserva guarda também o curinga, que só chega ao banco do jogador depois.
       expect(s.supply).toHaveLength(
-        Object.keys(solution).length - 2 * economy.rackStart,
+        Object.keys(solution).length - 2 * economy.rackStart + 1,
       );
       expect(engine.rack.audit(s)).toEqual([]);
     },
   );
   it("conta letras repetidas e cruzamentos uma única vez", () => {
     const s = new PuzzleEngine(small).start("t", "medio");
-    expect(Object.keys(s.tiles)).toHaveLength(11);
-    expect(Object.values(s.tiles).filter((t) => t.letter === "R")).toHaveLength(
-      3,
-    );
+    const plain = Object.values(s.tiles).filter((t) => !t.joker);
+    expect(plain).toHaveLength(11);
+    expect(plain.filter((t) => t.letter === "R")).toHaveLength(3);
   });
   it("o banco só recebe letras ainda necessárias", () => {
     const s = new PuzzleEngine(small).start("t", "medio");
@@ -341,7 +342,7 @@ describe("Inventário de peças", () => {
     expect(engine.swap(s, ["fora"])).toBeUndefined();
     const tiny = new PuzzleEngine({ ...small, words: [small.words[0]] });
     const all = tiny.start("t", "medio");
-    expect(all.supply).toHaveLength(0);
+    expect(all.supply.filter((id) => !all.tiles[id].joker)).toHaveLength(0);
     expect(tiny.swap(all, [all.rack[0]])).toBeUndefined();
   });
 });
@@ -552,7 +553,9 @@ describe("Confirmação ✓, pontos e ajudas", () => {
     expect(engine.complete(s)).toBe(true);
     expect(engine.rack.audit(s)).toEqual([]);
     expect(
-      Object.values(s.tiles).every((t) => t.cell && s.locked.includes(t.cell)),
+      Object.values(s.tiles)
+        .filter((t) => !t.joker)
+        .every((t) => t.cell && s.locked.includes(t.cell)),
     ).toBe(true);
     expect(Object.values(s.owners).every((o) => o === "p")).toBe(true);
   });

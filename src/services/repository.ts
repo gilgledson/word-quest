@@ -22,8 +22,14 @@ export interface Player {
   /** Vibração ao jogar (padrão: ligada). */
   vibration: boolean;
   animations: boolean;
+  /** Relógio de 25 s no turno do jogador (padrão: desligado). */
+  turnTimer: boolean;
   /** O tutorial da fase 1 já foi concluído ou pulado. */
   tutorialDone: boolean;
+  /** O tour de apresentação da fase 1 (grade, letras, botões, placar) já foi visto ou dispensado. */
+  tourDone: boolean;
+  /** A apresentação do curinga (primeira vez que ele chega ao banco) já foi vista. */
+  jokerTourDone: boolean;
   /** Baús da tela inicial já abertos (um a cada 5 vitórias). */
   chestsOpened: number;
 }
@@ -42,7 +48,10 @@ export const initialPlayer: Player = {
   music: true,
   vibration: true,
   animations: true,
+  turnTimer: false,
   tutorialDone: false,
+  tourDone: false,
+  jokerTourDone: false,
   chestsOpened: 0,
 };
 export interface PlayerRepository {

@@ -69,7 +69,7 @@ export function VersusPanel({
           className={`turn-arrow ${finished ? "done" : turn}`}
           role="status"
         >
-          {finished ? "FIM" : turn === "p" ? "◀ sua vez" : "vez dele ▶"}
+          {finished ? "FIM" : turn === "p" ? "◀ sua vez" : "vez do oponente ▶"}
         </span>
       </div>
       {side(rival, "ai")}

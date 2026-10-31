@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { dismissTour } from "./tour";
 
 /** Violações WCAG 2 A/AA da página atual (contraste, nomes, ARIA...). */
 const violacoes = async (page: Page) => {
@@ -31,6 +32,9 @@ test("sem violações na partida, com peça pendente e no diálogo de troca", as
 }) => {
   await page.goto("/play/vila-1");
   await expect(page.locator(".board .cell")).toHaveCount(80);
+  // Com o tour de apresentação aberto e depois de dispensado.
+  expect(await violacoes(page)).toEqual([]);
+  await dismissTour(page);
   expect(await violacoes(page)).toEqual([]);
   await page
     .getByRole("group", { name: "Letras do banco" })

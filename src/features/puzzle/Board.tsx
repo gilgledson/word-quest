@@ -27,6 +27,8 @@ interface Props {
   flash: string[];
   placedCells: Set<string>;
   revealedCells: Set<string>;
+  /** Letras que o rival está colocando agora, uma a uma (ainda não confirmadas na sessão). */
+  botReveal?: Record<string, string>;
   /** Escolhe a palavra; `cell` é a casa tocada (a próxima peça entra nela). */
   onChoose: (wordId: string, cell?: string) => void;
   /** Devolve ao banco a letra pendente da casa. */
@@ -46,6 +48,7 @@ export function Board({
   flash,
   placedCells,
   revealedCells,
+  botReveal,
   onChoose,
   onUnplace,
 }: Props) {
@@ -117,12 +120,13 @@ export function Board({
           const isActive = active.some((p) => p.key === ck);
           const locked = session.locked.includes(ck);
           const owner = session.owners[ck];
+          const botLetter = session.letters[ck] ? undefined : botReveal?.[ck];
           return (
             <button
               {...(mine && pending(ck)
                 ? letterDrag.bind(tileOf(ck)?.id ?? "", session.letters[ck])
                 : {})}
-              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
+              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
               data-cell={ck}
               style={
                 {
@@ -132,7 +136,7 @@ export function Board({
               }
               data-words={belongs.map((w) => w.id).join(" ")}
               key={ck}
-              aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${session.letters[ck] ?? "vazia"}`}
+              aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${session.letters[ck] ?? botLetter ?? "vazia"}`}
               onClick={(event) => {
                 if (!letterDrag.clickAllowed(event.detail === 0)) return;
                 if (mine && pending(ck)) onUnplace(ck);
@@ -143,7 +147,7 @@ export function Board({
                   );
               }}
             >
-              {session.letters[ck]}
+              {session.letters[ck] ?? botLetter}
               {locked && <i />}
             </button>
           );

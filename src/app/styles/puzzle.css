@@ -430,10 +430,14 @@
 .letter-bank button:active {
   cursor: grabbing;
 }
+/* A letra foi "levantada": o lugar dela fica vazio, só com o contorno, até ela chegar ou voltar. */
 .app-playing .letter-bank button.drag-source {
-  opacity: 0.25;
+  color: transparent;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
   transform: none;
-  box-shadow: none;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  animation: none;
 }
 .drag-letter-ghost {
   position: fixed;

@@ -40,8 +40,8 @@ export function TurnControls({
       <div className="letter-bank" role="group" aria-label="Letras do banco">
         {rack.map((t) => (
           <motion.button
-            {...letterDrag.bind(t.id, t.letter)}
-            className={letterDrag.drag?.tileId === t.id ? "drag-source" : ""}
+            {...letterDrag.bind(t.id, t.joker ? "★" : t.letter)}
+            className={`${t.joker ? "joker" : ""} ${letterDrag.drag?.tileId === t.id ? "drag-source" : ""}`}
             draggable={false}
             disabled={!mine}
             initial={animated ? { scale: 0.6, opacity: 0 } : false}
@@ -52,9 +52,11 @@ export function TurnControls({
             onClick={(event) => {
               if (letterDrag.clickAllowed(event.detail === 0)) onInsert(t.id);
             }}
-            aria-label={`Inserir letra ${t.letter}`}
+            aria-label={
+              t.joker ? "Inserir curinga" : `Inserir letra ${t.letter}`
+            }
           >
-            {t.letter}
+            {t.joker ? "★" : t.letter}
           </motion.button>
         ))}
       </div>

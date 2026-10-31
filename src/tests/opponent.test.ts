@@ -317,7 +317,9 @@ describe("Partidas completas contra os três níveis", () => {
     }
     expect(engine.complete(s)).toBe(true);
     expect(
-      Object.values(s.tiles).every((t) => t.cell && s.locked.includes(t.cell)),
+      Object.values(s.tiles)
+        .filter((t) => !t.joker)
+        .every((t) => t.cell && s.locked.includes(t.cell)),
     ).toBe(true);
   });
 });

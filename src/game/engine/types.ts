@@ -48,6 +48,8 @@ export const economy = {
   rackStart: 5,
   rackMax: 5,
   swapMax: 5,
+  /** O curinga chega ao banco depois de tantas jogadas do oponente (uma peça por partida). */
+  jokerAfter: 2,
 };
 export interface Puzzle {
   id: string;
@@ -63,6 +65,8 @@ export interface Tile {
   letter: string;
   /** Casa ocupada pela peça (colocada ou consumida); ausente no banco e na reserva. */
   cell?: string;
+  /** Curinga: vale "?" até ser usado; ao entrar numa casa vira a letra certa dela e trava na hora. */
+  joker?: boolean;
 }
 export interface Session {
   puzzleId: string;

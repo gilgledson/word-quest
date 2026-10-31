@@ -10,6 +10,8 @@ import {
 } from "./types";
 import { positions } from "./grid";
 import { hash, random } from "./random";
+export const JOKER_ID = "joker";
+export const JOKER_LETTER = "?";
 const copy = (s: Session): Session => ({
   ...s,
   letters: { ...s.letters },
@@ -53,6 +55,9 @@ export class RackManager {
       const j = Math.floor(rand() * (i + 1));
       [supply[i], supply[j]] = [supply[j], supply[i]];
     }
+    // Uma peça extra, fora da conta das letras: só chega ao banco do jogador (ver `topUp`).
+    tiles[JOKER_ID] = { id: JOKER_ID, letter: JOKER_LETTER, joker: true };
+    supply.push(JOKER_ID);
     return this.ensurePlayable({
       puzzleId: this.puzzle.id,
       letters: {},
@@ -116,6 +121,7 @@ export class RackManager {
     const room = Math.min(count, economy.rackMax - hand.length);
     for (const id of this.ordered(s, focus)) {
       if (picked.length >= room) break;
+      if (s.tiles[id].joker) continue;
       const letter = s.tiles[id].letter;
       if ((spare[letter] ?? 0) <= 0) continue;
       spare[letter]--;
@@ -141,7 +147,8 @@ export class RackManager {
   ensurePlayable(input: Session, focus?: PuzzleWord): Session {
     const s = copy(input);
     if (!Object.keys(this.solution).some((k) => !s.letters[k])) return s;
-    const useful = (id: string) => (this.needs(s)[s.tiles[id].letter] ?? 0) > 0;
+    const useful = (id: string) =>
+      !!s.tiles[id].joker || (this.needs(s)[s.tiles[id].letter] ?? 0) > 0;
     // Banco vazio sem nada pendente: nada a esperar, recebe peças já.
     if (!s.rack.length && !s.history.length)
       this.draw(s, economy.rackStart, focus);
@@ -227,7 +234,7 @@ export class RackManager {
     if (
       !out.length ||
       out.length > economy.swapMax ||
-      out.some((id) => !input.rack.includes(id))
+      out.some((id) => !input.rack.includes(id) || input.tiles[id].joker)
     )
       return undefined;
     const s = copy(input);
@@ -382,8 +389,41 @@ export class RackManager {
   /** Reabastece o banco com peças úteis até a quantidade inicial, sem retirar nenhuma. */
   topUp(input: Session) {
     const s = copy(input);
-    const missing = economy.rackStart - s.rack.length;
+    let missing = economy.rackStart - s.rack.length;
+    // O curinga ocupa uma das vagas livres quando já passaram jogadas suficientes.
+    if (
+      missing > 0 &&
+      s.supply.includes(JOKER_ID) &&
+      s.versus.rngCount >= economy.jokerAfter
+    ) {
+      s.supply = s.supply.filter((id) => id !== JOKER_ID);
+      s.rack.push(JOKER_ID);
+      missing--;
+    }
     if (missing > 0) this.draw(s, missing);
+    return s;
+  }
+  /**
+   * Curinga: a peça entra numa casa ainda não confirmada, vira a letra certa dela e trava na
+   * hora (+1 ponto para `who`). Uma letra errada pendente na casa volta ao banco. Recusa casas
+   * já travadas ou cuja letra pendente já está certa (o curinga seria desperdiçado).
+   */
+  useJoker(input: Session, tileId: string, cell: string, who: Owner = "p") {
+    const letter = this.solution[cell];
+    const tile = input.tiles[tileId];
+    if (!tile?.joker || !input.rack.includes(tileId) || !letter)
+      return undefined;
+    if (input.locked.includes(cell) || input.letters[cell] === letter)
+      return undefined;
+    const s = copy(input);
+    s.rack = s.rack.filter((id) => id !== tileId);
+    if (s.letters[cell]) this.unplace(s, cell);
+    s.tiles[tileId].letter = letter;
+    s.tiles[tileId].cell = cell;
+    s.letters[cell] = letter;
+    s.locked.push(cell);
+    s.owners[cell] = who;
+    s.scores[who] += economy.letterPoint;
     return s;
   }
   /** Sorteia a mão inicial do oponente (peças úteis da reserva, ao acaso). */
@@ -426,11 +466,15 @@ export class RackManager {
       if (places.get(id) !== 1)
         errors.push(`Peça ${id} em ${places.get(id) ?? 0} lugares`);
     const sorted = (letters: string[]) => letters.sort().join("");
+    const tiles = Object.values(s.tiles);
+    // O curinga é uma peça extra: fica de fora da conta das letras da solução.
     if (
-      sorted(Object.values(s.tiles).map((t) => t.letter)) !==
+      sorted(tiles.filter((t) => !t.joker).map((t) => t.letter)) !==
       sorted(Object.values(this.solution))
     )
       errors.push("Letras diferentes da solução");
+    if (tiles.filter((t) => t.joker).length > 1)
+      errors.push("Mais de um curinga");
     for (const [k, letter] of Object.entries(s.letters))
       if (this.tileAt(s, k)?.letter !== letter) errors.push("Casa sem peça");
     for (const k of s.locked)

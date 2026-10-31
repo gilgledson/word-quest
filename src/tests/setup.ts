@@ -37,3 +37,14 @@ Object.defineProperty(HTMLMediaElement.prototype, "pause", {
   configurable: true,
   writable: true,
 });
+// O tour (react-joyride) precisa de layout real: nos testes de unidade ele é trocado por um dublê que
+// só guarda as últimas props (ver `gametour.test.tsx`); o e2e cobre o tour de verdade.
+vi.mock("react-joyride", () => ({
+  Joyride: (props: unknown) => {
+    (globalThis as { __joyride?: unknown[] }).__joyride = [
+      ...((globalThis as { __joyride?: unknown[] }).__joyride ?? []),
+      props,
+    ];
+    return null;
+  },
+}));

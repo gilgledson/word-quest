@@ -10,6 +10,7 @@ import {
   Compass,
   Volume2,
   Activity,
+  Timer,
   Check,
   PawPrint,
   Utensils,
@@ -615,6 +616,19 @@ export function Profile() {
             checked={p.animations}
             onChange={(e) =>
               update((s) => ({ ...s, animations: e.target.checked }))
+            }
+          />
+        </label>
+        <label className="toggle">
+          <span>
+            <Timer />
+            Relógio do turno (25 s)
+          </span>
+          <input
+            type="checkbox"
+            checked={p.turnTimer}
+            onChange={(e) =>
+              update((s) => ({ ...s, turnTimer: e.target.checked }))
             }
           />
         </label>

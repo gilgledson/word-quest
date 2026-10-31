@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { dismissTour } from "./tour";
 import levels from "../src/data/levels.json" with { type: "json" };
 
 const level = levels[0];
@@ -38,6 +39,7 @@ const box = async (l: Locator) => (await l.boundingBox())!;
 test.beforeEach(async ({ page }) => {
   await page.goto("/play/vila-1");
   await expect(page.locator(".board .cell")).toHaveCount(80);
+  await dismissTour(page);
 });
 
 test("a fase cabe na tela de 360×800, sem rolagem", async ({ page }) => {
@@ -86,7 +88,7 @@ test("joga um turno: coloca letras, confirma, o oponente responde e o progresso 
   expect(mine).toBeGreaterThanOrEqual(placed);
 
   // A vez passa para o oponente e volta, com o banco reposto.
-  await expect(page.getByText("vez dele ▶")).toBeVisible();
+  await expect(page.getByText("vez do oponente ▶")).toBeVisible();
   await expect(page.getByText("◀ sua vez")).toBeVisible({ timeout: 15_000 });
   await expect(bank(page).getByRole("button")).toHaveCount(5);
   expect(Number(await score(page, "player").innerText())).toBe(mine);

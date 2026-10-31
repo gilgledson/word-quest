@@ -436,7 +436,7 @@ it("versus: placar, ✓ passa a vez, o oponente joga depois do atraso e devolve 
     true,
   );
   act(() => {
-    vi.advanceTimersByTime(1000);
+    vi.advanceTimersByTime(4000);
   });
   expect(session().versus?.turn).toBe("p");
   expect(session().versus?.rngCount).toBe(1);
@@ -527,7 +527,7 @@ it("mostra '+N' animado sobre as casas que pontuaram e o brilho nelas, e some de
   act(() => {
     vi.advanceTimersByTime(1200);
   });
-  // A vez do oponente começa em 900 ms; só as animações do jogador devem ter sumido.
+  // O rival ainda está pensando (mín. 700 ms); só as animações do jogador devem ter sumido.
   expect(document.querySelector(".score-float.p")).toBeNull();
   expect(document.querySelector(".score-float.bonus")).toBeNull();
 });

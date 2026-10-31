@@ -24,6 +24,8 @@ export const usePlayer = create<Store>((set) => ({
           sound: saved?.soundChosen ? saved.sound : true,
           // Quem já tinha progresso salvo antes do tutorial não precisa vê-lo.
           tutorialDone: saved ? (saved.tutorialDone ?? true) : false,
+          // O tour de apresentação também só vale para quem ainda não fez o tutorial.
+          tourDone: saved ? (saved.tourDone ?? true) : false,
           // Quem só tinha o nível passa a enfrentar o oponente cuidadoso daquele nível.
           opponent:
             opponentById(saved?.opponent)?.id ??

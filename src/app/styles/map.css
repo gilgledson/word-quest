@@ -201,7 +201,7 @@
   touch-action: none;
 }
 .app-playing .letter.pending.drag-source {
-  opacity: 0.35;
+  color: transparent;
 }
 .map-stop.locked .stop-tag {
   display: none;

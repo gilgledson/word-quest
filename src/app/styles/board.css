@@ -735,3 +735,108 @@
     animation: tutorial-glow 1.2s ease-in-out infinite;
   }
 }
+
+/* Rival colocando as letras uma a uma (ainda não confirmadas na sessão). */
+.app-playing .letter.bot-reveal {
+  color: #7a3f9d;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app-playing .letter.bot-reveal {
+    animation: bot-letter-pop 0.26s ease-out;
+  }
+}
+@keyframes bot-letter-pop {
+  0% {
+    transform: scale(1.35);
+    box-shadow: 0 0 0 4px rgba(122, 63, 157, 0.35);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(122, 63, 157, 0);
+  }
+}
+/* Relógio opcional do turno: barra fina que encolhe sem re-renderizar a grade. */
+.app-playing .selected-word {
+  position: relative;
+}
+.turn-timer {
+  position: absolute;
+  left: 14px;
+  right: 22px;
+  top: 7px;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(18, 79, 181, 0.14);
+}
+.turn-timer i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: #1678ee;
+  transform-origin: left center;
+  animation: turn-timer-shrink linear forwards;
+}
+@keyframes turn-timer-shrink {
+  0% {
+    transform: scaleX(1);
+    background: #1678ee;
+  }
+  70% {
+    transform: scaleX(0.3);
+    background: #1678ee;
+  }
+  80% {
+    background: #e08a00;
+  }
+  100% {
+    transform: scaleX(0);
+    background: #c93a2a;
+  }
+}
+
+/* Curinga: peça dourada com estrela no banco e marca na casa em que virou letra. */
+.app-playing .letter-bank button.joker {
+  color: #6a2fb0;
+  background: linear-gradient(#fff3b8, #ffd24a);
+  border-color: #fff8d6;
+  box-shadow:
+    0 0 0 2px #e0a840,
+    0 3px 0 #b8801a;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app-playing .letter-bank button.joker:not(:disabled) {
+    animation: joker-glow 1.6s ease-in-out infinite;
+  }
+}
+@keyframes joker-glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 0 rgba(255, 210, 74, 0));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 210, 74, 0.95));
+  }
+}
+.app-playing .letter.joker-cell {
+  position: relative;
+}
+.app-playing .letter.joker-cell::after {
+  content: "★";
+  position: absolute;
+  top: 1px;
+  right: 3px;
+  font-size: calc(var(--cell, 40px) * 0.28);
+  line-height: 1;
+  color: #d99a14;
+}
+/* O curinga levantado também deixa só o contorno no banco. */
+.app-playing .letter-bank button.joker.drag-source {
+  color: transparent;
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  animation: none;
+  filter: none;
+}

@@ -122,6 +122,19 @@ export class PuzzleEngine {
   complete(s: Session) {
     return this.solved(s).length === this.puzzle.words.length;
   }
+  /**
+   * Curinga do jogador: trava a casa na hora, com o ponto da letra e o bônus se fechar uma
+   * palavra (como numa letra confirmada). Não encerra o turno; devolve `undefined` se a casa não serve.
+   */
+  joker(s: Session, tileId: string, cell: string, who: Owner = "p") {
+    const before = new Set(this.solved(s).map((w) => w.id));
+    const placed = this.rack.useJoker(s, tileId, cell, who);
+    if (!placed) return undefined;
+    const done = this.solved(placed).filter((w) => !before.has(w.id));
+    const bonus = this.completionBonus(s, placed, done, 1);
+    placed.scores[who] += bonus;
+    return { session: this.rack.ensurePlayable(placed), gained: 1, bonus };
+  }
   /** Sem jogada possível, o oponente troca a mão e passa a vez. */
   exchangeBot(s: Session) {
     return this.rack.exchangeBot(s);
