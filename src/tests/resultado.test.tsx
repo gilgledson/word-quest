@@ -9,16 +9,17 @@ const session = (
   owners: Record<string, "p" | "ai">,
   locked: string[],
   scores = { p: 12, ai: 4 },
-) => ({ owners, locked, scores }) as unknown as Session;
+  hinted: string[] = [],
+) => ({ owners, locked, scores, hinted }) as unknown as Session;
 
 it("resume quem confirmou as letras e quantas vieram da Dica", () => {
   const s = summarize(
-    session({ "0,0": "p", "0,1": "p", "0,2": "ai" }, [
-      "0,0",
-      "0,1",
-      "0,2",
-      "0,3",
-    ]),
+    session(
+      { "0,0": "p", "0,1": "p", "0,2": "ai" },
+      ["0,0", "0,1", "0,2"],
+      { p: 12, ai: 4 },
+      ["0,1"],
+    ),
   );
   expect(s.letters).toEqual({ p: 2, ai: 1 });
   expect(s.helped).toBe(1);
@@ -34,8 +35,12 @@ it("medalhas: só vitória rende, e cada uma tem seu critério", () => {
     "folgada",
     "dono",
   ]);
+  const helped = summarize(
+    session({ ...owners }, ["a", "b", "c", "d"], { p: 16, ai: 4 }, ["a"]),
+  );
+  expect(medalsFor(helped).map((m) => m.id)).toEqual(["folgada", "dono"]);
   const close = summarize(
-    session({ ...owners }, ["a", "b", "c", "d", "e"], { p: 6, ai: 5 }),
+    session({ ...owners }, ["a", "b", "c", "d", "e"], { p: 6, ai: 5 }, ["e"]),
   );
   expect(medalsFor(close).map((m) => m.id)).toEqual(["apertada", "dono"]);
   const loss = summarize(session({ ...owners }, ["a"], { p: 1, ai: 9 }));

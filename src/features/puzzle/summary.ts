@@ -3,9 +3,9 @@ import type { Session } from "../../game/crossword-engine";
 export interface MatchSummary {
   result: "win" | "draw" | "loss";
   scores: { p: number; ai: number };
-  /** Letras confirmadas por cada lado (casas reveladas por Dica não contam). */
+  /** Letras confirmadas por cada lado (as da Dica contam para quem a usou). */
   letters: { p: number; ai: number };
-  /** Casas reveladas por Dica, sem dono. */
+  /** Casas travadas pela Dica. */
   helped: number;
 }
 export interface Medal {
@@ -27,7 +27,7 @@ export function summarize(session: Session): MatchSummary {
     result: p > ai ? "win" : p === ai ? "draw" : "loss",
     scores: { p, ai },
     letters,
-    helped: session.locked.length - letters.p - letters.ai,
+    helped: session.hinted?.length ?? 0,
   };
 }
 /** Medalhas ganhas nesta partida (só vitórias rendem medalha). */

@@ -477,11 +477,23 @@ function Duel() {
     const target = firstOpen();
     if (!mine || !target || complete || !afford(economy.hint)) return;
     const next = engine.hint(session, target.id);
-    if (!next) return;
-    setSelected(target.id);
+    if (!next) {
+      setMessage("Nenhuma das suas letras serve para uma dica agora.");
+      sfx("error");
+      return;
+    }
+    const cells = next.locked.filter((k) => !session.locked.includes(k));
+    const points = next.scores.p - session.scores.p;
+    const hintWord = puzzle.words.find((w) =>
+      positions(w).some((c) => c.key === cells[0]),
+    );
+    setSelected((hintWord ?? target).id);
     commit(next, economy.hint);
+    popScore(cells, 1, points - 1, "p");
     sfx("hint");
-    setMessage("Uma ajudinha para seguir em frente.");
+    setMessage(
+      `Dica usou uma das suas letras: +${points} ponto${points > 1 ? "s" : ""}.`,
+    );
   };
   const confirmSwap = () => {
     if (!swapping?.length) return;

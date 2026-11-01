@@ -185,11 +185,9 @@ describe("Jogada do bot", () => {
       const cell = Object.entries(engine.rack.solution).find(
         ([k, l]) => letters.has(l) && !stuck.locked.includes(k),
       )![0];
-      const word = puzzle.words.find((w) =>
-        positions(w).some((c) => c.key === cell),
-      )!;
-      stuck = engine.hint(stuck, word.id) ?? stuck;
-      if (stuck === s) break;
+      const next = structuredClone(stuck);
+      if (!engine.rack.lockCell(next, cell)) break;
+      stuck = next;
     }
     if (!engine.rack.botHasMove(stuck)) {
       const next = opponentTurn(engine, stuck).session;

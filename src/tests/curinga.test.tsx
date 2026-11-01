@@ -168,7 +168,7 @@ describe("Curinga: regras do motor", () => {
     const r = engine.confirm(placed, "p");
     expect(engine.solved(r.session).map((w) => w.id)).toContain(word.id);
     expect(r.bonus).toBeGreaterThanOrEqual(1);
-    expect(r.session.scores.p).toBe(1 + r.bonus);
+    expect(r.session.scores.p).toBe(s.scores.p + 1 + r.bonus);
   });
   it("não pode ser trocado e não é gasto pela Dica", () => {
     let s = withJoker();

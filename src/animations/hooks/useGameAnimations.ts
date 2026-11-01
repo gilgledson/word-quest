@@ -40,8 +40,9 @@ export function deriveEvents(
   for (const k of newLocked) {
     const owner = ownerOf(next.owners[k]);
     out.push({ type: "LETTER_CONFIRMED", cellId: k, owner });
-    // Casa travada sem dono = revelada por Dica.
-    if (!owner) out.push({ type: "HINT_REVEALED", cellId: k });
+    // Casa travada pela Dica.
+    if (next.hinted?.includes(k) || !owner)
+      out.push({ type: "HINT_REVEALED", cellId: k });
   }
   const before = new Set(engine.solved(prev).map((w) => w.id));
   for (const w of engine.solved(next)) {

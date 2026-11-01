@@ -8,6 +8,8 @@ import {
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { PuzzlePage } from "../features/PuzzlePage";
+import { levels } from "../data/catalog";
+import { PuzzleEngine, positions } from "../game/crossword-engine";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 vi.mock("../services/repository", async (importOriginal) => {
@@ -21,9 +23,23 @@ afterEach(() => {
   cleanup();
   vi.useRealTimers();
 });
-function open(coins = 100) {
+/** Abre a fase 1 já com as primeiras `locked` casas da primeira palavra confirmadas. */
+function open(coins = 100, locked = 0) {
+  const sessions: Record<string, unknown> = {};
+  if (locked) {
+    const engine = new PuzzleEngine(levels[0]);
+    const s = engine.start("vs:vila-1:medio", "medio");
+    for (const c of positions(levels[0].words[0]).slice(0, locked))
+      engine.rack.lockCell(s, c.key, "p");
+    sessions["vs:vila-1:medio"] = s;
+  }
   usePlayer.setState({
-    player: { ...structuredClone(initialPlayer), coins, tutorialDone: true },
+    player: {
+      ...structuredClone(initialPlayer),
+      coins,
+      tutorialDone: true,
+      sessions,
+    } as typeof initialPlayer,
     ready: true,
   });
   render(
@@ -55,7 +71,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
     vi.useFakeTimers();
     open();
     fireEvent.click(screen.getByRole("button", { name: "Dica" }));
-    const note = screen.getByText("Uma ajudinha para seguir em frente.");
+    const note = screen.getByText(/^Dica usou uma das suas letras/);
     expect(note).not.toHaveClass("message-hidden");
     expect(progress()).toBeNull();
     act(() => {
@@ -76,9 +92,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
   });
   it("com todas as casas cheias e ainda não confirmadas, pede a confirmação", () => {
     vi.useFakeTimers();
-    open(1000);
-    for (let i = 0; i < 6; i++)
-      fireEvent.click(screen.getByRole("button", { name: "Dica" }));
+    open(1000, 6);
     act(() => {
       vi.advanceTimersByTime(5000);
     });
@@ -86,9 +100,10 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
   });
   it("palavra fechada mostra 'Palavra completa'", () => {
     vi.useFakeTimers();
-    open(1000);
-    for (let i = 0; i < 7; i++)
-      fireEvent.click(screen.getByRole("button", { name: "Dica" }));
+    open(1000, 7);
+    // Ao fechar a palavra o painel passa para a próxima; voltar a ela mostra o aviso.
+    const first = positions(levels[0].words[0])[0].key;
+    fireEvent.click(document.querySelector(`[data-cell="${first}"]`)!);
     act(() => {
       vi.advanceTimersByTime(5000);
     });

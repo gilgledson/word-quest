@@ -313,14 +313,27 @@ export class RackManager {
     if (who) s.owners[cell] = who;
     return true;
   }
-  /** Dica: revela e confirma uma letra correta da palavra, sem pontos. */
+  /**
+   * Dica: usa uma peça que o jogador já tem (no banco ou pendente na casa certa) para travar
+   * uma letra correta da palavra; vale o ponto da letra. Sem peça que sirva, devolve undefined.
+   */
   hint(input: Session, word: PuzzleWord) {
-    const open = positions(word).filter((c) => !input.locked.includes(c.key));
+    const owned = (letter: string) =>
+      input.rack.some(
+        (id) => !input.tiles[id].joker && input.tiles[id].letter === letter,
+      );
+    const open = positions(word).filter(
+      (c) =>
+        !input.locked.includes(c.key) &&
+        (input.letters[c.key] === c.letter || owned(c.letter)),
+    );
     if (!open.length) return undefined;
     const target =
       open.find((c) => input.letters[c.key] !== c.letter) ?? open[0];
     const s = copy(input);
-    if (!this.lockCell(s, target.key)) return undefined;
+    if (!this.lockCell(s, target.key, "p")) return undefined;
+    s.scores.p += economy.letterPoint;
+    s.hinted = [...(s.hinted ?? []), target.key];
     return s;
   }
   /**

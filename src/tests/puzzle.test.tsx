@@ -214,14 +214,16 @@ it("tocar numa peça pendente a devolve ao banco, sem cobrar", () => {
   expect(rackLetters().sort()).toEqual(before);
   expect(player().coins).toBe(100);
 });
-it("Dica custa 20 moedas, confirma a letra certa e registra a ajuda", () => {
+it("Dica custa 20 moedas, usa uma letra do banco, confirma a certa e pontua", () => {
   open();
   fireEvent.click(screen.getByRole("button", { name: "Dica" }));
   expect(player().coins).toBe(80);
   const hinted = session().locked[0];
   const [r, c] = hinted.split(",").map(Number);
   expect(cell(r, c, solution[hinted])).toBeInTheDocument();
-  expect(session().scores.p).toBe(0);
+  expect(session().scores.p).toBe(1);
+  expect(session().owners[hinted]).toBe("p");
+  expect(session().hinted).toEqual([hinted]);
 });
 it("Trocar mostra o custo total, cobra 10 por peça e mantém o banco", () => {
   open();

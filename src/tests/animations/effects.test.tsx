@@ -169,8 +169,8 @@ describe("Feedback das jogadas", () => {
     expect(screen.getByRole("button", { name: "Dica" })).toHaveClass(
       "fx-hint-btn",
     );
-    // Palavras fechadas só pela Dica: contorno discreto.
-    expect(wordFx().every((w) => w.classList.contains("assisted"))).toBe(true);
+    // A Dica pontua: as palavras fechadas por ela têm o contorno normal.
+    expect(wordFx().some((w) => w.classList.contains("assisted"))).toBe(false);
     advance(1500);
     expect(document.querySelector(".fx-star")).toBeNull();
     expect(usePlayer.getState().player.coins).toBe(before - economy.hint);

@@ -80,8 +80,10 @@ export interface Session {
   rack: string[];
   /** Casas com peças colocadas, na ordem da inserção (usado por Remover). */
   history: string[];
-  /** Quem confirmou cada casa (casas reveladas por ajuda não têm dono). */
+  /** Quem confirmou cada casa. */
   owners: Record<string, Owner>;
+  /** Casas travadas pela Dica (pontuam para o jogador, mas contam como ajuda). */
+  hinted?: string[];
   scores: Record<Owner, number>;
   /** Peças que o oponente tem na mão (sorteadas da reserva); só existe no duelo. */
   botRack: string[];
