@@ -276,9 +276,9 @@
               "arrow": "right"
             },
             {
-              "id": "gnu",
-              "clue": "Antílope",
-              "answer": "GNU",
+              "id": "boi",
+              "clue": "Gado macho",
+              "answer": "BOI",
               "direction": "vertical",
               "startRow": 1,
               "startCol": 0,

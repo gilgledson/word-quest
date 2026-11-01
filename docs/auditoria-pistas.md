@@ -78,3 +78,24 @@ Critério: palavras do dia a dia, fáceis de reconhecer; o desafio deve estar na
 - As 44 palavras pouco cotidianas ficaram marcadas como `medio` no catálogo (o gerador ainda não filtra por nível).
 - Pendentes: palavras totalmente cruzadas que não têm substituto sem regerar a fase (EPOPEIA, IGAPO, OBOLO, EGIDE,
   MERCE, MOER, CAPATAZ…) e itens do casual sem opção do mesmo tema (ANIS, GEO, ATOL, HERA, RELVA).
+
+## OBOLO fora da fase 5 (01/11/2026)
+
+- A fase 5 (vila-5) foi regerada sem OBOLO, ACARA e OCASO (marcadas como `medio` no catálogo, fora do perfil fácil).
+  A grade nova usa só palavras comuns (MILITAR, TRATOR, ABACATE, CANAL, AGORA...).
+- Continuam pendentes as demais palavras totalmente cruzadas sem substituto (EPOPEIA, IGAPO, EGIDE, MERCE, MOER,
+  CAPATAZ…): cada uma exige regerar a fase em que aparece.
+
+## Revisão completa do vocabulário fácil (01/11/2026)
+
+- Leitura de todas as 3.302 palavras marcadas como `facil` (catálogo de 3.706). Critério: um adulto brasileiro
+  reconhece a palavra no dia a dia, sem contexto técnico, literário, regional ou antigo.
+- 197 palavras pouco cotidianas passaram a `medio` (ex.: ACERVO, ALCATRAZ, ARAUTO, BRUMA, CETRO, DOGMA, FULGOR,
+  HERA, HIDROMEL, LACAIO, MEANDRO, OLIMPO, QUIMERA, SALTEADOR, SOLSTICIO, UMBRAL), mais ACARA e OCASO. O gerador
+  de fases só usa `facil` no perfil fácil, então elas deixam de entrar em fases novas.
+- ASNO ficou como `facil` (conhecida e usada no tutorial). O resto do catálogo `facil` ficou como estava.
+- Em uso nas fases e no casual, só 7 das 197 apareciam; GNU→BOI no casual foi trocado na hora. As demais
+  (HERA, BALSAMO, CE, OSA, PELAGEM) estão totalmente cruzadas e só saem regerando a grade.
+- Palavras fora do nível fácil ainda em uso: 43 (lista completa pelos ids em `src/data/levels.json` e
+  `src/data/casual.json`), com destaque para as das fases iniciais: EPOPEIA (vila-3), AIS e OVAL (vila-1), AUGE e
+  ICAR (vila-2), IGAPO e HERA (vila-4).
