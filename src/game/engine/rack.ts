@@ -336,6 +336,12 @@ export class RackManager {
     let returned = 0;
     const wrongCells: string[] = [];
     for (const k of pending) {
+      // O curinga só vira a letra da casa ao confirmar, e sempre acerta.
+      const tile = this.tileAt(s, k);
+      if (tile?.joker) {
+        tile.letter = this.solution[k];
+        s.letters[k] = tile.letter;
+      }
       if (s.letters[k] === this.solution[k]) {
         s.locked.push(k);
         s.owners[k] = who;
@@ -401,29 +407,6 @@ export class RackManager {
       missing--;
     }
     if (missing > 0) this.draw(s, missing);
-    return s;
-  }
-  /**
-   * Curinga: a peça entra numa casa ainda não confirmada, vira a letra certa dela e trava na
-   * hora (+1 ponto para `who`). Uma letra errada pendente na casa volta ao banco. Recusa casas
-   * já travadas ou cuja letra pendente já está certa (o curinga seria desperdiçado).
-   */
-  useJoker(input: Session, tileId: string, cell: string, who: Owner = "p") {
-    const letter = this.solution[cell];
-    const tile = input.tiles[tileId];
-    if (!tile?.joker || !input.rack.includes(tileId) || !letter)
-      return undefined;
-    if (input.locked.includes(cell) || input.letters[cell] === letter)
-      return undefined;
-    const s = copy(input);
-    s.rack = s.rack.filter((id) => id !== tileId);
-    if (s.letters[cell]) this.unplace(s, cell);
-    s.tiles[tileId].letter = letter;
-    s.tiles[tileId].cell = cell;
-    s.letters[cell] = letter;
-    s.locked.push(cell);
-    s.owners[cell] = who;
-    s.scores[who] += economy.letterPoint;
     return s;
   }
   /** Sorteia a mão inicial do oponente (peças úteis da reserva, ao acaso). */

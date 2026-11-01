@@ -298,7 +298,9 @@ describe("Partidas completas contra os três níveis", () => {
       );
       const wrongTile =
         emptyCell &&
-        s.rack.find((id) => s.tiles[id].letter !== emptyCell.letter);
+        s.rack.find(
+          (id) => !s.tiles[id].joker && s.tiles[id].letter !== emptyCell.letter,
+        );
       if (emptyCell && wrongTile)
         s = engine.insert(s, wrongWord.id, wrongTile, emptyCell.key);
       // 2) confirma (as erradas voltam ao banco) e, às vezes, só passa a vez

@@ -58,6 +58,8 @@ export function Board({
   const { ref: gridRef, cell: cellSize, rotated } = grid;
   const pending = (cell: string) =>
     !!session.letters[cell] && !session.locked.includes(cell);
+  /** Curinga ainda pendente: mostra a estrela, não a letra (que só aparece ao confirmar). */
+  const hiddenJoker = (cell: string) => pending(cell) && !!tileOf(cell)?.joker;
   const tileOf = (cell: string) =>
     Object.values(session.tiles).find((t) => t.cell === cell);
   // A quarter turn counter-clockwise: words that ran right now run up, and down becomes right.
@@ -128,9 +130,12 @@ export function Board({
           return (
             <button
               {...(mine && pending(ck)
-                ? letterDrag.bind(tileOf(ck)?.id ?? "", session.letters[ck])
+                ? letterDrag.bind(
+                    tileOf(ck)?.id ?? "",
+                    hiddenJoker(ck) ? "★" : session.letters[ck],
+                  )
                 : {})}
-              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
+              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${hiddenJoker(ck) ? "joker-hidden" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
               data-cell={ck}
               style={
                 {
@@ -140,7 +145,7 @@ export function Board({
               }
               data-words={belongs.map((w) => w.id).join(" ")}
               key={ck}
-              aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${session.letters[ck] ?? botLetter ?? "vazia"}`}
+              aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${hiddenJoker(ck) ? "curinga" : (session.letters[ck] ?? botLetter ?? "vazia")}`}
               onClick={(event) => {
                 if (!letterDrag.clickAllowed(event.detail === 0)) return;
                 if (mine && pending(ck)) onUnplace(ck);
@@ -151,7 +156,7 @@ export function Board({
                   );
               }}
             >
-              {session.letters[ck] ?? botLetter}
+              {hiddenJoker(ck) ? "★" : (session.letters[ck] ?? botLetter)}
               {locked && <i />}
             </button>
           );

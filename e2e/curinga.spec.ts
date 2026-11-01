@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { dismissTour } from "./tour";
 
 const URL = "/play/vila-1?vs=medio";
@@ -53,37 +53,51 @@ test("o curinga aparece no banco e passa na checagem de acessibilidade", async (
   expect(scan.violations).toEqual([]);
 });
 
-test("tocar no curinga trava a próxima casa da palavra com a letra certa", async ({
+test("tocar no curinga só põe a estrela; a letra aparece ao confirmar", async ({
   page,
 }) => {
   await withJoker(page);
   const before = await page.locator(".cell.correct").count();
   await joker(page).click();
-  await expect(page.locator(".cell.correct")).toHaveCount(before + 1);
-  await expect(page.locator(".cell.joker-cell")).toHaveCount(1);
+  const cell = page.locator(".cell.joker-cell");
+  await expect(cell).toHaveCount(1);
+  await expect(cell).toHaveClass(/pending/);
+  await expect(cell).toHaveText("★");
+  await expect(page.locator(".cell.correct")).toHaveCount(before);
   await expect(joker(page)).toHaveCount(0);
-  await expect(page.getByText(/Curinga virou/)).toBeVisible();
-  // A vez continua do jogador; ✓ encerra a jogada normalmente.
-  await expect(page.getByText("vez do oponente ▶")).toHaveCount(0);
+  await page.getByRole("button", { name: /^Confirmar/ }).click();
+  await expect(cell).toHaveClass(/correct/);
+  await expect(cell).not.toHaveText("★");
+  await expect(cell).not.toHaveText("?");
 });
 
-test("arrastar o curinga para qualquer casa do tabuleiro vira a letra dela", async ({
+test("arrastar o curinga para uma casa e depois para outra, sem revelar a letra", async ({
   page,
 }) => {
   await withJoker(page);
-  const target = page.locator('.cell.letter[aria-label$="vazia"]').nth(20);
-  const label = await target.getAttribute("data-cell");
-  const from = (await joker(page).boundingBox())!;
-  const to = (await target.boundingBox())!;
-  await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, {
-    steps: 12,
-  });
-  await page.mouse.up();
-  const cell = page.locator(`[data-cell="${label}"]`);
-  await expect(cell).toHaveClass(/correct/);
-  await expect(cell).toHaveClass(/joker-cell/);
-  await expect(cell).not.toHaveText("?");
+  const drag = async (from: Locator, to: Locator) => {
+    const a = (await from.boundingBox())!;
+    const b = (await to.boundingBox())!;
+    await page.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
+    await page.mouse.up();
+  };
+  const first = page.locator('.cell.letter[aria-label$="vazia"]').nth(20);
+  const firstKey = await first.getAttribute("data-cell");
+  await drag(joker(page), first);
+  const placed = page.locator(`[data-cell="${firstKey}"]`);
+  await expect(placed).toHaveClass(/joker-cell/);
+  await expect(placed).toHaveClass(/pending/);
+  await expect(placed).toHaveText("★");
   await expect(joker(page)).toHaveCount(0);
+  const second = page.locator('.cell.letter[aria-label$="vazia"]').nth(30);
+  const secondKey = await second.getAttribute("data-cell");
+  await drag(placed, second);
+  const moved = page.locator(`[data-cell="${secondKey}"]`);
+  await expect(moved).toHaveClass(/joker-cell/);
+  await expect(moved).toHaveText("★");
+  await expect(page.locator(`[data-cell="${firstKey}"]`)).not.toHaveClass(
+    /joker-cell/,
+  );
 });

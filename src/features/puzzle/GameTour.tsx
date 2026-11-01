@@ -71,7 +71,7 @@ const JOKER_STEPS: Step[] = [
     target: ".letter-bank button.joker",
     title: "Chegou o curinga ★",
     content:
-      "Arraste-o para qualquer casa do tabuleiro: ele vira a letra certa e trava na hora. Você ganha um por partida.",
+      "Coloque-o em qualquer casa do tabuleiro. Você pode arrastá-lo para outro lugar; a letra certa só aparece quando confirmar. Você ganha um por partida.",
     placement: "top",
     buttons: ["primary"],
   },

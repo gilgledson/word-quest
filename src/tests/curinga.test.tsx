@@ -87,11 +87,39 @@ describe("Curinga: regras do motor", () => {
     expect(late.rack.length).toBeLessThanOrEqual(economy.rackMax);
     expect(engine.rack.audit(late)).toEqual([]);
   });
-  it("vira a letra certa da casa, trava na hora e pontua", () => {
+  const wordOf = (cell: string) =>
+    level.words.find((w) => positions(w).some((c) => c.key === cell))!;
+  it("entra como peça pendente: não mostra a letra, não trava nem pontua até confirmar", () => {
     const s = withJoker();
     const cell = emptyCell(s);
-    const r = engine.joker(s, JOKER, cell)!;
+    const r = engine.insert(s, wordOf(cell).id, JOKER, cell);
+    expect(r.tiles[JOKER].cell).toBe(cell);
+    expect(r.tiles[JOKER].letter).toBe("?");
+    expect(r.letters[cell]).toBe("?");
+    expect(r.locked).not.toContain(cell);
+    expect(r.history).toContain(cell);
+    expect(r.rack).not.toContain(JOKER);
+    expect(r.scores.p).toBe(0);
+    expect(engine.rack.audit(r)).toEqual([]);
+  });
+  it("pode ser movido para outra casa antes de confirmar", () => {
+    const s = withJoker();
+    const [a, b] = Object.keys(solution).filter((k) => !s.letters[k]);
+    const w = wordOf(b);
+    const placed = engine.insert(s, wordOf(a).id, JOKER, a);
+    const moved = engine.relocate(placed, w.id, a, b);
+    expect(moved.letters[a]).toBeUndefined();
+    expect(moved.letters[b]).toBe("?");
+    expect(moved.tiles[JOKER].cell).toBe(b);
+    expect(engine.rack.audit(moved)).toEqual([]);
+  });
+  it("ao confirmar vira a letra certa da casa, trava e pontua", () => {
+    const s = withJoker();
+    const cell = emptyCell(s);
+    const placed = engine.insert(s, wordOf(cell).id, JOKER, cell);
+    const r = engine.confirm(placed, "p");
     expect(r.gained).toBe(1);
+    expect(r.returned).toBe(0);
     expect(r.session.letters[cell]).toBe(solution[cell]);
     expect(r.session.locked).toContain(cell);
     expect(r.session.owners[cell]).toBe("p");
@@ -99,50 +127,45 @@ describe("Curinga: regras do motor", () => {
       letter: solution[cell],
       cell,
     });
-    expect(r.session.rack).not.toContain(JOKER);
     expect(r.session.scores.p).toBe(1 + r.bonus);
     expect(engine.rack.audit(r.session)).toEqual([]);
+  });
+  it("devolvido ao banco antes de confirmar, continua curinga", () => {
+    const s = withJoker();
+    const cell = emptyCell(s);
+    const placed = engine.insert(s, wordOf(cell).id, JOKER, cell);
+    const back = engine.remove(placed, wordOf(cell), cell)!;
+    expect(back.rack).toContain(JOKER);
+    expect(back.tiles[JOKER].letter).toBe("?");
   });
   it("uma letra errada pendente na casa volta ao banco", () => {
     const s = withJoker();
     const cell = emptyCell(s);
     const wrong = s.rack.find((id) => s.tiles[id].letter !== solution[cell])!;
-    const word = level.words.find((w) =>
-      positions(w).some((c) => c.key === cell),
-    )!;
-    const placed = engine.insert(s, word.id, wrong, cell);
-    const r = engine.joker(placed, JOKER, cell)!;
-    expect(r.session.letters[cell]).toBe(solution[cell]);
-    expect(r.session.rack).toContain(wrong);
-    expect(engine.rack.audit(r.session)).toEqual([]);
+    const placed = engine.insert(s, wordOf(cell).id, wrong, cell);
+    const r = engine.insert(placed, wordOf(cell).id, JOKER, cell);
+    expect(r.letters[cell]).toBe("?");
+    expect(r.rack).toContain(wrong);
+    expect(engine.rack.audit(r)).toEqual([]);
   });
-  it("recusa casa travada, letra pendente já certa, peça comum e curinga fora do banco", () => {
+  it("recusa casa travada e curinga fora do banco", () => {
     const s = withJoker();
     const cell = emptyCell(s);
-    const used = engine.joker(s, JOKER, cell)!.session;
-    expect(engine.joker(used, JOKER, cell)).toBeUndefined();
-    const right = s.rack.find((id) =>
-      Object.values(solution).includes(s.tiles[id].letter),
-    )!;
-    const target = Object.keys(solution).find(
-      (k) => solution[k] === s.tiles[right].letter,
-    )!;
-    const word = level.words.find((w) =>
-      positions(w).some((c) => c.key === target),
-    )!;
-    const correct = engine.insert(s, word.id, right, target);
-    expect(engine.joker(correct, JOKER, target)).toBeUndefined();
-    expect(engine.joker(s, s.rack[0], cell)).toBeUndefined();
-    expect(
-      engine.joker(engine.start("t", "medio"), JOKER, cell),
-    ).toBeUndefined();
+    const used = engine.confirm(
+      engine.insert(s, wordOf(cell).id, JOKER, cell),
+      "p",
+    ).session;
+    expect(engine.insert(used, wordOf(cell).id, JOKER, cell)).toBe(used);
+    const none = engine.start("t", "medio");
+    expect(engine.insert(none, wordOf(cell).id, JOKER, cell)).toBe(none);
   });
   it("fechar uma palavra com o curinga paga o bônus da palavra inteira", () => {
     let s = withJoker();
     const word = level.words.find((w) => positions(w).length === 2)!;
     s = engine.hint(s, word.id)!;
     const open = positions(word).find((c) => !s.locked.includes(c.key))!;
-    const r = engine.joker(s, JOKER, open.key)!;
+    const placed = engine.insert(s, word.id, JOKER, open.key);
+    const r = engine.confirm(placed, "p");
     expect(engine.solved(r.session).map((w) => w.id)).toContain(word.id);
     expect(r.bonus).toBeGreaterThanOrEqual(1);
     expect(r.session.scores.p).toBe(1 + r.bonus);
@@ -205,29 +228,31 @@ describe("Curinga: na tela", () => {
     expect(tile).toHaveTextContent("★");
     expect(tile).toHaveClass("joker");
   });
-  it("tocar no curinga preenche a casa da palavra com a letra certa, sem encerrar a vez", () => {
+  it("tocar no curinga só põe a estrela na casa; a letra aparece ao confirmar", () => {
     open();
     inject();
-    const before = session().scores.p;
     fireEvent.click(screen.getByRole("button", { name: "Inserir curinga" }));
-    const s = session();
+    let s = session();
     const cell = s.tiles[JOKER].cell!;
     expect(cell).toBeTruthy();
+    expect(s.locked).not.toContain(cell);
+    expect(s.letters[cell]).toBe("?");
+    expect(s.scores.p).toBe(0);
+    const [r, c] = cell.split(",").map(Number);
+    const el = document.querySelector(`[data-cell="${r},${c}"]`)!;
+    expect(el).toHaveClass("joker-cell", "pending", "joker-hidden");
+    expect(el).toHaveTextContent("★");
+    expect(el).toHaveAttribute(
+      "aria-label",
+      `Linha ${r + 1}, coluna ${c + 1}: curinga`,
+    );
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+    s = session();
     expect(s.locked).toContain(cell);
     expect(s.letters[cell]).toBe(solution[cell]);
-    expect(s.scores.p).toBeGreaterThan(before);
-    expect(s.versus.turn).toBe("p");
-    expect(
-      screen.queryByRole("button", { name: "Inserir curinga" }),
-    ).toBeNull();
-    expect(screen.getByText(/Curinga virou/)).toBeInTheDocument();
-    const [r, c] = cell.split(",").map(Number);
-    expect(document.querySelector(`[data-cell="${r},${c}"]`)).toHaveClass(
-      "joker-cell",
-      "correct",
-    );
+    expect(s.tiles[JOKER].letter).toBe(solution[cell]);
   });
-  it("arrastar o curinga para uma casa qualquer vira a letra dessa casa", () => {
+  it("arrastar o curinga para uma casa qualquer o deixa pendente nela", () => {
     open();
     inject();
     const cell = "3,6";
@@ -256,7 +281,8 @@ describe("Curinga: na tela", () => {
       clientX: 100,
       clientY: 250,
     });
-    expect(session().letters[cell]).toBe(solution[cell]);
-    expect(session().locked).toContain(cell);
+    expect(session().letters[cell]).toBe("?");
+    expect(session().tiles[JOKER].cell).toBe(cell);
+    expect(session().locked).not.toContain(cell);
   });
 });

@@ -839,6 +839,13 @@
   line-height: 1;
   color: #d99a14;
 }
+/* Curinga pendente: estrela grande no lugar da letra, sem a marca do canto. */
+.app-playing .letter.joker-hidden {
+  color: #d99a14;
+}
+.app-playing .letter.joker-hidden::after {
+  content: none;
+}
 /* O curinga levantado também deixa só o contorno no banco. */
 .app-playing .letter-bank button.joker.drag-source {
   color: transparent;

@@ -202,7 +202,7 @@ function Duel() {
     if (hasJoker && !hadJoker.current) {
       sfx("hint");
       setMessage(
-        "Chegou o curinga ★! Arraste-o para qualquer casa: ele vira a letra certa.",
+        "Chegou o curinga ★! Coloque-o em qualquer casa: a letra certa só aparece ao confirmar.",
       );
     }
     hadJoker.current = hasJoker;
@@ -348,36 +348,8 @@ function Duel() {
     );
     return w;
   };
-  /** Curinga: a casa recebe a letra certa e trava na hora; o turno continua. */
-  const playJoker = (tileId: string, cell: string, wordId?: string) => {
-    const r = engine.joker(session, tileId, cell, "p");
-    if (!r) {
-      setMessage(
-        "O curinga entra numa casa ainda não confirmada e sem a letra certa.",
-      );
-      sfx("error");
-      return false;
-    }
-    if (wordId) setSelected(wordId);
-    setTarget(null);
-    commit(r.session);
-    popScore([cell], r.gained, r.bonus, "p");
-    sfx(r.bonus ? "word" : "correct", r.gained);
-    setMessage(
-      `Curinga virou ${r.session.letters[cell]}! +${r.gained + r.bonus} ponto${r.gained + r.bonus > 1 ? "s" : ""}. Confirme com ✓ quando terminar a jogada.`,
-    );
-    return true;
-  };
   const insert = (tileId: string, cellKey = current?.key) => {
     if (!mine) return false;
-    if (session.tiles[tileId]?.joker) {
-      if (!word) {
-        setMessage("Toque em uma pista e use o curinga na palavra.");
-        return false;
-      }
-      if (!cellKey || complete) return false;
-      return playJoker(tileId, cellKey, word.id);
-    }
     if (!word) {
       setMessage("Toque em uma pista para começar.");
       return false;
@@ -389,8 +361,11 @@ function Duel() {
     setTarget(null);
     const from = rectOf(`[data-tile="${tileId}"]`);
     commit(next);
-    tileFlights.launch(tileId, session.tiles[tileId].letter, from, () =>
-      rectOf(`[data-cell="${cellKey}"]`),
+    tileFlights.launch(
+      tileId,
+      session.tiles[tileId].joker ? "★" : session.tiles[tileId].letter,
+      from,
+      () => rectOf(`[data-cell="${cellKey}"]`),
     );
     sfx("place");
     return true;
@@ -412,9 +387,6 @@ function Duel() {
       belongs.find((x) => x.id === selected) ??
       belongs.find((x) => !solved.some((s) => s.id === x.id)) ??
       belongs[0];
-    if (session.tiles[tileId]?.joker) {
-      return playJoker(tileId, cell, w.id);
-    }
     // Letra já colocada (ainda não confirmada) é movida; letra do banco é inserida.
     const from = session.tiles[tileId]?.cell;
     if (from === cell) return true;
@@ -444,7 +416,7 @@ function Duel() {
     const from = rectOf(`[data-cell="${cell}"]`);
     commit(next);
     if (tile)
-      tileFlights.launch(tile.id, tile.letter, from, () =>
+      tileFlights.launch(tile.id, tile.joker ? "★" : tile.letter, from, () =>
         rectOf(`[data-tile="${tile.id}"]`),
       );
     sfx("remove");

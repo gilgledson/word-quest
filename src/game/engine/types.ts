@@ -65,7 +65,7 @@ export interface Tile {
   letter: string;
   /** Casa ocupada pela peça (colocada ou consumida); ausente no banco e na reserva. */
   cell?: string;
-  /** Curinga: vale "?" até ser usado; ao entrar numa casa vira a letra certa dela e trava na hora. */
+  /** Curinga: vale "?" até ser usado; entra numa casa como peça pendente (movível) e só vira a letra certa dela ao confirmar. */
   joker?: boolean;
 }
 export interface Session {
