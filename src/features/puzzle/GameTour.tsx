@@ -55,7 +55,7 @@ const TOUR_STEPS: Step[] = [
     target: ".puzzle-tools",
     title: "Confirmar, Trocar e Dica",
     content:
-      "Confirmar fecha a jogada: letra certa vale 1 ponto, errada custa 1 e volta ao banco. Trocar renova letras e Dica usa uma das suas letras na casa certa, valendo ponto.",
+      "Confirmar fecha a jogada: letra certa vale 1 ponto, errada custa 1 e volta ao banco. Trocar renova letras e Dica coloca uma das suas letras na casa certa; confirme para valer ponto.",
     placement: "top",
   },
   {

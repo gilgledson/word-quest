@@ -37,6 +37,9 @@ export function deriveEvents(
   for (const k of Object.keys(prev.letters))
     if (isPending(prev, k) && !next.letters[k])
       out.push({ type: "LETTER_REMOVED", cellId: k });
+  for (const k of next.hinted ?? [])
+    if (!prev.hinted?.includes(k) && isPending(next, k))
+      out.push({ type: "HINT_REVEALED", cellId: k });
   for (const k of newLocked) {
     const owner = ownerOf(next.owners[k]);
     out.push({ type: "LETTER_CONFIRMED", cellId: k, owner });

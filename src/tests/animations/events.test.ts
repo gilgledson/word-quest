@@ -53,14 +53,14 @@ describe("deriveEvents (eventos vindos de transições reais do motor)", () => {
     expect(words).toHaveLength(2);
     for (const w of words) expect(w).toMatchObject({ owner: "ai" });
   });
-  it("palavra fechada pela Dica pontua (não é assisted) e a casa vira HINT_REVEALED", () => {
+  it("a Dica põe a letra pendente: HINT_REVEALED na casa, sem travar nem fechar palavra", () => {
     const { engine, session, a, cross } = crossScenario();
     const next = engine.hint(session, a.id)!;
     const events = deriveEvents(engine, session, next);
     expect(events).toContainEqual({ type: "HINT_REVEALED", cellId: cross });
-    const words = events.filter((e) => e.type === "WORD_COMPLETED");
-    expect(words).toHaveLength(2);
-    for (const w of words) expect(w).toMatchObject({ assisted: false });
+    expect(events).toContainEqual({ type: "LETTER_PLACED", cellId: cross });
+    expect(next.locked).toEqual(session.locked);
+    expect(events.some((e) => e.type === "WORD_COMPLETED")).toBe(false);
   });
   it("mudança de turno gera TURN_CHANGED", () => {
     const { engine, session } = crossScenario();

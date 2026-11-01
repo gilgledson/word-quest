@@ -214,16 +214,20 @@ it("tocar numa peça pendente a devolve ao banco, sem cobrar", () => {
   expect(rackLetters().sort()).toEqual(before);
   expect(player().coins).toBe(100);
 });
-it("Dica custa 20 moedas, usa uma letra do banco, confirma a certa e pontua", () => {
+it("Dica custa 20 moedas e põe a letra certa, pendente; só ao confirmar vale ponto", () => {
   open();
   fireEvent.click(screen.getByRole("button", { name: "Dica" }));
   expect(player().coins).toBe(80);
-  const hinted = session().locked[0];
+  const hinted = session().hinted![0];
   const [r, c] = hinted.split(",").map(Number);
   expect(cell(r, c, solution[hinted])).toBeInTheDocument();
-  expect(session().scores.p).toBe(1);
+  expect(session().locked).toEqual([]);
+  expect(session().scores.p).toBe(0);
+  expect(session().versus.turn).toBe("p");
+  fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+  expect(session().locked).toContain(hinted);
   expect(session().owners[hinted]).toBe("p");
-  expect(session().hinted).toEqual([hinted]);
+  expect(session().scores.p).toBe(1);
 });
 it("Trocar mostra o custo total, cobra 10 por peça e mantém o banco", () => {
   open();
@@ -324,7 +328,27 @@ it.each(["mouse", "touch"])(
 it("cancela solturas fora da grade, em pistas e em casas já confirmadas", () => {
   open();
   fireEvent.click(screen.getByRole("button", { name: "Dica" }));
-  const locked = session().locked[0];
+  const locked = session().hinted![0];
+  act(() =>
+    usePlayer.setState((st) => {
+      const key = Object.keys(st.player.sessions)[0];
+      const s = st.player.sessions[key];
+      return {
+        player: {
+          ...st.player,
+          sessions: {
+            ...st.player.sessions,
+            [key]: {
+              ...s,
+              locked: [locked],
+              history: [],
+              owners: { [locked]: "p" },
+            },
+          },
+        },
+      };
+    }),
+  );
   const [lr, lc] = locked.split(",").map(Number);
   const before = structuredClone(session());
   for (const target of [

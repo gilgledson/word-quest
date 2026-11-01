@@ -278,8 +278,9 @@ describe("Inventário de peças", () => {
     expect(Object.keys(swapped.letters)).toEqual(["1,3"]);
     expect(engine.rack.audit(swapped)).toEqual([]);
     // Casa confirmada não aceita.
-    const hinted = engine.hint(s, "casa")!;
-    const lockedCell = hinted.locked[0];
+    const hinted = structuredClone(s);
+    engine.rack.lockCell(hinted, "1,1", "p");
+    const lockedCell = "1,1";
     expect(engine.insert(hinted, "casa", hinted.rack[0], lockedCell)).toBe(
       hinted,
     );
@@ -524,34 +525,48 @@ describe("Confirmação ✓, pontos e ajudas", () => {
     expect(r.returned).toBe(1);
     expect(r.session.scores.p).toBe(5 + 1 - 1);
   });
-  it("Dica usa uma letra do banco, trava a casa para o jogador e pontua", () => {
+  it("Dica põe uma letra do banco na casa certa, pendente, sem confirmar nem pontuar", () => {
     const engine = new PuzzleEngine(small);
     const s0 = engine.start("t", "medio");
     const s = engine.hint(s0, "casa")!;
-    const [cell] = s.locked;
-    expect(s.locked).toHaveLength(1);
-    expect(s.owners[cell]).toBe("p");
+    const [cell] = Object.keys(s.letters);
+    expect(s.letters[cell]).toBe(engine.rack.solution[cell]);
+    expect(s.locked).toEqual([]);
+    expect(s.history).toContain(cell);
     expect(s.hinted).toEqual([cell]);
-    expect(s.scores.p).toBeGreaterThanOrEqual(1);
-    expect(
-      s0.rack.filter((id) => s0.tiles[id].letter === s.letters[cell]).length,
-    ).toBeGreaterThan(0);
+    expect(s.scores).toEqual({ p: 0, ai: 0 });
+    expect(s0.rack.some((id) => s0.tiles[id].letter === s.letters[cell])).toBe(
+      true,
+    );
     expect(engine.rack.audit(s)).toEqual([]);
+    // Só ao confirmar vale o ponto.
+    const r = engine.confirm(s, "p");
+    expect(r.gained).toBe(1);
+    expect(r.session.locked).toContain(cell);
+    expect(r.session.owners[cell]).toBe("p");
+    expect(r.session.scores.p).toBe(1);
+  });
+  it("Dica devolvida ao banco deixa de contar como ajuda", () => {
+    const engine = new PuzzleEngine(small);
+    const s = engine.hint(engine.start("t", "medio"), "casa")!;
+    const back = engine.remove(s, undefined, s.hinted![0])!;
+    expect(back.hinted).toEqual([]);
   });
   it("Dica sem nenhuma letra útil no banco não faz nada", () => {
     const engine = new PuzzleEngine(small);
     const s = engine.start("t", "medio");
     expect(engine.hint({ ...s, rack: [] }, "casa")).toBeUndefined();
   });
-  it("Dica trava a letra correta, inclusive sobre uma peça errada", () => {
+  it("Dica coloca a letra certa por cima de uma peça errada pendente", () => {
     const engine = new PuzzleEngine(small);
     let s = engine.start("t", "medio");
     const wrong = s.rack.find((id) => s.tiles[id].letter !== "C")!;
     s = engine.insert(s, "casa", wrong, "1,1");
     const hinted = engine.hint(s, "casa")!;
-    expect(hinted.letters["1,1"]).toBe("C");
-    expect(hinted.locked).toContain("1,1");
-    expect(hinted.rack.concat(hinted.supply)).toContain(wrong);
+    const cell = hinted.hinted![0];
+    expect(hinted.letters[cell]).toBe(engine.rack.solution[cell]);
+    if (cell === "1,1")
+      expect(hinted.rack.concat(hinted.supply)).toContain(wrong);
     expect(engine.rack.audit(hinted)).toEqual([]);
   });
   it.each(levels)("$id é concluível só com ações gratuitas", (p) => {

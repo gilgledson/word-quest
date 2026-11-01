@@ -160,15 +160,15 @@ describe("Curinga: regras do motor", () => {
     expect(engine.insert(none, wordOf(cell).id, JOKER, cell)).toBe(none);
   });
   it("fechar uma palavra com o curinga paga o bônus da palavra inteira", () => {
-    let s = withJoker();
+    const s = structuredClone(withJoker());
     const word = level.words.find((w) => positions(w).length === 2)!;
-    s = engine.hint(s, word.id)!;
-    const open = positions(word).find((c) => !s.locked.includes(c.key))!;
+    const [first, open] = positions(word);
+    engine.rack.lockCell(s, first.key, "p");
     const placed = engine.insert(s, word.id, JOKER, open.key);
     const r = engine.confirm(placed, "p");
     expect(engine.solved(r.session).map((w) => w.id)).toContain(word.id);
     expect(r.bonus).toBeGreaterThanOrEqual(1);
-    expect(r.session.scores.p).toBe(s.scores.p + 1 + r.bonus);
+    expect(r.session.scores.p).toBe(1 + r.bonus);
   });
   it("não pode ser trocado e não é gasto pela Dica", () => {
     let s = withJoker();

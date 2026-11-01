@@ -71,7 +71,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
     vi.useFakeTimers();
     open();
     fireEvent.click(screen.getByRole("button", { name: "Dica" }));
-    const note = screen.getByText(/^Dica usou uma das suas letras/);
+    const note = screen.getByText(/^Dica colocou uma letra sua/);
     expect(note).not.toHaveClass("message-hidden");
     expect(progress()).toBeNull();
     act(() => {

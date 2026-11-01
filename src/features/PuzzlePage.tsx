@@ -482,17 +482,16 @@ function Duel() {
       sfx("error");
       return;
     }
-    const cells = next.locked.filter((k) => !session.locked.includes(k));
-    const points = next.scores.p - session.scores.p;
+    const cell = (next.hinted ?? []).find((k) => !session.hinted?.includes(k));
     const hintWord = puzzle.words.find((w) =>
-      positions(w).some((c) => c.key === cells[0]),
+      positions(w).some((c) => c.key === cell),
     );
     setSelected((hintWord ?? target).id);
+    setTarget(null);
     commit(next, economy.hint);
-    popScore(cells, 1, points - 1, "p");
     sfx("hint");
     setMessage(
-      `Dica usou uma das suas letras: +${points} ponto${points > 1 ? "s" : ""}.`,
+      "Dica colocou uma letra sua. Confirme com ✓ quando terminar a jogada.",
     );
   };
   const confirmSwap = () => {

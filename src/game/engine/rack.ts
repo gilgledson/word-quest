@@ -136,6 +136,7 @@ export class RackManager {
     delete s.letters[cell];
     delete tile.cell;
     s.history = s.history.filter((h) => h !== cell);
+    if (s.hinted) s.hinted = s.hinted.filter((h) => h !== cell);
     if (s.rack.length < economy.rackMax) s.rack.push(tile.id);
     else s.supply.push(tile.id);
   }
@@ -209,6 +210,7 @@ export class RackManager {
     if (s.letters[to]) this.unplace(s, to);
     delete s.letters[from];
     s.history = s.history.filter((h) => h !== from);
+    if (s.hinted) s.hinted = s.hinted.filter((h) => h !== from);
     tile.cell = to;
     s.letters[to] = tile.letter;
     s.history.push(to);
@@ -314,25 +316,28 @@ export class RackManager {
     return true;
   }
   /**
-   * Dica: usa uma peça que o jogador já tem (no banco ou pendente na casa certa) para travar
-   * uma letra correta da palavra; vale o ponto da letra. Sem peça que sirva, devolve undefined.
+   * Dica: pega no banco uma peça que serve a uma casa da palavra e a coloca lá, ainda pendente
+   * (o jogador confirma com ✓, e só então vale o ponto). Sem peça que sirva, devolve undefined.
    */
   hint(input: Session, word: PuzzleWord) {
-    const owned = (letter: string) =>
-      input.rack.some(
+    const fit = (letter: string) =>
+      input.rack.find(
         (id) => !input.tiles[id].joker && input.tiles[id].letter === letter,
       );
-    const open = positions(word).filter(
+    const target = positions(word).find(
       (c) =>
         !input.locked.includes(c.key) &&
-        (input.letters[c.key] === c.letter || owned(c.letter)),
+        input.letters[c.key] !== c.letter &&
+        fit(c.letter),
     );
-    if (!open.length) return undefined;
-    const target =
-      open.find((c) => input.letters[c.key] !== c.letter) ?? open[0];
+    if (!target) return undefined;
     const s = copy(input);
-    if (!this.lockCell(s, target.key, "p")) return undefined;
-    s.scores.p += economy.letterPoint;
+    const id = fit(target.letter)!;
+    s.rack = s.rack.filter((r) => r !== id);
+    if (s.letters[target.key]) this.unplace(s, target.key);
+    s.tiles[id].cell = target.key;
+    s.letters[target.key] = target.letter;
+    s.history.push(target.key);
     s.hinted = [...(s.hinted ?? []), target.key];
     return s;
   }

@@ -89,21 +89,18 @@ export class PuzzleEngine {
     return this.refresh(this.rack.swap(s, ids, focus), focus);
   }
   /**
-   * Dica: gasta uma letra do banco do jogador e pontua como uma letra confirmada (com o bônus,
-   * se fechar a palavra). Tenta a palavra indicada e, sem letra que sirva nela, as outras.
+   * Dica: coloca uma letra do banco do jogador na casa certa da palavra, ainda pendente; o ponto
+   * (e o bônus, se fechar a palavra) vem quando ele confirma. Tenta a palavra indicada e, sem
+   * letra que sirva nela, as outras.
    */
   hint(s: Session, wordId: string) {
     const first = this.word(wordId);
-    const before = new Set(this.solved(s).map((w) => w.id));
     for (const word of [
       first,
       ...this.puzzle.words.filter((w) => w !== first),
     ]) {
       const placed = this.rack.hint(s, word);
-      if (!placed) continue;
-      const done = this.solved(placed).filter((w) => !before.has(w.id));
-      placed.scores.p += this.completionBonus(s, placed, done, 1);
-      return this.refresh(placed, word);
+      if (placed) return this.refresh(placed, word);
     }
     return undefined;
   }
@@ -157,7 +154,7 @@ export class PuzzleEngine {
   }
   /**
    * ✓ do jogador ou do bot. Sem peças pendentes é "passar". Palavras que ficam completas
-   * nesta jogada valem o tamanho inteiro; a Dica também rende o ponto e o bônus.
+   * nesta jogada valem o tamanho inteiro; a Dica também rende o ponto e o bônus quando confirmada.
    */
   confirm(s: Session, who: Owner = "p") {
     const before = new Set(this.solved(s).map((w) => w.id));

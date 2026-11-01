@@ -27,7 +27,8 @@ export function summarize(session: Session): MatchSummary {
     result: p > ai ? "win" : p === ai ? "draw" : "loss",
     scores: { p, ai },
     letters,
-    helped: session.hinted?.length ?? 0,
+    helped: (session.hinted ?? []).filter((k) => session.locked.includes(k))
+      .length,
   };
 }
 /** Medalhas ganhas nesta partida (só vitórias rendem medalha). */
