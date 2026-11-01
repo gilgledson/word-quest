@@ -40,17 +40,22 @@ export const economy = {
   letterPoint: 1,
   /** Pontos perdidos por cada letra confirmada no lugar errado (o placar não passa de 0). */
   wrongLetter: 1,
-  swap: 10,
+  /** Preço de cada peça trocada, na ordem: a terceira custa mais, para a troca não virar sorteio da mão toda. */
+  swap: [10, 10, 15],
   daily: 70,
   /** Baús da tela inicial: um a cada 25 palavras descobertas (sem repetir fases); prêmio crescente, em moedas, na ordem de abertura (o último vale para os seguintes). */
   chest: [50, 75, 100, 125, 150],
   chestWords: 25,
   rackStart: 5,
   rackMax: 5,
-  swapMax: 5,
+  /** Peças por troca; e só uma troca por vez do jogador. */
+  swapMax: 3,
   /** O curinga chega ao banco depois de tantas jogadas do oponente (uma peça por partida). */
   jokerAfter: 2,
 };
+/** Custo total de trocar `count` peças de uma vez. */
+export const swapPrice = (count: number) =>
+  economy.swap.slice(0, count).reduce((sum, price) => sum + price, 0);
 export interface Puzzle {
   id: string;
   number: number;
@@ -85,6 +90,8 @@ export interface Session {
   /** Casas travadas pela Dica (pontuam para o jogador, mas contam como ajuda). */
   hinted?: string[];
   scores: Record<Owner, number>;
+  /** O jogador já trocou letras nesta vez (uma troca por vez; volta a valer ao confirmar). */
+  swapped?: boolean;
   /** Peças que o oponente tem na mão (sorteadas da reserva); só existe no duelo. */
   botRack: string[];
   versus: VersusState;

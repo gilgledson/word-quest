@@ -161,12 +161,12 @@ test("troca de letras abre e fecha; girar o tabuleiro mantém a grade na tela", 
   await page.getByRole("button", { name: "Trocar", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Trocar letras" });
   await expect(dialog).toBeVisible();
-  await expect(dialog).toContainText("0/5 selecionadas");
+  await expect(dialog).toContainText("0/3 selecionadas");
   await dialog
     .getByRole("button", { name: /Trocar letra/ })
     .first()
     .click();
-  await expect(dialog).toContainText("1/5 selecionadas");
+  await expect(dialog).toContainText("1/3 selecionadas");
   await expect(dialog).toContainText("Custo: 10 moedas");
   await expect(dialog).toContainText("Saldo depois: 90");
   await dialog.getByRole("button", { name: "Cancelar" }).click();

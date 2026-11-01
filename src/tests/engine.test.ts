@@ -8,6 +8,7 @@ import {
   PuzzleEngine,
   PuzzleValidator,
   economy,
+  swapPrice,
   positions,
   type Puzzle,
   type Session,
@@ -329,6 +330,23 @@ describe("Inventário de peças", () => {
     expect(after.rack.length).toBeLessThanOrEqual(economy.rackMax);
     expect(engine.rack.audit(after)).toEqual([]);
   });
+  it("Trocar: no máximo 3 peças, preço crescente e uma troca por vez", () => {
+    const engine = new PuzzleEngine(levels[0]);
+    const s = engine.start("t", "medio");
+    expect(economy.swapMax).toBe(3);
+    expect(swapPrice(1)).toBe(10);
+    expect(swapPrice(2)).toBe(20);
+    expect(swapPrice(3)).toBe(35);
+    expect(engine.swap(s, s.rack.slice(0, 4))).toBeUndefined();
+    const once = engine.swap(s, s.rack.slice(0, 1))!;
+    expect(once.swapped).toBe(true);
+    // Segunda troca na mesma vez: recusada.
+    expect(engine.swap(once, once.rack.slice(0, 1))).toBeUndefined();
+    // Ao confirmar a jogada (ou passar), a troca volta a valer.
+    const next = engine.confirm(once, "p").session;
+    expect(next.swapped).toBeUndefined();
+    expect(engine.swap(next, next.rack.slice(0, 1))).toBeDefined();
+  });
   it("Trocar substitui por letras diferentes e úteis; sem alternativa recusa", () => {
     const engine = new PuzzleEngine(levels[0]);
     const s = engine.start("t", "medio");
@@ -638,10 +656,10 @@ describe("Propriedade: sequências aleatórias de ações", () => {
       else if (op === "swap" && s.rack.length) {
         const ids = s.rack.filter(() => r() < 0.5).slice(0, economy.swapMax);
         const next =
-          ids.length && coins >= ids.length * economy.swap
+          ids.length && coins >= swapPrice(ids.length)
             ? engine.swap(s, ids)
             : undefined;
-        if (next && spend(ids.length * economy.swap)) s = next;
+        if (next && spend(swapPrice(ids.length))) s = next;
       } else if (op === "hint") {
         const next = engine.hint(s, pick(p.words).id);
         if (next && spend(economy.hint)) s = next;

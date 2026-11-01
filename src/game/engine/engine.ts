@@ -86,7 +86,9 @@ export class PuzzleEngine {
     return this.refresh(this.rack.remove(s, at), focus);
   }
   swap(s: Session, ids: string[], focus?: PuzzleWord) {
-    return this.refresh(this.rack.swap(s, ids, focus), focus);
+    if (s.swapped) return undefined;
+    const next = this.rack.swap(s, ids, focus);
+    return next && this.refresh({ ...next, swapped: true }, focus);
   }
   /**
    * Dica: coloca uma letra do banco do jogador na casa certa da palavra, ainda pendente; o ponto
@@ -159,6 +161,7 @@ export class PuzzleEngine {
   confirm(s: Session, who: Owner = "p") {
     const before = new Set(this.solved(s).map((w) => w.id));
     const result = this.rack.confirm(s, who);
+    delete result.session.swapped;
     const done = this.solved(result.session).filter((w) => !before.has(w.id));
     const bonus = this.completionBonus(s, result.session, done, result.gained);
     result.session.scores[who] += bonus;

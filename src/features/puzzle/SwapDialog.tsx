@@ -44,7 +44,8 @@ export function SwapDialog({
       >
         <h2>Trocar letras</h2>
         <p>
-          Escolha até {economy.swapMax} peças · {economy.swap} moedas cada
+          Até {economy.swapMax} peças por vez · {economy.swap.join(" + ")}{" "}
+          moedas
         </p>
         <div className="swap-tiles">
           {rack.map((t) => (

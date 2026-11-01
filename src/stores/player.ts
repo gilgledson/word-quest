@@ -27,6 +27,7 @@ export const usePlayer = create<Store>((set) => ({
           tutorialDone: saved ? (saved.tutorialDone ?? true) : false,
           // O tour de apresentação também só vale para quem ainda não fez o tutorial.
           tourDone: saved ? (saved.tourDone ?? true) : false,
+          tipsSeen: saved?.tipsSeen ?? [],
           // Quem já tinha fases vencidas ganha, como descobertas, as palavras dessas fases.
           wordsFound:
             saved?.wordsFound ??

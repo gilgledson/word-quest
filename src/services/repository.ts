@@ -26,8 +26,10 @@ export interface Player {
   turnTimer: boolean;
   /** O tutorial da fase 1 já foi concluído ou pulado. */
   tutorialDone: boolean;
-  /** O tour de apresentação da fase 1 (grade, letras, botões, placar) já foi visto ou dispensado. */
+  /** As dicas da fase 1 foram dispensadas ("Dispensar") ou todas já vistas. */
   tourDone: boolean;
+  /** Dicas da fase 1 já vistas, por id (cada uma aparece quando a mecânica surge). */
+  tipsSeen: string[];
   /** A apresentação do curinga (primeira vez que ele chega ao banco) já foi vista. */
   jokerTourDone: boolean;
   /** Baús da tela inicial já abertos (um a cada 5 vitórias). */
@@ -65,6 +67,7 @@ export const initialPlayer: Player = {
   turnTimer: false,
   tutorialDone: false,
   tourDone: false,
+  tipsSeen: [],
   jokerTourDone: false,
   chestsOpened: 0,
   wordsFound: {},

@@ -244,6 +244,20 @@ it("Trocar mostra o custo total, cobra 10 por peça e mantém o banco", () => {
   expect(player().coins).toBe(90);
   expect(rackButtons()).toHaveLength(5);
 });
+it("a troca vai até 3 peças e só uma vez por vez", () => {
+  open();
+  fireEvent.click(screen.getByRole("button", { name: "Trocar" }));
+  const dialog = screen.getByRole("dialog", { name: "Trocar letras" });
+  expect(dialog).toHaveTextContent("Até 3 peças por vez");
+  for (const t of screen.getAllByRole("button", { name: /^Trocar letra / }))
+    fireEvent.click(t);
+  expect(dialog).toHaveTextContent("3/3 selecionadas");
+  expect(dialog).toHaveTextContent("Custo: 35 moedas");
+  fireEvent.click(screen.getByRole("button", { name: "Confirmar troca" }));
+  expect(player().coins).toBe(65);
+  // Já trocou nesta vez: o botão fica desligado até confirmar a jogada.
+  expect(screen.getByRole("button", { name: "Trocar" })).toBeDisabled();
+});
 it("cancelar a troca não cobra nada", () => {
   open();
   fireEvent.click(screen.getByRole("button", { name: "Trocar" }));

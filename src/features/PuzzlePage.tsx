@@ -11,6 +11,7 @@ import {
   economy,
   normalize,
   positions,
+  swapPrice,
   type Session,
 } from "../game/crossword-engine";
 import { OPPONENT_LEVELS, opponentTurn } from "../game/opponent";
@@ -38,7 +39,7 @@ import { Board } from "./puzzle/Board";
 import { ScoreFloats } from "./puzzle/ScoreFloats";
 import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
-import { GameTour, JokerTour } from "./puzzle/GameTour";
+import { JokerTour, TipTour, type TipId } from "./puzzle/GameTour";
 import { confirmMessage } from "./puzzle/messages";
 import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
@@ -263,6 +264,20 @@ function Duel() {
   const pending = (cell: string) =>
     !!session.letters[cell] && !session.locked.includes(cell);
   const pendingCount = session.history.filter(pending).length;
+  // Dicas da fase 1, uma por vez, na ordem em que as mecânicas aparecem.
+  const seen = player.tipsSeen;
+  const tip: TipId | undefined =
+    inTutorial && !player.tourDone && !complete
+      ? !seen.includes("inicio")
+        ? "inicio"
+        : mine && pendingCount > 0 && !seen.includes("confirmar")
+          ? "confirmar"
+          : botTurn && !seen.includes("duelo")
+            ? "duelo"
+            : mine && seen.includes("duelo") && !seen.includes("trocar")
+              ? "trocar"
+              : undefined
+      : undefined;
   const hasPending = pendingCount > 0;
   const effectCells = (type: "LETTER_PLACED" | "HINT_REVEALED") =>
     new Set(
@@ -274,7 +289,7 @@ function Duel() {
   const revealedCells = effectCells("HINT_REVEALED");
   const hinting = revealedCells.size > 0;
   const rack = session.rack.map((tileId) => session.tiles[tileId]);
-  const swapCost = (swapping?.length ?? 0) * economy.swap;
+  const swapCost = swapPrice(swapping?.length ?? 0);
   const swapResult = swapping?.length
     ? engine.swap(session, swapping, word)
     : undefined;
@@ -751,6 +766,7 @@ function Duel() {
             hinting={hinting}
             flying={tileFlights.flying}
             onInsert={insert}
+            swapped={!!session.swapped}
             onSwap={() => setSwapping([])}
             onConfirm={confirm}
             onHint={hint}
@@ -758,9 +774,12 @@ function Duel() {
         </>
       )}
       <TileFlights flights={tileFlights.flights} land={tileFlights.land} />
-      <GameTour
-        run={inTutorial && !player.tourDone && !complete}
-        onFinish={() => update((p) => ({ ...p, tourDone: true }))}
+      <TipTour
+        tip={tip}
+        onSeen={(id) =>
+          update((p) => ({ ...p, tipsSeen: [...p.tipsSeen, id] }))
+        }
+        onDismissAll={() => update((p) => ({ ...p, tourDone: true }))}
       />
       <JokerTour
         run={hasJoker && mine && !player.jokerTourDone}

@@ -29,7 +29,13 @@ const calls = () =>
 /** Últimas props do tour de apresentação ou do tour do curinga. */
 const last = (first: string) =>
   [...calls()].reverse().find((p) => p.steps[0].target === first)!;
-const gameTour = () => last(".board-area");
+const tipAt = (target: string) => last(target);
+/** Alguma dica (qualquer uma) está rodando agora? */
+const anyRunning = () => {
+  const latest = new Map<string, JoyProps>();
+  for (const c of calls()) latest.set(c.steps[0].target, c);
+  return [...latest.values()].some((c) => c.run);
+};
 const jokerTour = () => last(".letter-bank button.joker");
 beforeEach(() => {
   (globalThis as { __joyride?: JoyProps[] }).__joyride = [];
@@ -53,72 +59,108 @@ function open(
   );
 }
 
-describe("Tour de apresentação (react-joyride)", () => {
-  it("roda na primeira vez da fase 1, com 4 passos em português", () => {
+describe("Dicas curtas da fase 1 (react-joyride)", () => {
+  const seen = () => usePlayer.getState().player.tipsSeen;
+  it("a primeira dica roda na primeira vez da fase 1, com um só passo em português", () => {
     open();
-    const tour = gameTour();
-    expect(tour.run).toBe(true);
-    expect(tour.steps.map((s) => s.target)).toEqual([
-      ".board-area",
-      ".letter-bank",
-      ".puzzle-tools",
-      ".versus-score",
-    ]);
-    expect(tour.locale).toMatchObject({
-      next: "Próximo",
-      last: "Entendi",
-      skip: "Dispensar",
-    });
-    expect(tour.options.buttons).toContain("skip");
-    expect(tour.options.skipBeacon).toBe(true);
+    const tip = tipAt(".board-area");
+    expect(tip.run).toBe(true);
+    expect(tip.steps).toHaveLength(1);
+    expect(tip.locale).toMatchObject({ last: "Entendi", skip: "Dispensar" });
+    expect(tip.options.buttons).toEqual(["skip", "primary"]);
+    expect(tip.options.skipBeacon).toBe(true);
+    expect(document.querySelector(".board-area")).not.toBeNull();
   });
-  it("cada passo aponta para algo que existe na tela da partida", () => {
+  it("‘Entendi’ marca só essa dica como vista e ela não volta", () => {
     open();
-    for (const step of gameTour().steps)
-      expect(document.querySelector(step.target), step.target).not.toBeNull();
-  });
-  it.each(["finished", "skipped"])(
-    "ao %s, grava que o tour foi visto e para de rodar",
-    (status) => {
-      open();
-      expect(usePlayer.getState().player.tourDone).toBe(false);
-      act(() => gameTour().onEvent({ status }));
-      expect(usePlayer.getState().player.tourDone).toBe(true);
-      expect(gameTour().run).toBe(false);
-    },
-  );
-  it("passos intermediários não encerram o tour", () => {
-    open();
-    act(() => gameTour().onEvent({ status: "running" }));
+    act(() => tipAt(".board-area").onEvent({ status: "finished" }));
+    expect(seen()).toEqual(["inicio"]);
     expect(usePlayer.getState().player.tourDone).toBe(false);
-    expect(gameTour().run).toBe(true);
+    expect(tipAt(".board-area").run).toBe(false);
+  });
+  it("‘Dispensar’ desliga todas as dicas", () => {
+    open();
+    act(() => tipAt(".board-area").onEvent({ status: "skipped" }));
+    expect(usePlayer.getState().player.tourDone).toBe(true);
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
+    );
+    expect(anyRunning()).toBe(false);
+  });
+  it("passos intermediários não encerram a dica", () => {
+    open();
+    act(() => tipAt(".board-area").onEvent({ status: "running" }));
+    expect(seen()).toEqual([]);
+    expect(tipAt(".board-area").run).toBe(true);
+  });
+  it("a dica de confirmar surge quando a primeira letra é colocada", () => {
+    open({ tipsSeen: ["inicio"] });
+    expect(anyRunning()).toBe(false);
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
+    );
+    const tip = tipAt(".confirm-button");
+    expect(tip.run).toBe(true);
+    expect(document.querySelector(tip.steps[0].target)).not.toBeNull();
+    act(() => tip.onEvent({ status: "finished" }));
+    expect(seen()).toEqual(["inicio", "confirmar"]);
+  });
+  it("a dica do duelo surge na primeira vez do rival; trocar e Dica na vez seguinte do jogador", () => {
+    open({ tipsSeen: ["inicio", "confirmar"] });
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
+    );
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+    expect(tipAt(".versus-score").run).toBe(true);
+    act(() => tipAt(".versus-score").onEvent({ status: "finished" }));
+    expect(seen()).toContain("duelo");
+    // De volta à vez do jogador.
+    act(() =>
+      usePlayer.setState((st) => {
+        const key = Object.keys(st.player.sessions)[0];
+        const sess = st.player.sessions[key];
+        return {
+          player: {
+            ...st.player,
+            sessions: {
+              ...st.player.sessions,
+              [key]: { ...sess, versus: { ...sess.versus, turn: "p" } },
+            },
+          },
+        };
+      }),
+    );
+    expect(tipAt(".puzzle-tools").run).toBe(true);
   });
   it("não roda para quem já fez o tutorial, nem fora da fase 1", () => {
     open({ tutorialDone: true });
-    expect(gameTour().run).toBe(false);
+    expect(anyRunning()).toBe(false);
     cleanup();
     (globalThis as { __joyride?: JoyProps[] }).__joyride = [];
     open({}, "/play/vila-2?vs=medio");
-    expect(calls().some((c) => c.run)).toBe(false);
+    expect(anyRunning()).toBe(false);
   });
-  it("dispensar o tutorial no ‘Pular’ também encerra o tour", () => {
+  it("dispensar o tutorial no ‘Pular’ também encerra as dicas", () => {
     open();
     fireEvent.click(screen.getByRole("button", { name: "Pular" }));
-    expect(gameTour().run).toBe(false);
+    expect(anyRunning()).toBe(false);
   });
-  it("jogador novo vê o tour; quem já tinha progresso salvo não", async () => {
+  it("jogador novo vê as dicas; quem já tinha progresso salvo não", async () => {
     const {
       tourDone: _t,
       tutorialDone: _d,
+      tipsSeen: _s,
       ...old
     } = structuredClone(initialPlayer);
     void _t;
     void _d;
+    void _s;
     vi.mocked(repository.load).mockResolvedValueOnce(
       old as typeof initialPlayer,
     );
     await usePlayer.getState().hydrate();
     expect(usePlayer.getState().player.tourDone).toBe(true);
+    expect(usePlayer.getState().player.tipsSeen).toEqual([]);
     vi.mocked(repository.load).mockResolvedValueOnce(undefined);
     await usePlayer.getState().hydrate();
     expect(usePlayer.getState().player.tourDone).toBe(false);

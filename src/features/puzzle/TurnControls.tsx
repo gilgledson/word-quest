@@ -16,6 +16,8 @@ interface Props {
   /** Letras colocadas na grade e ainda não confirmadas. */
   pendingCount: number;
   pulse: number;
+  /** Já trocou letras nesta vez (só uma troca por vez). */
+  swapped: boolean;
   hinting: boolean;
   /** Peças em voo (da grade para o banco ou o contrário): ficam invisíveis até a letra chegar. */
   flying?: ReadonlySet<string>;
@@ -34,6 +36,7 @@ export function TurnControls({
   pendingCount,
   pulse,
   hinting,
+  swapped,
   flying,
   onInsert,
   onSwap,
@@ -89,12 +92,12 @@ export function TurnControls({
       </div>
       <div className="puzzle-tools">
         <button
-          disabled={!mine || !rack.length}
+          disabled={!mine || !rack.length || swapped}
           onClick={onSwap}
           aria-label="Trocar"
         >
           <Shuffle />
-          Trocar <span>{economy.swap} ◉</span>
+          Trocar <span>{swapped ? "1 por vez" : `${economy.swap[0]} ◉`}</span>
         </button>
         <motion.button
           className={`confirm-button ${hasPending ? "" : "is-pass"}`}

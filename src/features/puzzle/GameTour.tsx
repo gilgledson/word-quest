@@ -1,4 +1,9 @@
-import { Joyride, type EventData, type Step } from "react-joyride";
+import {
+  Joyride,
+  type EventData,
+  type Step,
+  type TooltipRenderProps,
+} from "react-joyride";
 
 const LOCALE = {
   back: "Voltar",
@@ -36,36 +41,38 @@ const STYLES = {
   buttonBack: { color: "#4a5c6b", fontWeight: 700 },
   buttonSkip: { color: "#4a5c6b", fontWeight: 700 },
 };
-const TOUR_STEPS: Step[] = [
-  {
+/** Dicas curtas da fase 1, cada uma mostrada só quando a mecânica aparece pela primeira vez. */
+export type TipId = "inicio" | "confirmar" | "duelo" | "trocar";
+const TIPS: Record<TipId, Step> = {
+  inicio: {
     target: ".board-area",
-    title: "A grade",
+    title: "Comece pela grade",
     content:
-      "Cada casa verde traz uma pista. Toque nela para escolher a palavra e ver onde as letras entram.",
+      "Toque numa pista para escolher a palavra. Depois arraste uma letra do banco até a casa, ou toque nela.",
     placement: "bottom",
   },
-  {
-    target: ".letter-bank",
-    title: "Suas letras",
+  confirmar: {
+    target: ".confirm-button",
+    title: "Confirme a jogada",
     content:
-      "Arraste uma letra até a casa, ou toque nela, para preencher a palavra escolhida.",
+      "Confirmar fecha a jogada: letra certa vale 1 ponto; errada custa 1 e volta ao banco.",
     placement: "top",
   },
-  {
-    target: ".puzzle-tools",
-    title: "Confirmar, Trocar e Dica",
-    content:
-      "Confirmar fecha a jogada: letra certa vale 1 ponto, errada custa 1 e volta ao banco. Trocar renova letras e Dica coloca uma das suas letras na casa certa; confirme para valer ponto.",
-    placement: "top",
-  },
-  {
+  duelo: {
     target: ".versus-score",
-    title: "O duelo",
+    title: "Agora é a vez do rival",
     content:
-      "Você joga contra um rival, vez a vez. Fechar uma palavra vale a palavra inteira. Quem tiver mais pontos no fim vence!",
+      "Vocês jogam vez a vez. Fechar uma palavra vale a palavra inteira. Quem tiver mais pontos no fim vence!",
     placement: "bottom",
   },
-];
+  trocar: {
+    target: ".puzzle-tools",
+    title: "Trocar e Dica",
+    content:
+      "Sem letra útil? Trocar renova as letras do banco por moedas. A Dica coloca uma das suas letras na casa certa; confirme para valer ponto.",
+    placement: "top",
+  },
+};
 const JOKER_STEPS: Step[] = [
   {
     target: ".letter-bank button.joker",
@@ -79,28 +86,65 @@ const JOKER_STEPS: Step[] = [
 const ended = (data: EventData) =>
   data.status === "finished" || data.status === "skipped";
 
-/** Tour de apresentação da fase 1; `onFinish` roda ao concluir ou dispensar. */
-export function GameTour({
-  run,
-  onFinish,
+/** Balão de uma dica avulsa: o "Dispensar" do joyride some no último passo, e aqui ele precisa existir. */
+function TipTooltip({
+  primaryProps,
+  skipProps,
+  step,
+  tooltipProps,
+}: TooltipRenderProps) {
+  const { styles, title, content } = step;
+  return (
+    <div
+      className="react-joyride__tooltip"
+      style={styles.tooltip}
+      {...tooltipProps}
+      aria-labelledby="joyride-tooltip-title"
+      aria-describedby="joyride-tooltip-content"
+    >
+      <div style={styles.tooltipContainer}>
+        <h4 id="joyride-tooltip-title" style={styles.tooltipTitle}>
+          {title}
+        </h4>
+        <div id="joyride-tooltip-content" style={styles.tooltipContent}>
+          {content}
+        </div>
+      </div>
+      <div style={styles.tooltipFooter}>
+        <div style={styles.tooltipFooterSpacer}>
+          <button type="button" style={styles.buttonSkip} {...skipProps} />
+        </div>
+        <button type="button" style={styles.buttonPrimary} {...primaryProps} />
+      </div>
+    </div>
+  );
+}
+/**
+ * Mostra a dica `tip` (uma por vez). "Entendi" marca só essa como vista; "Dispensar"
+ * desliga todas as dicas da fase 1.
+ */
+export function TipTour({
+  tip,
+  onSeen,
+  onDismissAll,
 }: {
-  run: boolean;
-  onFinish: () => void;
+  tip: TipId | undefined;
+  onSeen: (tip: TipId) => void;
+  onDismissAll: () => void;
 }) {
   return (
     <Joyride
-      run={run}
+      key={tip ?? "nenhuma"}
+      run={!!tip}
       continuous
-      steps={TOUR_STEPS}
+      steps={[{ ...TIPS[tip ?? "inicio"], tooltipComponent: TipTooltip }]}
       locale={LOCALE}
-      options={{
-        ...OPTIONS,
-        showProgress: true,
-        buttons: ["back", "skip", "primary"],
-      }}
+      options={{ ...OPTIONS, buttons: ["skip", "primary"] }}
       styles={STYLES}
       onEvent={(data) => {
-        if (ended(data)) onFinish();
+        if (!tip || !ended(data)) return;
+        if (data.status === "skipped") onDismissAll();
+        else onSeen(tip);
       }}
     />
   );
