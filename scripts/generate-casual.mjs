@@ -97,13 +97,6 @@ function themify(grid, themeWords) {
     }
     return out;
   };
-  const fits = (sl, w, skip = -1) =>
-    sl.cells.every(
-      (k, j) =>
-        letters[k] === w[j] ||
-        (cellSlots[k].length === 1 && skip < 0) ||
-        cellSlots[k].every((o) => o === skip || slots[o] === sl),
-    );
   const themeByLen = {};
   for (const w of themeWords) (themeByLen[w.length] ??= []).push(w);
   for (const i of shuffled(slots.map((_, k) => k))) {
