@@ -90,6 +90,15 @@
 .calendar-legend .dot.future {
   background: #cfd6dc;
 }
+/* Dia que passou sem vitória: contorno tracejado, sem preenchimento (não depende só da cor). */
+.calendar .missed,
+.calendar-legend .dot.missed {
+  border: 2px dashed #9aa7b2;
+}
+.calendar-legend .dot.missed {
+  box-sizing: border-box;
+  background: transparent;
+}
 .profile-stats {
   margin-bottom: 14px;
   padding: 14px;
@@ -108,6 +117,17 @@
 }
 .profile-stats h2 svg {
   color: #e2a516;
+}
+.profile-stats .stats-group + .stats-group {
+  margin-top: 12px;
+}
+.profile-stats h3 {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a6a1f;
 }
 .profile-stats dl {
   display: grid;

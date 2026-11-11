@@ -1,5 +1,4 @@
 import { motion } from "motion/react";
-import { Shield } from "lucide-react";
 import { OpponentPortrait } from "./OpponentPortrait";
 import type { Mood, OpponentProfile } from "../game/opponents";
 
@@ -45,8 +44,7 @@ export function VersusPanel({
       </span>
       <span className="duelist-info">
         <span className="duelist-name">{s.name}</span>
-        <span className="duelist-score">
-          <Shield size={14} aria-hidden="true" />
+        <span className="duelist-score" aria-label={`${s.score} pontos`}>
           <motion.strong
             key={s.score}
             initial={animate ? { scale: 1.6 } : false}
@@ -54,6 +52,7 @@ export function VersusPanel({
           >
             {s.score}
           </motion.strong>
+          <small aria-hidden="true">pts</small>
         </span>
       </span>
     </div>

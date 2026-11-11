@@ -182,7 +182,9 @@ describe("Feedback das jogadas", () => {
     fireEvent.click(screen.getByRole("button", { name: "Trocar" }));
     const first = screen.getAllByRole("button", { name: /^Trocar letra / })[0];
     fireEvent.click(first);
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar troca" }));
+    fireEvent.click(
+      screen.getByRole("button", { name: /^Trocar por \d+ moedas$/ }),
+    );
     expect(document.querySelectorAll(".fx-swap-out").length).toBe(1);
     advance(800);
     expect(document.querySelector(".fx-swap-out")).toBeNull();

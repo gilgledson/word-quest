@@ -313,6 +313,11 @@
   font-size: 15px;
   line-height: 20px;
 }
+.duelist-score small {
+  font-size: 10px;
+  font-weight: 800;
+  opacity: 0.85;
+}
 .duelist-name {
   max-width: 100%;
   overflow: hidden;
@@ -725,16 +730,100 @@
     box-shadow: 0 0 0 5px #ffd45acc;
   }
 }
-[data-tutorial="1"] .letter-bank button,
+/* Tutorial: com uma peça certa para a casa azul, só ela brilha; sem ela, o banco inteiro. */
+[data-tutorial="1"]:not([data-spotlight]) .letter-bank button,
+[data-tutorial="1"] .letter-bank button.tutorial-pick,
 [data-tutorial="2"] .confirm-button {
   outline: 3px solid #ffb400;
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: no-preference) {
-  [data-tutorial="1"] .letter-bank button,
+  [data-tutorial="1"]:not([data-spotlight]) .letter-bank button,
+  [data-tutorial="1"] .letter-bank button.tutorial-pick,
   [data-tutorial="2"] .confirm-button {
     animation: tutorial-glow 1.2s ease-in-out infinite;
   }
+}
+
+/* Última vez do rival: as casas que ele confirmou ganham um anel roxo até o jogador confirmar. */
+.app-playing .letter.last-bot {
+  box-shadow: inset 0 0 0 3px #9b5cc4;
+}
+@keyframes last-bot-ping {
+  50% {
+    box-shadow:
+      inset 0 0 0 3px #9b5cc4,
+      0 0 0 4px #c99be6;
+    background: #f1e2fb;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .app-playing .letter.last-bot.ping {
+    animation: last-bot-ping 0.65s ease-in-out 2;
+  }
+}
+.app-playing .selected-word {
+  position: relative;
+}
+/* Etiqueta no vão entre a grade e o painel, para não cobrir o texto da pista. */
+.app-playing .selected-word .last-move {
+  position: absolute;
+  top: -17px;
+  right: 10px;
+  z-index: 1;
+  max-width: 60%;
+  padding: 2px 8px;
+  border: 1px solid #c9a6e2;
+  border-radius: 999px;
+  background: #f4eafb;
+  color: #5b2c7d;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Alto contraste (Perfil): pistas escuras com texto branco, linhas pretas, letras pretas e grossas. */
+.app-playing .high-contrast .board {
+  --grid-line: #000;
+  border-color: #000;
+  background: #000;
+}
+.app-playing .high-contrast .clue,
+.app-playing .high-contrast .clue-half {
+  background: #123b20;
+}
+.app-playing .high-contrast .clue span,
+.app-playing .high-contrast .clue b {
+  color: #fff;
+}
+.app-playing .high-contrast .clue.double .clue-half + .clue-half {
+  border-top-color: #fff;
+}
+.app-playing .high-contrast .selected-clue {
+  background: #0b4fb3;
+}
+.app-playing .high-contrast .letter {
+  color: #000;
+  font-weight: 900;
+}
+.app-playing .high-contrast .letter.active {
+  background: #fff4b8;
+  box-shadow: inset 0 0 0 2px #000;
+}
+.app-playing .high-contrast .letter.cursor {
+  box-shadow: inset 0 0 0 4px #0b4fb3;
+}
+.app-playing .high-contrast .letter.owner-p {
+  color: #0b3fa0;
+}
+.app-playing .high-contrast .letter.owner-ai {
+  color: #5a1f80;
+}
+.app-playing .high-contrast .blocked {
+  background: #3d4a48;
 }
 
 /* Rival colocando as letras uma a uma (ainda não confirmadas na sessão). */
@@ -923,6 +1012,19 @@
 .app-playing .puzzle-status .pill {
   font-size: 13px;
   padding: 3px 8px;
+}
+/* Contador de palavras: número em cima, rótulo "palavras" embaixo, sem alargar o cabeçalho. */
+.words-pill {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+}
+.words-pill small {
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  opacity: 0.8;
 }
 .app-playing .versus-score {
   position: relative;

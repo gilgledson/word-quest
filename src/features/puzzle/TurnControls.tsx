@@ -15,6 +15,8 @@ interface Props {
   fxEnabled: boolean;
   /** Letras colocadas na grade e ainda não confirmadas. */
   pendingCount: number;
+  /** Peça em destaque no tutorial (a que serve na casa azul). */
+  spotlight?: string;
   pulse: number;
   /** Já trocou letras nesta vez (só uma troca por vez). */
   swapped: boolean;
@@ -34,6 +36,7 @@ export function TurnControls({
   animated,
   fxEnabled,
   pendingCount,
+  spotlight,
   pulse,
   hinting,
   swapped,
@@ -69,7 +72,7 @@ export function TurnControls({
           return (
             <motion.button
               {...letterDrag.bind(t.id, t.joker ? "★" : t.letter)}
-              className={`${t.joker ? "joker" : ""} ${letterDrag.drag?.tileId === t.id ? "drag-source" : ""} ${flying?.has(t.id) ? "in-flight" : ""}`}
+              className={`${t.joker ? "joker" : ""} ${letterDrag.drag?.tileId === t.id ? "drag-source" : ""} ${flying?.has(t.id) ? "in-flight" : ""} ${spotlight === t.id ? "tutorial-pick" : ""}`}
               draggable={false}
               disabled={!mine}
               initial={animated ? { scale: 0.6, opacity: 0 } : false}

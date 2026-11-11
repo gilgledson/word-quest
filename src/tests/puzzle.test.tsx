@@ -239,7 +239,9 @@ it("Trocar mostra o custo total, cobra 10 por peça e mantém o banco", () => {
     screen.getAllByRole("button", { name: `Trocar letra ${first}` })[0],
   );
   expect(dialog).toHaveTextContent("Custo: 10 moedas");
-  fireEvent.click(screen.getByRole("button", { name: "Confirmar troca" }));
+  fireEvent.click(
+    screen.getByRole("button", { name: /^Trocar por \d+ moedas$/ }),
+  );
   expect(screen.queryByRole("dialog")).toBeNull();
   expect(player().coins).toBe(90);
   expect(rackButtons()).toHaveLength(5);
@@ -248,12 +250,15 @@ it("a troca vai até 3 peças e só uma vez por vez", () => {
   open();
   fireEvent.click(screen.getByRole("button", { name: "Trocar" }));
   const dialog = screen.getByRole("dialog", { name: "Trocar letras" });
-  expect(dialog).toHaveTextContent("Até 3 peças por vez");
+  expect(dialog).toHaveTextContent(
+    "Até 3 peças: 1 por 10 · 2 por 20 · 3 por 35 moedas",
+  );
+  expect(dialog).toHaveTextContent("continua na sua vez");
   for (const t of screen.getAllByRole("button", { name: /^Trocar letra / }))
     fireEvent.click(t);
   expect(dialog).toHaveTextContent("3/3 selecionadas");
   expect(dialog).toHaveTextContent("Custo: 35 moedas");
-  fireEvent.click(screen.getByRole("button", { name: "Confirmar troca" }));
+  fireEvent.click(screen.getByRole("button", { name: "Trocar por 35 moedas" }));
   expect(player().coins).toBe(65);
   // Já trocou nesta vez: o botão fica desligado até confirmar a jogada.
   expect(screen.getByRole("button", { name: "Trocar" })).toBeDisabled();

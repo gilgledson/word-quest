@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { economy, type Tile } from "../../game/crossword-engine";
+import { economy, swapPrice, type Tile } from "../../game/crossword-engine";
 
 interface Props {
   rack: Tile[];
@@ -44,8 +44,11 @@ export function SwapDialog({
       >
         <h2>Trocar letras</h2>
         <p>
-          Até {economy.swapMax} peças por vez · {economy.swap.join(" + ")}{" "}
-          moedas
+          Até {economy.swapMax} peças:{" "}
+          {economy.swap
+            .map((_, i) => `${i + 1} por ${swapPrice(i + 1)}`)
+            .join(" · ")}{" "}
+          moedas. Você recebe letras novas e continua na sua vez.
         </p>
         <div className="swap-tiles">
           {rack.map((t) => (
@@ -77,7 +80,9 @@ export function SwapDialog({
             disabled={!selected.length || !canSwap}
             onClick={onConfirm}
           >
-            Confirmar troca
+            {selected.length
+              ? `Trocar por ${cost} moedas`
+              : "Escolha as letras"}
           </button>
         </div>
         {!!selected.length && !canSwap && (

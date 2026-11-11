@@ -1,6 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import { dismissTour } from "./tour";
+import { waitSaved } from "./storage";
 
 const timerToggle = (page: Page) => page.getByLabel("Relógio do turno (25 s)");
 /** Abre a fase 1 contra o rival difícil e dispensa o tutorial. */
@@ -17,6 +18,7 @@ test("o relógio é opcional: vem desligado e a preferência é gravada", async 
   await page.goto("/profile");
   await expect(timerToggle(page)).not.toBeChecked();
   await timerToggle(page).check();
+  await waitSaved(page, "turnTimer", true);
   await page.reload();
   await expect(timerToggle(page)).toBeChecked();
   await startDuel(page);
@@ -24,6 +26,7 @@ test("o relógio é opcional: vem desligado e a preferência é gravada", async 
   // Desligando, a barra some na partida seguinte.
   await page.goto("/profile");
   await timerToggle(page).uncheck();
+  await waitSaved(page, "turnTimer", false);
   await page.goto("/play/vila-1?vs=dificil");
   await expect(page.locator(".board .cell")).toHaveCount(80);
   await expect(page.getByRole("timer")).toHaveCount(0);
@@ -35,6 +38,7 @@ test("ao zerar o relógio a vez passa sozinha e o rival joga", async ({
   await page.clock.install();
   await page.goto("/profile");
   await timerToggle(page).check();
+  await waitSaved(page, "turnTimer", true);
   await startDuel(page);
   await expect(page.getByRole("timer")).toBeVisible();
   await expect(page.getByText("vez do oponente ▶")).toHaveCount(0);
@@ -77,6 +81,7 @@ test("com o relógio e o rival jogando, a tela segue acessível e sem rolagem", 
 }) => {
   await page.goto("/profile");
   await timerToggle(page).check();
+  await waitSaved(page, "turnTimer", true);
   await startDuel(page);
   const scan = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa"])

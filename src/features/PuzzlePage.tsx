@@ -68,6 +68,26 @@ const readMode = (): BoardMode => {
     return "auto";
   }
 };
+interface LastBotMove {
+  cells: string[];
+  gained: number;
+  total: number;
+  passed: boolean;
+}
+/** Frase completa da última vez do rival (aviso e leitor de tela). */
+const lastBotText = (name: string, m: LastBotMove) =>
+  m.passed
+    ? `${name} passou a vez sem jogar.`
+    : m.gained
+      ? `${name} confirmou ${m.gained} letra${m.gained > 1 ? "s" : ""} e fez +${m.total}. As casas marcadas em roxo são dele.`
+      : `${name} tentou uma palavra, errou e não pontuou.`;
+/** Rótulo curto do chip da última jogada. */
+const lastBotChip = (m: LastBotMove) =>
+  m.passed
+    ? "passou"
+    : m.gained
+      ? `${m.gained} letra${m.gained > 1 ? "s" : ""} · +${m.total}`
+      : "errou";
 /** O jogo é um confronto: o oponente vem da fase (ou do sorteio no casual e no diário). */
 export function PuzzlePage() {
   return <Duel />;
@@ -134,6 +154,16 @@ function Duel() {
   const [botReveal, setBotReveal] = useState<Record<string, string> | null>(
     null,
   );
+  // Resumo da última vez do rival: as casas dele ficam marcadas até o jogador confirmar a jogada.
+  const [lastBot, setLastBot] = useState<LastBotMove | null>(null);
+  useEffect(() => setLastBot(null), [sessionKey]);
+  // Tocar no resumo faz as casas do rival piscarem de novo.
+  const [botPing, setBotPing] = useState(false);
+  useEffect(() => {
+    if (!botPing) return;
+    const t = window.setTimeout(() => setBotPing(false), 1300);
+    return () => window.clearTimeout(t);
+  }, [botPing]);
   const cardRef = useRef<HTMLDivElement>(null);
   const { floats, flash, popScore, popPenalty } = useScoreFloats(
     cardRef,
@@ -270,13 +300,11 @@ function Duel() {
     inTutorial && !player.tourDone && !complete
       ? !seen.includes("inicio")
         ? "inicio"
-        : mine && pendingCount > 0 && !seen.includes("confirmar")
-          ? "confirmar"
-          : botTurn && !seen.includes("duelo")
-            ? "duelo"
-            : mine && seen.includes("duelo") && !seen.includes("trocar")
-              ? "trocar"
-              : undefined
+        : botTurn && !seen.includes("duelo")
+          ? "duelo"
+          : mine && seen.includes("duelo") && !seen.includes("trocar")
+            ? "trocar"
+            : undefined
       : undefined;
   const hasPending = pendingCount > 0;
   const effectCells = (type: "LETTER_PLACED" | "HINT_REVEALED") =>
@@ -314,6 +342,12 @@ function Duel() {
       setBotReveal(null);
       commit(turn.session);
       const total = turn.gained + turn.bonus;
+      setLastBot({
+        cells: fresh,
+        gained: turn.gained,
+        total,
+        passed: turn.plan.wordId === null,
+      });
       if (turn.gained) popScore(fresh, turn.gained, turn.bonus, "ai");
       if (turn.gained) {
         if (turn.bonus) sfx("word", turn.gained);
@@ -440,6 +474,7 @@ function Duel() {
   const confirm = () => {
     if (!mine || complete) return;
     const r = engine.confirm(session, "p");
+    setLastBot(null);
     setTarget(null);
     setPulse((n) => n + 1);
     fx.emit(
@@ -563,6 +598,13 @@ function Duel() {
   const tutorial =
     !player.tutorialDone && !daily && !casual && puzzle.number === 1;
   const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
+  // Primeiro passo: a peça do banco que serve na casa azul brilha sozinha, e o passo diz qual é.
+  const spotlight =
+    tutorial && tutorialStep === 1 && mine && current
+      ? rack.find(
+          (t) => !t.joker && t.letter === engine.rack.solution[current.key],
+        )
+      : undefined;
   // Vitória na campanha: progresso do mundo, rival seguinte e, se for o caso, mundo novo.
   const campaignWin = !daily && !casual && winner === "win";
   const world = mapOf(puzzle.world);
@@ -587,9 +629,10 @@ function Duel() {
       : undefined;
   return (
     <div
-      className="puzzle-page"
+      className={`puzzle-page ${player.highContrast ? "high-contrast" : ""}`}
       ref={setFxHost}
       data-tutorial={tutorial && !complete ? tutorialStep : undefined}
+      data-spotlight={spotlight ? "" : undefined}
     >
       <section className="puzzle-status" aria-label="Progresso da fase">
         <div className="puzzle-top">
@@ -613,8 +656,12 @@ function Duel() {
                   : `Fase ${puzzle.number}`}
             </h2>
           </div>
-          <span className="pill">
+          <span
+            className="pill words-pill"
+            aria-label={`${solved.length} de ${puzzle.words.length} palavras fechadas`}
+          >
             {solved.length}/{puzzle.words.length}
+            <small aria-hidden="true">palavras</small>
           </span>
           <button
             className="round-button rotate-board"
@@ -660,6 +707,8 @@ function Duel() {
           flash={flash}
           placedCells={placedCells}
           botReveal={botReveal ?? undefined}
+          lastBotCells={mine ? lastBot?.cells : undefined}
+          lastBotPing={botPing}
           flying={tileFlights.flying}
           revealedCells={revealedCells}
           onChoose={choose}
@@ -692,6 +741,19 @@ function Duel() {
       ) : (
         <>
           <section className="selected-word">
+            {mine && lastBot && (
+              <button
+                type="button"
+                className="last-move"
+                aria-label={`Última jogada: ${lastBotText(rival.name, lastBot)}`}
+                onClick={() => {
+                  setMessage(lastBotText(rival.name, lastBot));
+                  setBotPing(true);
+                }}
+              >
+                {shortName(rival)}: {lastBotChip(lastBot)}
+              </button>
+            )}
             <span className="eyebrow">
               {botTurn
                 ? "VEZ DO OPONENTE"
@@ -737,6 +799,7 @@ function Duel() {
               {tutorial && (
                 <TutorialTip
                   step={tutorialStep}
+                  letter={spotlight?.letter}
                   botTurn={botTurn}
                   onDone={() => update((p) => ({ ...p, tutorialDone: true }))}
                 />
@@ -762,6 +825,7 @@ function Duel() {
             animated={player.animations}
             fxEnabled={prefs.enabled}
             pendingCount={pendingCount}
+            spotlight={spotlight?.id}
             pulse={pulse}
             hinting={hinting}
             flying={tileFlights.flying}

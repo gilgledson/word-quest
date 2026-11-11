@@ -60,6 +60,20 @@ describe("páginas secundárias", () => {
         screen.getByLabelText(`Dia ${d + 1}: ainda indisponível`),
       ).toHaveClass("future");
     if (d >= 3) expect(screen.getByText(/3 dias seguidos/)).toBeInTheDocument();
+    // Hoje já vencido: o selo confirma em vez de prometer a recompensa.
+    expect(screen.getByText("Vencido hoje ✓")).toBeInTheDocument();
+  });
+  it("Diário diz que só a vitória rende e marca os dias passados sem vitória", () => {
+    const [, , d] = today().split("-").map(Number);
+    open(<Daily />, { daily: [] });
+    expect(screen.getByText("+70 ao vencer")).toBeInTheDocument();
+    if (d > 1)
+      expect(screen.getByLabelText(`Dia ${d - 1}: não vencido`)).toHaveClass(
+        "missed",
+      );
+    expect(screen.getByLabelText(`Dia ${d}: disponível hoje`)).not.toHaveClass(
+      "missed",
+    );
   });
   it("Perfil traz as conquistas: fases, estrelas e duelos", () => {
     open(<Profile />, {
@@ -67,7 +81,16 @@ describe("páginas secundárias", () => {
       duels: { a: "win", b: "win", c: "loss", d: "draw" },
       daily: ["2026-01-01"],
     });
+    // Quem você é vem antes das conquistas.
+    const identity = screen.getByLabelText("Você");
     const box = screen.getByLabelText("Suas conquistas");
+    expect(
+      identity.compareDocumentPosition(box) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { name: "Aventura" }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Duelos" })).toBeInTheDocument();
     expect(box).toHaveTextContent("Fases1/25");
     expect(box).toHaveTextContent("Estrelas3/75");
     expect(box).toHaveTextContent("Vitórias2");

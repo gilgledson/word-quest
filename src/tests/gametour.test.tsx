@@ -63,24 +63,24 @@ describe("Dicas curtas da fase 1 (react-joyride)", () => {
   const seen = () => usePlayer.getState().player.tipsSeen;
   it("a primeira dica roda na primeira vez da fase 1, com um só passo em português", () => {
     open();
-    const tip = tipAt(".board-area");
+    const tip = tipAt(".selected-clue");
     expect(tip.run).toBe(true);
     expect(tip.steps).toHaveLength(1);
     expect(tip.locale).toMatchObject({ last: "Entendi", skip: "Dispensar" });
     expect(tip.options.buttons).toEqual(["skip", "primary"]);
     expect(tip.options.skipBeacon).toBe(true);
-    expect(document.querySelector(".board-area")).not.toBeNull();
+    expect(document.querySelector(".selected-clue")).not.toBeNull();
   });
   it("‘Entendi’ marca só essa dica como vista e ela não volta", () => {
     open();
-    act(() => tipAt(".board-area").onEvent({ status: "finished" }));
+    act(() => tipAt(".selected-clue").onEvent({ status: "finished" }));
     expect(seen()).toEqual(["inicio"]);
     expect(usePlayer.getState().player.tourDone).toBe(false);
-    expect(tipAt(".board-area").run).toBe(false);
+    expect(tipAt(".selected-clue").run).toBe(false);
   });
   it("‘Dispensar’ desliga todas as dicas", () => {
     open();
-    act(() => tipAt(".board-area").onEvent({ status: "skipped" }));
+    act(() => tipAt(".selected-clue").onEvent({ status: "skipped" }));
     expect(usePlayer.getState().player.tourDone).toBe(true);
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
@@ -89,21 +89,20 @@ describe("Dicas curtas da fase 1 (react-joyride)", () => {
   });
   it("passos intermediários não encerram a dica", () => {
     open();
-    act(() => tipAt(".board-area").onEvent({ status: "running" }));
+    act(() => tipAt(".selected-clue").onEvent({ status: "running" }));
     expect(seen()).toEqual([]);
-    expect(tipAt(".board-area").run).toBe(true);
+    expect(tipAt(".selected-clue").run).toBe(true);
   });
-  it("a dica de confirmar surge quando a primeira letra é colocada", () => {
+  it("colocar a primeira letra não abre balão: o passo do tutorial explica o Confirmar e a pontuação", () => {
     open({ tipsSeen: ["inicio"] });
     expect(anyRunning()).toBe(false);
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
     );
-    const tip = tipAt(".confirm-button");
-    expect(tip.run).toBe(true);
-    expect(document.querySelector(tip.steps[0].target)).not.toBeNull();
-    act(() => tip.onEvent({ status: "finished" }));
-    expect(seen()).toEqual(["inicio", "confirmar"]);
+    expect(anyRunning()).toBe(false);
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "Toque em Confirmar: certa +1, errada −1",
+    );
   });
   it("a dica do duelo surge na primeira vez do rival; trocar e Dica na vez seguinte do jogador", () => {
     open({ tipsSeen: ["inicio", "confirmar"] });

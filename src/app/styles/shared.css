@@ -515,7 +515,6 @@ footer {
 }
 .calendar-title h2 {
   font-size: 17px;
-  text-transform: capitalize;
 }
 .calendar-title .pill {
   margin-left: auto;
@@ -625,24 +624,6 @@ footer {
   color: #243657;
   background: #fafbf8;
   font-size: 16px;
-}
-.stats {
-  display: flex;
-  justify-content: space-around;
-  margin: 28px 0;
-}
-.stats > div {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-}
-.stats strong {
-  font-size: 29px;
-  color: #2479d9;
-}
-.stats span {
-  font-size: 13px;
-  color: #607568;
 }
 .profile-card h2 {
   font-size: 19px;

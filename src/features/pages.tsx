@@ -11,6 +11,7 @@ import {
   Volume2,
   Activity,
   Timer,
+  Contrast,
   Check,
   PawPrint,
   Utensils,
@@ -37,6 +38,7 @@ import {
   type CasualTheme,
 } from "../data/catalog";
 import { OPPONENT_LEVELS, OPPONENT_STYLES } from "../game/opponent";
+import { economy } from "../game/crossword-engine";
 import {
   OPPONENTS,
   OPPONENT_BY_LEVEL,
@@ -412,9 +414,16 @@ export function Daily() {
             {new Intl.DateTimeFormat("pt-BR", {
               month: "long",
               year: "numeric",
-            }).format(new Date(year, month - 1, day))}
+            })
+              .format(new Date(year, month - 1, day))
+              .replace(/^./, (c) => c.toUpperCase())}
           </h2>
-          <span className="pill">+70 moedas</span>
+          {/* Só a vitória conta no diário (uma vez por dia): o selo diz a condição. */}
+          <span className="pill">
+            {p.daily.includes(date)
+              ? "Vencido hoje ✓"
+              : `+${economy.daily} ao vencer`}
+          </span>
         </div>
         <div className="calendar">
           {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
@@ -426,12 +435,13 @@ export function Daily() {
           {Array.from({ length: days }, (_, i) => {
             const n = i + 1;
             const completed = p.daily.includes(iso(n));
+            const missed = !completed && n < day;
             return (
               <span
-                className={`${n === day ? "today" : ""} ${completed ? "done" : ""} ${n > day ? "future" : ""}`}
+                className={`${n === day ? "today" : ""} ${completed ? "done" : ""} ${n > day ? "future" : ""} ${missed ? "missed" : ""}`}
                 key={n}
                 role="img"
-                aria-label={`Dia ${n}: ${completed ? "concluído" : n === day ? "disponível hoje" : n > day ? "ainda indisponível" : "não concluído"}`}
+                aria-label={`Dia ${n}: ${completed ? "concluído" : n === day ? "disponível hoje" : n > day ? "ainda indisponível" : "não vencido"}`}
               >
                 {completed ? <Check size={20} /> : n}
               </span>
@@ -440,13 +450,16 @@ export function Daily() {
         </div>
         <ul className="calendar-legend" aria-hidden="true">
           <li>
-            <Check size={14} /> concluído
+            <Check size={14} /> vencido
           </li>
           <li>
             <i className="dot today" /> hoje
           </li>
           <li>
-            <i className="dot future" /> indisponível
+            <i className="dot missed" /> não vencido
+          </li>
+          <li>
+            <i className="dot future" /> em breve
           </li>
         </ul>
         <Link className="button primary" to="/play/daily">
@@ -479,8 +492,7 @@ export function Profile() {
         <span className="eyebrow">CADA EXPLORADOR TEM UMA HISTÓRIA</span>
         <h1>Seu perfil</h1>
       </div>
-      <ProfileStats />
-      <section className="profile-card">
+      <section className="profile-card profile-identity" aria-label="Você">
         <div className="avatar">
           <OpponentAvatar opponent={avatarOf(p.avatar)} size={76} />
         </div>
@@ -511,6 +523,9 @@ export function Profile() {
             onChange={(e) => update((s) => ({ ...s, name: e.target.value }))}
           />
         </label>
+      </section>
+      <ProfileStats />
+      <section className="profile-card">
         <div className="opponent-setting">
           <span>Seus rivais</span>
           <p className="rivals-note">
@@ -530,20 +545,6 @@ export function Profile() {
               </li>
             ))}
           </ul>
-        </div>
-        <div className="stats">
-          <div>
-            <strong>{Object.keys(p.stars).length}</strong>
-            <span>Fases</span>
-          </div>
-          <div>
-            <strong>{Object.values(p.stars).reduce((a, b) => a + b, 0)}</strong>
-            <span>Estrelas</span>
-          </div>
-          <div>
-            <strong>{p.daily.length}</strong>
-            <span>Desafios</span>
-          </div>
         </div>
         <h2>Suas descobertas</h2>
         <div
@@ -623,6 +624,19 @@ export function Profile() {
         </label>
         <label className="toggle">
           <span>
+            <Contrast />
+            Alto contraste na grade
+          </span>
+          <input
+            type="checkbox"
+            checked={p.highContrast}
+            onChange={(e) =>
+              update((s) => ({ ...s, highContrast: e.target.checked }))
+            }
+          />
+        </label>
+        <label className="toggle">
+          <span>
             <Timer />
             Relógio do turno (25 s)
           </span>
@@ -661,27 +675,43 @@ function ProfileStats() {
   const losses = results.filter((r) => r === "loss").length;
   const stars = Object.values(p.stars).reduce((a, b) => a + b, 0);
   const done = Object.keys(p.stars).length;
-  const items: [string, string][] = [
-    ["Fases", `${done}/${levels.length}`],
-    ["Estrelas", `${stars}/${levels.length * 3}`],
-    ["Vitórias", String(wins)],
-    ["Empates", String(draws)],
-    ["Derrotas", String(losses)],
-    ["Desafios do dia", String(p.daily.length)],
+  // Progresso da jornada de um lado, resultado dos confrontos do outro.
+  const groups: [string, [string, string][]][] = [
+    [
+      "Aventura",
+      [
+        ["Fases", `${done}/${levels.length}`],
+        ["Estrelas", `${stars}/${levels.length * 3}`],
+        ["Desafios do dia", String(p.daily.length)],
+      ],
+    ],
+    [
+      "Duelos",
+      [
+        ["Vitórias", String(wins)],
+        ["Empates", String(draws)],
+        ["Derrotas", String(losses)],
+      ],
+    ],
   ];
   return (
     <section className="profile-stats" aria-label="Suas conquistas">
       <h2>
         <Trophy size={20} aria-hidden="true" /> Suas conquistas
       </h2>
-      <dl>
-        {items.map(([label, value]) => (
-          <div key={label}>
-            <dt>{label}</dt>
-            <dd>{value}</dd>
-          </div>
-        ))}
-      </dl>
+      {groups.map(([title, items]) => (
+        <div className="stats-group" key={title}>
+          <h3>{title}</h3>
+          <dl>
+            {items.map(([label, value]) => (
+              <div key={label}>
+                <dt>{label}</dt>
+                <dd>{value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      ))}
     </section>
   );
 }

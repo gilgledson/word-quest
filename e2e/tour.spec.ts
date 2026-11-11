@@ -20,20 +20,18 @@ test("as dicas surgem uma a uma, quando a mecânica aparece", async ({
   page,
 }) => {
   await open(page);
-  await expect(dialog(page)).toContainText("Comece pela grade");
+  await expect(dialog(page)).toContainText("Comece pela pista");
   await inside(page);
   await page.getByRole("button", { name: "Entendi" }).click();
   await expect(dialog(page)).toHaveCount(0);
-  // Sem o overlay, a partida responde ao toque; a primeira letra traz a dica de confirmar.
+  // Sem o overlay, a partida responde ao toque; o passo do tutorial (sem balão) pede o Confirmar.
   await page
     .getByRole("button", { name: /^Inserir letra/ })
     .first()
     .click();
   await expect(page.locator(".cell.pending")).toHaveCount(1);
-  await expect(dialog(page)).toContainText("Confirme a jogada");
-  await inside(page);
-  await page.getByRole("button", { name: "Entendi" }).click();
   await expect(dialog(page)).toHaveCount(0);
+  await expect(page.getByRole("note")).toContainText("Toque em Confirmar");
   // Ao confirmar, é a vez do rival: surge a dica do duelo.
   await page.getByRole("button", { name: /^Confirmar/ }).click();
   await expect(dialog(page)).toContainText("vez do rival");

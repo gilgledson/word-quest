@@ -41,22 +41,19 @@ const STYLES = {
   buttonBack: { color: "#4a5c6b", fontWeight: 700 },
   buttonSkip: { color: "#4a5c6b", fontWeight: 700 },
 };
-/** Dicas curtas da fase 1, cada uma mostrada só quando a mecânica aparece pela primeira vez. */
-export type TipId = "inicio" | "confirmar" | "duelo" | "trocar";
+/**
+ * Dicas curtas da fase 1, cada uma mostrada só quando a mecânica aparece pela primeira vez. As ações
+ * (tocar a letra, confirmar) são guiadas pelo `TutorialTip`, passo a passo; aqui ficam só os conceitos.
+ */
+export type TipId = "inicio" | "duelo" | "trocar";
 const TIPS: Record<TipId, Step> = {
   inicio: {
-    target: ".board-area",
-    title: "Comece pela grade",
+    // Aponta a pista escolhida e fica sobre a grade, sem cobrir o banco nem os botões.
+    target: ".selected-clue",
+    title: "Comece pela pista",
     content:
-      "Toque numa pista para escolher a palavra. Depois arraste uma letra do banco até a casa, ou toque nela.",
+      "A resposta vai nas casas azuis, no sentido da seta. Toque em outra pista quando quiser trocar.",
     placement: "bottom",
-  },
-  confirmar: {
-    target: ".confirm-button",
-    title: "Confirme a jogada",
-    content:
-      "Confirmar fecha a jogada: letra certa vale 1 ponto; errada custa 1 e volta ao banco.",
-    placement: "top",
   },
   duelo: {
     target: ".versus-score",

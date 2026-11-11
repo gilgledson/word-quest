@@ -22,6 +22,8 @@ export interface Player {
   /** Vibração ao jogar (padrão: ligada). */
   vibration: boolean;
   animations: boolean;
+  /** Grade em alto contraste: pistas escuras com texto branco, linhas e letras mais fortes. */
+  highContrast: boolean;
   /** Relógio de 25 s no turno do jogador (padrão: desligado). */
   turnTimer: boolean;
   /** O tutorial da fase 1 já foi concluído ou pulado. */
@@ -64,6 +66,7 @@ export const initialPlayer: Player = {
   music: true,
   vibration: true,
   animations: true,
+  highContrast: false,
   turnTimer: false,
   tutorialDone: false,
   tourDone: false,
