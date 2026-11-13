@@ -356,3 +356,7 @@
 .result-achievement svg {
   flex: none;
 }
+.achievement-claim.claim-all {
+  width: 100%;
+  margin-top: 12px;
+}

@@ -179,6 +179,23 @@ describe("telas", () => {
       "Resgatada ✓",
     );
   });
+  it("'Resgatar tudo' paga todas as prontas de uma vez e some", () => {
+    open(<Profile />, { stars: won(5) });
+    // Passo, chefe e mundo completo: 20 + 50 + 60.
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: "Resgatar tudo: 130 moedas de 3 conquistas",
+      }),
+    );
+    const now = usePlayer.getState().player;
+    expect(now.coins).toBe(initialPlayer.coins + 130);
+    expect(now.achievements).toHaveLength(3);
+    expect(screen.queryByRole("button", { name: /^Resgatar/ })).toBeNull();
+    // Com uma só pronta, o botão geral não aparece.
+    cleanup();
+    open(<Profile />, { stars: won(1) });
+    expect(screen.queryByRole("button", { name: /^Resgatar tudo/ })).toBeNull();
+  });
   it("a navegação avisa quantas conquistas esperam o resgate", () => {
     open(<Layout />, { stars: won(5) });
     expect(

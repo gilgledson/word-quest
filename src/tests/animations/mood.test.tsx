@@ -172,7 +172,7 @@ describe("Rosto do oponente na partida", () => {
     fireEvent.click(
       screen.getAllByRole("button", { name: `Inserir letra ${sc.letter}` })[0],
     );
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
     // Fechou duas palavras: o oponente fica bravo, e depois passa a pensar na vez dele.
     expect(
       within(screen.getByTestId("duelist-rival")).getByTestId(

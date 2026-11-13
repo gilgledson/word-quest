@@ -60,7 +60,9 @@ const cell = (row: number, col: number, content: string) =>
     name: `Linha ${row + 1}, coluna ${col + 1}: ${content}`,
   });
 const confirmButton = () =>
-  screen.getByRole("button", { name: /^(Confirmar|Passar a vez)$/ });
+  screen.getByRole("button", {
+    name: /^(Confirmar \d+ letras?|Passar a vez)$/,
+  });
 function dragTo(letter: string, target: Element | null, pointerType = "mouse") {
   const [tile] = screen.getAllByRole("button", {
     name: `Inserir letra ${letter}`,
@@ -297,15 +299,19 @@ it("✓ sem peças pendentes vira Passar a vez", () => {
   open();
   expect(confirmButton()).toHaveAccessibleName("Passar a vez");
   fireEvent.click(rackButtons()[0]);
-  expect(confirmButton()).toHaveAccessibleName("Confirmar");
+  expect(confirmButton()).toHaveAccessibleName("Confirmar 1 letra");
 });
 it("o botão Confirmar mostra quantas letras estão pendentes", () => {
   open();
-  expect(screen.queryByTestId("pending-count")).toBeNull();
+  expect(screen.getByTestId("confirm-label")).toHaveTextContent("Passar a vez");
   fireEvent.click(rackButtons()[0]);
-  expect(screen.getByTestId("pending-count")).toHaveTextContent("1");
+  expect(screen.getByTestId("confirm-label")).toHaveTextContent(
+    "Confirmar 1 letra",
+  );
   fireEvent.click(rackButtons()[0]);
-  expect(screen.getByTestId("pending-count")).toHaveTextContent("2");
+  expect(screen.getByTestId("confirm-label")).toHaveTextContent(
+    "Confirmar 2 letras",
+  );
 });
 it("a fase fixa o oponente: a fase 1 é contra o Bolota (fácil), sem escolha do jogador", () => {
   usePlayer.setState({

@@ -20,7 +20,9 @@ const clickTile = (letter: string) =>
     screen.getAllByRole("button", { name: `Inserir letra ${letter}` })[0],
   );
 const confirmBtn = () =>
-  screen.getByRole("button", { name: /^(Confirmar|Passar a vez)$/ });
+  screen.getByRole("button", {
+    name: /^(Confirmar \d+ letras?|Passar a vez)$/,
+  });
 const wordFx = () => [...document.querySelectorAll(".fx-word")];
 const advance = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
 

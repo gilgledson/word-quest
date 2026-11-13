@@ -122,7 +122,7 @@ describe("Sons na partida", () => {
     fireEvent.click(tile());
     expect(started.length).toBeGreaterThan(0);
     const afterPlace = started.length;
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
     expect(started.length).toBeGreaterThan(afterPlace);
   });
   it("com os sons desligados a partida fica em silêncio", () => {

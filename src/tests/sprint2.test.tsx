@@ -89,7 +89,7 @@ describe("tutorial da fase 1", () => {
     expect(document.querySelector("[data-tutorial='1']")).not.toBeNull();
     fireEvent.click(rackButtons()[0]);
     expect(screen.getByRole("note")).toHaveTextContent("2/3");
-    fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
     expect(screen.getByRole("note")).toHaveTextContent("3/3");
     expect(usePlayer.getState().player.tutorialDone).toBe(false);
     act(() => {

@@ -60,6 +60,17 @@ export function Home() {
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
   const wins = Object.keys(p.stars).length;
   const words = wordsFoundCount(p.wordsFound);
+  // Partida da próxima fase já começada (há letras confirmadas) e ainda sem resultado.
+  const started = Object.entries(p.sessions).some(
+    ([key, s]) =>
+      key.startsWith(`vs:${next.id}:`) && !s.claimed && s.locked?.length > 0,
+  );
+  // O botão diz o que o toque faz: quem nunca jogou não tem o que "continuar".
+  const action = started
+    ? "Retomar partida"
+    : wins === 0
+      ? "Jogar primeira fase"
+      : "Continuar aventura";
   return (
     <>
       <section className="welcome">
@@ -69,7 +80,7 @@ export function Home() {
           <br />
           entre as <em>palavras.</em>
         </h1>
-        <p>Desvende pistas. Descubra caminhos. Viva a aventura.</p>
+        <p>Resolva palavras. Vença seu rival.</p>
       </section>
       <section className="adventure-card">
         <Link
@@ -105,14 +116,14 @@ export function Home() {
           >
             <span style={{ width: `${(wins / levels.length) * 100}%` }} />
             <strong>
-              {wins} / {levels.length}
+              {wins} de {levels.length} fases
             </strong>
           </div>
           <HomeChest words={words} />
         </div>
       </section>
       <Link className="button primary continue-button" to={`/play/${next.id}`}>
-        Continuar aventura <ArrowRight size={24} />
+        {action} <ArrowRight size={24} />
       </Link>
       <div className="gentle-note">
         <Compass size={23} />
@@ -715,6 +726,8 @@ function Achievements() {
   const rank = (a: AchievementStatus) => (a.claimed ? 2 : a.done ? 0 : 1);
   const list = achievementStatus(p).sort((a, b) => rank(a) - rank(b));
   const claimed = list.filter((a) => a.claimed).length;
+  const ready = list.filter((a) => a.done && !a.claimed);
+  const readyCoins = ready.reduce((n, a) => n + a.coins, 0);
   return (
     <section className="profile-card achievements" aria-label="Conquistas">
       <h2>
@@ -723,6 +736,18 @@ function Achievements() {
           {claimed}/{list.length}
         </small>
       </h2>
+      {ready.length > 1 && (
+        <button
+          type="button"
+          className="achievement-claim claim-all"
+          aria-label={`Resgatar tudo: ${readyCoins} moedas de ${ready.length} conquistas`}
+          onClick={() =>
+            update((s) => ready.reduce((n, a) => claimAchievement(n, a.id), s))
+          }
+        >
+          Resgatar tudo <CoinIcon size={16} /> +{readyCoins}
+        </button>
+      )}
       <ul>
         {list.map((a) => (
           <li

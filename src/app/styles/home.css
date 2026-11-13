@@ -45,7 +45,7 @@
   padding: clamp(8px, 2dvh, 22px) 0 0;
 }
 .app-home .welcome h1 {
-  font-size: clamp(26px, 6.8vw, 42px);
+  font-size: clamp(21px, 5.6vw, 34px);
   -webkit-text-stroke: 1.4px #15365e;
   line-height: 1.15;
 }
@@ -259,7 +259,7 @@
     padding-top: 2px;
   }
   .app-home .welcome h1 {
-    font-size: 25px;
+    font-size: 21px;
   }
   .app-home .welcome p {
     font-size: 9px;
@@ -386,4 +386,16 @@
 .app-home .bottom-nav a.active {
   background: #dcebff;
   box-shadow: none;
+}
+
+/* O rótulo da fase termina antes do baú, que fica sobre o fim da barra. */
+.app-home .adventure-action > div {
+  padding-right: 42px;
+}
+/* Telas internas: marca, carteira e som na mesma linha, como na home. */
+.app-secondary > header {
+  flex-wrap: nowrap;
+}
+.app-secondary .brand {
+  flex-shrink: 1;
 }

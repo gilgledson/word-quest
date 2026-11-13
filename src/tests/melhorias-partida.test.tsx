@@ -38,7 +38,9 @@ function open(patch: Partial<Player> = {}) {
 }
 const session = () => usePlayer.getState().player.sessions["vs:vila-1:medio"];
 const confirmButton = () =>
-  screen.getByRole("button", { name: /^(Confirmar|Passar a vez)$/ });
+  screen.getByRole("button", {
+    name: /^(Confirmar \d+ letras?|Passar a vez)$/,
+  });
 
 it("depois da vez do rival fica um resumo dela e as casas dele marcadas até o jogador confirmar", () => {
   vi.useFakeTimers();

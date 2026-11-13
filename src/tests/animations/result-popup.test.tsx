@@ -10,7 +10,9 @@ afterEach(() => {
 });
 
 const confirmBtn = () =>
-  screen.getByRole("button", { name: /^(Confirmar|Passar a vez)$/ });
+  screen.getByRole("button", {
+    name: /^(Confirmar \d+ letras?|Passar a vez)$/,
+  });
 const popup = () =>
   screen.queryByRole("dialog", { name: "Resultado da partida" });
 

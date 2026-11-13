@@ -63,7 +63,7 @@ describe("Confete da vitória", () => {
     );
     expect(fire).not.toHaveBeenCalled();
     await act(async () => {
-      fireEvent.click(screen.getByRole("button", { name: "Confirmar" }));
+      fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
     });
     await screen.findByText("Você venceu o duelo!");
     await vi.waitFor(() => expect(fire).toHaveBeenCalled());

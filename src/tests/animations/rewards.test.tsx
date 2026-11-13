@@ -28,7 +28,9 @@ afterEach(() => {
 
 const advance = (ms: number) => act(() => void vi.advanceTimersByTime(ms));
 const confirmBtn = () =>
-  screen.getByRole("button", { name: /^(Confirmar|Passar a vez)$/ });
+  screen.getByRole("button", {
+    name: /^(Confirmar \d+ letras?|Passar a vez)$/,
+  });
 const coinsNow = () => usePlayer.getState().player.coins;
 
 /** Joga a última letra e confirma: a partida termina e a recompensa é paga. */

@@ -9,7 +9,7 @@ test("a abertura mostra o estúdio e o jogo e depois libera a home (?splash=1)",
   await expect(page.locator(".splash-studio.on img")).toBeVisible();
   await expect(abertura).toBeHidden({ timeout: 8000 });
   await expect(
-    page.getByRole("link", { name: /Continuar aventura/ }),
+    page.getByRole("link", { name: /Jogar primeira fase/ }),
   ).toBeVisible();
 });
 

@@ -51,6 +51,8 @@ export function TurnControls({
     economy.rackMax,
   );
   const hasPending = pendingCount > 0;
+  // O botão diz quantas letras a confirmação vale, em vez de um número solto no canto.
+  const confirmLabel = `Confirmar ${pendingCount} ${pendingCount === 1 ? "letra" : "letras"}`;
   const byId = new Map(rack.map((t) => [t.id, t]));
   return (
     <>
@@ -107,19 +109,12 @@ export function TurnControls({
           disabled={!mine}
           onClick={onConfirm}
           whileTap={fxEnabled ? { scale: 0.94 } : undefined}
-          aria-label={hasPending ? "Confirmar" : "Passar a vez"}
+          aria-label={hasPending ? confirmLabel : "Passar a vez"}
         >
           {hasPending ? <Check /> : <SkipForward />}
-          <small>{hasPending ? "Confirmar" : "Passar a vez"}</small>
-          {hasPending && (
-            <span
-              className="pending-count"
-              data-testid="pending-count"
-              aria-hidden="true"
-            >
-              {pendingCount}
-            </span>
-          )}
+          <small data-testid="confirm-label">
+            {hasPending ? confirmLabel : "Passar a vez"}
+          </small>
           {fxEnabled && pulse > 0 && (
             <span key={pulse} className="confirm-pulse" aria-hidden="true" />
           )}
