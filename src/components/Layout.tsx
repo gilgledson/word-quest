@@ -14,6 +14,7 @@ import {
 import { motion } from "motion/react";
 import { usePlayer } from "../stores/player";
 import { CoinIcon } from "./CoinIcon";
+import { claimableCount } from "../game/achievements";
 export function Wallet() {
   const p = usePlayer((s) => s.player);
   return (
@@ -48,6 +49,7 @@ export function Layout() {
   const error = usePlayer((s) => s.error);
   const { pathname } = useLocation();
   const enabled = usePlayer((s) => s.player.animations);
+  const toClaim = usePlayer((s) => claimableCount(s.player));
   const home = pathname === "/";
   const playing = pathname.startsWith("/play/");
   const map = pathname.startsWith("/map");
@@ -129,6 +131,14 @@ export function Layout() {
             <NavLink to="/profile">
               <UserRound />
               Perfil
+              {toClaim > 0 && (
+                <span
+                  className="nav-badge"
+                  aria-label={`${toClaim} ${toClaim === 1 ? "conquista" : "conquistas"} para resgatar`}
+                >
+                  {toClaim}
+                </span>
+              )}
             </NavLink>
           </nav>
         </>

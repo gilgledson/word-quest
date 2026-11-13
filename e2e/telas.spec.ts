@@ -30,9 +30,13 @@ test("mapa: a fase 5 é o chefe e o portão mostra o que falta", async ({
   await expect(page.getByText(/Faltam 5 fases/)).toBeVisible();
 });
 
-test("perfil mostra as conquistas", async ({ page }) => {
+test("perfil mostra o progresso e as conquistas", async ({ page }) => {
   await page.goto("/profile");
-  const box = page.getByLabel("Suas conquistas");
+  const box = page.getByLabel("Seu progresso");
   await expect(box).toContainText("Fases");
   await expect(box).toContainText("0/25");
+  // Sem progresso, nenhuma conquista está pronta: a lista mostra metas e prêmios.
+  const list = page.getByLabel("Conquistas", { exact: true });
+  await expect(list).toContainText("O primeiro passo");
+  await expect(list.getByRole("button", { name: /^Resgatar/ })).toHaveCount(0);
 });

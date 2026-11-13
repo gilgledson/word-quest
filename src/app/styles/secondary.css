@@ -228,3 +228,131 @@
   font-weight: 800;
   text-decoration: underline;
 }
+
+/* Conquistas do Perfil: meta, progresso e resgate das moedas. */
+.achievements h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.achievements h2 small {
+  margin-left: auto;
+  font-size: 13px;
+  color: #45525c;
+}
+.achievements ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 10px;
+}
+.achievements .achievement {
+  margin: 0;
+  padding: 12px 14px;
+  gap: 12px;
+}
+.achievement > svg {
+  flex: none;
+}
+.achievement > div {
+  flex: 1;
+  min-width: 0;
+}
+.achievement.claimed {
+  background: #eef6ea;
+  color: #2f6b3a;
+}
+.achievement-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.achievement-progress .bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 99px;
+  background: #d3ddd0;
+  overflow: hidden;
+}
+.achievement-progress .bar i {
+  display: block;
+  height: 100%;
+  border-radius: 99px;
+  background: #5b9a4f;
+}
+.achievement-progress small {
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+.achievement-prize {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex: none;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+/* Em tela estreita o botão de resgate vai para a linha de baixo, para o título não quebrar. */
+.achievements .achievement {
+  flex-wrap: wrap;
+}
+.achievement-claim {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex: 1 0 100%;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: #f2b632;
+  color: #4a3200;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  white-space: nowrap;
+  box-shadow: 0 3px 0 #b98312;
+  cursor: pointer;
+}
+.achievement-claim:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #b98312;
+}
+.bottom-nav a {
+  position: relative;
+}
+.nav-badge {
+  position: absolute;
+  top: 4px;
+  left: calc(50% + 8px);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 99px;
+  background: #d8342b;
+  color: #fff;
+  font-size: 11px;
+  line-height: 18px;
+  text-align: center;
+}
+.result-achievement {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fff0bd;
+  color: #6b4d0c;
+  font-size: 13px;
+  text-align: left;
+}
+.result-achievement svg {
+  flex: none;
+}

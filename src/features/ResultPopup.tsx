@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { Frown, Handshake, Trophy } from "lucide-react";
+import { Award, Frown, Handshake, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
 import { OpponentPortrait } from "../components/OpponentPortrait";
@@ -29,6 +29,8 @@ interface Props {
   progress?: { world: string; done: number; total: number; stars: number };
   /** Nome do mundo que acabou de ser desbloqueado, se foi o caso. */
   unlocked?: string;
+  /** Títulos das conquistas que esta partida completou. */
+  achievements?: string[];
   /** Resumo da partida e histórico (opcionais). */
   summary?: MatchSummary;
   history?: GameRecord[];
@@ -68,6 +70,7 @@ export function ResultPopup({
   nextRival,
   progress,
   unlocked,
+  achievements = [],
   summary,
   history = [],
   enabled,
@@ -158,6 +161,15 @@ export function ResultPopup({
         {unlocked && (
           <p className="result-unlocked" role="status">
             Novo mundo aberto: <b>{unlocked}</b>!
+          </p>
+        )}
+        {achievements.length > 0 && (
+          <p className="result-achievement" role="status">
+            <Award size={18} aria-hidden="true" />
+            <span>
+              {achievements.length === 1 ? "Conquista" : "Conquistas"}:{" "}
+              <b>{achievements.join(", ")}</b>. Resgate no Perfil.
+            </span>
           </p>
         )}
         {summary && (

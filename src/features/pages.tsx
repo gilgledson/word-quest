@@ -5,7 +5,6 @@ import {
   CalendarDays,
   Sparkles,
   LockKeyhole,
-  Star,
   Flag,
   Compass,
   Volume2,
@@ -22,9 +21,16 @@ import {
   Vibrate,
   Crown,
   Trophy,
+  Award,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
 import { wordsFoundCount } from "../game/chest";
+import {
+  achievementStatus,
+  claimAchievement,
+  type AchievementStatus,
+} from "../game/achievements";
+import { CoinIcon } from "../components/CoinIcon";
 import { ChestHint, HomeChest } from "./HomeChest";
 import road from "../data/map-road.json";
 import { usePlayer } from "../stores/player";
@@ -525,6 +531,7 @@ export function Profile() {
         </label>
       </section>
       <ProfileStats />
+      <Achievements />
       <section className="profile-card">
         <div className="opponent-setting">
           <span>Seus rivais</span>
@@ -545,20 +552,6 @@ export function Profile() {
               </li>
             ))}
           </ul>
-        </div>
-        <h2>Suas descobertas</h2>
-        <div
-          className={`achievement ${Object.keys(p.stars).length ? "earned" : ""}`}
-        >
-          <Star />
-          <div>
-            <strong>O primeiro passo</strong>
-            <p>
-              {Object.keys(p.stars).length
-                ? "Conquista desbloqueada!"
-                : "Complete sua primeira fase."}
-            </p>
-          </div>
         </div>
         <label className="toggle">
           <span>
@@ -695,9 +688,9 @@ function ProfileStats() {
     ],
   ];
   return (
-    <section className="profile-stats" aria-label="Suas conquistas">
+    <section className="profile-stats" aria-label="Seu progresso">
       <h2>
-        <Trophy size={20} aria-hidden="true" /> Suas conquistas
+        <Trophy size={20} aria-hidden="true" /> Seu progresso
       </h2>
       {groups.map(([title, items]) => (
         <div className="stats-group" key={title}>
@@ -712,6 +705,74 @@ function ProfileStats() {
           </dl>
         </div>
       ))}
+    </section>
+  );
+}
+/** Conquistas: as prontas para resgatar vêm primeiro; as já resgatadas, por último. */
+function Achievements() {
+  const p = usePlayer((s) => s.player);
+  const update = usePlayer((s) => s.update);
+  const rank = (a: AchievementStatus) => (a.claimed ? 2 : a.done ? 0 : 1);
+  const list = achievementStatus(p).sort((a, b) => rank(a) - rank(b));
+  const claimed = list.filter((a) => a.claimed).length;
+  return (
+    <section className="profile-card achievements" aria-label="Conquistas">
+      <h2>
+        <Award size={20} aria-hidden="true" /> Conquistas
+        <small>
+          {claimed}/{list.length}
+        </small>
+      </h2>
+      <ul>
+        {list.map((a) => (
+          <li
+            key={a.id}
+            className={`achievement ${a.done ? "earned" : ""} ${a.claimed ? "claimed" : ""}`}
+          >
+            <Award aria-hidden="true" />
+            <div>
+              <strong>{a.title}</strong>
+              <p>{a.text}</p>
+              {!a.done && (
+                <span className="achievement-progress">
+                  <span
+                    className="bar"
+                    role="progressbar"
+                    aria-label={`Progresso de ${a.title}`}
+                    aria-valuenow={a.progress}
+                    aria-valuemin={0}
+                    aria-valuemax={a.goal}
+                  >
+                    <i style={{ width: `${(a.progress / a.goal) * 100}%` }} />
+                  </span>
+                  <small>
+                    {a.progress}/{a.goal}
+                  </small>
+                </span>
+              )}
+            </div>
+            {a.claimed ? (
+              <span className="achievement-prize">Resgatada ✓</span>
+            ) : a.done ? (
+              <button
+                type="button"
+                className="achievement-claim"
+                aria-label={`Resgatar ${a.coins} moedas de ${a.title}`}
+                onClick={() => update((s) => claimAchievement(s, a.id))}
+              >
+                Resgatar <CoinIcon size={16} /> +{a.coins}
+              </button>
+            ) : (
+              <span
+                className="achievement-prize"
+                aria-label={`Prêmio: ${a.coins} moedas`}
+              >
+                <CoinIcon size={16} /> {a.coins}
+              </span>
+            )}
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

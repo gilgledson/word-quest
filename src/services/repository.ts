@@ -40,6 +40,10 @@ export interface Player {
   wordsFound: Record<string, string[]>;
   /** Últimas partidas concluídas (a mais recente primeiro). */
   history: GameRecord[];
+  /** Conquistas já resgatadas (ids de `ACHIEVEMENTS`). */
+  achievements: string[];
+  /** Vitórias sem nenhuma letra errada (alimenta a conquista "Mão certeira"). */
+  cleanWins: number;
 }
 export interface GameRecord {
   puzzleId: string;
@@ -75,6 +79,8 @@ export const initialPlayer: Player = {
   chestsOpened: 0,
   wordsFound: {},
   history: [],
+  achievements: [],
+  cleanWins: 0,
 };
 export interface PlayerRepository {
   load(): Promise<Player | undefined>;

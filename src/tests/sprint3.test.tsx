@@ -83,7 +83,7 @@ describe("páginas secundárias", () => {
     });
     // Quem você é vem antes das conquistas.
     const identity = screen.getByLabelText("Você");
-    const box = screen.getByLabelText("Suas conquistas");
+    const box = screen.getByLabelText("Seu progresso");
     expect(
       identity.compareDocumentPosition(box) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();

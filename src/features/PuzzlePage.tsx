@@ -45,6 +45,7 @@ import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
+import { achievedIds, achievementStatus } from "../game/achievements";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
 /** Duração do relógio opcional do turno do jogador. */
 const TURN_SECONDS = 25;
@@ -186,6 +187,13 @@ function Duel() {
   const [fxHost, setFxHost] = useState<HTMLElement | null>(null);
   const [pulse, setPulse] = useState(0);
   const [resultOpen, setResultOpen] = useState(false);
+  // Conquistas que já estavam completas ao abrir a partida: o resultado só anuncia as novas.
+  const [achBase, setAchBase] = useState(() => ({
+    key: sessionKey,
+    ids: achievedIds(player),
+  }));
+  if (achBase.key !== sessionKey)
+    setAchBase({ key: sessionKey, ids: achievedIds(player) });
   const botTurn =
     !!engine && session?.versus.turn === "ai" && !engine.complete(session);
   const reaction = useOpponentMood({
@@ -900,6 +908,9 @@ function Duel() {
           }
           progress={progress}
           unlocked={unlocked}
+          achievements={achievementStatus(player)
+            .filter((a) => a.done && !achBase.ids.includes(a.id))
+            .map((a) => a.title)}
           summary={summarize(session)}
           history={player.history}
           enabled={prefs.enabled}

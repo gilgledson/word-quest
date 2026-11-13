@@ -90,6 +90,8 @@ export interface Session {
   /** Casas travadas pela Dica (pontuam para o jogador, mas contam como ajuda). */
   hinted?: string[];
   scores: Record<Owner, number>;
+  /** Letras que o jogador confirmou no lugar errado nesta partida. */
+  misses?: number;
   /** O jogador já trocou letras nesta vez (uma troca por vez; volta a valer ao confirmar). */
   swapped?: boolean;
   /** Peças que o oponente tem na mão (sorteadas da reserva); só existe no duelo. */

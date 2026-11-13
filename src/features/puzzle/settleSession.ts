@@ -35,6 +35,7 @@ export function settleSession(
   let days = p.daily;
   let duels = p.duels;
   let history = p.history ?? [];
+  let cleanWins = p.cleanWins ?? 0;
   const wordsFound = discover(p, next, engine, puzzleId, sessionKey);
   if (engine.complete(settled) && !settled.claimed) {
     const { p: mine, ai } = settled.scores;
@@ -60,6 +61,8 @@ export function settleSession(
           economy.duelStars[settled.versus.level],
         ),
       };
+    // Partidas começadas antes deste contador não têm `misses` e não contam como limpas.
+    if (result === "win" && settled.misses === 0) cleanWins++;
     history = [
       {
         puzzleId,
@@ -80,6 +83,7 @@ export function settleSession(
     daily: days,
     duels,
     history,
+    cleanWins,
     wordsFound,
     sessions: { ...p.sessions, [sessionKey]: settled },
   };

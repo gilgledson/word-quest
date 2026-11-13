@@ -69,6 +69,7 @@ export class RackManager {
       history: [],
       owners: {},
       scores: { p: 0, ai: 0 },
+      misses: 0,
       botRack: [],
       versus: {
         level,
@@ -371,6 +372,7 @@ export class RackManager {
       }
     }
     s.history = s.history.filter((k) => !s.locked.includes(k));
+    if (who === "p" && s.misses !== undefined) s.misses += returned;
     // Cada letra confirmada no lugar errado custa pontos, mas o placar nunca fica negativo.
     const before = s.scores[who];
     s.scores[who] = Math.max(
