@@ -56,7 +56,7 @@ test("a fase cabe na tela de 360×800, sem rolagem", async ({ page }) => {
   // Banco e botões de ação visíveis dentro da tela.
   await expect(bank(page).getByRole("button")).toHaveCount(5);
   for (const name of ["Trocar", "Passar a vez", "Dica"])
-    await expect(page.getByRole("button", { name })).toBeVisible();
+    await expect(page.getByRole("button", { name, exact: true })).toBeVisible();
   await expect(score(page, "player")).toHaveText("0");
   await expect(score(page, "rival")).toHaveText("0");
   // O selo de turno é explícito e os nomes cabem inteiros no placar.
@@ -118,7 +118,7 @@ test("arrasta uma peça do banco até uma casa da grade", async ({ page }) => {
   await expect(bank(page).getByRole("button")).toHaveCount(4);
 });
 
-test("tutorial da fase 1 não muda o tamanho da grade e some depois do rival", async ({
+test("tutorial da fase 1 não muda o tamanho da grade e termina no último passo", async ({
   page,
 }) => {
   const cols = () =>
@@ -131,14 +131,18 @@ test("tutorial da fase 1 não muda o tamanho da grade e some depois do rival", a
   const height = () =>
     page.evaluate(() => document.querySelector(".board-area")!.clientHeight);
   const tip = page.getByRole("note");
-  await expect(tip).toContainText("1/3");
+  await expect(tip).toContainText("1/4");
   const h0 = await height();
   expect(await cols()).toBe(8);
   await bank(page).getByRole("button").first().click();
-  await expect(tip).toContainText("2/3");
+  await expect(tip).toContainText("2/4");
   expect(await height()).toBe(h0);
   await page.getByRole("button", { name: "Confirmar" }).click();
   await expect(page.getByText("◀ sua vez")).toBeVisible({ timeout: 15_000 });
+  // A vez voltou: o último passo explica como se vence e some no "Entendi".
+  await expect(tip).toContainText("4/4");
+  expect(await height()).toBe(h0);
+  await tip.getByRole("button", { name: "Entendi" }).click();
   await expect(tip).toHaveCount(0);
   // Sem a dica a grade continua do mesmo tamanho e em pé.
   expect(await height()).toBe(h0);

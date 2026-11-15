@@ -57,9 +57,16 @@ export function useDuelSetup() {
     ? `daily:${date}:${botLevel}`
     : `vs:${puzzle?.id}:${botLevel}`;
   const stored = player.sessions[sessionKey];
-  // Sessions saved before the duel/confirm flow existed cannot be resumed.
+  // Não dá para retomar: sessões de antes do duelo/confirmar e sessões gravadas numa versão antiga
+  // da grade (a fase foi gerada de novo e as letras salvas não batem mais com a solução).
+  const resumable =
+    !!engine &&
+    !!stored?.owners &&
+    !!stored.botRack &&
+    !!stored.versus &&
+    fitsGrid(engine, stored);
   const session: Session | undefined = engine
-    ? stored?.owners && stored.botRack && stored.versus
+    ? resumable
       ? stored
       : engine.start(sessionKey, botLevel, {
           style: assigned?.style,
@@ -78,4 +85,19 @@ export function useDuelSetup() {
     sessionKey,
     session,
   };
+}
+
+/**
+ * A sessão é desta versão da grade: as peças têm exatamente as letras da solução e as casas
+ * ocupadas existem nela, com as confirmadas certas. Uma fase gerada de novo falha aqui.
+ */
+function fitsGrid(engine: PuzzleEngine, s: Session) {
+  const solution = engine.rack.solution;
+  const sorted = (letters: string[]) => letters.sort().join("");
+  const tiles = Object.values(s.tiles ?? {}).filter((t) => !t.joker);
+  return (
+    sorted(tiles.map((t) => t.letter)) === sorted(Object.values(solution)) &&
+    Object.keys(s.letters).every((k) => k in solution) &&
+    s.locked.every((k) => s.letters[k] === solution[k])
+  );
 }

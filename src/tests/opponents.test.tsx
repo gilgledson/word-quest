@@ -264,7 +264,7 @@ describe("Oponente na partida", () => {
   it("o parâmetro vs força outro oponente (só para testes) e a sessão grava o personagem", () => {
     open("/play/vila-1?vs=raposo");
     expect(screen.getByLabelText("Placar")).toHaveTextContent("Raposo");
-    fireEvent.click(document.querySelector('[data-cell="1,1"]')!);
+    fireEvent.click(document.querySelector(".cell.letter")!);
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra / })[0],
     );
@@ -276,7 +276,7 @@ describe("Oponente na partida", () => {
   });
   it("partida em andamento continua com o mesmo oponente ao reabrir", () => {
     open("/play/vila-1?vs=fagulha");
-    fireEvent.click(document.querySelector('[data-cell="1,1"]')!);
+    fireEvent.click(document.querySelector(".cell.letter")!);
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra / })[0],
     );

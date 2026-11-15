@@ -80,3 +80,41 @@ a.campaign-start {
 .app-map .map-back + .wallet {
   margin-left: auto;
 }
+/* Cada tema tem a sua cor: o selo do ícone, a borda e a barra de progresso. */
+.theme-card {
+  --theme: #1f6fe0;
+  --theme-soft: #dcebff;
+  border-color: var(--theme-soft);
+}
+.theme-card[data-theme="animais"] {
+  --theme: #c2590b;
+  --theme-soft: #ffe2c4;
+}
+.theme-card[data-theme="comida"] {
+  --theme: #c43a2a;
+  --theme-soft: #ffd9d2;
+}
+.theme-card[data-theme="natureza"] {
+  --theme: #23794c;
+  --theme-soft: #d3f0dd;
+}
+.theme-card[data-theme="casa"] {
+  --theme: #5b47b8;
+  --theme-soft: #e2dcfa;
+}
+.theme-icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--theme);
+  box-shadow: 0 0 0 5px var(--theme-soft);
+  margin-bottom: 4px;
+}
+.theme-card .theme-icon svg {
+  color: #fff;
+}
+.theme-card .theme-progress i {
+  background: var(--theme);
+}

@@ -399,3 +399,7 @@
 .app-secondary .brand {
   flex-shrink: 1;
 }
+/* Na home o rótulo "N de 25 fases" fica sobre a barra: sem os marcos, o texto lê limpo. */
+.app-home .journey-progress::after {
+  display: none;
+}

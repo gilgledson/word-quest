@@ -44,15 +44,18 @@ test("a faixa de turno fica dentro do painel e não cobre o selo VS", async ({
 
 test("o painel da palavra mostra o progresso e o bônus", async ({ page }) => {
   await open(page);
-  await expect(page.getByTestId("word-progress")).toHaveText(
-    "0/7 · restam 7 · +7 ao completar",
+  // O tamanho da palavra vem da grade (muda quando a fase é regerada).
+  const progress = page.getByTestId("word-progress");
+  await expect(progress).toHaveText(
+    /^0\/(\d) · restam \1 · \+\1 ao completar$/,
   );
+  const n = Number((await progress.innerText()).match(/\/(\d)/)![1]);
   await page
     .getByRole("button", { name: /^Inserir letra/ })
     .first()
     .click();
-  await expect(page.getByTestId("word-progress")).toHaveText(
-    "1/7 · restam 6 · +7 ao completar",
+  await expect(progress).toHaveText(
+    `1/${n} · restam ${n - 1} · +${n} ao completar`,
   );
 });
 
@@ -122,14 +125,24 @@ test("na vez do rival os controles ficam apagados e dá para escolher a próxima
     .evaluate((el) => getComputedStyle(el).filter);
   expect(tileFilter).toContain("grayscale(0.9)");
   // Escolhe uma pista enquanto o rival pensa.
-  const clue = page.getByRole("button", { name: /^Pista: Burro/ });
+  // Uma pista que não seja a já selecionada (o texto vem da grade).
+  const label = (await page
+    .locator(".clue-half:not(.selected-clue)")
+    .first()
+    .getAttribute("aria-label"))!;
+  const clue = page.getByRole("button", { name: label, exact: true });
+  const text = label
+    .replace(/^Pista: /, "")
+    .replace(/, (horizontal|vertical)$/, "");
   await clue.click();
   await expect(page.getByTestId("word-progress")).toContainText(
-    "Sua pista: Burro",
+    `Sua pista: ${text}`,
   );
   await expect(clue).toHaveClass(/selected-clue/);
   // Quando a vez volta, o painel passa a mostrar o progresso normal da pista escolhida.
-  await expect(page.getByRole("button", { name: "Dica" })).toBeEnabled({
+  await expect(
+    page.getByRole("button", { name: "Dica", exact: true }),
+  ).toBeEnabled({
     timeout: 8000,
   });
   await expect(page.getByTestId("word-progress")).not.toContainText(

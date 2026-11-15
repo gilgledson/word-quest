@@ -376,10 +376,13 @@ export function Casual() {
             <button
               key={t.id}
               className="theme-card"
+              data-theme={t.id}
               onClick={() => play(t)}
               aria-label={`Tema ${t.nome}`}
             >
-              <Icon size={34} />
+              <span className="theme-icon" aria-hidden="true">
+                <Icon size={30} />
+              </span>
               <strong>{t.nome}</strong>
               <small>
                 {finished} de {t.puzzles.length} grades vencidas
@@ -544,8 +547,10 @@ export function Profile() {
       <ProfileStats />
       <Achievements />
       <section className="profile-card">
-        <div className="opponent-setting">
-          <span>Seus rivais</span>
+        <details className="opponent-setting fold">
+          <summary>
+            Seus rivais <small>{OPPONENTS.length}</small>
+          </summary>
           <p className="rivals-note">
             Cada fase tem seu oponente; o último de cada mundo é o chefe.
           </p>
@@ -563,7 +568,7 @@ export function Profile() {
               </li>
             ))}
           </ul>
-        </div>
+        </details>
         <label className="toggle">
           <span>
             <Volume2 />
@@ -719,15 +724,23 @@ function ProfileStats() {
     </section>
   );
 }
+/** Quantas conquistas ainda não prontas aparecem com a lista recolhida. */
+const ACHIEVEMENTS_PREVIEW = 3;
 /** Conquistas: as prontas para resgatar vêm primeiro; as já resgatadas, por último. */
 function Achievements() {
   const p = usePlayer((s) => s.player);
   const update = usePlayer((s) => s.update);
+  const [all, setAll] = useState(false);
   const rank = (a: AchievementStatus) => (a.claimed ? 2 : a.done ? 0 : 1);
-  const list = achievementStatus(p).sort((a, b) => rank(a) - rank(b));
+  // Prontas primeiro; depois as em andamento, da mais perto da meta para a mais longe.
+  const list = achievementStatus(p).sort(
+    (a, b) => rank(a) - rank(b) || b.progress / b.goal - a.progress / a.goal,
+  );
   const claimed = list.filter((a) => a.claimed).length;
   const ready = list.filter((a) => a.done && !a.claimed);
   const readyCoins = ready.reduce((n, a) => n + a.coins, 0);
+  // Recolhida, a lista mostra as prontas e as próximas metas; o resto abre no botão.
+  const shown = all ? list : list.slice(0, ready.length + ACHIEVEMENTS_PREVIEW);
   return (
     <section className="profile-card achievements" aria-label="Conquistas">
       <h2>
@@ -749,7 +762,7 @@ function Achievements() {
         </button>
       )}
       <ul>
-        {list.map((a) => (
+        {shown.map((a) => (
           <li
             key={a.id}
             className={`achievement ${a.done ? "earned" : ""} ${a.claimed ? "claimed" : ""}`}
@@ -798,6 +811,16 @@ function Achievements() {
           </li>
         ))}
       </ul>
+      {list.length > shown.length || all ? (
+        <button
+          type="button"
+          className="text-link achievements-more"
+          aria-expanded={all}
+          onClick={() => setAll(!all)}
+        >
+          {all ? "Ver menos" : `Ver todas as ${list.length} conquistas`}
+        </button>
+      ) : null}
     </section>
   );
 }

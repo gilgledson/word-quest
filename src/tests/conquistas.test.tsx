@@ -155,6 +155,11 @@ describe("telas", () => {
   it("o Perfil lista todas, com progresso e prêmio", () => {
     open(<Profile />, { daily: ["2026-11-01", "2026-11-02"] });
     const list = screen.getByLabelText("Conquistas");
+    // Recolhida, mostra só as próximas metas; "Ver todas" abre o resto.
+    expect(list.querySelectorAll("li")).toHaveLength(4);
+    fireEvent.click(
+      screen.getByRole("button", { name: "Ver todas as 14 conquistas" }),
+    );
     expect(list.querySelectorAll("li")).toHaveLength(ACHIEVEMENTS.length);
     expect(
       screen.getByRole("progressbar", { name: "Progresso de Semana perfeita" }),
@@ -175,6 +180,8 @@ describe("telas", () => {
     expect(now.coins).toBe(initialPlayer.coins + 20);
     expect(now.achievements).toEqual(["primeiro-passo"]);
     expect(screen.queryByRole("button", { name: /^Resgatar/ })).toBeNull();
+    // As resgatadas vão para o fim da lista, que abre no "Ver todas".
+    fireEvent.click(screen.getByRole("button", { name: /^Ver todas/ }));
     expect(screen.getByLabelText("Conquistas")).toHaveTextContent(
       "Resgatada ✓",
     );

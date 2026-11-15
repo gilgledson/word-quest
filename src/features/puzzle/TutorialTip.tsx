@@ -4,34 +4,45 @@ const STEPS: Record<number, string> = {
   1: "Toque numa letra do banco para jogar",
   2: "Toque em Confirmar: certa +1, errada −1",
   3: "Vez do rival: as letras roxas são dele",
+  4: "Sua vez de novo: mais pontos vence",
 };
+const LAST = 4;
 interface Props {
+  /** Passo da jogada: 1 escolher a letra, 2 confirmar, 3 vez do rival. */
   step: number;
   /** Letra do banco que serve na casa azul (só no primeiro passo): o passo diz qual tocar. */
   letter?: string;
   botTurn: boolean;
-  /** Chamado ao terminar (a vez volta ao jogador depois do rival) ou ao pular. */
+  /** Chamado ao terminar (o jogador volta a jogar depois do rival) ou ao pular. */
   onDone: () => void;
 }
-/** Dica contextual da fase 1: acompanha a partida em 3 passos e some sozinha. */
+/**
+ * Dica contextual da fase 1: acompanha a primeira rodada em 4 passos. Depois que o rival joga, o
+ * último passo explica que a vez voltou e como se vence; some no "Entendi" ou na jogada seguinte.
+ */
 export function TutorialTip({ step, letter, botTurn, onDone }: Props) {
   const [sawRival, setSawRival] = useState(false);
+  const back = sawRival && !botTurn;
   useEffect(() => {
     if (botTurn) setSawRival(true);
-    else if (sawRival) onDone();
+    // A vez voltou e o jogador já colocou outra letra: o tutorial cumpriu o papel.
+    else if (sawRival && step === 2) onDone();
     // onDone só grava a preferência; não precisa reiniciar o efeito.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [botTurn, sawRival]);
+  }, [botTurn, sawRival, step]);
+  const shown = back ? LAST : step;
   return (
-    <div className={`tutorial-tip ${step === 3 ? "quiet" : ""}`} role="note">
-      <b>{step}/3</b>
+    <div className={`tutorial-tip ${shown === 3 ? "quiet" : ""}`} role="note">
+      <b>
+        {shown}/{LAST}
+      </b>
       <span>
-        {step === 1 && letter
+        {shown === 1 && letter
           ? `Toque no ${letter} que brilha para jogar`
-          : STEPS[step]}
+          : STEPS[shown]}
       </span>
       <button type="button" onClick={onDone}>
-        Pular
+        {back ? "Entendi" : "Pular"}
       </button>
     </div>
   );

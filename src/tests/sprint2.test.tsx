@@ -82,21 +82,38 @@ describe("estados da grade sem depender de cor", () => {
 });
 
 describe("tutorial da fase 1", () => {
-  it("acompanha em 3 passos e some sozinho depois que o rival joga", () => {
+  it("acompanha em 4 passos: depois do rival, explica que a vez voltou", () => {
     vi.useFakeTimers();
     open(false);
-    expect(screen.getByRole("note")).toHaveTextContent("1/3");
+    expect(screen.getByRole("note")).toHaveTextContent("1/4");
     expect(document.querySelector("[data-tutorial='1']")).not.toBeNull();
     fireEvent.click(rackButtons()[0]);
-    expect(screen.getByRole("note")).toHaveTextContent("2/3");
+    expect(screen.getByRole("note")).toHaveTextContent("2/4");
     fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
-    expect(screen.getByRole("note")).toHaveTextContent("3/3");
-    expect(usePlayer.getState().player.tutorialDone).toBe(false);
+    expect(screen.getByRole("note")).toHaveTextContent("3/4");
     act(() => {
       vi.advanceTimersByTime(3000);
     });
+    // A vez voltou: o último passo fica até o "Entendi" (ou a próxima letra).
+    expect(usePlayer.getState().player.tutorialDone).toBe(false);
+    expect(screen.getByRole("note")).toHaveTextContent(
+      "4/4Sua vez de novo: mais pontos vence",
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Entendi" }));
     expect(usePlayer.getState().player.tutorialDone).toBe(true);
     expect(screen.queryByRole("note")).toBeNull();
+  });
+  it("colocar a próxima letra depois do rival também encerra o tutorial", () => {
+    vi.useFakeTimers();
+    open(false);
+    fireEvent.click(rackButtons()[0]);
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+    act(() => {
+      vi.advanceTimersByTime(3000);
+    });
+    expect(screen.getByRole("note")).toHaveTextContent("4/4");
+    fireEvent.click(rackButtons()[0]);
+    expect(usePlayer.getState().player.tutorialDone).toBe(true);
   });
   it("Pular encerra o tutorial e grava a preferência", async () => {
     open(false);

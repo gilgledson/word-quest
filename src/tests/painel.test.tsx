@@ -51,15 +51,21 @@ function open(coins = 100, locked = 0) {
   );
 }
 const progress = () => screen.queryByTestId("word-progress");
+/** Tamanho da primeira palavra da fase 1 (a selecionada ao abrir): muda quando a fase é regerada. */
+const N = levels[0].words[0].answer.length;
 
 describe("Painel da palavra: progresso e valor de fechar", () => {
   it("mostra letras preenchidas, quantas faltam e o que fechar vale", () => {
     open();
-    expect(progress()).toHaveTextContent("0/7 · restam 7 · +7 ao completar");
+    expect(progress()).toHaveTextContent(
+      `0/${N} · restam ${N} · +${N} ao completar`,
+    );
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
     );
-    expect(progress()).toHaveTextContent("1/7 · restam 6 · +7 ao completar");
+    expect(progress()).toHaveTextContent(
+      `1/${N} · restam ${N - 1} · +${N} ao completar`,
+    );
   });
   it("a frase fixa de rotina deixa de aparecer, mas segue para o leitor de tela", () => {
     open();
@@ -92,15 +98,17 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
   });
   it("com todas as casas cheias e ainda não confirmadas, pede a confirmação", () => {
     vi.useFakeTimers();
-    open(1000, 6);
+    open(1000, N - 1);
     act(() => {
       vi.advanceTimersByTime(5000);
     });
-    expect(progress()).toHaveTextContent("6/7 · resta 1 · +7 ao completar");
+    expect(progress()).toHaveTextContent(
+      `${N - 1}/${N} · resta 1 · +${N} ao completar`,
+    );
   });
   it("palavra fechada mostra 'Palavra completa'", () => {
     vi.useFakeTimers();
-    open(1000, 7);
+    open(1000, N);
     // Ao fechar a palavra o painel passa para a próxima; voltar a ela mostra o aviso.
     const first = positions(levels[0].words[0])[0].key;
     fireEvent.click(document.querySelector(`[data-cell="${first}"]`)!);
@@ -159,5 +167,35 @@ describe("Vez do rival: controles desligados e pista escolhida", () => {
     expect(screen.getByRole("button", { name: "Dica" })).toBeEnabled();
     expect(progress()).not.toHaveTextContent("Sua pista:");
     expect(progress()).toHaveTextContent(/\d+\/\d+ · /);
+  });
+});
+
+describe("partida salva de uma versão antiga da grade", () => {
+  it("não é retomada: a fase abre do zero, sem letras nem pontos da grade antiga", () => {
+    // Sessão de outra grade gravada na chave da fase 1, como fica depois de a fase ser gerada de novo.
+    const other = new PuzzleEngine(levels[1]);
+    const stale = other.start("vs:vila-1:medio", "medio");
+    for (const c of positions(levels[1].words[0]))
+      other.rack.lockCell(stale, c.key, "p");
+    stale.scores = { p: 10, ai: 3 };
+    expect(new PuzzleEngine(levels[0]).rack.audit(stale)).not.toEqual([]);
+    usePlayer.setState({
+      player: {
+        ...structuredClone(initialPlayer),
+        tutorialDone: true,
+        sessions: { "vs:vila-1:medio": stale },
+      } as typeof initialPlayer,
+      ready: true,
+    });
+    render(
+      <MemoryRouter initialEntries={["/play/vila-1?vs=medio"]}>
+        <Routes>
+          <Route path="/play/:id" element={<PuzzlePage />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+    expect(document.querySelectorAll(".cell.letter.locked")).toHaveLength(0);
+    expect(screen.getByLabelText("Placar")).not.toHaveTextContent("10");
+    expect(progress()).toHaveTextContent(`0/${N} · restam ${N}`);
   });
 });

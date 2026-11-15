@@ -360,3 +360,43 @@
   width: 100%;
   margin-top: 12px;
 }
+/* Perfil mais curto: rivais recolhidos e conquistas com "ver todas". */
+.fold > summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+}
+.fold > summary::-webkit-details-marker {
+  display: none;
+}
+.fold > summary::after {
+  content: "";
+  margin-left: auto;
+  width: 9px;
+  height: 9px;
+  border-right: 3px solid #45525c;
+  border-bottom: 3px solid #45525c;
+  transform: rotate(45deg);
+  transition: transform 0.15s;
+}
+.fold[open] > summary::after {
+  transform: rotate(-135deg);
+}
+.fold > summary small {
+  font-size: 13px;
+  color: #45525c;
+}
+.achievements-more {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 800;
+  cursor: pointer;
+}
