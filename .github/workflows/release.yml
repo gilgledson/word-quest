@@ -1,0 +1,54 @@
+name: Release (AAB assinado)
+
+# Gera o App Bundle assinado com a chave de envio (upload key) do Google Play.
+# Só roda à mão (Actions > Release > Run workflow) ou ao criar uma tag v*; nunca em pull request,
+# para que os segredos não fiquem ao alcance de código vindo de fora.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - name: Build web + sincronizar o Android
+        run: npm run build:android
+      - name: Restaurar a chave de assinatura
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          dir="$HOME/.wordquest-signing"
+          mkdir -p "$dir"
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$dir/wordquest-upload.jks"
+          {
+            echo "storeFile=$dir/wordquest-upload.jks"
+            echo "storePassword=$KEYSTORE_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPassword=$KEY_PASSWORD"
+          } > "$dir/keystore.properties"
+          chmod 600 "$dir"/*
+      - name: Gerar o AAB
+        working-directory: android
+        run: sh ./gradlew bundleRelease
+      - name: Remover a chave do runner
+        if: always()
+        run: rm -rf "$HOME/.wordquest-signing"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wordquest-aab
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error
