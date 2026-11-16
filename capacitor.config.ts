@@ -6,6 +6,8 @@ const config: CapacitorConfig = {
   webDir: "dist",
   android: { allowMixedContent: false },
   backgroundColor: "#fff5de",
+  // O index.html usa viewport-fit=cover: avisar de antemão evita um salto de layout na abertura.
+  plugins: { SystemBars: { initialViewportFitValueHint: "cover" } },
 };
 
 export default config;

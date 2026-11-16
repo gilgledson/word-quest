@@ -1,0 +1,474 @@
+/* Telas internas cabem na altura do aparelho: o conteúdo ocupa o que sobra entre o topo e a barra de
+   navegação. Só rola (dentro do main) se a tela for baixa demais para o conteúdo. */
+.app-secondary {
+  height: 100dvh;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom));
+}
+.app-secondary > main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden auto;
+}
+.app-secondary > footer {
+  display: none;
+}
+/* A paisagem aparece inteira atrás do título, como na home, e se desfaz no fundo creme. */
+.app-secondary .home-landscape {
+  height: 250px;
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(#000 50%, transparent);
+  mask-image: linear-gradient(#000 50%, transparent);
+}
+.app-secondary .page-heading {
+  padding: 2px 0 10px;
+}
+.app-secondary .page-heading h1 {
+  margin: 2px 0;
+  font-size: 30px;
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 2px 0 #123c86,
+    2px 0 0 #123c86,
+    -2px 0 0 #123c86,
+    0 -2px 0 #123c86,
+    0 4px 8px #0b2a5c80;
+}
+.app-secondary .page-heading p,
+.app-secondary .page-heading .eyebrow {
+  color: #0f2547;
+  font-weight: 800;
+  text-shadow:
+    0 0 6px #fff,
+    0 0 6px #fff,
+    0 1px 0 #fff;
+}
+.app-secondary .page-heading p {
+  margin: 0;
+  font-size: 13.5px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Baralho: um card na frente, o seguinte e o anterior espiando dos lados. */
+.deck {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  justify-content: center;
+}
+.deck-stack {
+  position: relative;
+  flex: 1;
+  min-height: 236px;
+  max-height: 430px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.deck-card {
+  position: absolute;
+  inset: 0 40px 14px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 18px;
+  text-align: center;
+  border: 3px solid #fff2c9;
+  border-radius: 28px;
+  background: linear-gradient(#fffef7, #fff3d6);
+  box-shadow:
+    0 5px 0 #c9b985,
+    0 12px 26px #24365726;
+  color: #12264a;
+  transition:
+    transform 0.26s cubic-bezier(0.2, 0.8, 0.3, 1),
+    opacity 0.2s;
+}
+.deck-card.dragging {
+  transition: none;
+}
+.deck-card[data-pos="next"] {
+  z-index: 2;
+  transform: translate(18px, 6px) rotate(4deg) scale(0.93);
+}
+.deck-card[data-pos="prev"] {
+  z-index: 1;
+  transform: translate(-18px, 6px) rotate(-4deg) scale(0.93);
+}
+.deck-card[data-pos="off"] {
+  z-index: 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.88);
+}
+/* Os cards de trás mostram só a silhueta: o conteúdo fica do card da frente. */
+.deck-card:not([data-pos="0"]) > * {
+  opacity: 0;
+}
+.deck-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+}
+/* As setas ficam inteiras dentro da tela, meio sobre a borda do card. */
+.deck-nav button {
+  position: absolute;
+  top: calc(50% - 30px);
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 3px solid #fff3c4;
+  border-radius: 50%;
+  background: linear-gradient(#ffd75a, #f0a81e);
+  color: #4a3200;
+  box-shadow: 0 3px 0 #b98312;
+}
+.deck-nav button:first-child {
+  left: 6px;
+}
+.deck-nav button:last-child {
+  right: 6px;
+}
+.deck-nav button:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #b98312;
+}
+.deck-dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.deck-dots i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #c3cdd8;
+}
+.deck-dots i.on {
+  width: 10px;
+  height: 10px;
+  background: #1c5fc4;
+}
+
+/* Casual: o card do tema. */
+.deck-card.theme-card {
+  justify-content: flex-end;
+  padding: 0 0 16px;
+  overflow: hidden;
+  border-color: var(--theme-soft);
+}
+/* A ilustração do tema ocupa o alto do card e cede altura quando a tela é baixa. */
+.theme-art {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: cover;
+  background: var(--theme-soft);
+}
+.theme-card .theme-progress {
+  width: 70%;
+  height: 10px;
+}
+.theme-play {
+  width: 78%;
+  margin-top: 8px;
+  font-size: 18px;
+}
+
+/* Diário: sequência em destaque e calendário compacto. */
+.streak-pill {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: 8px;
+  margin: 0 auto 10px;
+  padding: 6px 16px;
+  border: 2px solid #fff7d6;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  box-shadow: 0 3px 0 #c99a2a;
+  color: #5b3a00;
+  font-size: 14px;
+  font-weight: 900;
+}
+.app-secondary .calendar-card {
+  width: 100%;
+  margin-bottom: 0;
+  padding: 14px 16px;
+  border: 3px solid #fff2c9;
+  border-radius: 26px;
+  background: linear-gradient(#fffef7, #fff3d6);
+  box-shadow:
+    0 5px 0 #c9b985,
+    0 12px 26px #24365726;
+}
+.app-secondary .calendar {
+  margin: 10px 0 6px;
+  gap: 3px 4px;
+}
+.app-secondary .calendar > * {
+  aspect-ratio: auto;
+  justify-self: center;
+  width: clamp(30px, 4.6dvh, 40px);
+  height: clamp(30px, 4.6dvh, 40px);
+}
+.app-secondary .calendar b {
+  height: 22px;
+}
+.app-secondary .calendar-legend {
+  margin: 4px 0 10px;
+}
+
+/* Perfil: o painel da aba ocupa o resto da tela. */
+.app-secondary .profile-header {
+  width: 100%;
+  margin: 4px auto 10px;
+  padding: 10px 14px;
+  border: 3px solid #fff2c9;
+  box-shadow: 0 4px 0 #c9b985;
+}
+.app-secondary .profile-avatar {
+  width: 74px;
+  height: 74px;
+}
+.app-secondary .profile-avatar .opponent-avatar {
+  width: 66px;
+  height: 66px;
+}
+.app-secondary .profile-tabs {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.profile-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.profile-panel > .profile-card,
+.profile-panel > .profile-stats {
+  width: 100%;
+  margin-bottom: 10px;
+}
+.profile-panel > .profile-card {
+  padding: 8px 16px 12px;
+}
+.profile-panel .toggle {
+  min-height: 46px;
+  padding: 6px 0;
+}
+.settings-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+.settings-actions .test-sound {
+  padding: 0 6px;
+  font-size: 13px;
+}
+.profile-panel .credits-link {
+  display: flex;
+  min-height: 40px;
+  align-items: center;
+  margin-top: 4px;
+}
+
+/* Rivais: retrato grande, nível e a frase do personagem. */
+.rival-deck .opponent-avatar {
+  width: clamp(96px, 19dvh, 164px);
+  height: clamp(96px, 19dvh, 164px);
+  margin: 0;
+  border: 4px solid #fff;
+  border-radius: 30px;
+  background: linear-gradient(#bfe6ff, #eaf7ff);
+  box-shadow: 0 6px 14px #24365730;
+}
+.rival-portrait {
+  display: block;
+  margin-bottom: 4px;
+}
+.rival strong {
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.rival-level {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  color: #5b3a00;
+  font-size: 13px;
+  font-weight: 900;
+}
+.rival em {
+  margin-top: 4px;
+  padding: 8px 14px;
+  border: 2px solid #efe6c8;
+  border-radius: 16px;
+  background: #fff;
+  color: #3a4b5f;
+  font-size: 14px;
+  font-weight: 700;
+}
+.deck-card.rival.boss {
+  border-color: #f0c24a;
+}
+
+/* Conquistas: uma medalha em destaque por vez. */
+.achievements-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  min-height: 40px;
+  margin: 0 auto 6px;
+  color: #33414d;
+  font-size: 14px;
+  font-weight: 800;
+}
+.achievements-bar > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.achievements-bar .claim-all {
+  flex: none;
+  width: auto;
+  margin: 0;
+  min-height: 40px;
+}
+.medal-art {
+  width: clamp(92px, 18dvh, 150px);
+  height: auto;
+  filter: drop-shadow(0 6px 8px #24365740);
+}
+.medal:not(.earned) .medal-art {
+  filter: grayscale(0.9) opacity(0.7);
+}
+.medal strong {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.15;
+}
+.medal p {
+  margin: 0;
+  font-size: 14px;
+  color: #45525c;
+}
+.medal .achievement-progress {
+  width: 82%;
+  margin-top: 4px;
+}
+.medal .achievement-progress .bar {
+  height: 10px;
+}
+.medal .achievement-progress .bar i {
+  background: linear-gradient(#35b3ff, #1678ee);
+}
+.medal .achievement-claim {
+  flex: none;
+  width: 82%;
+  margin-top: 6px;
+}
+.medal .achievement-prize {
+  margin-top: 6px;
+  padding: 6px 16px;
+  border: 2px solid #efe6c8;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 14px;
+}
+.medal.claimed .achievement-prize {
+  border-color: #cfe6c8;
+  background: #eef6ea;
+  color: #2f6b3a;
+}
+
+/* Créditos: um assunto por card. */
+.credits article {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+.credits h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.credits img {
+  max-width: 100%;
+  height: auto;
+}
+.credits ul {
+  text-align: left;
+}
+.app-secondary .credits-back {
+  margin: 8px 0 0;
+}
+
+/* Aparelhos baixos: some o que é acessório para o card principal continuar inteiro na tela. */
+@media (max-height: 700px) {
+  .app-secondary .page-heading p,
+  .app-secondary .profile-who p,
+  .app-secondary .calendar-legend {
+    display: none;
+  }
+  .app-secondary .profile-avatar {
+    width: 58px;
+    height: 58px;
+  }
+  .app-secondary .profile-avatar .opponent-avatar {
+    width: 50px;
+    height: 50px;
+  }
+  .rival-deck .opponent-avatar,
+  .medal-art {
+    width: 78px;
+    height: 78px;
+  }
+  .rival strong,
+  .medal strong,
+  .theme-card strong {
+    font-size: 20px;
+  }
+  .deck-card {
+    gap: 4px;
+    padding: 8px 16px;
+  }
+  .profile-panel .toggle {
+    min-height: 44px;
+    padding: 2px 0;
+  }
+}

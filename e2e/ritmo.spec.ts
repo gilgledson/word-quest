@@ -5,6 +5,11 @@ import { waitSaved } from "./storage";
 
 const timerToggle = (page: Page) => page.getByLabel("Relógio do turno (25 s)");
 /** Abre a fase 1 contra o rival difícil e dispensa o tutorial. */
+/** Abre o Perfil na aba Ajustes, onde fica o relógio do turno. */
+const openSettings = async (page: Page) => {
+  await page.goto("/profile");
+  await page.getByRole("tab", { name: "Ajustes" }).click();
+};
 const startDuel = async (page: Page) => {
   await page.goto("/play/vila-1?vs=dificil");
   await expect(page.locator(".board .cell")).toHaveCount(80);
@@ -15,16 +20,17 @@ const startDuel = async (page: Page) => {
 test("o relógio é opcional: vem desligado e a preferência é gravada", async ({
   page,
 }) => {
-  await page.goto("/profile");
+  await openSettings(page);
   await expect(timerToggle(page)).not.toBeChecked();
   await timerToggle(page).check();
   await waitSaved(page, "turnTimer", true);
   await page.reload();
+  await page.getByRole("tab", { name: "Ajustes" }).click();
   await expect(timerToggle(page)).toBeChecked();
   await startDuel(page);
   await expect(page.getByRole("timer")).toBeVisible();
   // Desligando, a barra some na partida seguinte.
-  await page.goto("/profile");
+  await openSettings(page);
   await timerToggle(page).uncheck();
   await waitSaved(page, "turnTimer", false);
   await page.goto("/play/vila-1?vs=dificil");
@@ -36,18 +42,18 @@ test("ao zerar o relógio a vez passa sozinha e o rival joga", async ({
   page,
 }) => {
   await page.clock.install();
-  await page.goto("/profile");
+  await openSettings(page);
   await timerToggle(page).check();
   await waitSaved(page, "turnTimer", true);
   await startDuel(page);
   await expect(page.getByRole("timer")).toBeVisible();
-  await expect(page.getByText("vez do oponente ▶")).toHaveCount(0);
+  await expect(page.getByText("vez do rival ▶")).toHaveCount(0);
   await page.clock.fastForward(26_000);
-  await expect(page.getByText("vez do oponente ▶")).toBeVisible();
+  await expect(page.getByText("vez do rival ▶")).toBeVisible();
   await expect(page.getByRole("timer")).toHaveCount(0);
   // O rival termina a jogada e a vez volta, com o relógio reiniciado.
   await page.clock.fastForward(6_000);
-  await expect(page.getByText("vez do oponente ▶")).toHaveCount(0);
+  await expect(page.getByText("vez do rival ▶")).toHaveCount(0);
   await expect(page.getByRole("timer")).toBeVisible();
 });
 
@@ -63,7 +69,7 @@ test("o rival coloca as letras uma a uma antes de confirmar", async ({
     counts.push(await placed.count());
     if (
       counts.at(-1) === 0 &&
-      (await page.getByText("vez do oponente ▶").count()) === 0
+      (await page.getByText("vez do rival ▶").count()) === 0
     )
       break;
     await page.waitForTimeout(40);
@@ -79,7 +85,7 @@ test("o rival coloca as letras uma a uma antes de confirmar", async ({
 test("com o relógio e o rival jogando, a tela segue acessível e sem rolagem", async ({
   page,
 }) => {
-  await page.goto("/profile");
+  await openSettings(page);
   await timerToggle(page).check();
   await waitSaved(page, "turnTimer", true);
   await startDuel(page);

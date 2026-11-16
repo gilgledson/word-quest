@@ -119,3 +119,33 @@ adaptativo), `drawable*/splash.jpg` (retrato e paisagem, só Android 11 ou anter
 `public/`. O fundo do ícone adaptativo é `ic_launcher_background` (dourado); no Android 12+ o sistema mostra o
 ícone sobre esse fundo (`windowSplashScreenBackground`) e a tela "Preparando sua aventura…" do app continua o
 mesmo dourado.
+
+## Conteúdo sem atualizar o app
+
+Fases, variantes, temas do casual, mundos e rivais podem ser publicados no servidor e chegam aos
+jogadores na próxima abertura do app, sem passar pela Play Store.
+
+- **Fonte:** os mesmos arquivos que vão no app: `src/data/levels.json`, `level-variants.json`,
+  `casual.json`, `worlds.json` e `opponents.json` (rivais e o rival de cada fase).
+- **Imagens novas:** ficam em `content/hosting/art/...` e são citadas pelo endereço
+  `https://wordquest-online.web.app/art/...`. Um rival novo leva `"art": "https://wordquest-online.web.app/art/rivais/<nome>-v1"`
+  e os seis arquivos `<nome>-v1-<humor>.webp` (neutral, thinking, happy, angry, sad, surprised).
+  Mapas novos seguem o tamanho dos atuais (848×1264). Ao trocar uma imagem, troque o nome (`-v2`):
+  o aparelho guarda cada endereço para sempre.
+- **Mundo novo:** acrescente em `worlds.json`, gere as fases com `generate-levels.mjs --only 26,27,...`
+  e defina o rival de cada fase em `opponents.json` (`byLevel`).
+
+```sh
+node scripts/publish-content.mjs            # monta e confere, sem publicar
+npx firebase-tools login                    # uma vez, com a conta dona do projeto
+node scripts/publish-content.mjs --deploy   # confere e publica
+```
+
+A conferência roda a validação do app, joga cada grade até o fim só com ações gratuitas e exige que
+toda imagem citada exista em `content/hosting`. Se algo falhar, nada é publicado. O `--deploy`
+publica as imagens (Firebase Hosting) e as regras do banco (`database.rules.json`), e por último
+grava o conteúdo em `content/` no Realtime Database.
+
+No aparelho (`src/content`): na abertura vale o último conteúdo baixado que passar na validação;
+depois o app confere se há versão nova, baixa, valida e guarda para a próxima abertura, adiantando
+as imagens do mundo seguinte. Sem internet, segue com o que tem; o conteúdo do app é o mínimo.

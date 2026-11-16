@@ -156,22 +156,6 @@
   color: #6d5f36;
 }
 /* Créditos e tela de erro. */
-.credits {
-  display: grid;
-  gap: 10px;
-}
-.credits article {
-  padding: 12px 14px;
-  border: 2px solid #fff2c9;
-  border-radius: 16px;
-  background: linear-gradient(#fffef5, #fff6dd);
-  box-shadow: 0 3px 0 #c9b985;
-  color: #12264a;
-}
-.credits h2 {
-  margin: 0 0 4px;
-  font-size: 16px;
-}
 .credits p,
 .credits li {
   margin: 0;
@@ -399,4 +383,189 @@
   font: inherit;
   font-weight: 800;
   cursor: pointer;
+}
+
+/* Cartão do Google Play Games no Perfil (só no app Android com o serviço configurado). */
+.play-games h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+}
+.play-games p {
+  margin: 0 0 12px;
+  color: #45525c;
+}
+.play-games-actions {
+  display: flex;
+  gap: 10px;
+}
+.play-games-actions button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  border-radius: 12px;
+  font-weight: 800;
+  background: #edf3f9;
+}
+
+.play-games-account {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.play-games-account img {
+  border-radius: 50%;
+  flex: none;
+}
+.play-games-account p {
+  margin: 0;
+}
+/* Aviso de login no Play Games: sobe do rodapé, acima da barra de navegação. */
+.play-games-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #123c86;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+/* Perfil: cabeçalho com avatar editável e seções em abas. */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 600px;
+  margin: 8px auto 14px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  border: 2px solid #e8e1cc;
+  background: #fffcf5;
+}
+.profile-avatar {
+  position: relative;
+  flex: none;
+  width: 92px;
+  height: 92px;
+  padding: 0;
+  border-radius: 50%;
+  border: 4px solid #f4eaca;
+  background: #e5f1e8;
+  display: grid;
+  place-items: center;
+}
+.profile-avatar .opponent-avatar {
+  margin: 0;
+  border-radius: 50%;
+}
+.profile-avatar-edit {
+  position: absolute;
+  right: -4px;
+  bottom: -4px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #1c5fc4;
+  color: #fff;
+  border: 3px solid #fffcf5;
+}
+.profile-who {
+  min-width: 0;
+}
+.profile-who h1 {
+  margin: 2px 0 4px;
+  font-size: 24px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+.profile-who p {
+  margin: 0;
+  font-size: 14px;
+  color: #45525c;
+}
+.profile-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  max-width: 600px;
+  margin: 0 auto 14px;
+  padding: 4px;
+  border-radius: 16px;
+  background: #e9eef5;
+}
+.profile-tabs button {
+  position: relative;
+  min-height: 44px;
+  padding: 0 2px;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #45525c;
+  white-space: nowrap;
+}
+.profile-tabs button.selected {
+  background: #fffcf5;
+  color: #123c86;
+  box-shadow: 0 2px 6px rgba(18, 60, 134, 0.16);
+}
+.profile-tabs .tab-badge {
+  position: absolute;
+  top: -5px;
+  right: -2px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: #d23b3b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+}
+.profile-panel > .profile-card h2 small {
+  font-size: 14px;
+  color: #45525c;
+}
+.profile-dialog {
+  text-align: left;
+}
+.profile-dialog-label,
+.profile-dialog-name {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #45525c;
+}
+.profile-dialog-name input {
+  font-size: 17px;
+}
+.profile-dialog-name input {
+  padding: 10px 12px;
+  border: 2px solid #d9e2ec;
+  border-radius: 12px;
+  background: #fff;
+}
+.profile-dialog .swap-actions .primary {
+  flex: 1;
 }

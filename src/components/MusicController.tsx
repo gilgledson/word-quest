@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { isPlayPath } from "../game/routes";
 import { usePlayer } from "../stores/player";
 import { setMusic } from "../services/music";
 
@@ -8,7 +9,7 @@ export function MusicController() {
   const music = usePlayer((s) => s.player.music);
   const { pathname } = useLocation();
   useEffect(() => {
-    setMusic(music && !pathname.startsWith("/play/"));
+    setMusic(music && !isPlayPath(pathname));
   }, [music, pathname]);
   return null;
 }

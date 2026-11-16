@@ -80,8 +80,10 @@ describe("Modo casual", () => {
   });
   it("mostra os temas e abre um duelo ao escolher um", () => {
     open();
-    expect(screen.getAllByRole("button", { name: /^Tema / })).toHaveLength(4);
-    fireEvent.click(screen.getByRole("button", { name: "Tema Animais" }));
+    expect(
+      screen.getAllByRole("button", { name: /^Jogar tema / }),
+    ).toHaveLength(4);
+    fireEvent.click(screen.getByRole("button", { name: "Jogar tema Animais" }));
     const where = screen.getByTestId("where").textContent!;
     expect(where).toMatch(/^\/play\/casual-animais-\d+\?vs=[a-z]+$/);
     expect(screen.getByText(/CASUAL · ANIMAIS/)).toBeInTheDocument();

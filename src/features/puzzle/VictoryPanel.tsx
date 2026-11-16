@@ -21,6 +21,8 @@ interface Props {
   /** Rota da próxima fase da campanha, quando há. */
   nextTo?: string;
   backTo: string;
+  /** Duelo ao vivo: não há "jogar novamente" (a sala acabou). */
+  online?: boolean;
   onNext: () => void;
   onReplay: () => void;
 }
@@ -36,6 +38,7 @@ export function VictoryPanel({
   fxEnabled,
   nextTo,
   backTo,
+  online,
   onNext,
   onReplay,
 }: Props) {
@@ -62,7 +65,9 @@ export function VictoryPanel({
           ? result === "win"
             ? `Recompensa diária: ${economy.daily} moedas`
             : "Vença o oponente para concluir o desafio do dia."
-          : `Recompensa do duelo: ${economy.duel[result]} moedas`}
+          : economy.duel[result] < 0
+            ? `A derrota custou ${-economy.duel[result]} moedas`
+            : `Recompensa do duelo: ${economy.duel[result]} moedas`}
         {campaignWin && (
           <>
             {" · "}
@@ -79,11 +84,20 @@ export function VictoryPanel({
         </Link>
       )}
       <Link className="text-link" to={backTo}>
-        {casual ? "Escolher outro tema" : "Voltar à jornada"}
+        {online
+          ? "Desafiar de novo"
+          : casual
+            ? "Escolher outro tema"
+            : "Voltar à jornada"}
       </Link>
-      <button className="text-link" onClick={onReplay}>
-        Jogar novamente
-      </button>
+      {!online && (
+        <button
+          className={result === "loss" ? "button primary" : "text-link"}
+          onClick={onReplay}
+        >
+          {result === "loss" ? "Tentar de novo" : "Jogar novamente"}
+        </button>
+      )}
     </motion.section>
   );
 }

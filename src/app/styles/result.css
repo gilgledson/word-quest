@@ -1,0 +1,310 @@
+/* Janela de resultado do duelo: faixa do título, estrelas, confronto com os dois rostos e prêmios. */
+.result-backdrop {
+  padding: 52px 14px 14px;
+}
+.result-dialog {
+  position: relative;
+  width: min(100%, 350px);
+  gap: 6px;
+  padding: 0 16px 16px;
+}
+.result-dialog > :not(.result-rays) {
+  position: relative;
+  z-index: 1;
+}
+/* Raios de luz atrás do troféu, presos ao contorno da janela. */
+.result-rays {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  border-radius: 23px;
+  pointer-events: none;
+}
+.result-rays::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -150px;
+  width: 420px;
+  height: 420px;
+  margin-left: -210px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #ffd75a66 0deg 10deg,
+    transparent 10deg 20deg
+  );
+  -webkit-mask-image: radial-gradient(closest-side, #000 20%, transparent);
+  mask-image: radial-gradient(closest-side, #000 20%, transparent);
+}
+.result-dialog.draw .result-rays::before {
+  background: repeating-conic-gradient(
+    from 0deg,
+    #9fd2ff66 0deg 10deg,
+    transparent 10deg 20deg
+  );
+}
+.result-dialog.loss .result-rays {
+  display: none;
+}
+.result-dialog .result-icon {
+  width: 76px;
+  height: 76px;
+  margin-top: -40px;
+}
+/* O título é uma faixa com as pontas dobradas. */
+.result-dialog h2 {
+  margin: 2px 0 0;
+  padding: 3px 30px 5px;
+  border-radius: 10px;
+  background: linear-gradient(#ffcf4a, #f0a81e);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-shadow: 0 2px 0 #8a5a00;
+  box-shadow: 0 4px 0 #b98312;
+}
+.result-dialog h2::before,
+.result-dialog h2::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  z-index: -1;
+  width: 26px;
+  height: 100%;
+  background: #d18f12;
+}
+.result-dialog h2::before {
+  left: -16px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 45% 50%);
+}
+.result-dialog h2::after {
+  right: -16px;
+  clip-path: polygon(0 0, 100% 0, 55% 50%, 100% 100%, 0 100%);
+}
+.result-dialog.draw h2 {
+  background: linear-gradient(#5aaeff, #2f7fe0);
+  text-shadow: 0 2px 0 #0d3a7a;
+  box-shadow: 0 4px 0 #1f5cab;
+}
+.result-dialog.draw h2::before,
+.result-dialog.draw h2::after {
+  background: #1f5cab;
+}
+.result-dialog.loss h2 {
+  background: linear-gradient(#aab4bf, #7c8896);
+  text-shadow: 0 2px 0 #3a4654;
+  box-shadow: 0 4px 0 #5b6673;
+}
+.result-dialog.loss h2::before,
+.result-dialog.loss h2::after {
+  background: #5b6673;
+}
+.result-dialog .victory-stars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 40px;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ffc21a;
+  text-shadow:
+    0 2px 0 #b98312,
+    0 0 10px #ffd75a80;
+}
+/* A estrela do meio fica maior e mais alta, como um pódio. */
+.result-dialog .victory-stars > :nth-child(2) {
+  font-size: 52px;
+}
+.result-dialog .victory-stars .off {
+  color: #d9d2bd;
+  text-shadow: 0 2px 0 #b8b09a;
+}
+/* A frase do resultado repete o que a faixa e o placar já mostram: fica só para leitores de tela. */
+.result-dialog .result-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.result-dialog .result-score {
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 2px;
+  padding: 8px 8px 6px;
+  border: 2px solid #efe6c8;
+  border-radius: 18px;
+  background: #fffdf6;
+  font-size: 13px;
+}
+/* Cada lado: rosto com o nome embaixo e, ao lado, os pontos. O rival vem espelhado. */
+.result-dialog .result-score > span:not([aria-hidden]) {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-template-rows: 56px auto;
+  align-items: center;
+  justify-items: center;
+  column-gap: 8px;
+}
+.result-dialog .result-score > span:last-child {
+  direction: rtl;
+}
+.result-dialog .result-score b {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.05;
+}
+.result-dialog .result-score > [aria-hidden] {
+  font-size: 22px;
+  color: #b98312;
+}
+.result-dialog .result-score .opponent-avatar {
+  width: 54px;
+  height: 54px;
+  margin: 0;
+  border: 3px solid #1678ee;
+  border-radius: 50%;
+  background: #e5f1e8;
+}
+.result-dialog .result-score span:last-child .opponent-avatar {
+  border-color: #7045c8;
+}
+/* A fala do rival sai do lado dele, como um balão. */
+.result-dialog .result-quote {
+  position: relative;
+  margin: 2px 0 0;
+  padding: 6px 12px;
+  border: 2px solid #efe6c8;
+  border-radius: 14px;
+  background: #fff;
+  font-size: 13px;
+  text-align: center;
+  color: #3a4b5f;
+}
+.result-dialog .result-quote::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 22%;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #efe6c8;
+  border-width: 2px 0 0 2px;
+  background: #fff;
+  transform: rotate(45deg);
+}
+.result-dialog .result-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 0;
+  padding: 4px 16px;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  color: #5b3a00;
+  font-size: 17px;
+  box-shadow: 0 3px 0 #c99a2a;
+}
+/* Derrota: as moedas saem, e o selo fica vermelho. */
+.result-dialog .result-coins.lost {
+  background: linear-gradient(#ffe1dc, #f7b9b0);
+  color: #8a1c12;
+  box-shadow: 0 3px 0 #d68f85;
+}
+.result-dialog .result-progress {
+  margin-top: 2px;
+  font-size: 12px;
+  color: #33414d;
+}
+.result-dialog .result-achievement {
+  margin: 2px 0 0;
+  padding: 5px 10px;
+  font-size: 12px;
+}
+/* O resumo vira uma linha só: três números lado a lado, sem caixas. */
+.result-dialog .match-stats {
+  gap: 0;
+  margin: 2px 0 0;
+  padding: 4px 0;
+  border-top: 1px solid #efe2bd;
+  border-bottom: 1px solid #efe2bd;
+}
+.result-dialog .match-stats div {
+  display: flex;
+  flex-direction: column-reverse;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+.result-dialog .match-stats dd {
+  font-size: 16px;
+  line-height: 1.1;
+}
+.result-dialog .medals {
+  gap: 4px;
+  margin: 2px 0 0;
+}
+.result-dialog .medals li {
+  padding: 1px 6px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.result-dialog .result-next {
+  font-size: 12px;
+  color: #45525c;
+}
+.result-dialog .result-actions {
+  gap: 8px;
+  margin-top: 4px;
+}
+/* Com próxima fase, os dois botões dividem a linha: o principal à direita e maior. */
+.result-dialog .result-actions:has(.result-ghost) {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+}
+.result-dialog .result-actions .result-ghost {
+  order: -1;
+}
+.result-dialog .result-actions .button {
+  width: 100%;
+  min-height: 52px;
+  padding-inline: 8px;
+  font-size: 16px;
+}
+.result-dialog .result-actions .button.result-ghost {
+  font-size: 14px;
+}
+.button.result-ghost {
+  padding: 0 8px;
+  border: 2px solid #1c5fc4;
+  background: #fffdf6;
+  color: #123c86;
+  font-size: 14px;
+  line-height: 1.15;
+  box-shadow: 0 3px 0 #b9cdea;
+}
+@media (max-height: 700px) {
+  .result-dialog .result-icon {
+    width: 56px;
+    height: 56px;
+    margin-top: -30px;
+  }
+  .result-dialog .victory-stars {
+    font-size: 30px;
+  }
+  .result-dialog .victory-stars > :nth-child(2) {
+    font-size: 38px;
+  }
+  .result-dialog .result-score .opponent-avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .result-dialog .match-stats {
+    display: none;
+  }
+}

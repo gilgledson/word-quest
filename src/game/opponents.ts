@@ -1,4 +1,5 @@
 import type { BotLevel, BotStyle } from "./crossword-engine";
+import castRaw from "../data/opponents.json";
 
 /**
  * Elenco de oponentes. Cada fase da campanha tem um oponente fixo (`OPPONENT_BY_LEVEL`), com um
@@ -19,6 +20,16 @@ export interface OpponentProfile {
   lose: string;
   /** Chefe de um mundo (última fase). */
   boss?: boolean;
+  /**
+   * Base dos rostos: `<art>-<humor>.webp`. Sem ela, public/art/opponents/<id>; num personagem
+   * baixado, o endereço no servidor de conteúdo.
+   */
+  art?: string;
+}
+export interface Cast {
+  opponents: OpponentProfile[];
+  /** Número da fase → id do oponente. */
+  byLevel: Record<string, string>;
 }
 
 /** Expressões de cada personagem: neutro, pensando, feliz, com raiva, triste e surpreso. */
@@ -32,152 +43,20 @@ export const MOODS = [
 ] as const;
 export type Mood = (typeof MOODS)[number];
 
-export const OPPONENTS: OpponentProfile[] = [
-  {
-    id: "bolota",
-    name: "Bolota",
-    species: "esquilo",
-    level: "facil",
-    style: "cuidadoso",
-    tagline: "Devagar e sempre.",
-    win: "Eu juntei mais palavras do que você!",
-    lose: "Boa! Guardei as palavras pro inverno...",
-  },
-  {
-    id: "fagulha",
-    name: "Fagulha",
-    species: "dragãozinho",
-    level: "facil",
-    style: "agressivo",
-    tagline: "Vou com tudo!",
-    win: "Queimei as palavras todas!",
-    lose: "Ai, me apaguei...",
-  },
-  {
-    id: "sabi",
-    name: "Sabi",
-    species: "coruja",
-    level: "medio",
-    style: "cuidadoso",
-    tagline: "Cada letra no seu lugar.",
-    win: "A sabedoria venceu hoje.",
-    lose: "Impressionante. Aprendi algo novo.",
-  },
-  {
-    id: "raposo",
-    name: "Raposo",
-    species: "raposa",
-    level: "medio",
-    style: "agressivo",
-    tagline: "Quem arrisca, petisca.",
-    win: "Fui mais esperto, como sempre!",
-    lose: "Hmpf... na próxima eu pego você.",
-  },
-  {
-    id: "oraculo",
-    name: "Oráculo",
-    species: "lince",
-    level: "dificil",
-    style: "cuidadoso",
-    tagline: "Eu já vi esta jogada.",
-    win: "Estava escrito nas estrelas.",
-    lose: "Isso... eu não previ.",
-  },
-  {
-    id: "draco",
-    name: "Draco",
-    species: "dragão",
-    level: "dificil",
-    style: "agressivo",
-    tagline: "Nenhuma palavra me escapa.",
-    win: "Cinzas e vitória!",
-    lose: "Respeito. Poucos me vencem.",
-  },
-  {
-    id: "cuco",
-    name: "Mestre Cuco",
-    species: "cuco",
-    level: "medio",
-    style: "cuidadoso",
-    tagline: "Tudo tem a sua hora.",
-    win: "Cuco! Já deu a sua hora.",
-    lose: "Meu relógio parou...",
-    boss: true,
-  },
-  {
-    id: "musgo",
-    name: "Musgo",
-    species: "árvore falante",
-    level: "medio",
-    style: "agressivo",
-    tagline: "Minhas raízes vão fundo.",
-    win: "A floresta é minha!",
-    lose: "Até as árvores caem...",
-    boss: true,
-  },
-  {
-    id: "zefa",
-    name: "Esfinge Zefa",
-    species: "esfinge",
-    level: "dificil",
-    style: "cuidadoso",
-    tagline: "Decifre-me ou devore-se.",
-    win: "O enigma era você.",
-    lose: "Você decifrou... raro.",
-    boss: true,
-  },
-  {
-    id: "lumen",
-    name: "Rainha Lúmen",
-    species: "leoa",
-    level: "dificil",
-    style: "agressivo",
-    tagline: "Curve-se às palavras.",
-    win: "Longa vida à rainha!",
-    lose: "A coroa é sua por hoje.",
-    boss: true,
-  },
-  {
-    id: "polvo",
-    name: "Capitão Polvo",
-    species: "polvo",
-    level: "dificil",
-    style: "agressivo",
-    tagline: "Oito braços, oito palavras.",
-    win: "Ah-har! Tesouro meu!",
-    lose: "Navegar é preciso... perder também.",
-    boss: true,
-  },
-];
-
+/** O elenco que vem dentro do app (src/data/opponents.json). */
+export const bundledCast: Cast = castRaw as Cast;
+/** Elenco em uso: o do app ou o baixado (src/content), trocado no lugar antes da primeira tela. */
+export const OPPONENTS: OpponentProfile[] = [];
 /** Oponente de cada fase da campanha (número da fase → id); a 5ª de cada mundo é o chefe. */
-export const OPPONENT_BY_LEVEL: Record<number, string> = {
-  1: "bolota",
-  2: "bolota",
-  3: "fagulha",
-  4: "fagulha",
-  5: "cuco",
-  6: "fagulha",
-  7: "sabi",
-  8: "fagulha",
-  9: "raposo",
-  10: "musgo",
-  11: "sabi",
-  12: "raposo",
-  13: "sabi",
-  14: "raposo",
-  15: "zefa",
-  16: "raposo",
-  17: "oraculo",
-  18: "draco",
-  19: "oraculo",
-  20: "lumen",
-  21: "draco",
-  22: "oraculo",
-  23: "draco",
-  24: "oraculo",
-  25: "polvo",
-};
+export const OPPONENT_BY_LEVEL: Record<number, string> = {};
+export function setCast(cast: Cast) {
+  OPPONENTS.splice(0, OPPONENTS.length, ...cast.opponents);
+  for (const k of Object.keys(OPPONENT_BY_LEVEL))
+    delete OPPONENT_BY_LEVEL[Number(k)];
+  for (const [k, id] of Object.entries(cast.byLevel))
+    OPPONENT_BY_LEVEL[Number(k)] = id;
+}
+setCast(bundledCast);
 
 /** Nome curto para o placar ("Mestre Cuco" → "Cuco"). */
 export const shortName = (o: Pick<OpponentProfile, "name">) =>
@@ -232,4 +111,4 @@ export const randomOpponent = (): OpponentProfile =>
   OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
 
 export const opponentFace = (id: string, mood: Mood = "neutral") =>
-  `/art/opponents/${id}-${mood}.webp`;
+  `${opponentById(id)?.art ?? `/art/opponents/${id}`}-${mood}.webp`;

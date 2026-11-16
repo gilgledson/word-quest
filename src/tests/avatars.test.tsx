@@ -30,6 +30,9 @@ describe("Avatares do jogador", () => {
         <Profile />
       </MemoryRouter>,
     );
+    fireEvent.click(
+      screen.getByRole("button", { name: "Editar avatar e nome" }),
+    );
     expect(screen.getByRole("button", { name: "Explorador" })).toHaveAttribute(
       "aria-pressed",
       "true",

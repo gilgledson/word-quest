@@ -20,17 +20,29 @@ import {
 } from "./features/pages";
 import { Credits } from "./features/Credits";
 // A partida (motor, animações, confete) só é baixada ao abrir uma fase.
+// O duelo ao vivo (salas e servidor) só é baixado por quem abre o modo online.
+const OnlineLobby = lazy(() =>
+  import("./features/OnlinePage").then((m) => ({ default: m.OnlineLobby })),
+);
+const OnlineMatch = lazy(() =>
+  import("./features/OnlinePage").then((m) => ({ default: m.OnlineMatch })),
+);
 const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
 );
 import { usePlayer } from "./stores/player";
+import { refreshContent, startContent } from "./content/content";
 import "./app/styles.css";
 import "./animations/animations.css";
+// Depois das animações: refina a janela de resultado definida lá.
+import "./app/styles/result.css";
 import "./animations/mood.css";
 import { unlockAudio } from "./services/sound";
 import { keepScreenOn } from "./services/wakeLock";
 import { resumeMusic } from "./services/music";
 import { MusicController } from "./components/MusicController";
+import { PlayGamesSync } from "./features/PlayGamesCard";
+import { installErrorReporting, trackScreen } from "./services/telemetry";
 // O primeiro toque em qualquer lugar libera o áudio (política de autoplay do navegador e do WebView).
 for (const type of ["pointerdown", "touchend", "click", "keydown"])
   window.addEventListener(
@@ -42,11 +54,25 @@ for (const type of ["pointerdown", "touchend", "click", "keydown"])
     { once: false, passive: true },
   );
 keepScreenOn();
+/** Registra cada tela aberta na medição de uso (só no app Android). Não desenha nada. */
+function ScreenTracker() {
+  const { pathname } = useLocation();
+  useEffect(() => trackScreen(pathname), [pathname]);
+  return null;
+}
 function GameRoute() {
   const { pathname, search } = useLocation();
   return (
     <Suspense fallback={<div className="loading">Abrindo a fase…</div>}>
       <PuzzlePage key={pathname + search} />
+    </Suspense>
+  );
+}
+function OnlineRoute({ match }: { match?: boolean }) {
+  const { pathname } = useLocation();
+  return (
+    <Suspense fallback={<div className="loading">Abrindo o duelo…</div>}>
+      {match ? <OnlineMatch key={pathname} /> : <OnlineLobby />}
     </Suspense>
   );
 }
@@ -58,8 +84,18 @@ function Guarded({ children }: { children: React.ReactNode }) {
 function App() {
   const { ready, hydrate, player } = usePlayer();
   useEffect(() => {
-    void hydrate();
+    // O conteúdo baixado (fases, rivais, mapas) entra antes do progresso e da primeira tela.
+    void startContent().then(hydrate);
   }, [hydrate]);
+  useEffect(() => {
+    if (!ready) return;
+    // Novidades do servidor ficam para a próxima abertura; a conferência espera o app assentar.
+    const t = window.setTimeout(
+      () => void refreshContent(usePlayer.getState().player),
+      4000,
+    );
+    return () => window.clearTimeout(t);
+  }, [ready]);
   const loading = (
     <div className="loading">
       <img className="loading-icon" src="/icon-192.png" alt="" />
@@ -73,6 +109,8 @@ function App() {
         <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
           <BrowserRouter>
             <MusicController />
+            <PlayGamesSync />
+            <ScreenTracker />
             <Guarded>
               <Routes>
                 <Route element={<Layout />}>
@@ -84,6 +122,8 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                   <Route path="credits" element={<Credits />} />
                   <Route path="play/:id" element={<GameRoute />} />
+                  <Route path="online" element={<OnlineRoute />} />
+                  <Route path="online/:code" element={<OnlineRoute match />} />
                   <Route path="*" element={<Home />} />
                 </Route>
               </Routes>
@@ -96,6 +136,7 @@ function App() {
     </>
   );
 }
+installErrorReporting();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>

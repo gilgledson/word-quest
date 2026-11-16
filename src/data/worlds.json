@@ -1,0 +1,32 @@
+[
+  {
+    "id": "vila",
+    "nome": "Vila das Palavras",
+    "art": "/art/map-straight-v1.jpg",
+    "start": "Início da jornada"
+  },
+  {
+    "id": "floresta",
+    "nome": "Floresta dos Enigmas",
+    "art": "/art/map-forest-v1.jpg",
+    "start": "Início da floresta"
+  },
+  {
+    "id": "deserto",
+    "nome": "Deserto dos Mistérios",
+    "art": "/art/map-desert-v1.jpg",
+    "start": "Início do deserto"
+  },
+  {
+    "id": "reino",
+    "nome": "Reino dos Sábios",
+    "art": "/art/map-kingdom-v1.jpg",
+    "start": "Início do reino"
+  },
+  {
+    "id": "ilhas",
+    "nome": "Ilhas do Conhecimento",
+    "art": "/art/map-islands-v1.jpg",
+    "start": "Início das ilhas"
+  }
+]

@@ -1,0 +1,146 @@
+{
+  "opponents": [
+    {
+      "id": "bolota",
+      "name": "Bolota",
+      "species": "esquilo",
+      "level": "facil",
+      "style": "cuidadoso",
+      "tagline": "Devagar e sempre.",
+      "win": "Eu juntei mais palavras do que você!",
+      "lose": "Boa! Guardei as palavras pro inverno..."
+    },
+    {
+      "id": "fagulha",
+      "name": "Fagulha",
+      "species": "dragãozinho",
+      "level": "facil",
+      "style": "agressivo",
+      "tagline": "Vou com tudo!",
+      "win": "Queimei as palavras todas!",
+      "lose": "Ai, me apaguei..."
+    },
+    {
+      "id": "sabi",
+      "name": "Sabi",
+      "species": "coruja",
+      "level": "medio",
+      "style": "cuidadoso",
+      "tagline": "Cada letra no seu lugar.",
+      "win": "A sabedoria venceu hoje.",
+      "lose": "Impressionante. Aprendi algo novo."
+    },
+    {
+      "id": "raposo",
+      "name": "Raposo",
+      "species": "raposa",
+      "level": "medio",
+      "style": "agressivo",
+      "tagline": "Quem arrisca, petisca.",
+      "win": "Fui mais esperto, como sempre!",
+      "lose": "Hmpf... na próxima eu pego você."
+    },
+    {
+      "id": "oraculo",
+      "name": "Oráculo",
+      "species": "lince",
+      "level": "dificil",
+      "style": "cuidadoso",
+      "tagline": "Eu já vi esta jogada.",
+      "win": "Estava escrito nas estrelas.",
+      "lose": "Isso... eu não previ."
+    },
+    {
+      "id": "draco",
+      "name": "Draco",
+      "species": "dragão",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "Nenhuma palavra me escapa.",
+      "win": "Cinzas e vitória!",
+      "lose": "Respeito. Poucos me vencem."
+    },
+    {
+      "id": "cuco",
+      "name": "Mestre Cuco",
+      "species": "cuco",
+      "level": "medio",
+      "style": "cuidadoso",
+      "tagline": "Tudo tem a sua hora.",
+      "win": "Cuco! Já deu a sua hora.",
+      "lose": "Meu relógio parou...",
+      "boss": true
+    },
+    {
+      "id": "musgo",
+      "name": "Musgo",
+      "species": "árvore falante",
+      "level": "medio",
+      "style": "agressivo",
+      "tagline": "Minhas raízes vão fundo.",
+      "win": "A floresta é minha!",
+      "lose": "Até as árvores caem...",
+      "boss": true
+    },
+    {
+      "id": "zefa",
+      "name": "Esfinge Zefa",
+      "species": "esfinge",
+      "level": "dificil",
+      "style": "cuidadoso",
+      "tagline": "Decifre-me ou devore-se.",
+      "win": "O enigma era você.",
+      "lose": "Você decifrou... raro.",
+      "boss": true
+    },
+    {
+      "id": "lumen",
+      "name": "Rainha Lúmen",
+      "species": "leoa",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "Curve-se às palavras.",
+      "win": "Longa vida à rainha!",
+      "lose": "A coroa é sua por hoje.",
+      "boss": true
+    },
+    {
+      "id": "polvo",
+      "name": "Capitão Polvo",
+      "species": "polvo",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "Oito braços, oito palavras.",
+      "win": "Ah-har! Tesouro meu!",
+      "lose": "Navegar é preciso... perder também.",
+      "boss": true
+    }
+  ],
+  "byLevel": {
+    "1": "bolota",
+    "2": "bolota",
+    "3": "fagulha",
+    "4": "fagulha",
+    "5": "cuco",
+    "6": "fagulha",
+    "7": "sabi",
+    "8": "fagulha",
+    "9": "raposo",
+    "10": "musgo",
+    "11": "sabi",
+    "12": "raposo",
+    "13": "sabi",
+    "14": "raposo",
+    "15": "zefa",
+    "16": "raposo",
+    "17": "oraculo",
+    "18": "draco",
+    "19": "oraculo",
+    "20": "lumen",
+    "21": "draco",
+    "22": "oraculo",
+    "23": "draco",
+    "24": "oraculo",
+    "25": "polvo"
+  }
+}

@@ -34,7 +34,8 @@ export interface VersusState {
 }
 export const economy = {
   hint: 20,
-  duel: { win: 50, draw: 25, loss: 10 },
+  /** Moedas ao fim do duelo: vencer e empatar pagam; perder tira (o saldo não fica negativo). */
+  duel: { win: 50, draw: 25, loss: -10 },
   /** Estrelas ganhas ao vencer, conforme a dificuldade do oponente. */
   duelStars: { facil: 1, medio: 2, dificil: 3 },
   letterPoint: 1,

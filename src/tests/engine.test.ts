@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { levels, dailyPuzzle } from "../data/catalog";
+import { levels, levelVariants, dailyPuzzle } from "../data/catalog";
+/** As 25 fases e as grades alternativas de cada uma: todas passam pelas mesmas regras. */
+const grids = [...levels, ...levelVariants];
 import {
   CLUE_MAX_CHARS,
   CLUE_MAX_WORD,
@@ -128,7 +130,7 @@ function solveForFree(engine: PuzzleEngine, start: Session) {
 }
 
 describe("Catálogo", () => {
-  it.each(levels)("$id é válido, 8×10 e denso", (p) => {
+  it.each(grids)("$id é válido, 8×10 e denso", (p) => {
     expect(PuzzleValidator.validateCatalog(p)).toEqual([]);
     expect(p.rows).toBe(GRID_ROWS);
     expect(p.cols).toBe(GRID_COLS);
@@ -139,7 +141,7 @@ describe("Catálogo", () => {
       cells.filter((c) => c.kind === "blocked").length,
     ).toBeLessThanOrEqual(5);
   });
-  it.each(levels)("$id: pistas simples e duplas legíveis", (p) => {
+  it.each(grids)("$id: pistas simples e duplas legíveis", (p) => {
     for (const w of p.words) {
       expect(w.clue.length).toBeLessThanOrEqual(CLUE_MAX_CHARS);
       for (const part of w.clue.split(" "))
@@ -157,7 +159,7 @@ describe("Catálogo", () => {
       clueCells.some((c) => c.kind === "clue" && c.words.length === 2),
     ).toBe(true);
   });
-  it.each(levels)(
+  it.each(grids)(
     "$id: toda casa de resposta está numa palavra de 2+ letras",
     (p) => {
       const cells = new PuzzleEngine(p).matrix();
@@ -587,7 +589,7 @@ describe("Confirmação ✓, pontos e ajudas", () => {
       expect(hinted.rack.concat(hinted.supply)).toContain(wrong);
     expect(engine.rack.audit(hinted)).toEqual([]);
   });
-  it.each(levels)("$id é concluível só com ações gratuitas", (p) => {
+  it.each(grids)("$id é concluível só com ações gratuitas", (p) => {
     const engine = new PuzzleEngine(p);
     const s = solveForFree(engine, engine.start("t", "medio"));
     expect(engine.complete(s)).toBe(true);

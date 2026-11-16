@@ -21,10 +21,13 @@ export function VictoryBadge({ enabled }: { enabled: boolean }) {
 /** Estrelas que aparecem uma por vez; o texto continua acessível sem a animação. */
 export function VictoryStars({
   count,
+  total = count,
   enabled,
   decorative = false,
 }: {
   count: number;
+  /** Quantas estrelas cabem no total: as que faltam aparecem apagadas. */
+  total?: number;
   enabled: boolean;
   /** Repetição visual de outra contagem já anunciada: some para leitores de tela. */
   decorative?: boolean;
@@ -35,10 +38,11 @@ export function VictoryStars({
       aria-label={decorative ? undefined : `${count} estrelas`}
       aria-hidden={decorative || undefined}
     >
-      {Array.from({ length: count }, (_, i) => (
+      {Array.from({ length: Math.max(count, total) }, (_, i) => (
         <motion.span
           key={i}
           aria-hidden="true"
+          className={i < count ? "" : "off"}
           initial={enabled ? { opacity: 0, scale: 0.2, rotate: -40 } : false}
           animate={{ opacity: 1, scale: 1, rotate: 0 }}
           transition={{

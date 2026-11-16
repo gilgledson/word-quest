@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, it, expect } from "vitest";
 import { Home, Profile } from "../features/pages";
@@ -45,6 +45,7 @@ it("o perfil mostra os rivais (sem seletor): cada fase tem o seu e o último de 
       <Profile />
     </MemoryRouter>,
   );
+  fireEvent.click(screen.getByRole("tab", { name: "Rivais" }));
   expect(screen.queryAllByRole("radio")).toHaveLength(0);
   const list = screen.getByRole("list", { name: "Rivais" });
   expect(list.querySelectorAll("li")).toHaveLength(11);

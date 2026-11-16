@@ -14,6 +14,8 @@ interface State {
  * Evita a tela em branco quando algo quebra ao renderizar: mostra uma mensagem calma, garante
  * que o progresso está salvo (ele vive no IndexedDB, não na tela) e deixa tentar de novo.
  */
+import { reportError } from "../services/telemetry";
+
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { failed: false, key: this.props.resetKey };
   static getDerivedStateFromError(): Partial<State> {
@@ -26,6 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("Erro de renderização", error, info.componentStack);
+    reportError(error);
   }
   render() {
     if (!this.state.failed) return this.props.children;

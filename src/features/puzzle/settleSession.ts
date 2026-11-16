@@ -49,7 +49,7 @@ export function settleSession(
         days = [...days, date];
       }
     } else if (!(sessionKey in duels)) {
-      coins += economy.duel[result];
+      coins = Math.max(0, coins + economy.duel[result]);
       duels = { ...duels, [sessionKey]: result };
     }
     // Vencer o oponente conclui a fase e libera a próxima (o modo casual não tem progresso).

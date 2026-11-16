@@ -1,0 +1,22 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "content": {
+      ".read": true
+    },
+    "rooms": {
+      "$code": {
+        ".read": "auth != null",
+        ".write": "auth != null && (!data.exists() || data.child('host/uid').val() === auth.uid || data.child('guest/uid').val() === auth.uid || (!data.child('guest').exists() && data.child('status').val() === 'waiting'))",
+        ".validate": "$code.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['code', 'puzzleId', 'host', 'status', 'rev', 'state'])",
+        "state": {
+          ".validate": "newData.isString() && newData.val().length < 60000"
+        },
+        "grid": {
+          ".validate": "newData.isString() && newData.val().length < 60000"
+        }
+      }
+    }
+  }
+}

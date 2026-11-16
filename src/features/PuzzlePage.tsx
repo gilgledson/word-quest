@@ -5,8 +5,16 @@ import { TileFlights, useTileFlights } from "../hooks/useTileFlights";
 import { useFitGrid, type BoardMode } from "../hooks/useFitGrid";
 import { Link } from "react-router-dom";
 import { ArrowLeft, RotateCw } from "lucide-react";
-import { levels, maps, mapOf, worldLevels } from "../data/catalog";
 import {
+  levelGrid,
+  levels,
+  maps,
+  mapOf,
+  variantCount,
+  worldLevels,
+} from "../data/catalog";
+import {
+  PuzzleEngine,
   PuzzleValidator,
   economy,
   normalize,
@@ -28,6 +36,7 @@ import {
   opponentById,
   opponentOfSession,
   shortName,
+  type OpponentProfile,
 } from "../game/opponents";
 import { useAnimationPrefs } from "../animations/hooks/useAnimationPrefs";
 import { useGameAnimations } from "../animations/hooks/useGameAnimations";
@@ -45,6 +54,7 @@ import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
 import { settleSession } from "./puzzle/settleSession";
+import { track } from "../services/telemetry";
 import { achievedIds, achievementStatus } from "../game/achievements";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
 /** Duração do relógio opcional do turno do jogador. */
@@ -89,11 +99,27 @@ const lastBotChip = (m: LastBotMove) =>
     : m.gained
       ? `${m.gained} letra${m.gained > 1 ? "s" : ""} · +${m.total}`
       : "errou";
+/** Duelo ao vivo: o rival é outro jogador e as jogadas chegam do servidor. */
+export interface OnlineDuel {
+  rival: OpponentProfile;
+  /** Estado mais recente da sala, já do ponto de vista deste jogador. */
+  incoming: Session;
+  /** Envia ao servidor a vez que este jogador acabou de confirmar. */
+  onTurn: (next: Session) => void;
+  /** Aviso fixo sobre a conexão do amigo, quando há. */
+  notice?: string;
+}
 /** O jogo é um confronto: o oponente vem da fase (ou do sorteio no casual e no diário). */
 export function PuzzlePage() {
-  return <Duel />;
+  return <Duel setup={useDuelSetup()} />;
 }
-function Duel() {
+export function Duel({
+  setup,
+  online,
+}: {
+  setup: ReturnType<typeof useDuelSetup>;
+  online?: OnlineDuel;
+}) {
   const { player, update } = usePlayer();
   const sfx = (name: EffectName, count?: number) => {
     playSfx(player.sound, name, count);
@@ -110,9 +136,9 @@ function Duel() {
     engine,
     sessionKey,
     session,
-  } = useDuelSetup();
-  // Quem joga esta partida: o personagem gravado na sessão (partidas antigas usam o padrão do nível).
-  const rival = opponentOfSession(session?.versus);
+  } = setup;
+  // Quem joga esta partida: o amigo (ao vivo) ou o personagem gravado na sessão.
+  const rival = online?.rival ?? opponentOfSession(session?.versus);
   const [selected, setSelected] = useState(
     () =>
       puzzle?.words.find((w) => session && !PuzzleValidator.correct(w, session))
@@ -150,6 +176,7 @@ function Duel() {
     () => false,
   );
   const botStep = useRef<() => void>(() => {});
+  const rivalMoved = useRef<(next: Session) => void>(() => {});
   const botTimers = useRef<number[]>([]);
   const expireTurn = useRef<() => void>(() => {});
   const [botReveal, setBotReveal] = useState<Record<string, string> | null>(
@@ -221,6 +248,19 @@ function Duel() {
       sfx(p > ai ? "win" : p === ai ? "draw" : "lose");
       if (p > ai) void celebrate(player.animations);
       setResultOpen(true);
+      track("duel_end", {
+        result: p > ai ? "win" : p === ai ? "draw" : "loss",
+        mode: online
+          ? "online"
+          : daily
+            ? "diario"
+            : casual
+              ? "casual"
+              : "aventura",
+        level: session.versus.level,
+        score_player: p,
+        score_rival: ai,
+      });
     }
     wasFinished.current = finished;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -234,6 +274,20 @@ function Duel() {
       setBotReveal(null);
     };
   }, [botTurn, session?.versus?.rngCount, sessionKey, player.animations]);
+  // Ao vivo: a jogada do amigo chega do servidor (uma jogada nova tem número maior que o da tela).
+  const incoming = online?.incoming;
+  const incomingRev = incoming?.versus.rngCount;
+  useEffect(() => {
+    if (!incoming || !session) return;
+    if (incoming.versus.rngCount <= session.versus.rngCount) return;
+    rivalMoved.current(incoming);
+    return () => {
+      botTimers.current.forEach((t) => window.clearTimeout(t));
+      botTimers.current = [];
+      setBotReveal(null);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [incomingRev, sessionKey]);
   // Avisa uma vez quando o curinga chega ao banco.
   const hasJoker = !!session?.rack.some((id) => session.tiles[id].joker);
   const hadJoker = useRef(hasJoker);
@@ -340,8 +394,13 @@ function Duel() {
         date,
       }),
     );
-  botStep.current = () => {
-    const turn = opponentTurn(engine, session);
+  /** Mostra a jogada do rival (letra a letra, com som e pontos) e grava o resultado. */
+  const showRivalMove = (turn: {
+    session: Session;
+    gained: number;
+    bonus: number;
+    passed: boolean;
+  }) => {
     const fresh = turn.session.locked.filter(
       (k) => !session.locked.includes(k),
     );
@@ -354,7 +413,7 @@ function Duel() {
         cells: fresh,
         gained: turn.gained,
         total,
-        passed: turn.plan.wordId === null,
+        passed: turn.passed,
       });
       if (turn.gained) popScore(fresh, turn.gained, turn.bonus, "ai");
       if (turn.gained) {
@@ -362,7 +421,7 @@ function Duel() {
         else if (!animated) sfx("botMove", turn.gained);
       } else sfx("botPass");
       setMessage(
-        turn.plan.wordId === null
+        turn.passed
           ? `${rival.name} passou a vez.`
           : turn.gained
             ? `${rival.name} confirmou ${turn.gained} letra${turn.gained > 1 ? "s" : ""} (+${total}). Sua vez!`
@@ -375,10 +434,13 @@ function Duel() {
       at(0, finish);
       return;
     }
-    // O rival "pensa" mais quando a jogada é maior e coloca as letras uma a uma.
-    const think = fresh.length
-      ? 500 + 130 * Math.min(fresh.length, 4)
-      : 700 + (turn.plan.wordId === null ? 0 : 150);
+    // O rival "pensa" mais quando a jogada é maior e coloca as letras uma a uma. Ao vivo o amigo
+    // já pensou: as letras entram logo.
+    const think = online
+      ? 250
+      : fresh.length
+        ? 500 + 130 * Math.min(fresh.length, 4)
+        : 700 + (turn.passed ? 0 : 150);
     fresh.forEach((cell, i) =>
       at(think + BOT_LETTER_MS * i, () => {
         setBotReveal((r) => ({ ...r, [cell]: turn.session.letters[cell] }));
@@ -386,6 +448,32 @@ function Duel() {
       }),
     );
     at(think + BOT_LETTER_MS * fresh.length + (fresh.length ? 320 : 0), finish);
+  };
+  botStep.current = () => {
+    // Ao vivo quem joga é o amigo: a vez dele chega pelo servidor (ver `rivalMoved`).
+    if (online) return;
+    const turn = opponentTurn(engine, session);
+    showRivalMove({
+      session: turn.session,
+      gained: turn.gained,
+      bonus: turn.bonus,
+      passed: turn.plan.wordId === null,
+    });
+  };
+  rivalMoved.current = (shared) => {
+    // A grade mudou na vez do amigo: se as letras deste jogador não servem mais, ele recebe outras.
+    const next = engine.rack.ensurePlayable(shared);
+    const gained = next.locked.filter(
+      (k) => !session.locked.includes(k),
+    ).length;
+    const scored = next.scores.ai - session.scores.ai;
+    showRivalMove({
+      // Os erros deste jogador não vêm do servidor: valem os da tela.
+      session: { ...next, misses: session.misses },
+      gained,
+      bonus: Math.max(0, scored - gained),
+      passed: gained === 0 && scored === 0,
+    });
   };
   const afford = (cost: number) => {
     if (player.coins >= cost) return true;
@@ -492,15 +580,18 @@ function Duel() {
         letter: session.letters[cellId] ?? "",
       })),
     );
+    // Ao vivo cada vez confirmada tem um número: é por ele que o amigo sabe que há jogada nova.
+    const count = versus.rngCount + (online ? 1 : 0);
     const next: Session = engine.complete(r.session)
-      ? r.session
-      : { ...r.session, versus: { ...versus, turn: "ai" } };
+      ? { ...r.session, versus: { ...versus, rngCount: count } }
+      : { ...r.session, versus: { ...versus, turn: "ai", rngCount: count } };
     // Letras erradas voltam ao banco voando, da casa até o lugar delas.
     const rejected = r.wrongCells.flatMap((cellId) => {
       const tile = Object.values(session.tiles).find((t) => t.cell === cellId);
       return tile ? [{ tile, from: rectOf(`[data-cell="${cellId}"]`) }] : [];
     });
     commit(next);
+    online?.onTurn(next);
     for (const { tile, from } of rejected)
       tileFlights.launch(tile.id, tile.letter, from, () =>
         rectOf(`[data-tile="${tile.id}"]`),
@@ -649,19 +740,27 @@ function Duel() {
           </Link>
           <div>
             <span className="eyebrow">
-              {daily
-                ? "DESAFIO DO DIA"
-                : casual
-                  ? `CASUAL · ${theme?.nome.toUpperCase()}`
-                  : "DUELO"}{" "}
-              · {OPPONENT_LEVELS[versus.level].label.toUpperCase()}
+              {online ? (
+                "DUELO AO VIVO"
+              ) : (
+                <>
+                  {daily
+                    ? "DESAFIO DO DIA"
+                    : casual
+                      ? `CASUAL · ${theme?.nome.toUpperCase()}`
+                      : "DUELO"}{" "}
+                  · {OPPONENT_LEVELS[versus.level].label.toUpperCase()}
+                </>
+              )}
             </span>
             <h2>
-              {daily
-                ? "Uma descoberta diária"
-                : casual
-                  ? `Grade ${puzzle.number}`
-                  : `Fase ${puzzle.number}`}
+              {online
+                ? `Contra ${shortName(rival)}`
+                : daily
+                  ? "Uma descoberta diária"
+                  : casual
+                    ? `Grade ${puzzle.number}`
+                    : `Fase ${puzzle.number}`}
             </h2>
           </div>
           <span
@@ -735,15 +834,31 @@ function Duel() {
           fxEnabled={prefs.enabled}
           nextTo={nextTo}
           backTo={backTo}
+          online={!!online}
           onNext={() => setSelected("")}
           onReplay={() => {
-            const fresh = engine.start(`${sessionKey}:${Date.now()}`, botLevel);
+            // Na campanha a revanche troca de grade: quem perdeu não joga de novo as mesmas palavras.
+            const count = variantCount(puzzle.id);
+            const rotate = !daily && !casual && !online && count > 1;
+            const variant = ((player.variants?.[puzzle.id] ?? 0) + 1) % count;
+            const grid = rotate ? levelGrid(puzzle.id, variant) : undefined;
+            const fresh = (grid ? new PuzzleEngine(grid) : engine).start(
+              `${sessionKey}:${Date.now()}`,
+              botLevel,
+            );
             update((p) => ({
               ...p,
+              variants: grid
+                ? { ...p.variants, [puzzle.id]: variant }
+                : p.variants,
               sessions: { ...p.sessions, [sessionKey]: fresh },
             }));
             setSelected("");
-            setMessage("Toque em uma pista para começar de novo.");
+            setMessage(
+              grid
+                ? "Grade nova: toque em uma pista para começar."
+                : "Toque em uma pista para começar de novo.",
+            );
           }}
         />
       ) : (
@@ -764,14 +879,18 @@ function Duel() {
             )}
             <span className="eyebrow">
               {botTurn
-                ? "VEZ DO OPONENTE"
+                ? online
+                  ? `VEZ DE ${shortName(rival).toUpperCase()}`
+                  : "VEZ DO OPONENTE"
                 : word
                   ? `${word.direction === "horizontal" ? "→ HORIZONTAL" : "↓ VERTICAL"} · ${normalize(word.answer).length} LETRAS`
                   : "TOQUE EM UMA PISTA"}
             </span>
             <h2>
               {botTurn
-                ? `${rival.name} pensando…`
+                ? online
+                  ? (online.notice ?? `${rival.name} está jogando…`)
+                  : `${rival.name} pensando…`
                 : (word?.clue ?? "Escolha por onde começar")}
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
@@ -809,7 +928,10 @@ function Duel() {
                   step={tutorialStep}
                   letter={spotlight?.letter}
                   botTurn={botTurn}
-                  onDone={() => update((p) => ({ ...p, tutorialDone: true }))}
+                  onDone={() => {
+                    track("tutorial_complete");
+                    update((p) => ({ ...p, tutorialDone: true }));
+                  }}
                 />
               )}
             </div>

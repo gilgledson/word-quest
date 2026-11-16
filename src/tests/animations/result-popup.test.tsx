@@ -38,11 +38,11 @@ describe("Janela de resultado do duelo", () => {
     );
     void sc;
   });
-  it("derrota: mostra que perdeu, com a recompensa menor, sem próxima fase", () => {
+  it("derrota: mostra que perdeu e quantas moedas saíram, sem próxima fase", () => {
     finish(true);
     const dialog = popup()!;
     expect(dialog).toHaveTextContent("Derrota");
-    expect(dialog).toHaveTextContent(`+${economy.duel.loss} moedas`);
+    expect(dialog).toHaveTextContent(`−${-economy.duel.loss} moedas`);
     expect(screen.queryByRole("link", { name: "Próxima fase" })).toBeNull();
   });
   it("fecha pelo botão, pelo Esc e tocando fora; o painel de resultado continua na tela", () => {

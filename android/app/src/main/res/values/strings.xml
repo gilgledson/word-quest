@@ -4,4 +4,7 @@
     <string name="title_activity_main">WordQuest</string>
     <string name="package_name">br.com.wordquest.game</string>
     <string name="custom_url_scheme">br.com.wordquest.game</string>
+    <!-- Id do projeto dos Serviços do Google Play Games (Play Console > Play Games > Configuração).
+         Vazio: o jogo roda sem login, conquistas e placar da Google. -->
+    <string name="game_services_project_id" translatable="false">185387215466</string>
 </resources>

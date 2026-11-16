@@ -99,6 +99,7 @@ describe("Créditos", () => {
         <Profile />
       </MemoryRouter>,
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Ajustes" }));
     expect(
       screen.getByRole("link", { name: "Créditos e licenças" }),
     ).toHaveAttribute("href", "/credits");

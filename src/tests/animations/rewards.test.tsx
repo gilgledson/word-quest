@@ -70,13 +70,13 @@ describe("Moedas da recompensa", () => {
     expect(screen.queryByTestId("fx-coin-amount")).toBeNull();
     expect(coinsNow()).toBe(start + economy.duel.win);
   });
-  it("derrota também paga a recompensa menor, sem onda nem selo de fase concluída", () => {
+  it("derrota tira moedas, sem moedas voando, onda nem selo de fase concluída", () => {
     const start = initialPlayer.coins;
     finish({ lose: true });
+    expect(economy.duel.loss).toBeLessThan(0);
     expect(coinsNow()).toBe(start + economy.duel.loss);
-    expect(screen.getByTestId("fx-coin-amount")).toHaveTextContent(
-      `+${economy.duel.loss}`,
-    );
+    expect(screen.queryByTestId("fx-coin-amount")).toBeNull();
+    expect(screen.queryAllByTestId("fx-coin")).toHaveLength(0);
     expect(screen.queryByTestId("fx-wave")).toBeNull();
     expect(screen.queryByText("Fase concluída!")).toBeNull();
     expect(screen.getByText("Sabi venceu")).toBeInTheDocument();

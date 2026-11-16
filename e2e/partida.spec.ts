@@ -88,7 +88,7 @@ test("joga um turno: coloca letras, confirma, o oponente responde e o progresso 
   expect(mine).toBeGreaterThanOrEqual(placed);
 
   // A vez passa para o oponente e volta, com o banco reposto.
-  await expect(page.getByText("vez do oponente ▶")).toBeVisible();
+  await expect(page.getByText("vez do rival ▶")).toBeVisible();
   await expect(page.getByText("◀ sua vez")).toBeVisible({ timeout: 15_000 });
   await expect(bank(page).getByRole("button")).toHaveCount(5);
   expect(Number(await score(page, "player").innerText())).toBe(mine);

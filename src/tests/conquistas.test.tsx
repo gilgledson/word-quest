@@ -154,13 +154,11 @@ describe("telas", () => {
   };
   it("o Perfil lista todas, com progresso e prêmio", () => {
     open(<Profile />, { daily: ["2026-11-01", "2026-11-02"] });
+    fireEvent.click(screen.getByRole("tab", { name: /^Conquistas/ }));
     const list = screen.getByLabelText("Conquistas");
-    // Recolhida, mostra só as próximas metas; "Ver todas" abre o resto.
-    expect(list.querySelectorAll("li")).toHaveLength(4);
-    fireEvent.click(
-      screen.getByRole("button", { name: "Ver todas as 14 conquistas" }),
-    );
+    // Um card por conquista: todas ficam na lista, uma na frente por vez.
     expect(list.querySelectorAll("li")).toHaveLength(ACHIEVEMENTS.length);
+    expect(list.querySelectorAll("li:not([inert])")).toHaveLength(1);
     expect(
       screen.getByRole("progressbar", { name: "Progresso de Semana perfeita" }),
     ).toHaveAttribute("aria-valuenow", "2");
@@ -168,6 +166,7 @@ describe("telas", () => {
   });
   it("resgatar no Perfil soma as moedas e marca como resgatada", () => {
     open(<Profile />, { stars: won(1) });
+    fireEvent.click(screen.getByRole("tab", { name: /^Conquistas/ }));
     const first = screen.getByLabelText("Conquistas").querySelector("li")!;
     // As prontas vêm primeiro.
     expect(first).toHaveTextContent("O primeiro passo");
@@ -180,14 +179,14 @@ describe("telas", () => {
     expect(now.coins).toBe(initialPlayer.coins + 20);
     expect(now.achievements).toEqual(["primeiro-passo"]);
     expect(screen.queryByRole("button", { name: /^Resgatar/ })).toBeNull();
-    // As resgatadas vão para o fim da lista, que abre no "Ver todas".
-    fireEvent.click(screen.getByRole("button", { name: /^Ver todas/ }));
+    // As resgatadas vão para o fim da lista.
     expect(screen.getByLabelText("Conquistas")).toHaveTextContent(
       "Resgatada ✓",
     );
   });
   it("'Resgatar tudo' paga todas as prontas de uma vez e some", () => {
     open(<Profile />, { stars: won(5) });
+    fireEvent.click(screen.getByRole("tab", { name: /^Conquistas/ }));
     // Passo, chefe e mundo completo: 20 + 50 + 60.
     fireEvent.click(
       screen.getByRole("button", {
@@ -201,6 +200,7 @@ describe("telas", () => {
     // Com uma só pronta, o botão geral não aparece.
     cleanup();
     open(<Profile />, { stars: won(1) });
+    fireEvent.click(screen.getByRole("tab", { name: /^Conquistas/ }));
     expect(screen.queryByRole("button", { name: /^Resgatar tudo/ })).toBeNull();
   });
   it("a navegação avisa quantas conquistas esperam o resgate", () => {

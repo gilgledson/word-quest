@@ -36,6 +36,7 @@ test("perfil mostra o progresso e as conquistas", async ({ page }) => {
   await expect(box).toContainText("Fases");
   await expect(box).toContainText("0/25");
   // Sem progresso, nenhuma conquista está pronta: a lista mostra metas e prêmios.
+  await page.getByRole("tab", { name: "Conquistas" }).click();
   const list = page.getByLabel("Conquistas", { exact: true });
   await expect(list).toContainText("O primeiro passo");
   await expect(list.getByRole("button", { name: /^Resgatar/ })).toHaveCount(0);

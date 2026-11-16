@@ -150,6 +150,7 @@ describe("Preferência de som", () => {
         <Profile />
       </MemoryRouter>,
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Ajustes" }));
     const toggle = screen.getByRole("checkbox", { name: /Efeitos sonoros/ });
     expect(toggle).toBeChecked();
     fireEvent.click(toggle);
@@ -163,6 +164,7 @@ describe("Preferência de som", () => {
         <Profile />
       </MemoryRouter>,
     );
+    fireEvent.click(screen.getByRole("tab", { name: "Ajustes" }));
     fireEvent.click(screen.getByRole("button", { name: /Testar som/ }));
     expect(started).toHaveLength(3);
     fireEvent.click(screen.getByRole("checkbox", { name: /Efeitos sonoros/ }));

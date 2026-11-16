@@ -47,18 +47,21 @@ const beatenRivals = (p: Player) => [
 ];
 const beatenBosses = (p: Player) =>
   beatenRivals(p).filter((id) => opponentById(id)?.boss).length;
-const BOSSES = new Set(
-  Object.values(OPPONENT_BY_LEVEL).filter((id) => opponentById(id)?.boss),
-).size;
+/** Chefes da Aventura (lido na hora: o conteúdo baixado pode trazer mundos novos). */
+const bosses = () =>
+  new Set(
+    Object.values(OPPONENT_BY_LEVEL).filter((id) => opponentById(id)?.boss),
+  ).size;
 /** Fases vencidas no mundo em que o jogador mais avançou, e o tamanho desse mundo. */
-const worldSize = Math.max(
-  ...Object.values(
-    levels.reduce<Record<string, number>>(
-      (n, l) => ({ ...n, [l.world]: (n[l.world] ?? 0) + 1 }),
-      {},
+const worldSize = () =>
+  Math.max(
+    ...Object.values(
+      levels.reduce<Record<string, number>>(
+        (n, l) => ({ ...n, [l.world]: (n[l.world] ?? 0) + 1 }),
+        {},
+      ),
     ),
-  ),
-);
+  );
 const bestWorld = (p: Player) =>
   Math.max(
     0,
@@ -142,9 +145,13 @@ export const ACHIEVEMENTS: Achievement[] = [
   {
     id: "chefes-todos",
     title: "Lenda dos cinco mundos",
-    text: `Vença os ${BOSSES} chefes.`,
+    get text() {
+      return `Vença os ${bosses()} chefes.`;
+    },
     coins: 150,
-    goal: BOSSES,
+    get goal() {
+      return bosses();
+    },
     value: beatenBosses,
   },
   {
@@ -152,7 +159,9 @@ export const ACHIEVEMENTS: Achievement[] = [
     title: "Mundo completo",
     text: "Vença todas as fases de um mundo.",
     coins: 60,
-    goal: worldSize,
+    get goal() {
+      return worldSize();
+    },
     value: bestWorld,
   },
   {

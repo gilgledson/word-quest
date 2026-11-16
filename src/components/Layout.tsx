@@ -1,4 +1,5 @@
 import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
+import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
 import {
   Compass,
@@ -51,7 +52,7 @@ export function Layout() {
   const enabled = usePlayer((s) => s.player.animations);
   const toClaim = usePlayer((s) => claimableCount(s.player));
   const home = pathname === "/";
-  const playing = pathname.startsWith("/play/");
+  const playing = isPlayPath(pathname);
   const map = pathname.startsWith("/map");
   const secondary = !home && !playing && !map;
   return (

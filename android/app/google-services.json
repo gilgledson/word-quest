@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "896431008098",
+    "firebase_url": "https://wordquest-online-default-rtdb.firebaseio.com",
+    "project_id": "wordquest-online",
+    "storage_bucket": "wordquest-online.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896431008098:android:a8fd35de7588a7598d243b",
+        "android_client_info": {
+          "package_name": "br.com.wordquest.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6ijXmxPc9XkJtEyEzMJuOguTRw7L04Aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896431008098:android:484225ff8006df948d243b",
+        "android_client_info": {
+          "package_name": "br.com.wordquest.game.teste"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6ijXmxPc9XkJtEyEzMJuOguTRw7L04Aw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

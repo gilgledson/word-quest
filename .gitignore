@@ -16,3 +16,13 @@ android/.gradle/
 android/local.properties
 android/app/build/
 android/build/
+
+# Chave de upload do Google Play e suas senhas: nunca vão para o repositório
+android/keystore.properties
+android/*.jks
+android/*.keystore
+*.jks
+
+# Conteúdo montado pela publicação (scripts/publish-content.mjs)
+content/build/
+.firebase/

@@ -1,36 +1,12 @@
-/* Modo casual: escolha do tema. */
-.theme-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 16px;
-}
-.theme-card {
-  display: grid;
-  justify-items: center;
-  gap: 6px;
-  padding: 22px 10px 16px;
-  border: 3px solid #fff2c9;
-  border-radius: 22px;
-  background: linear-gradient(#fffef5, #fff1d2);
-  color: #12264a;
-  box-shadow: 0 5px 0 #c9b985;
-  font: inherit;
-  cursor: pointer;
-}
-.theme-card svg {
-  color: #1f6fe0;
-}
+/* Modo casual: cada tema é um card do baralho (ver deck.css). */
 .theme-card strong {
-  font-size: 18px;
+  font-size: 26px;
+  font-weight: 900;
 }
 .theme-card small {
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 700;
   color: #6d5f36;
-}
-.theme-card:active {
-  transform: translateY(2px);
-  box-shadow: 0 3px 0 #c9b985;
 }
 .campaign-gate.open {
   background: #2f8f5b;
@@ -103,18 +79,358 @@ a.campaign-start {
   --theme-soft: #e2dcfa;
 }
 .theme-icon {
+  position: relative;
   display: grid;
   place-items: center;
+  flex: none;
   width: 58px;
   height: 58px;
+  margin-top: -36px;
+  border: 4px solid #fffef7;
   border-radius: 50%;
   background: var(--theme);
-  box-shadow: 0 0 0 5px var(--theme-soft);
-  margin-bottom: 4px;
+  box-shadow: 0 4px 10px #24365740;
 }
 .theme-card .theme-icon svg {
   color: #fff;
 }
 .theme-card .theme-progress i {
   background: var(--theme);
+}
+
+/* Duelo ao vivo: entrada na tela Casual, sala de espera e avisos. */
+.online-entry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  min-height: 50px;
+  margin: 10px auto 0;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 2px solid #1c5fc4;
+  background: #fffcf5;
+  color: #123c86;
+  font-size: 15px;
+  text-decoration: none;
+  box-shadow: 0 3px 0 #b9cdea;
+}
+/* Lobby do duelo ao vivo: duas abas, tema da partida e o confronto "Você VS Amigo". */
+.app-secondary .online-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 440px;
+}
+.online-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 14px 16px 10px;
+  border: 3px solid #fff2c9;
+  border-radius: 26px;
+  background: linear-gradient(#fffef7, #fff3d6);
+  box-shadow:
+    0 5px 0 #c9b985,
+    0 12px 26px #24365726;
+  color: #12264a;
+}
+.online-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 900;
+}
+.online-card h2::before,
+.online-card h2::after {
+  content: "";
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: #e9c869;
+}
+.online-themes {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+.online-themes button {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: calc((100% - 16px) / 3);
+  padding: 5px 5px 4px;
+  border: 3px solid #efe6c8;
+  border-radius: 16px;
+  background: #fffdf6;
+  color: #12264a;
+  font-size: 13px;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #d9cfae;
+}
+.online-themes button.selected {
+  border-color: #f0a81e;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  color: #fff;
+  box-shadow: 0 3px 0 #123c86;
+}
+.online-theme-art {
+  width: 100%;
+  height: clamp(44px, 8dvh, 70px);
+  border-radius: 10px;
+  object-fit: cover;
+}
+.online-theme-art.surprise {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7a4ddb, #3a6ff0);
+  color: #ffd75a;
+}
+.online-versus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.online-versus > span {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-width: 0;
+  font-size: 13px;
+}
+.online-versus .opponent-avatar,
+.online-versus em {
+  width: 60px;
+  height: 60px;
+  margin: 0;
+  border: 3px solid #f0c24a;
+  border-radius: 50%;
+  background: #e5f1e8;
+}
+.online-versus em {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(#ffe28a, #f0a81e);
+  color: #7a4d00;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 900;
+}
+.online-versus b {
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.online-versus i {
+  color: #e2890b;
+  font-size: 26px;
+  font-style: italic;
+  font-weight: 900;
+  text-shadow: 0 2px 0 #fff;
+}
+.online-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.online-card .button {
+  width: 100%;
+  font-size: 17px;
+}
+.online-mail {
+  display: grid;
+  place-items: center;
+  align-self: center;
+  width: 84px;
+  height: 84px;
+  border: 4px solid #fff3c4;
+  border-radius: 50%;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  color: #ffd75a;
+  box-shadow: 0 4px 0 #123c86;
+}
+.online-code-field {
+  display: grid;
+  gap: 8px;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 900;
+}
+/* O campo é um só, transparente, por cima de seis caixinhas que mostram o que foi digitado. */
+.online-code-boxes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 6px;
+}
+.online-code-boxes input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: 16px;
+  outline: none;
+}
+.online-code-boxes i {
+  display: grid;
+  place-items: center;
+  height: 52px;
+  border: 3px solid #efe6c8;
+  border-radius: 12px;
+  background: #fff;
+  color: #123c86;
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #d9cfae;
+}
+.online-code-boxes:focus-within i.next {
+  border-color: #1c5fc4;
+  box-shadow:
+    0 3px 0 #123c86,
+    0 0 0 3px #f0a81e80;
+}
+.online-hint {
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  color: #45525c;
+}
+.online-error {
+  min-height: 20px;
+  margin: 0;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #a8263a;
+}
+/* Sala de espera e avisos da partida: um cartão sobre a paisagem, para o texto ler bem. */
+.online-state {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  width: calc(100% - 32px);
+  max-width: 440px;
+  margin: 24px auto 0;
+  padding: 20px 18px 16px;
+  border: 3px solid #fff2c9;
+  border-radius: 26px;
+  background: linear-gradient(#fffef7, #fff3d6);
+  box-shadow:
+    0 5px 0 #c9b985,
+    0 12px 26px #24365740;
+  color: #12264a;
+}
+.online-state h1 {
+  margin: 0;
+  font-size: 26px;
+}
+.online-state p {
+  margin: 0;
+  color: #33414d;
+}
+.online-state .button {
+  width: 100%;
+  gap: 8px;
+  font-size: 16px;
+}
+/* O cartão fica no meio da tela, entre o topo e a base. */
+.app-playing > main:has(.online-state) {
+  display: grid;
+  align-content: center;
+  padding-bottom: 8dvh;
+}
+.app-playing > main:has(.online-state) .online-state {
+  margin-top: 0;
+}
+/* Botões secundários do duelo ao vivo: contorno azul; o de cancelar, vermelho. */
+.button.online-ghost,
+.button.online-danger {
+  min-height: 48px;
+  padding: 0 14px;
+  border: 2px solid #1c5fc4;
+  background: #fffdf6;
+  color: #123c86;
+  box-shadow: 0 3px 0 #b9cdea;
+  text-decoration: none;
+}
+.button.online-danger {
+  border-color: #c0392b;
+  color: #9a1f14;
+  box-shadow: 0 3px 0 #ecc0ba;
+}
+.button.online-ghost:active,
+.button.online-danger:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.online-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+.online-status {
+  min-height: 20px;
+  font-size: 13px;
+  font-weight: 800;
+}
+.online-state .online-status {
+  color: #23794c;
+}
+.online-theme-note {
+  padding: 4px 14px;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  font-weight: 800;
+}
+.online-state .online-theme-note {
+  color: #5b3a00;
+}
+@media (max-height: 700px) {
+  .online-versus {
+    display: none;
+  }
+}
+.online-code {
+  display: block;
+  padding: 12px 22px;
+  border-radius: 16px;
+  border: 2px dashed #1c5fc4;
+  background: #fffcf5;
+  font-size: 38px;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  color: #123c86;
+}
+.online-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  padding: 8px 12px;
+  background: #fff1c9;
+  color: #5b3a00;
+  font-weight: 700;
+}
+.online-banner button {
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: #5b3a00;
+  color: #fff;
+  font-weight: 800;
 }

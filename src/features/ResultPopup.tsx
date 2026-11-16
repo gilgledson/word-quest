@@ -4,6 +4,10 @@ import { Award, Frown, Handshake, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
 import { OpponentPortrait } from "../components/OpponentPortrait";
+import { OpponentAvatar } from "../components/OpponentAvatar";
+import { CoinIcon } from "../components/CoinIcon";
+import { avatarOf } from "../game/avatars";
+import { usePlayer } from "../stores/player";
 import type { Mood, OpponentProfile } from "../game/opponents";
 import type { GameRecord } from "../services/repository";
 import { MatchRecap } from "./puzzle/MatchRecap";
@@ -17,7 +21,7 @@ interface Props {
   mood: Mood;
   moodKey: number;
   scores: { p: number; ai: number };
-  /** Moedas que a partida pagou (0 quando não há recompensa). */
+  /** Moedas da partida: positivo quando pagou, negativo quando tirou (derrota), 0 sem mudança. */
   coins: number;
   /** Estrelas ganhas (só na vitória da campanha). */
   stars: number;
@@ -86,6 +90,7 @@ export function ResultPopup({
       : result === "win"
         ? rival.lose
         : rival.tagline;
+  const avatar = usePlayer((s) => s.player.avatar);
   const close = useRef<HTMLButtonElement>(null);
   useEffect(() => close.current?.focus(), []);
   return (
@@ -108,35 +113,42 @@ export function ResultPopup({
         transition={{ type: "spring", stiffness: 320, damping: 20 }}
         onClick={(e) => e.stopPropagation()}
       >
+        <span className="result-rays" aria-hidden="true" />
         <span className="result-icon" aria-hidden="true">
-          <Icon size={44} />
+          <Icon size={40} />
         </span>
         <h2>{title}</h2>
+        {stars > 0 && (
+          <VictoryStars count={stars} total={3} enabled={enabled} decorative />
+        )}
         <p className="result-text">{text(rival.name)}</p>
-        <p className="result-quote">
-          <OpponentPortrait
-            opponent={rival}
-            mood={mood}
-            moodKey={moodKey}
-            size={52}
-            animate={enabled}
-          />
-          <span>
-            <b>{rival.name}:</b> “{quote}”
-          </span>
-        </p>
         <div className="result-score" aria-label="Placar final">
           <span>
+            <OpponentAvatar opponent={avatarOf(avatar)} size={58} />
             <b>{scores.p}</b> Você
           </span>
           <span aria-hidden="true">×</span>
           <span>
+            <OpponentPortrait
+              opponent={rival}
+              mood={mood}
+              moodKey={moodKey}
+              size={58}
+              animate={enabled}
+            />
             <b>{scores.ai}</b> {rival.name}
           </span>
         </div>
-        {coins > 0 && <p className="result-coins">+{coins} moedas</p>}
-        {stars > 0 && (
-          <VictoryStars count={stars} enabled={enabled} decorative />
+        <p className="result-quote">
+          <span>
+            <b>{rival.name}:</b> “{quote}”
+          </span>
+        </p>
+        {coins !== 0 && (
+          <p className={`result-coins ${coins < 0 ? "lost" : ""}`}>
+            <CoinIcon size={20} /> {coins > 0 ? `+${coins}` : `−${-coins}`}{" "}
+            moedas
+          </p>
         )}
         {progress && (
           <div className="result-progress">
@@ -190,7 +202,7 @@ export function ResultPopup({
           )}
           <button
             ref={close}
-            className={nextTo ? "text-link" : "button primary"}
+            className={nextTo ? "button result-ghost" : "button primary"}
             onClick={onClose}
           >
             {nextTo ? "Ver o tabuleiro" : "Continuar"}

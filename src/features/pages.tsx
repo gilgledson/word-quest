@@ -22,12 +22,17 @@ import {
   Crown,
   Trophy,
   Award,
+  Pencil,
+  Swords,
+  Play,
+  Star,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
 import { wordsFoundCount } from "../game/chest";
 import {
   achievementStatus,
   claimAchievement,
+  claimableCount,
   type AchievementStatus,
 } from "../game/achievements";
 import { CoinIcon } from "../components/CoinIcon";
@@ -42,6 +47,8 @@ import {
   worldLevels,
   casualThemes,
   type CasualTheme,
+  themeArt,
+  themeColors,
 } from "../data/catalog";
 import { OPPONENT_LEVELS, OPPONENT_STYLES } from "../game/opponent";
 import { economy } from "../game/crossword-engine";
@@ -53,8 +60,12 @@ import {
 } from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
 import { OpponentAvatar } from "../components/OpponentAvatar";
+import { AssetImage } from "../components/AssetImage";
+import { Deck } from "../components/Deck";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
+import { PlayGamesCard } from "./PlayGamesCard";
+import { onlineAvailable } from "../services/online";
 export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
@@ -243,7 +254,7 @@ export function Campaign({ world = "vila" }: { world?: string }) {
       ref={section}
       style={{ "--node": `${node}px` } as React.CSSProperties}
     >
-      <img
+      <AssetImage
         className="campaign-art"
         src={map.art}
         alt=""
@@ -368,18 +379,29 @@ export function Casual() {
         <h1>Escolha um tema</h1>
         <p>Um duelo rápido numa cruzadinha cheia de palavras do tema.</p>
       </div>
-      <div className="theme-grid">
-        {casualThemes.map((t) => {
+      <Deck
+        className="theme-deck"
+        label="Temas"
+        items={casualThemes}
+        keyOf={(t) => t.id}
+        cardProps={(t) => ({
+          className: "theme-card",
+          "data-theme": t.id,
+          style: themeColors(t),
+        })}
+        render={(t) => {
           const Icon = THEME_ICONS[t.id] ?? Shapes;
           const finished = t.puzzles.filter((g) => done(g.id)).length;
           return (
-            <button
-              key={t.id}
-              className="theme-card"
-              data-theme={t.id}
-              onClick={() => play(t)}
-              aria-label={`Tema ${t.nome}`}
-            >
+            <>
+              <AssetImage
+                className="theme-art"
+                src={themeArt(t)}
+                alt=""
+                width={512}
+                height={512}
+                draggable={false}
+              />
               <span className="theme-icon" aria-hidden="true">
                 <Icon size={30} />
               </span>
@@ -399,10 +421,24 @@ export function Casual() {
                   style={{ width: `${(finished / t.puzzles.length) * 100}%` }}
                 />
               </span>
-            </button>
+              <button
+                type="button"
+                className="button primary theme-play"
+                aria-label={`Jogar tema ${t.nome}`}
+                onClick={() => play(t)}
+              >
+                Jogar <Play size={18} fill="currentColor" aria-hidden="true" />
+              </button>
+            </>
           );
-        })}
-      </div>
+        }}
+      />
+      {onlineAvailable() && (
+        <Link className="online-entry" to="/online">
+          <Swords size={22} aria-hidden="true" />
+          <b>Jogar com um amigo</b>
+        </Link>
+      )}
     </>
   );
 }
@@ -427,6 +463,12 @@ export function Daily() {
         <h1>Desafio do Dia</h1>
         <p>Volte a cada dia para um novo caminho.</p>
       </div>
+      <p className="streak-pill">
+        <Sparkles size={18} aria-hidden="true" />
+        {streak > 1
+          ? `${streak} dias seguidos`
+          : `${p.daily.length} ${p.daily.length === 1 ? "desafio concluído" : "desafios concluídos"}`}
+      </p>
       <section className="calendar-card">
         <div className="calendar-title">
           <CalendarDays />
@@ -488,54 +530,129 @@ export function Daily() {
             : "Jogar o desafio de hoje"}{" "}
           <ArrowRight size={18} />
         </Link>
-        <p className="caption">
-          Horário de Brasília · Progresso salvo neste dispositivo
-        </p>
       </section>
-      <div className="notice">
-        <Sparkles />
-        <p>
-          {p.daily.length}{" "}
-          {p.daily.length === 1 ? "desafio concluído" : "desafios concluídos"}
-          {streak > 1 ? ` · ${streak} dias seguidos` : ""}. Um novo enigma chega
-          todo dia; perder um dia não tira nada do que você ganhou.
-        </p>
-      </div>
     </>
   );
 }
+type ProfileTab = "resumo" | "conquistas" | "rivais" | "ajustes";
+const PROFILE_TABS: [ProfileTab, string][] = [
+  ["resumo", "Resumo"],
+  ["conquistas", "Conquistas"],
+  ["rivais", "Rivais"],
+  ["ajustes", "Ajustes"],
+];
+/**
+ * Perfil: quem é o jogador no topo (avatar, nome e um resumo de uma linha) e o resto em abas, uma
+ * seção por vez. O avatar e o nome são editados numa janela própria, aberta pelo botão do avatar.
+ */
 export function Profile() {
-  const { player: p, update } = usePlayer();
+  const p = usePlayer((s) => s.player);
+  const [tab, setTab] = useState<ProfileTab>("resumo");
+  const [editing, setEditing] = useState(false);
+  const ready = claimableCount(p);
+  const stars = Object.values(p.stars).reduce((a, b) => a + b, 0);
   return (
     <>
-      <div className="page-heading">
-        <span className="eyebrow">CADA EXPLORADOR TEM UMA HISTÓRIA</span>
-        <h1>Seu perfil</h1>
+      <section className="profile-header" aria-label="Você">
+        <button
+          type="button"
+          className="profile-avatar"
+          aria-label="Editar avatar e nome"
+          onClick={() => setEditing(true)}
+        >
+          <OpponentAvatar opponent={avatarOf(p.avatar)} size={84} />
+          <span className="profile-avatar-edit" aria-hidden="true">
+            <Pencil size={15} />
+          </span>
+        </button>
+        <div className="profile-who">
+          <span className="eyebrow">SEU PERFIL</span>
+          <h1>{p.name.trim() || "Explorador"}</h1>
+          <p>
+            {Object.keys(p.stars).length} de {levels.length} fases · {stars}{" "}
+            estrelas · {p.coins} moedas
+          </p>
+        </div>
+      </section>
+      <div
+        className="profile-tabs"
+        role="tablist"
+        aria-label="Seções do perfil"
+      >
+        {PROFILE_TABS.map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            id={`profile-tab-${id}`}
+            aria-selected={tab === id}
+            aria-controls="profile-panel"
+            className={tab === id ? "selected" : ""}
+            onClick={() => setTab(id)}
+          >
+            {label}
+            {id === "conquistas" && ready > 0 && (
+              <span className="tab-badge" aria-label={`${ready} prontas`}>
+                {ready}
+              </span>
+            )}
+          </button>
+        ))}
       </div>
-      <section className="profile-card profile-identity" aria-label="Você">
-        <div className="avatar">
-          <OpponentAvatar opponent={avatarOf(p.avatar)} size={76} />
-        </div>
-        <div className="opponent-setting">
-          <span>Seu avatar</span>
-          <ul className="avatar-picker" aria-label="Avatares">
-            {PLAYER_AVATARS.map((a) => (
-              <li key={a.id}>
-                <button
-                  type="button"
-                  className={a.id === p.avatar ? "selected" : ""}
-                  aria-pressed={a.id === avatarOf(p.avatar).id}
-                  aria-label={a.name}
-                  onClick={() => update((s) => ({ ...s, avatar: a.id }))}
-                >
-                  <OpponentAvatar opponent={a} size={52} />
-                  <small>{a.name}</small>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <label>
+      <div
+        className="profile-panel"
+        role="tabpanel"
+        id="profile-panel"
+        aria-label={`Aba ${PROFILE_TABS.find(([id]) => id === tab)?.[1]}`}
+      >
+        {tab === "resumo" && (
+          <>
+            <PlayGamesCard />
+            <ProfileStats />
+          </>
+        )}
+        {tab === "conquistas" && <Achievements />}
+        {tab === "rivais" && <ProfileRivals />}
+        {tab === "ajustes" && <ProfileSettings />}
+      </div>
+      {editing && <EditProfileDialog onClose={() => setEditing(false)} />}
+    </>
+  );
+}
+/** Janela de edição do jogador: avatar e nome. As escolhas valem na hora. */
+function EditProfileDialog({ onClose }: { onClose: () => void }) {
+  const { player: p, update } = usePlayer();
+  return (
+    <div
+      className="swap-backdrop"
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+    >
+      <div
+        className="swap-dialog profile-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Editar perfil"
+      >
+        <h2>Editar perfil</h2>
+        <span className="profile-dialog-label">Seu avatar</span>
+        <ul className="avatar-picker" aria-label="Avatares">
+          {PLAYER_AVATARS.map((a) => (
+            <li key={a.id}>
+              <button
+                type="button"
+                className={a.id === p.avatar ? "selected" : ""}
+                aria-pressed={a.id === avatarOf(p.avatar).id}
+                aria-label={a.name}
+                onClick={() => update((s) => ({ ...s, avatar: a.id }))}
+              >
+                <OpponentAvatar opponent={a} size={52} />
+                <small>{a.name}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <label className="profile-dialog-name">
           Nome do explorador
           <input
             value={p.name}
@@ -543,74 +660,128 @@ export function Profile() {
             onChange={(e) => update((s) => ({ ...s, name: e.target.value }))}
           />
         </label>
-      </section>
-      <ProfileStats />
-      <Achievements />
-      <section className="profile-card">
-        <details className="opponent-setting fold">
-          <summary>
-            Seus rivais <small>{OPPONENTS.length}</small>
-          </summary>
-          <p className="rivals-note">
-            Cada fase tem seu oponente; o último de cada mundo é o chefe.
-          </p>
-          <ul className="opponent-picker" aria-label="Rivais">
-            {OPPONENTS.map((o) => (
-              <li key={o.id}>
-                <OpponentAvatar opponent={o} size={56} />
-                <strong>{o.name}</strong>
-                <small>
-                  {o.boss ? "Chefe · " : ""}
-                  {OPPONENT_LEVELS[o.level].label} ·{" "}
-                  {OPPONENT_STYLES[o.style].label}
-                </small>
-                <em>{o.tagline}</em>
-              </li>
-            ))}
-          </ul>
-        </details>
-        <label className="toggle">
-          <span>
-            <Volume2 />
-            Efeitos sonoros
+        <div className="swap-actions">
+          <button className="primary" autoFocus onClick={onClose}>
+            Concluir
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+/** Aba Rivais: o elenco de personagens que o jogador enfrenta, um card por vez. */
+function ProfileRivals() {
+  return (
+    <Deck
+      className="rival-deck"
+      label="Rivais"
+      items={OPPONENTS}
+      keyOf={(o) => o.id}
+      cardProps={(o) => ({ className: o.boss ? "rival boss" : "rival" })}
+      render={(o) => (
+        <>
+          <span className="rival-portrait">
+            <OpponentAvatar opponent={o} size={150} />
           </span>
-          <input
-            type="checkbox"
-            checked={p.sound}
-            onChange={(e) =>
-              update((s) => ({
-                ...s,
-                sound: e.target.checked,
-                soundChosen: true,
-              }))
-            }
-          />
-        </label>
-        <label className="toggle">
-          <span>
-            <Music />
-            Música
-          </span>
-          <input
-            type="checkbox"
-            checked={p.music}
-            onChange={(e) => update((s) => ({ ...s, music: e.target.checked }))}
-          />
-        </label>
-        <label className="toggle">
-          <span>
-            <Vibrate />
-            Vibração
-          </span>
-          <input
-            type="checkbox"
-            checked={p.vibration}
-            onChange={(e) => {
-              update((s) => ({ ...s, vibration: e.target.checked }));
-              if (e.target.checked) buzz(true, "correct");
-            }}
-          />
-        </label>
+          <strong>{o.name}</strong>
+          <small className="rival-level">
+            <Star size={14} fill="currentColor" aria-hidden="true" />
+            {o.boss ? "Chefe · " : ""}
+            {OPPONENT_LEVELS[o.level].label} · {OPPONENT_STYLES[o.style].label}
+          </small>
+          <em>“{o.tagline}”</em>
+        </>
+      )}
+    />
+  );
+}
+/** Aba Ajustes: som, vibração, animações, contraste, relógio, tutorial e créditos. */
+function ProfileSettings() {
+  const { player: p, update } = usePlayer();
+  return (
+    <section className="profile-card" aria-label="Ajustes">
+      <label className="toggle">
+        <span>
+          <Volume2 />
+          Efeitos sonoros
+        </span>
+        <input
+          type="checkbox"
+          checked={p.sound}
+          onChange={(e) =>
+            update((s) => ({
+              ...s,
+              sound: e.target.checked,
+              soundChosen: true,
+            }))
+          }
+        />
+      </label>
+      <label className="toggle">
+        <span>
+          <Music />
+          Música
+        </span>
+        <input
+          type="checkbox"
+          checked={p.music}
+          onChange={(e) => update((s) => ({ ...s, music: e.target.checked }))}
+        />
+      </label>
+      <label className="toggle">
+        <span>
+          <Vibrate />
+          Vibração
+        </span>
+        <input
+          type="checkbox"
+          checked={p.vibration}
+          onChange={(e) => {
+            update((s) => ({ ...s, vibration: e.target.checked }));
+            if (e.target.checked) buzz(true, "correct");
+          }}
+        />
+      </label>
+      <label className="toggle">
+        <span>
+          <Activity />
+          Animações
+        </span>
+        <input
+          type="checkbox"
+          checked={p.animations}
+          onChange={(e) =>
+            update((s) => ({ ...s, animations: e.target.checked }))
+          }
+        />
+      </label>
+      <label className="toggle">
+        <span>
+          <Contrast />
+          Alto contraste na grade
+        </span>
+        <input
+          type="checkbox"
+          checked={p.highContrast}
+          onChange={(e) =>
+            update((s) => ({ ...s, highContrast: e.target.checked }))
+          }
+        />
+      </label>
+      <label className="toggle">
+        <span>
+          <Timer />
+          Relógio do turno (25 s)
+        </span>
+        <input
+          type="checkbox"
+          checked={p.turnTimer}
+          onChange={(e) =>
+            update((s) => ({ ...s, turnTimer: e.target.checked }))
+          }
+        />
+      </label>
+      <div className="settings-actions">
         <button
           className="test-sound"
           disabled={!p.sound}
@@ -618,61 +789,19 @@ export function Profile() {
         >
           <Volume2 size={18} /> Testar som
         </button>
-        <label className="toggle">
-          <span>
-            <Activity />
-            Animações
-          </span>
-          <input
-            type="checkbox"
-            checked={p.animations}
-            onChange={(e) =>
-              update((s) => ({ ...s, animations: e.target.checked }))
-            }
-          />
-        </label>
-        <label className="toggle">
-          <span>
-            <Contrast />
-            Alto contraste na grade
-          </span>
-          <input
-            type="checkbox"
-            checked={p.highContrast}
-            onChange={(e) =>
-              update((s) => ({ ...s, highContrast: e.target.checked }))
-            }
-          />
-        </label>
-        <label className="toggle">
-          <span>
-            <Timer />
-            Relógio do turno (25 s)
-          </span>
-          <input
-            type="checkbox"
-            checked={p.turnTimer}
-            onChange={(e) =>
-              update((s) => ({ ...s, turnTimer: e.target.checked }))
-            }
-          />
-        </label>
         <button
           className="test-sound"
           disabled={!p.tutorialDone}
           onClick={() => update((s) => ({ ...s, tutorialDone: false }))}
         >
           <Sparkles size={18} />{" "}
-          {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo na Fase 1"}
+          {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo"}
         </button>
-        <Link className="text-link credits-link" to="/credits">
-          Créditos e licenças
-        </Link>
-        <p className="caption">
-          Seu progresso fica neste navegador. Não é necessário criar uma conta.
-        </p>
-      </section>
-    </>
+      </div>
+      <Link className="text-link credits-link" to="/credits">
+        Créditos e licenças
+      </Link>
+    </section>
   );
 }
 /** Resumo do progresso do jogador: fases, estrelas, duelos e desafios do dia. */
@@ -724,13 +853,10 @@ function ProfileStats() {
     </section>
   );
 }
-/** Quantas conquistas ainda não prontas aparecem com a lista recolhida. */
-const ACHIEVEMENTS_PREVIEW = 3;
-/** Conquistas: as prontas para resgatar vêm primeiro; as já resgatadas, por último. */
+/** Conquistas, uma medalha por vez: as prontas para resgatar vêm primeiro; as já resgatadas, por último. */
 function Achievements() {
   const p = usePlayer((s) => s.player);
   const update = usePlayer((s) => s.update);
-  const [all, setAll] = useState(false);
   const rank = (a: AchievementStatus) => (a.claimed ? 2 : a.done ? 0 : 1);
   // Prontas primeiro; depois as em andamento, da mais perto da meta para a mais longe.
   const list = achievementStatus(p).sort(
@@ -739,56 +865,65 @@ function Achievements() {
   const claimed = list.filter((a) => a.claimed).length;
   const ready = list.filter((a) => a.done && !a.claimed);
   const readyCoins = ready.reduce((n, a) => n + a.coins, 0);
-  // Recolhida, a lista mostra as prontas e as próximas metas; o resto abre no botão.
-  const shown = all ? list : list.slice(0, ready.length + ACHIEVEMENTS_PREVIEW);
   return (
-    <section className="profile-card achievements" aria-label="Conquistas">
-      <h2>
-        <Award size={20} aria-hidden="true" /> Conquistas
-        <small>
-          {claimed}/{list.length}
-        </small>
-      </h2>
-      {ready.length > 1 && (
-        <button
-          type="button"
-          className="achievement-claim claim-all"
-          aria-label={`Resgatar tudo: ${readyCoins} moedas de ${ready.length} conquistas`}
-          onClick={() =>
-            update((s) => ready.reduce((n, a) => claimAchievement(n, a.id), s))
-          }
-        >
-          Resgatar tudo <CoinIcon size={16} /> +{readyCoins}
-        </button>
-      )}
-      <ul>
-        {shown.map((a) => (
-          <li
-            key={a.id}
-            className={`achievement ${a.done ? "earned" : ""} ${a.claimed ? "claimed" : ""}`}
+    <>
+      <div className="achievements-bar">
+        <span>
+          <Award size={18} aria-hidden="true" /> {claimed}/{list.length}{" "}
+          resgatadas
+        </span>
+        {ready.length > 1 && (
+          <button
+            type="button"
+            className="achievement-claim claim-all"
+            aria-label={`Resgatar tudo: ${readyCoins} moedas de ${ready.length} conquistas`}
+            onClick={() =>
+              update((s) =>
+                ready.reduce((n, a) => claimAchievement(n, a.id), s),
+              )
+            }
           >
-            <Award aria-hidden="true" />
-            <div>
-              <strong>{a.title}</strong>
-              <p>{a.text}</p>
-              {!a.done && (
-                <span className="achievement-progress">
-                  <span
-                    className="bar"
-                    role="progressbar"
-                    aria-label={`Progresso de ${a.title}`}
-                    aria-valuenow={a.progress}
-                    aria-valuemin={0}
-                    aria-valuemax={a.goal}
-                  >
-                    <i style={{ width: `${(a.progress / a.goal) * 100}%` }} />
-                  </span>
-                  <small>
-                    {a.progress}/{a.goal}
-                  </small>
+            Resgatar tudo <CoinIcon size={16} /> +{readyCoins}
+          </button>
+        )}
+      </div>
+      <Deck
+        className="medal-deck"
+        label="Conquistas"
+        items={list}
+        keyOf={(a) => a.id}
+        cardProps={(a) => ({
+          className: `medal ${a.done ? "earned" : ""} ${a.claimed ? "claimed" : ""}`,
+        })}
+        render={(a) => (
+          <>
+            <img
+              className="medal-art"
+              src={`/art/conquistas/${a.id}.webp`}
+              alt=""
+              width={132}
+              height={132}
+              draggable={false}
+            />
+            <strong>{a.title}</strong>
+            <p>{a.text}</p>
+            {!a.done && (
+              <span className="achievement-progress">
+                <span
+                  className="bar"
+                  role="progressbar"
+                  aria-label={`Progresso de ${a.title}`}
+                  aria-valuenow={a.progress}
+                  aria-valuemin={0}
+                  aria-valuemax={a.goal}
+                >
+                  <i style={{ width: `${(a.progress / a.goal) * 100}%` }} />
                 </span>
-              )}
-            </div>
+                <small>
+                  {a.progress}/{a.goal}
+                </small>
+              </span>
+            )}
             {a.claimed ? (
               <span className="achievement-prize">Resgatada ✓</span>
             ) : a.done ? (
@@ -805,22 +940,12 @@ function Achievements() {
                 className="achievement-prize"
                 aria-label={`Prêmio: ${a.coins} moedas`}
               >
-                <CoinIcon size={16} /> {a.coins}
+                <CoinIcon size={16} /> {a.coins} moedas
               </span>
             )}
-          </li>
-        ))}
-      </ul>
-      {list.length > shown.length || all ? (
-        <button
-          type="button"
-          className="text-link achievements-more"
-          aria-expanded={all}
-          onClick={() => setAll(!all)}
-        >
-          {all ? "Ver menos" : `Ver todas as ${list.length} conquistas`}
-        </button>
-      ) : null}
-    </section>
+          </>
+        )}
+      />
+    </>
   );
 }
