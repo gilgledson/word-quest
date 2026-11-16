@@ -25,19 +25,31 @@ export interface LiveRelease {
   manifest: { file_name: string; file_hash: string; download_url: string }[];
 }
 
-/** Este pacote pode ser instalado aqui? (é mais novo e serve para esta versão nativa). */
+/** Data de um pacote ("5.3.20261117-1200" → "20261117-1200"). */
+export const stampOf = (version: string) => version.split(".").pop() ?? "";
+
+/**
+ * Este pacote pode ser instalado aqui? Precisa servir para esta versão nativa e ser mais novo que
+ * o que está em uso: o app da loja traz o próprio código (o "builtin", com a data do build), e um
+ * pacote ao vivo publicado antes dele não pode substituí-lo.
+ */
 export function applies(
   release: LiveRelease | null,
-  current: { version: string; native: string },
+  current: { version: string; native: string; builtStamp: string },
 ) {
-  return (
-    !!release &&
-    typeof release.version === "string" &&
-    Array.isArray(release.natives) &&
-    Array.isArray(release.manifest) &&
-    release.version !== current.version &&
-    release.natives.includes(current.native)
-  );
+  if (
+    !release ||
+    typeof release.version !== "string" ||
+    !Array.isArray(release.natives) ||
+    !Array.isArray(release.manifest) ||
+    !release.natives.includes(current.native)
+  )
+    return false;
+  const inUse =
+    current.version === "builtin"
+      ? current.builtStamp
+      : stampOf(current.version);
+  return stampOf(release.version) > inUse;
 }
 
 /** Abertura do app: a versão em uso abriu bem (senão o plugin a desfaz). */
@@ -63,7 +75,13 @@ export async function checkLiveUpdate(
   }
   try {
     const { bundle, native } = await CapacitorUpdater.current();
-    if (!applies(release, { version: bundle.version, native }))
+    if (
+      !applies(release, {
+        version: bundle.version,
+        native,
+        builtStamp: __BUILD_STAMP__,
+      })
+    )
       return "current";
     const next = await CapacitorUpdater.download({
       url: release!.url,

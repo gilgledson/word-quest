@@ -71,6 +71,15 @@ export default defineConfig(({ mode }) => ({
   // (scripts/publish-app.mjs) gera cada pacote com BUNDLE_VERSION próprio.
   define: {
     __BUNDLE_VERSION__: JSON.stringify(process.env.BUNDLE_VERSION ?? "builtin"),
+    // Quando este build foi gerado (AAAAMMDD-HHMM, UTC): um pacote ao vivo só entra se for mais novo.
+    __BUILD_STAMP__: JSON.stringify(
+      process.env.BUILD_STAMP ??
+        new Date()
+          .toISOString()
+          .replace(/[-:]/g, "")
+          .replace("T", "-")
+          .slice(0, 13),
+    ),
   },
   test: {
     environment: "jsdom",

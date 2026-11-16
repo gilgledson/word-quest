@@ -25,15 +25,15 @@ import {
 } from "../services/liveUpdate";
 
 const release: LiveRelease = {
-  version: "5.3.20261117-1200",
+  version: "5.3.20991231-2359",
   natives: ["5.3"],
-  url: "https://wordquest-online.web.app/app/5.3.20261117-1200.zip",
+  url: "https://wordquest-online.web.app/app/5.3.20991231-2359.zip",
   manifest: [
     {
       file_name: "index.html",
       file_hash: "abc",
       download_url:
-        "https://wordquest-online.web.app/app/5.3.20261117-1200/index.html",
+        "https://wordquest-online.web.app/app/5.3.20991231-2359/index.html",
     },
   ],
 };
@@ -53,20 +53,34 @@ beforeEach(() => {
 });
 
 describe("Quando um pacote vale para este aparelho", () => {
-  it("só se for outra versão e servir para esta versão da loja", () => {
-    expect(applies(release, { version: "builtin", native: "5.3" })).toBe(true);
-    expect(applies(release, { version: release.version, native: "5.3" })).toBe(
+  const here = {
+    version: "builtin",
+    native: "5.3",
+    builtStamp: "20261117-0900",
+  };
+  it("só se servir para esta versão da loja e for mais novo que o que está em uso", () => {
+    expect(applies(release, here)).toBe(true);
+    // Mesmo pacote já em uso.
+    expect(applies(release, { ...here, version: release.version })).toBe(false);
+    // Pacote feito para a 5.3 não entra na 5.2 (pode depender de plugin nativo novo).
+    expect(applies(release, { ...here, native: "5.2" })).toBe(false);
+    expect(applies(null, here)).toBe(false);
+    expect(
+      applies(
+        { ...release, manifest: undefined } as unknown as LiveRelease,
+        here,
+      ),
+    ).toBe(false);
+  });
+  it("pacote publicado antes do app da loja não substitui o código mais novo que veio nele", () => {
+    // O app da loja foi gerado depois do pacote ao vivo.
+    expect(applies(release, { ...here, builtStamp: "21000101-0000" })).toBe(
       false,
     );
-    // Pacote feito para a 5.3 não entra na 5.2 (pode depender de plugin nativo novo).
-    expect(applies(release, { version: "builtin", native: "5.2" })).toBe(false);
-    expect(applies(null, { version: "builtin", native: "5.3" })).toBe(false);
-    expect(
-      applies({ ...release, manifest: undefined } as unknown as LiveRelease, {
-        version: "builtin",
-        native: "5.3",
-      }),
-    ).toBe(false);
+    // Um pacote ao vivo mais velho que o que já está em uso também não entra.
+    expect(applies(release, { ...here, version: "5.3.21000101-0000" })).toBe(
+      false,
+    );
   });
 });
 

@@ -64,6 +64,7 @@ console.log(`Gerando o pacote ${version} para a loja ${natives.join(", ")}…`);
 run("npx", ["tsc", "-b"]);
 run("npx", ["vite", "build", "--mode", "capacitor"], {
   BUNDLE_VERSION: version,
+  BUILD_STAMP: stamp,
 });
 const dist = path.join(root, "dist");
 if (!fs.existsSync(path.join(dist, "index.html")))

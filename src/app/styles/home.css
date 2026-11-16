@@ -412,6 +412,9 @@
 /* Telas internas: marca, carteira e som na mesma linha, como na home. */
 .app-secondary > header {
   flex-wrap: nowrap;
+  /* Abaixo da barra de status, com o mesmo respiro da home (a tela não rola: cada px conta). */
+  min-height: 0;
+  padding-block: calc(env(safe-area-inset-top) + 8px) 6px;
 }
 .app-secondary .brand {
   flex-shrink: 1;

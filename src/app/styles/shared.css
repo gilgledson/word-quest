@@ -27,9 +27,9 @@ header {
   justify-content: space-between;
   gap: 8px;
   min-height: 92px;
-  padding-top: env(safe-area-inset-top);
   flex-wrap: wrap;
-  padding-block: 14px;
+  /* A barra de status (Android de borda a borda) fica fora: a margem segura entra no topo. */
+  padding-block: calc(env(safe-area-inset-top) + 14px) 14px;
 }
 .brand {
   display: flex;
