@@ -24,6 +24,14 @@ import {
 } from "../game/crossword-engine";
 import { OPPONENT_LEVELS, opponentTurn } from "../game/opponent";
 import { usePlayer } from "../stores/player";
+import { itemCount, spendItem, VOWELS } from "../game/shop";
+import { ItemsDialog } from "./puzzle/ItemsDialog";
+import { requestReview, shouldAskReview } from "../services/review";
+import {
+  boardShareText,
+  currentStreak,
+  dailyShareText,
+} from "../game/dailyShare";
 import { playSfx, type EffectName } from "../services/sound";
 import { celebrate } from "../services/confetti";
 import { buzz } from "../services/haptics";
@@ -108,6 +116,10 @@ export interface OnlineDuel {
   onTurn: (next: Session) => void;
   /** Aviso fixo sobre a conexão do amigo, quando há. */
   notice?: string;
+  /** Pergunta antes de sair pela seta de voltar (partida em andamento). */
+  leaveWarning?: string;
+  /** Tempo máximo de cada jogada escolhido na sala (0 ou ausente = sem limite). */
+  turnSeconds?: number;
 }
 /** O jogo é um confronto: o oponente vem da fase (ou do sorteio no casual e no diário). */
 export function PuzzlePage() {
@@ -179,6 +191,7 @@ export function Duel({
   const rivalMoved = useRef<(next: Session) => void>(() => {});
   const botTimers = useRef<number[]>([]);
   const expireTurn = useRef<() => void>(() => {});
+  const [itemsOpen, setItemsOpen] = useState(false);
   const [botReveal, setBotReveal] = useState<Record<string, string> | null>(
     null,
   );
@@ -304,20 +317,19 @@ export function Duel({
   // Relógio opcional: ao zerar, a jogada pendente é confirmada (ou a vez passa).
   const inTutorial =
     !player.tutorialDone && !daily && !casual && puzzle?.number === 1;
+  // No duelo ao vivo vale o tempo da sala; nas outras partidas, a opção do jogador.
+  const turnSeconds = online ? (online.turnSeconds ?? 0) : TURN_SECONDS;
   const timerActive =
-    player.turnTimer &&
+    (online ? turnSeconds > 0 : player.turnTimer) &&
     !inTutorial &&
     !!engine &&
     session?.versus.turn === "p" &&
     !engine.complete(session);
   useEffect(() => {
     if (!timerActive) return;
-    const t = window.setTimeout(
-      () => expireTurn.current(),
-      TURN_SECONDS * 1000,
-    );
+    const t = window.setTimeout(() => expireTurn.current(), turnSeconds * 1000);
     return () => window.clearTimeout(t);
-  }, [timerActive, session?.versus?.rngCount, sessionKey]);
+  }, [timerActive, session?.versus?.rngCount, sessionKey, turnSeconds]);
   if (!puzzle || !engine || !session)
     return (
       <div className="page-heading">
@@ -383,9 +395,13 @@ export function Duel({
   const swapResult = swapping?.length
     ? engine.swap(session, swapping, word)
     : undefined;
-  const commit = (next: Session, cost = 0) =>
+  const commit = (
+    next: Session,
+    cost = 0,
+    before: (p: typeof player) => typeof player = (p) => p,
+  ) =>
     update((p) =>
-      settleSession(p, next, cost, {
+      settleSession(before(p), next, cost, {
         engine,
         puzzleId: puzzle.id,
         sessionKey,
@@ -622,6 +638,40 @@ export function Duel({
     word && !solved.some((s) => s.id === word.id)
       ? word
       : puzzle.words.find((w) => !solved.some((s) => s.id === w.id));
+  // Itens da loja: só na vez do jogador, fora do tutorial; o uso é gasto quando funciona.
+  const itemCounts = {
+    curinga: itemCount(player, "curinga"),
+    vogal: itemCount(player, "vogal"),
+  };
+  const applyJoker = () => {
+    const next = mine && !complete ? engine.addJoker(session, word) : undefined;
+    setItemsOpen(false);
+    if (!next) {
+      setMessage("Não há espaço no banco para o curinga agora.");
+      sfx("error");
+      return;
+    }
+    commit(next, 0, (p) => spendItem(p, "curinga"));
+    track("item_used", { item: "curinga" });
+    sfx("hint");
+    setMessage(
+      "Curinga ★ no seu banco: coloque em qualquer casa, ele sempre acerta.",
+    );
+  };
+  const applyVowel = (letter: string) => {
+    const next =
+      mine && !complete ? engine.takeLetter(session, letter, word) : undefined;
+    setItemsOpen(false);
+    if (!next) {
+      setMessage(`A grade não precisa de mais ${letter} agora.`);
+      sfx("error");
+      return;
+    }
+    commit(next, 0, (p) => spendItem(p, "vogal"));
+    track("item_used", { item: "vogal", letter });
+    sfx("hint");
+    setMessage(`A vogal ${letter} chegou ao seu banco.`);
+  };
   const hint = () => {
     const target = firstOpen();
     if (!mine || !target || complete || !afford(economy.hint)) return;
@@ -687,6 +737,26 @@ export function Duel({
       : session.scores.p > session.scores.ai
         ? "win"
         : "loss";
+  // Partida terminada: o resultado pode ser compartilhado. O desafio do dia vai sem as letras (a
+  // grade é a mesma para todos naquela data); Aventura e Casual vão com o tabuleiro de letras.
+  const shareResult =
+    !complete || online
+      ? undefined
+      : daily
+        ? dailyShareText({
+            date,
+            session,
+            rival: rival.name,
+            streak: currentStreak(player.daily, date),
+          })
+        : boardShareText({
+            title: casual
+              ? `Casual: ${theme?.nome ?? "tema"}`
+              : `Fase ${puzzle.number} · ${mapOf(puzzle.world).nome}`,
+            puzzle,
+            session,
+            rival: rival.name,
+          });
   expireTurn.current = () => {
     if (!mine || complete) return;
     setSwapping(null);
@@ -735,7 +805,16 @@ export function Duel({
     >
       <section className="puzzle-status" aria-label="Progresso da fase">
         <div className="puzzle-top">
-          <Link className="round-button" aria-label="Voltar" to={backTo}>
+          <Link
+            className="round-button"
+            aria-label="Voltar"
+            to={backTo}
+            onClick={(e) => {
+              // Duelo ao vivo em andamento: sair sem querer deixava o amigo encerrar a partida.
+              if (online?.leaveWarning && !window.confirm(online.leaveWarning))
+                e.preventDefault();
+            }}
+          >
             <ArrowLeft />
           </Link>
           <div>
@@ -836,6 +915,7 @@ export function Duel({
           backTo={backTo}
           online={!!online}
           onNext={() => setSelected("")}
+          shareResult={shareResult}
           onReplay={() => {
             // Na campanha a revanche troca de grade: quem perdeu não joga de novo as mesmas palavras.
             const count = variantCount(puzzle.id);
@@ -939,11 +1019,11 @@ export function Duel({
               <div
                 className="turn-timer"
                 role="timer"
-                aria-label={`Relógio do turno: ${TURN_SECONDS} segundos`}
+                aria-label={`Relógio do turno: ${turnSeconds} segundos`}
               >
                 <i
                   key={session.versus.rngCount}
-                  style={{ animationDuration: `${TURN_SECONDS}s` }}
+                  style={{ animationDuration: `${turnSeconds}s` }}
                 />
               </div>
             )}
@@ -955,6 +1035,8 @@ export function Duel({
             animated={player.animations}
             fxEnabled={prefs.enabled}
             pendingCount={pendingCount}
+            itemsCount={tutorial ? 0 : itemCounts.curinga + itemCounts.vogal}
+            onItems={() => setItemsOpen(true)}
             spotlight={spotlight?.id}
             pulse={pulse}
             hinting={hinting}
@@ -979,6 +1061,18 @@ export function Duel({
         run={hasJoker && mine && !player.jokerTourDone}
         onFinish={() => update((p) => ({ ...p, jokerTourDone: true }))}
       />
+      {itemsOpen && (
+        <ItemsDialog
+          counts={itemCounts}
+          vowels={engine.takeable(session, VOWELS)}
+          canJoker={!!engine.addJoker(session)}
+          animated={prefs.enabled}
+          shopLink={!online}
+          onJoker={applyJoker}
+          onVowel={applyVowel}
+          onCancel={() => setItemsOpen(false)}
+        />
+      )}
       {swapping && (
         <SwapDialog
           rack={rack}
@@ -1036,7 +1130,19 @@ export function Duel({
           summary={summarize(session)}
           history={player.history}
           enabled={prefs.enabled}
-          onClose={() => setResultOpen(false)}
+          shareResult={shareResult}
+          onClose={() => {
+            setResultOpen(false);
+            // Vitória na Aventura: bom momento para pedir a nota na loja (com limites, ver review.ts).
+            const wins = levels.filter((l) => player.stars[l.id]).length;
+            if (campaignWin && !online && shouldAskReview(player, wins)) {
+              update((p) => ({
+                ...p,
+                reviewAsks: [...(p.reviewAsks ?? []), new Date().toISOString()],
+              }));
+              void requestReview();
+            }
+          }}
         />
       )}
       <FxLayer

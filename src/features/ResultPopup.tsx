@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { ShareResultButton } from "../components/ShareResultButton";
 import { Award, Frown, Handshake, Trophy } from "lucide-react";
 import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
@@ -39,6 +40,8 @@ interface Props {
   summary?: MatchSummary;
   history?: GameRecord[];
   enabled: boolean;
+  /** Texto do resultado para compartilhar (desafio do dia). */
+  shareResult?: string;
   onClose: () => void;
 }
 
@@ -79,6 +82,7 @@ export function ResultPopup({
   history = [],
   enabled,
   onClose,
+  shareResult,
 }: Props) {
   const Icon =
     result === "win" ? Trophy : result === "draw" ? Handshake : Frown;
@@ -200,9 +204,14 @@ export function ResultPopup({
               Próxima fase
             </Link>
           )}
+          {shareResult && (
+            <ShareResultButton text={shareResult} className="button primary" />
+          )}
           <button
             ref={close}
-            className={nextTo ? "button result-ghost" : "button primary"}
+            className={
+              nextTo || shareResult ? "button result-ghost" : "button primary"
+            }
             onClick={onClose}
           >
             {nextTo ? "Ver o tabuleiro" : "Continuar"}

@@ -994,3 +994,309 @@ footer {
     display: none;
   }
 }
+/* Avisos (react-toastify): no topo, abaixo do cabeçalho, com a cara do jogo. */
+.wq-toasts {
+  --toastify-toast-top: calc(62px + env(safe-area-inset-top));
+  --toastify-toast-width: min(420px, calc(100vw - 24px));
+  --toastify-toast-min-height: 52px;
+  --toastify-font-family: inherit;
+  --toastify-color-light: #fff6dc;
+  --toastify-text-color-light: #3b2600;
+}
+/* No celular a biblioteca cola o aviso no topo, em largura total: aqui ele fica abaixo do cabeçalho. */
+.Toastify__toast-container.wq-toasts {
+  top: calc(62px + env(safe-area-inset-top));
+  left: 50%;
+  width: min(420px, calc(100vw - 24px));
+  padding: 0;
+  transform: translateX(-50%);
+}
+.wq-toasts .Toastify__toast {
+  margin: 0 0 8px;
+  padding: 8px 10px 8px 14px;
+  border: 2px solid #f0a500;
+  border-radius: 18px;
+  box-shadow: 0 6px 18px #3b260033;
+}
+.resume-toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 800;
+}
+.resume-toast span {
+  flex: 1;
+}
+.wq-toasts .Toastify__close-button {
+  align-self: center;
+  margin-left: 6px;
+  color: #3b2600;
+  opacity: 0.6;
+}
+.resume-toast a {
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: #3b2600;
+  color: #fff6dc;
+}
+/* Moedas no topo: tocar abre a loja (o link cobre a pílula inteira; o "+" sinaliza). */
+.wallet > span.wallet-coins {
+  position: relative;
+}
+.wallet-shop {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  margin-left: 2px;
+  border-radius: 50%;
+  background: #2fa35a;
+  color: #fff;
+}
+.wallet .wallet-shop svg {
+  width: 13px;
+  height: 13px;
+  stroke-width: 3.5;
+}
+.wallet-shop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+/* Loja: saldo em destaque, um card por item (arte, texto, comprar) e a dica de uso. */
+.shop-heading h1 {
+  margin-bottom: 0;
+}
+.shop-heading h1::after {
+  content: "";
+  display: block;
+  width: 120px;
+  height: 3px;
+  margin: 6px auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #ffcc47, transparent);
+}
+.shop-balance {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: min(100%, 340px);
+  margin: 4px auto 10px;
+  padding: 8px 18px;
+  border: 3px solid #ffcc47;
+  border-radius: 999px;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  box-shadow: 0 4px 0 #123c86;
+  color: #fff;
+  font-weight: 800;
+}
+.shop-balance > span:last-child {
+  display: grid;
+  padding-left: 12px;
+  border-left: 2px solid #ffffff55;
+  font-size: 13px;
+  line-height: 1.1;
+}
+.shop-balance b {
+  color: #ffd85a;
+  font-size: 26px;
+  font-weight: 900;
+}
+.shop-balance small {
+  color: #fff;
+  font-size: 16px;
+}
+.shop-list {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+.shop-item {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-areas: "art text" "buy buy";
+  align-items: center;
+  gap: 8px 14px;
+  padding: 12px 14px;
+  border: 3px solid #f3d27a;
+  border-radius: 22px;
+  background: linear-gradient(#fffcf1, #fff4d6);
+  box-shadow: 0 6px 16px #3b260020;
+}
+.shop-item-text {
+  grid-area: text;
+  display: grid;
+  justify-items: start;
+  gap: 3px;
+  padding-left: 14px;
+  border-left: 2px solid #f1e0ad;
+}
+.shop-item h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+}
+.shop-item p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.3;
+  color: #45525c;
+}
+.shop-item small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 800;
+  color: #1c5fc4;
+}
+.shop-badge {
+  padding: 2px 10px;
+  border: 2px solid #f0c040;
+  border-radius: 999px;
+  background: #fff3bf;
+  color: #5b3a00;
+  font-size: 12px;
+  font-weight: 800;
+}
+.shop-art {
+  grid-area: art;
+  display: grid;
+  place-items: center;
+}
+.shop-art img {
+  width: 100%;
+  max-height: 84px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px #3b260033);
+}
+.shop-art.curinga img {
+  max-height: 78px;
+}
+.shop-balance-coins {
+  width: 64px;
+  height: 52px;
+  object-fit: contain;
+}
+.shop-tip-bag {
+  flex: none;
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+.shop-buy {
+  grid-area: buy;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 46px;
+  font-size: 18px;
+}
+.shop-buy > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 12px;
+  border-left: 2px solid #ffffff66;
+}
+.shop-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  max-width: 460px;
+  min-height: 52px;
+  margin: 10px auto 0;
+  padding: 8px 14px;
+  border: 3px solid #bfe0ff;
+  border-radius: 20px;
+  background: linear-gradient(#eef7ff, #d6ecff);
+  color: #15365e;
+  font-weight: 800;
+  text-align: center;
+}
+.shop-tip b {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #ffd85a;
+}
+@media (max-height: 700px) {
+  .shop-balance {
+    margin-bottom: 6px;
+    padding-block: 4px;
+  }
+  .shop-balance b {
+    font-size: 20px;
+  }
+  .shop-item {
+    padding: 8px 12px;
+    gap: 6px 12px;
+  }
+  .shop-item p {
+    display: none;
+  }
+  .shop-item small,
+  .shop-badge {
+    white-space: nowrap;
+    font-size: 11px;
+  }
+  .shop-badge {
+    padding: 1px 8px;
+  }
+  .shop-buy {
+    min-height: 40px;
+  }
+  .shop-tip {
+    min-height: 44px;
+    margin-top: 6px;
+  }
+}
+/* Telas mais baixas: o botão Comprar vai para o lado do item (uma linha por card). */
+@media (max-height: 760px) {
+  .shop-item {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    grid-template-areas: "art text buy";
+  }
+  .shop-item p {
+    display: none;
+  }
+  .shop-item-text {
+    padding-left: 10px;
+  }
+  .shop-item h2 {
+    font-size: 17px;
+  }
+  .shop-buy {
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .shop-buy > span {
+    padding-left: 0;
+    border-left: 0;
+    font-size: 15px;
+  }
+}
+/* Celular deitado: os dois itens lado a lado, sem a dica. */
+@media (max-height: 500px) and (min-width: 600px) {
+  .shop-heading {
+    display: none;
+  }
+  .shop-list {
+    grid-template-columns: 1fr 1fr;
+    max-width: 900px;
+  }
+  .shop-tip {
+    display: none;
+  }
+}

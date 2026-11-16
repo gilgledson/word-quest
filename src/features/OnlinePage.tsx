@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import {
   ArrowLeft,
+  ArrowRight,
   Copy,
   Dices,
   MailOpen,
   Share2,
   Swords,
+  Timer,
   Users,
   X,
 } from "lucide-react";
@@ -19,6 +26,12 @@ import {
   SURPRISE_THEME,
   cleanCode,
   inviteText,
+  inviteReward,
+  BET_OPTIONS,
+  betPayout,
+  NO_RULES,
+  TURN_OPTIONS,
+  turnLabel,
   newCode,
   roomPuzzle,
   pickOnlinePuzzle,
@@ -44,9 +57,11 @@ import { copyText, shareText } from "../services/share";
 import { track } from "../services/telemetry";
 import { OpponentAvatar } from "../components/OpponentAvatar";
 import { avatarOf } from "../game/avatars";
+import { CoinIcon } from "../components/CoinIcon";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
-export const RIVAL_OFFLINE_MS = 30_000;
+/** Quanto o amigo espera alguém sem conexão antes de poder encerrar (e ficar com a vitória). */
+export const RIVAL_OFFLINE_MS = 120_000;
 const UNAVAILABLE =
   "Não foi possível falar com o servidor. Confira a internet e tente de novo.";
 
@@ -59,13 +74,13 @@ const seatOf = (uid: string, name: string, avatar: string): OnlineSeat => ({
 /** Tela de entrada do duelo ao vivo: criar uma partida ou entrar com o código do amigo. */
 export function OnlineLobby() {
   const player = usePlayer((s) => s.player);
-  const update = usePlayer((s) => s.update);
   const navigate = useNavigate();
   const [code, setCode] = useState("");
   const [mode, setMode] = useState<"criar" | "entrar">("criar");
   const [theme, setTheme] = useState(SURPRISE_THEME);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [preview, setPreview] = useState<OnlineRoom | null>(null);
   if (!onlineAvailable())
     return (
       <div className="page-heading">
@@ -89,55 +104,35 @@ export function OnlineLobby() {
       setBusy(false);
     }
   };
-  const create = () =>
-    run(async (backend, uid) => {
-      const puzzle = pickOnlinePuzzle(theme);
-      // O código é sorteado; se já existir uma sala com ele, sorteia outro.
-      for (let attempt = 0; attempt < 5; attempt++) {
-        const fresh = newCode();
-        const room: OnlineRoom = {
-          code: fresh,
-          puzzleId: puzzle.id,
-          grid: puzzle,
-          host: seatOf(uid, player.name, player.avatar),
-          status: "waiting",
-          rev: 0,
-          state: startOnline(puzzle.id, `${fresh}:${Date.now()}`, puzzle),
-        };
-        if (!(await backend.create(room))) continue;
-        // Uma partida antiga com o mesmo código não pode ser retomada por engano.
-        update((p) => {
-          const sessions = { ...p.sessions };
-          delete sessions[sessionKeyOf(fresh)];
-          return { ...p, sessions };
-        });
-        track("online_room_created", {
-          theme: themeOfPuzzle(puzzle.id)?.id ?? "aventura",
-          theme_choice: theme,
-        });
-        navigate(`/online/${fresh}`);
-        return;
-      }
-      setError(UNAVAILABLE);
-    });
+  const enter = (backend: OnlineBackend, uid: string) =>
+    backend
+      .join(code, seatOf(uid, player.name, player.avatar))
+      .then((result) => {
+        if (result.ok) {
+          track("online_room_joined");
+          navigate(`/online/${code}`);
+        } else
+          setError(
+            result.reason === "missing"
+              ? "Não achei nenhuma partida com esse código."
+              : result.reason === "full"
+                ? "Essa partida já tem dois jogadores."
+                : "Essa partida já terminou.",
+          );
+      });
+  // Sala com tempo ou aposta: o convidado vê as regras antes de entrar.
   const join = () =>
     run(async (backend, uid) => {
-      const result = await backend.join(
-        code,
-        seatOf(uid, player.name, player.avatar),
-      );
-      if (result.ok) {
-        track("online_room_joined");
-        navigate(`/online/${code}`);
-      } else
-        setError(
-          result.reason === "missing"
-            ? "Não achei nenhuma partida com esse código."
-            : result.reason === "full"
-              ? "Essa partida já tem dois jogadores."
-              : "Essa partida já terminou.",
-        );
+      const room = await backend.peek(code);
+      const member = room && (room.host.uid === uid || room.guest?.uid === uid);
+      const rules = room?.rules ?? NO_RULES;
+      if (room && !member && (rules.bet || rules.turnSeconds)) {
+        setPreview(room);
+        return;
+      }
+      await enter(backend, uid);
     });
+  const confirmJoin = () => run((backend, uid) => enter(backend, uid));
   return (
     <>
       <div className="page-heading">
@@ -208,26 +203,24 @@ export function OnlineLobby() {
                 </button>
               ))}
             </div>
-            <div className="online-versus" aria-hidden="true">
-              <span>
-                <OpponentAvatar opponent={avatarOf(player.avatar)} size={60} />
-                <b>{player.name.trim() || "Você"}</b>
-              </span>
-              <i>VS</i>
-              <span>
-                <em>?</em>
-                <b>Seu amigo</b>
-              </span>
-            </div>
             <button
               type="button"
               className="button primary"
-              disabled={busy}
-              onClick={() => void create()}
+              onClick={() =>
+                navigate(`/online/nova?tema=${encodeURIComponent(theme)}`)
+              }
             >
-              <Swords size={20} aria-hidden="true" /> Criar partida
+              Configurar partida <ArrowRight size={20} aria-hidden="true" />
             </button>
           </>
+        ) : preview ? (
+          <RulesPreview
+            room={preview}
+            coins={player.coins}
+            busy={busy}
+            onJoin={() => void confirmJoin()}
+            onBack={() => setPreview(null)}
+          />
         ) : (
           <form
             onSubmit={(e) => {
@@ -287,6 +280,230 @@ type Loaded =
   | { kind: "loading" }
   | { kind: "error"; text: string }
   | { kind: "ready"; backend: OnlineBackend; uid: string };
+
+/** Grupo de opções em pílulas (tempo por jogada, aposta). */
+function Choices<T extends number>({
+  title,
+  options,
+  value,
+  label,
+  disabled,
+  onChange,
+}: {
+  title: string;
+  options: T[];
+  value: T;
+  label: (v: T) => string;
+  disabled?: (v: T) => boolean;
+  onChange: (v: T) => void;
+}) {
+  const id = `escolha-${title.toLowerCase().replace(/\W+/g, "-")}`;
+  return (
+    <>
+      <h2 id={id}>{title}</h2>
+      <div className="online-choices" role="radiogroup" aria-labelledby={id}>
+        {options.map((o) => (
+          <button
+            key={o}
+            type="button"
+            role="radio"
+            aria-checked={value === o}
+            className={value === o ? "selected" : ""}
+            disabled={disabled?.(o)}
+            onClick={() => onChange(o)}
+          >
+            {label(o)}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/** Regras da sala em uma linha: tema, tempo por jogada e aposta. */
+function RulesSummary({
+  room,
+}: {
+  room: Pick<OnlineRoom, "puzzleId" | "rules">;
+}) {
+  const rules = room.rules ?? NO_RULES;
+  return (
+    <ul className="online-rules" aria-label="Regras da partida">
+      <li>
+        Tema: <b>{themeOfPuzzle(room.puzzleId)?.nome ?? "Surpresa"}</b>
+      </li>
+      <li>
+        <Timer size={16} aria-hidden="true" /> Jogada:{" "}
+        <b>{turnLabel(rules.turnSeconds)}</b>
+      </li>
+      <li>
+        <CoinIcon size={16} /> Aposta:{" "}
+        <b>{rules.bet ? `${rules.bet} moedas` : "sem aposta"}</b>
+      </li>
+    </ul>
+  );
+}
+
+/** Convidado: as regras da sala antes de entrar (e se ele tem moedas para a aposta). */
+function RulesPreview({
+  room,
+  coins,
+  busy,
+  onJoin,
+  onBack,
+}: {
+  room: OnlineRoom;
+  coins: number;
+  busy: boolean;
+  onJoin: () => void;
+  onBack: () => void;
+}) {
+  const bet = room.rules?.bet ?? 0;
+  const short = coins < bet;
+  return (
+    <div className="online-preview">
+      <h2>Partida de {room.host.name}</h2>
+      <RulesSummary room={room} />
+      {bet > 0 && (
+        <p className="online-hint">
+          {short
+            ? `Você tem ${coins} moedas: não dá para apostar ${bet}.`
+            : `Quem vencer leva ${2 * bet} moedas. Você tem ${coins}.`}
+        </p>
+      )}
+      <button
+        type="button"
+        className="button primary"
+        disabled={busy || short}
+        onClick={onJoin}
+      >
+        <Swords size={20} aria-hidden="true" />{" "}
+        {bet ? `Entrar e apostar ${bet}` : "Entrar na partida"}
+      </button>
+      <button type="button" className="button online-ghost" onClick={onBack}>
+        <ArrowLeft size={18} aria-hidden="true" /> Voltar
+      </button>
+    </div>
+  );
+}
+
+/** Configuração da partida (quem cria): tempo por jogada e aposta, depois cria a sala. */
+export function OnlineSetup() {
+  const player = usePlayer((s) => s.player);
+  const update = usePlayer((s) => s.update);
+  const navigate = useNavigate();
+  const [search] = useSearchParams();
+  const theme = search.get("tema") ?? SURPRISE_THEME;
+  const themeName =
+    onlineThemes().find((t) => t.id === theme)?.nome ?? "Surpresa";
+  const [turnSeconds, setTurnSeconds] = useState(0);
+  const [bet, setBet] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const create = async () => {
+    setBusy(true);
+    setError("");
+    try {
+      const backend = await onlineBackend();
+      const uid = await backend.uid();
+      const puzzle = pickOnlinePuzzle(theme);
+      // O código é sorteado; se já existir uma sala com ele, sorteia outro.
+      for (let attempt = 0; attempt < 5; attempt++) {
+        const fresh = newCode();
+        const room: OnlineRoom = {
+          code: fresh,
+          puzzleId: puzzle.id,
+          grid: puzzle,
+          host: seatOf(uid, player.name, player.avatar),
+          status: "waiting",
+          rev: 0,
+          rules: { turnSeconds, bet },
+          state: startOnline(puzzle.id, `${fresh}:${Date.now()}`, puzzle),
+        };
+        if (!(await backend.create(room))) continue;
+        // Uma partida antiga com o mesmo código não pode ser retomada por engano.
+        update((p) => {
+          const sessions = { ...p.sessions };
+          delete sessions[sessionKeyOf(fresh)];
+          return { ...p, sessions };
+        });
+        track("online_room_created", {
+          theme: themeOfPuzzle(puzzle.id)?.id ?? "aventura",
+          theme_choice: theme,
+          turn_seconds: turnSeconds,
+          bet,
+        });
+        navigate(`/online/${fresh}`, { replace: true });
+        return;
+      }
+      setError(UNAVAILABLE);
+    } catch {
+      setError(UNAVAILABLE);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <div className="page-heading">
+        <span className="eyebrow">DUELO AO VIVO</span>
+        <h1>Configurar partida</h1>
+      </div>
+      <section
+        className="online-card online-setup"
+        aria-label="Configurar partida"
+      >
+        <div className="online-versus" aria-hidden="true">
+          <span>
+            <OpponentAvatar opponent={avatarOf(player.avatar)} size={60} />
+            <b>{player.name.trim() || "Você"}</b>
+          </span>
+          <i>VS</i>
+          <span>
+            <em>?</em>
+            <b>Seu amigo</b>
+          </span>
+        </div>
+        <p className="online-setup-theme">
+          Tema: <b>{themeName}</b> · <Link to="/online">trocar</Link>
+        </p>
+        <Choices
+          title="Tempo por jogada"
+          options={TURN_OPTIONS}
+          value={turnSeconds}
+          label={(v) => (v ? turnLabel(v) : "Livre")}
+          onChange={setTurnSeconds}
+        />
+        <Choices
+          title="Aposta"
+          options={BET_OPTIONS}
+          value={bet}
+          label={(v) => (v ? String(v) : "Sem")}
+          disabled={(v) => v > player.coins}
+          onChange={setBet}
+        />
+        <p className="online-hint" role="status">
+          {bet
+            ? `Cada um aposta ${bet}: quem vencer leva ${2 * bet} moedas. Você tem ${player.coins}.`
+            : `Partida sem aposta. Você tem ${player.coins} moedas.`}
+        </p>
+        <button
+          type="button"
+          className="button primary"
+          disabled={busy || bet > player.coins}
+          onClick={() => void create()}
+        >
+          <Swords size={20} aria-hidden="true" /> Criar partida
+        </button>
+        {error && (
+          <p className="online-error" role="alert">
+            {error}
+          </p>
+        )}
+      </section>
+    </>
+  );
+}
 
 /** A sala: espera o amigo, joga a partida e mostra o fim (resultado ou abandono). */
 export function OnlineMatch() {
@@ -388,6 +605,16 @@ export function OnlineMatch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingRev, room?.rev, room?.status]);
 
+  // Partida em andamento fica marcada no jogador: o lobby oferece voltar a ela.
+  const live = room?.status === "waiting" || room?.status === "playing";
+  useEffect(() => {
+    if (!role || room === undefined) return;
+    const active = usePlayer.getState().player.activeOnline;
+    if (live && active !== code) update((p) => ({ ...p, activeOnline: code }));
+    if (!live && active === code)
+      update((p) => ({ ...p, activeOnline: undefined }));
+  }, [live, role, room, code, update]);
+
   // O amigo abandonou: a vitória (e as moedas dela) fica com quem ficou, uma vez só.
   const wonByForfeit =
     room?.status === "abandoned" && !!uid && room.left !== uid;
@@ -403,6 +630,59 @@ export function OnlineMatch() {
           },
     );
   }, [wonByForfeit, sessionKey, update]);
+
+  // Partida terminada: quem criou a sala ganha as moedas de convite deste amigo (uma vez por amigo).
+  const friend = role === "host" ? room?.guest?.uid : undefined;
+  const [inviteEarned, setInviteEarned] = useState(0);
+  useEffect(() => {
+    if (room?.status !== "finished" || !friend) return;
+    const reward = inviteReward(
+      usePlayer.getState().player.invitedFriends,
+      friend,
+    );
+    if (!reward) return;
+    update((p) => ({
+      ...p,
+      coins: p.coins + reward,
+      invitedFriends: [...(p.invitedFriends ?? []), friend],
+    }));
+    setInviteEarned(reward);
+    track("invite_rewarded");
+  }, [room?.status, friend, update]);
+
+  // Aposta: cada um reserva a sua quando a partida começa; no fim, quem venceu leva as duas, o
+  // empate devolve a de cada um e quem abandonou perde a sua. Uma vez por sala.
+  const bet = room?.rules?.bet ?? 0;
+  const [betResult, setBetResult] = useState<number | null>(null);
+  useEffect(() => {
+    if (!bet || !role || !room || !uid) return;
+    const reserved = usePlayer.getState().player.wagers?.[code];
+    if (room.status === "playing" && reserved === undefined) {
+      update((p) => ({
+        ...p,
+        coins: Math.max(0, p.coins - bet),
+        wagers: { ...p.wagers, [code]: bet },
+      }));
+      track("online_bet_placed", { bet });
+      return;
+    }
+    if (reserved === undefined) return;
+    let result: "win" | "draw" | "loss" | undefined;
+    if (room.status === "abandoned")
+      result = room.left !== uid ? "win" : "loss";
+    if (room.status === "finished") {
+      const mine = toView(room.state, role).scores;
+      result = mine.p > mine.ai ? "win" : mine.p === mine.ai ? "draw" : "loss";
+    }
+    if (!result) return;
+    const payout = betPayout(reserved, result);
+    update((p) => {
+      const wagers = { ...p.wagers };
+      delete wagers[code];
+      return { ...p, coins: p.coins + payout, wagers };
+    });
+    setBetResult(payout - reserved);
+  }, [bet, role, room, uid, code, update]);
 
   const heading = (
     title: string,
@@ -436,6 +716,7 @@ export function OnlineMatch() {
       "Essa partida já tem dois jogadores.",
     );
 
+  const invitesLeft = economy.inviteMax - (player.invitedFriends ?? []).length;
   if (room.status === "waiting") {
     const note = (ok: boolean, text: string) =>
       setCopied(ok ? text : "Não deu para copiar. Anote o código acima.");
@@ -446,9 +727,7 @@ export function OnlineMatch() {
         <output className="online-code" aria-label={`Código ${code}`}>
           {code}
         </output>
-        <p className="online-theme-note">
-          Tema: <b>{themeOfPuzzle(room.puzzleId)?.nome ?? "Surpresa"}</b>
-        </p>
+        <RulesSummary room={room} />
         <button
           type="button"
           className="button primary"
@@ -469,6 +748,12 @@ export function OnlineMatch() {
         >
           <Copy size={18} aria-hidden="true" /> Copiar código
         </button>
+        {invitesLeft > 0 && (
+          <p className="online-invite-bonus">
+            <CoinIcon size={18} /> Ganhe {economy.invite} moedas quando um amigo
+            novo jogar com você (faltam {invitesLeft}).
+          </p>
+        )}
         <p className="online-status" role="status">
           {copied}
         </p>
@@ -495,17 +780,47 @@ export function OnlineMatch() {
           "Vitória!",
           `${rivalProfile(rival).name} saiu da partida. Você ganhou ${economy.duel.win} moedas.`,
         )
-      : heading("Partida encerrada", "Você saiu desta partida.");
+      : heading(
+          "Partida encerrada",
+          room.endedBy && room.endedBy !== uid
+            ? `${rivalProfile(rival).name} encerrou a partida porque você ficou fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos.`
+            : "Você saiu desta partida.",
+        );
 
   return (
     <>
+      {inviteEarned > 0 && (
+        <div className="online-banner invite" role="status">
+          <span>
+            <CoinIcon size={18} /> Convite recompensado: +{inviteEarned} moedas
+            por jogar com {rivalProfile(rival).name}!
+          </span>
+        </div>
+      )}
+      {betResult !== null && (
+        <div
+          className={`online-banner ${betResult > 0 ? "invite" : ""}`}
+          role="status"
+        >
+          <span>
+            <CoinIcon size={18} />{" "}
+            {betResult > 0
+              ? `Aposta ganha: +${betResult} moedas!`
+              : betResult === 0
+                ? "Empate: sua aposta voltou."
+                : `Aposta perdida: ${betResult} moedas.`}
+          </span>
+        </div>
+      )}
       {room.status === "playing" && !rivalOnline && (
         <div className="online-banner" role="status">
           <span>{rivalProfile(rival).name} está sem conexão.</span>
           {rivalGone && (
             <button
               type="button"
-              onClick={() => rival && void backend.abandon(code, rival.uid)}
+              onClick={() =>
+                rival && void backend.abandon(code, rival.uid, uid)
+              }
             >
               Encerrar e ficar com a vitória
             </button>
@@ -530,6 +845,11 @@ export function OnlineMatch() {
           rival: rivalProfile(rival),
           incoming: view,
           onTurn: send,
+          turnSeconds: room.rules?.turnSeconds,
+          leaveWarning:
+            room.status === "playing"
+              ? `Sair da partida? Para voltar, use "Voltar para a partida" em Jogar com um amigo (código ${code}). Se ficar fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos, ${rivalProfile(rival).name} pode encerrar e ficar com a vitória.`
+              : undefined,
           notice:
             room.status === "playing" && !rivalOnline
               ? `${rivalProfile(rival).name} está sem conexão…`

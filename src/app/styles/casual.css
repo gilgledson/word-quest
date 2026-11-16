@@ -403,6 +403,17 @@ a.campaign-start {
   .online-versus {
     display: none;
   }
+  /* Celulares baixos: temas e cartão mais compactos para o lobby caber sem rolagem. */
+  .online-card {
+    gap: 8px;
+    padding-block: 10px 8px;
+  }
+  .online-theme-art {
+    height: 34px;
+  }
+  .online-themes button {
+    padding: 3px 4px 2px;
+  }
 }
 .online-code {
   display: block;
@@ -433,4 +444,86 @@ a.campaign-start {
   background: #5b3a00;
   color: #fff;
   font-weight: 800;
+}
+/* Convite: aviso na sala de espera e faixa verde quando o amigo rende moedas. */
+.online-invite-bonus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 2px 0 0;
+  color: #6b4a00;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+.online-banner.invite {
+  background: #dff5e6;
+  color: #1f6b3a;
+}
+.online-banner.invite span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Configuração da partida: tempo por jogada e aposta em pílulas, no mesmo visual dos temas. */
+.online-choices {
+  display: flex;
+  gap: 6px;
+}
+.online-choices button {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 4px;
+  white-space: nowrap;
+  border: 3px solid #efe6c8;
+  border-radius: 999px;
+  background: #fffdf6;
+  color: #123c86;
+  font-weight: 900;
+  box-shadow: 0 3px 0 #e2d6ad;
+}
+.online-choices button.selected {
+  border-color: #f0a81e;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  color: #fff;
+  box-shadow: 0 3px 0 #123c86;
+}
+.online-choices button:disabled {
+  opacity: 0.4;
+}
+.online-setup-theme {
+  margin: 0;
+  text-align: center;
+  font-weight: 700;
+}
+.online-setup-theme a {
+  color: #1c5fc4;
+  text-decoration: underline;
+}
+/* Regras da sala (sala de espera e convidado): três selos numa linha. */
+.online-rules {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.online-rules li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  color: #5b3a00;
+  font-size: 13px;
+  font-weight: 700;
+}
+.online-preview {
+  display: grid;
+  gap: 10px;
 }

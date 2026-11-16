@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -40,6 +40,7 @@ import { ChestHint, HomeChest } from "./HomeChest";
 import road from "../data/map-road.json";
 import { usePlayer } from "../stores/player";
 import {
+  dailyPuzzle,
   levels,
   today,
   maps,
@@ -51,11 +52,15 @@ import {
   themeColors,
 } from "../data/catalog";
 import { OPPONENT_LEVELS, OPPONENT_STYLES } from "../game/opponent";
-import { economy } from "../game/crossword-engine";
+import { economy, PuzzleEngine } from "../game/crossword-engine";
+import { currentStreak, dailyShareText } from "../game/dailyShare";
+import { ShareResultButton } from "../components/ShareResultButton";
+import type { Player } from "../services/repository";
 import {
   OPPONENTS,
   OPPONENT_BY_LEVEL,
   opponentById,
+  opponentFor,
   randomOpponent,
 } from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
@@ -66,11 +71,13 @@ import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
 import { onlineAvailable } from "../services/online";
+import { appVersion } from "../services/liveUpdate";
 export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
   const wins = Object.keys(p.stars).length;
   const words = wordsFoundCount(p.wordsFound);
+  const world = mapOf(next.world);
   // Partida da próxima fase já começada (há letras confirmadas) e ainda sem resultado.
   const started = Object.entries(p.sessions).some(
     ([key, s]) =>
@@ -85,26 +92,26 @@ export function Home() {
   return (
     <>
       <section className="welcome">
-        <span className="eyebrow">SEU PRÓXIMO CAPÍTULO COMEÇA AQUI</span>
         <h1>
-          Um mundo inteiro
-          <br />
-          entre as <em>palavras.</em>
+          <Sparkles aria-hidden="true" />
+          {wins ? "Sua aventura continua!" : "Sua aventura começa!"}
+          <Sparkles aria-hidden="true" />
         </h1>
-        <p>Resolva palavras. Vença seu rival.</p>
       </section>
       <section className="adventure-card">
         <Link
           className="adventure-link"
-          to={mapOf(next.world).path}
-          aria-label="Ver o mapa da Vila das Palavras"
+          to={world.path}
+          aria-label={`Ver o mapa: ${world.nome}`}
         >
           <div className="world-preview" aria-hidden="true">
             <Scenery />
           </div>
           <div className="scene-label">
-            <span className="pill">MUNDO 01</span>
-            <h2>Vila das Palavras</h2>
+            <span className="pill">
+              MUNDO {String(maps.indexOf(world) + 1).padStart(2, "0")}
+            </span>
+            <h2>{world.nome}</h2>
             <p>Grandes jornadas começam com pequenas descobertas.</p>
           </div>
         </Link>
@@ -133,6 +140,24 @@ export function Home() {
           <HomeChest words={words} />
         </div>
       </section>
+      <Link
+        className="shop-card"
+        to="/loja"
+        aria-label="Loja de itens: Curinga e Kit de vogais"
+      >
+        <span className="shop-card-art" aria-hidden="true">
+          <img src="/art/loja/moedas.webp" alt="" draggable={false} />
+          <img src="/art/loja/vogais.webp" alt="" draggable={false} />
+          <img src="/art/loja/curinga.webp" alt="" draggable={false} />
+        </span>
+        <span className="shop-card-text">
+          <strong>Loja de itens</strong>
+          <small>Curinga e Kit de vogais</small>
+          <span className="shop-card-cta">
+            Ver loja <ArrowRight size={16} aria-hidden="true" />
+          </span>
+        </span>
+      </Link>
       <Link className="button primary continue-button" to={`/play/${next.id}`}>
         {action} <ArrowRight size={24} />
       </Link>
@@ -450,12 +475,9 @@ export function Daily() {
   const offset = new Date(year, month - 1, 1).getDay();
   const iso = (n: number) =>
     `${year}-${String(month).padStart(2, "0")}-${String(n).padStart(2, "0")}`;
-  // Sequência: dias seguidos concluídos até hoje (ou até ontem, se hoje ainda não foi jogado).
-  let streak = 0;
-  for (let n = p.daily.includes(iso(day)) ? day : day - 1; n >= 1; n--) {
-    if (!p.daily.includes(iso(n))) break;
-    streak++;
-  }
+  // Sequência: dias seguidos vencidos até hoje (ou até ontem, se hoje ainda não foi vencido).
+  const streak = currentStreak(p.daily, date);
+  const shareResult = dailyResultText(p, date, streak);
   return (
     <>
       <div className="page-heading">
@@ -524,15 +546,42 @@ export function Daily() {
             <i className="dot future" /> em breve
           </li>
         </ul>
-        <Link className="button primary" to="/play/daily">
-          {p.daily.includes(date)
-            ? "Revisitar desafio"
-            : "Jogar o desafio de hoje"}{" "}
-          <ArrowRight size={18} />
-        </Link>
+        {shareResult ? (
+          <div className="daily-actions">
+            <ShareResultButton text={shareResult} className="button primary" />
+            <Link className="button result-ghost" to="/play/daily">
+              Revisitar desafio <ArrowRight size={18} />
+            </Link>
+          </div>
+        ) : (
+          <Link className="button primary" to="/play/daily">
+            {p.daily.includes(date)
+              ? "Revisitar desafio"
+              : "Jogar o desafio de hoje"}{" "}
+            <ArrowRight size={18} />
+          </Link>
+        )}
       </section>
     </>
   );
+}
+/** Texto para compartilhar o desafio de hoje, se ele já terminou (vencido ou não). */
+function dailyResultText(p: Player, date: string, streak: number) {
+  const puzzle = dailyPuzzle(date);
+  const rival = opponentFor({
+    puzzleId: puzzle.id,
+    number: puzzle.number,
+    mode: "daily",
+    date,
+  });
+  const session = p.sessions[`daily:${date}:${rival.level}`];
+  if (!session || !new PuzzleEngine(puzzle).complete(session)) return undefined;
+  return dailyShareText({
+    date,
+    session,
+    rival: rival.name,
+    streak,
+  });
 }
 type ProfileTab = "resumo" | "conquistas" | "rivais" | "ajustes";
 const PROFILE_TABS: [ProfileTab, string][] = [
@@ -801,8 +850,21 @@ function ProfileSettings() {
       <Link className="text-link credits-link" to="/credits">
         Créditos e licenças
       </Link>
+      <AppVersion />
     </section>
   );
+}
+/** Versão da loja e do pacote em uso (a atualização ao vivo troca só o pacote). */
+function AppVersion() {
+  const [text, setText] = useState("");
+  useEffect(() => {
+    let alive = true;
+    void appVersion().then((v) => alive && setText(v));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return text ? <small className="app-version">{text}</small> : null;
 }
 /** Resumo do progresso do jogador: fases, estrelas, duelos e desafios do dia. */
 function ProfileStats() {

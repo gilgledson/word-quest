@@ -27,6 +27,9 @@ interface Props {
   onSwap: () => void;
   onConfirm: () => void;
   onHint: () => void;
+  /** Usos de itens da loja no inventário; com algum, aparece o botão "Itens". */
+  itemsCount?: number;
+  onItems?: () => void;
 }
 /** Banco de letras e a barra de ações (trocar, confirmar/passar, dica). */
 export function TurnControls({
@@ -45,6 +48,8 @@ export function TurnControls({
   onSwap,
   onConfirm,
   onHint,
+  itemsCount = 0,
+  onItems,
 }: Props) {
   const slots = useRackSlots(
     rack.map((t) => t.id),
@@ -95,7 +100,7 @@ export function TurnControls({
           );
         })}
       </div>
-      <div className="puzzle-tools">
+      <div className={`puzzle-tools ${itemsCount > 0 ? "with-items" : ""}`}>
         <button
           disabled={!mine || !rack.length || swapped}
           onClick={onSwap}
@@ -104,6 +109,20 @@ export function TurnControls({
           <Shuffle />
           Trocar <span>{swapped ? "1 por vez" : `${economy.swap[0]} ◉`}</span>
         </button>
+        {itemsCount > 0 && (
+          <button
+            disabled={!mine}
+            onClick={onItems}
+            aria-label={`Itens (${itemsCount})`}
+            className="items-button"
+          >
+            <span className="items-button-art" aria-hidden="true">
+              <img src="/art/loja/curinga.webp" alt="" draggable={false} />
+              <b>{itemsCount}</b>
+            </span>
+            Itens
+          </button>
+        )}
         <motion.button
           className={`confirm-button ${hasPending ? "" : "is-pass"}`}
           disabled={!mine}

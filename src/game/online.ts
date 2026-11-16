@@ -1,5 +1,11 @@
 import { casualPuzzles, casualThemes, levels } from "../data/catalog";
-import { PuzzleEngine, type Puzzle, type Session } from "./crossword-engine";
+import {
+  PuzzleEngine,
+  economy,
+  type Puzzle,
+  type Session,
+} from "./crossword-engine";
+import { STORE_URL } from "./dailyShare";
 import { JOKER_ID } from "./engine/rack";
 import { avatarOf } from "./avatars";
 import type { OpponentProfile } from "./opponents";
@@ -11,6 +17,26 @@ import type { OpponentProfile } from "./opponents";
  * e assim cada um joga como "p" no próprio aparelho, com as telas e regras de sempre.
  */
 export type OnlineRole = "host" | "guest";
+/** Regras escolhidas por quem cria a sala. */
+export interface RoomRules {
+  /** Tempo máximo de cada jogada, em segundos (0 = sem limite). */
+  turnSeconds: number;
+  /** Moedas que cada um aposta (0 = sem aposta): quem vence leva as duas. */
+  bet: number;
+}
+export const TURN_OPTIONS = [0, 30, 60, 120];
+export const BET_OPTIONS = [0, 10, 25, 50, 100];
+export const NO_RULES: RoomRules = { turnSeconds: 0, bet: 0 };
+/** "30 s", "1 min", "2 min" ou "Sem limite". */
+export const turnLabel = (seconds: number) =>
+  !seconds
+    ? "Sem limite"
+    : seconds < 60
+      ? `${seconds} s`
+      : `${seconds / 60} min`;
+/** Moedas que a aposta devolve a quem reservou `bet`: as duas na vitória, a sua no empate. */
+export const betPayout = (bet: number, result: "win" | "draw" | "loss") =>
+  result === "win" ? 2 * bet : result === "draw" ? bet : 0;
 export interface OnlineSeat {
   uid: string;
   name: string;
@@ -32,8 +58,12 @@ export interface OnlineRoom {
   rev: number;
   /** Estado da partida do ponto de vista do host. */
   state: Session;
+  /** Tempo por jogada e aposta (salas antigas não têm: sem limite e sem aposta). */
+  rules?: RoomRules;
   /** Quem saiu, quando a partida foi abandonada. */
   left?: string;
+  /** Quem encerrou: o próprio `left` (saiu ou cancelou) ou o amigo, depois de esperar demais. */
+  endedBy?: string;
 }
 
 /** Grades que podem cair num duelo ao vivo: as da Aventura e as do Casual (do catálogo em uso). */
@@ -150,4 +180,15 @@ export function rivalProfile(seat: OnlineSeat | undefined): OpponentProfile {
 
 /** Texto do convite que vai pelo WhatsApp e afins. */
 export const inviteText = (code: string) =>
-  `Te desafio no WordQuest! Abra o jogo, toque em "Jogar com um amigo" e digite o código ${code}.`;
+  `Te desafio no WordQuest! Abra o jogo, toque em "Jogar com um amigo" e digite o código ${code}.\n` +
+  `Ainda não tem o jogo? Baixe grátis: ${STORE_URL}`;
+/** Moedas de convite que este amigo rende ao anfitrião: só amigo novo, até o limite. */
+export const inviteReward = (
+  invited: string[] | undefined,
+  friend: string | undefined,
+) =>
+  friend &&
+  !(invited ?? []).includes(friend) &&
+  (invited ?? []).length < economy.inviteMax
+    ? economy.invite
+    : 0;

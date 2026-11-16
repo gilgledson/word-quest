@@ -90,6 +90,20 @@ export class PuzzleEngine {
     const next = this.rack.swap(s, ids, focus);
     return next && this.refresh({ ...next, swapped: true }, focus);
   }
+  /** Item da loja: curinga extra no banco. */
+  addJoker(s: Session, focus?: PuzzleWord) {
+    const next = this.rack.addJoker(s);
+    return next && this.refresh(next, focus);
+  }
+  /** Item da loja: traz uma vogal da reserva para o banco. */
+  takeLetter(s: Session, letter: string, focus?: PuzzleWord) {
+    const next = this.rack.takeLetter(s, letter);
+    return next && this.refresh(next, focus);
+  }
+  /** Quais destas letras o item consegue trazer agora. */
+  takeable(s: Session, letters: string[]) {
+    return this.rack.takeable(s, letters);
+  }
   /**
    * Dica: coloca uma letra do banco do jogador na casa certa da palavra, ainda pendente; o ponto
    * (e o bônus, se fechar a palavra) vem quando ele confirma. Tenta a palavra indicada e, sem

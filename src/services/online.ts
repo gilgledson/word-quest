@@ -16,6 +16,8 @@ export interface OnlineBackend {
   uid(): Promise<string>;
   /** Cria a sala; devolve false se o código já existe. */
   create(room: OnlineRoom): Promise<boolean>;
+  /** Lê a sala sem entrar nela (para o convidado ver as regras antes). */
+  peek(code: string): Promise<OnlineRoom | null>;
   /** Entra como convidado (ou volta para uma sala de que já faz parte). */
   join(code: string, me: OnlineSeat): Promise<JoinResult>;
   /** Acompanha a sala; `null` quando ela não existe. Devolve como parar. */
@@ -25,8 +27,8 @@ export interface OnlineBackend {
    * mesmo tempo não se atropelam. Devolve se gravou.
    */
   play(room: OnlineRoom): Promise<boolean>;
-  /** Encerra a partida porque `uid` saiu. */
-  abandon(code: string, uid: string): Promise<void>;
+  /** Encerra a partida porque `uid` saiu; `by` é quem encerrou (padrão: o próprio `uid`). */
+  abandon(code: string, uid: string, by?: string): Promise<void>;
   /**
    * Marca este jogador como conectado e avisa quando a lista de conectados muda. O servidor
    * desmarca sozinho se a conexão cair. Devolve como parar.
@@ -74,6 +76,9 @@ export function memoryBackend() {
       tell(room.code);
       return true;
     },
+    async peek(code) {
+      return rooms.has(code) ? copy(rooms.get(code)!) : null;
+    },
     async join(code, me) {
       const room = rooms.get(code);
       if (!room) return { ok: false, reason: "missing" };
@@ -103,11 +108,12 @@ export function memoryBackend() {
       tell(room.code);
       return true;
     },
-    async abandon(code, who) {
+    async abandon(code, who, by = who) {
       const room = rooms.get(code);
       if (!room || room.status === "finished") return;
       room.status = "abandoned";
       room.left = who;
+      room.endedBy = by;
       tell(code);
     },
     presence(code, who, onOnline) {

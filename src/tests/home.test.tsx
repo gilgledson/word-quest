@@ -84,5 +84,10 @@ it("o botão principal diz o que o toque faz: jogar, continuar ou retomar", () =
   expect(
     screen.getByRole("link", { name: /Jogar primeira fase/ }),
   ).toBeInTheDocument();
-  expect(screen.getByText("Resolva palavras. Vença seu rival.")).toBeVisible();
+  expect(screen.getByText("Sua aventura começa!")).toBeVisible();
+  // Card da Loja leva para a loja.
+  expect(screen.getByRole("link", { name: /Loja de itens/ })).toHaveAttribute(
+    "href",
+    "/loja",
+  );
 });

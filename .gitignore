@@ -26,3 +26,5 @@ android/*.keystore
 # Conteúdo montado pela publicação (scripts/publish-content.mjs)
 content/build/
 .firebase/
+# Pacotes do app publicados ao vivo (scripts/publish-app.mjs): gerados, não versionados
+content/hosting/app/

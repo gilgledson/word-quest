@@ -15,10 +15,13 @@ export async function copyText(text: string): Promise<boolean> {
     return false;
   }
 }
-export async function shareText(text: string): Promise<ShareResult> {
+export async function shareText(
+  text: string,
+  title = "Enviar convite",
+): Promise<ShareResult> {
   try {
     if (Capacitor.isNativePlatform()) {
-      await Share.share({ text, dialogTitle: "Enviar convite" });
+      await Share.share({ text, dialogTitle: title });
       return "shared";
     }
     if (typeof navigator.share === "function") {

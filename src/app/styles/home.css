@@ -33,7 +33,7 @@
 .app-home > main {
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(120px, 1fr) auto auto;
+  grid-template-rows: minmax(60px, 1fr) auto auto auto;
   gap: clamp(10px, 1.6dvh, 18px);
 }
 .app-home .welcome {
@@ -45,9 +45,20 @@
   padding: clamp(8px, 2dvh, 22px) 0 0;
 }
 .app-home .welcome h1 {
-  font-size: clamp(21px, 5.6vw, 34px);
-  -webkit-text-stroke: 1.4px #15365e;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(20px, 5.4vw, 30px);
+  -webkit-text-stroke: 1.2px #15365e;
   line-height: 1.15;
+}
+.app-home .welcome h1 svg {
+  flex: none;
+  width: 0.9em;
+  height: 0.9em;
+  color: #ffcc47;
+  stroke-width: 2.6;
+  filter: drop-shadow(0 1px 0 #15365e);
 }
 .app-home .welcome em {
   background: none;
@@ -252,8 +263,14 @@
     padding-bottom: max(6px, env(safe-area-inset-bottom));
   }
   .app-home > main {
-    grid-template-rows: minmax(86px, 1fr) auto auto;
+    grid-template-rows: minmax(40px, 1fr) auto auto auto;
     gap: 8px;
+  }
+  .app-home .shop-card {
+    padding-block: 6px;
+  }
+  .app-home .shop-card small {
+    display: none;
   }
   .app-home .welcome {
     padding-top: 2px;
@@ -402,4 +419,79 @@
 /* Na home o rótulo "N de 25 fases" fica sobre a barra: sem os marcos, o texto lê limpo. */
 .app-home .journey-progress::after {
   display: none;
+}
+
+/* Card da Loja na tela inicial: peças e moedas à esquerda, chamada à direita (o card todo é link). */
+.app-home .shop-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 3px solid #fff2c9;
+  border-radius: 22px;
+  background: #fffcf1;
+  box-shadow: 0 6px 16px #3b260026;
+  color: #15365e;
+}
+.shop-card-art {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  padding-right: 12px;
+  border-right: 2px solid #f1e6c2;
+}
+/* Moedas, vogais e o curinga, um pouco sobrepostos, como no conceito. */
+.shop-card-art img {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px #3b260033);
+}
+.shop-card-art img:nth-child(2) {
+  height: 40px;
+  margin-left: -8px;
+}
+.shop-card-art img:nth-child(3) {
+  height: 34px;
+  margin-left: -10px;
+  transform: rotate(8deg);
+}
+.shop-card-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.shop-card-text strong {
+  font-size: clamp(16px, 4.4vw, 20px);
+  font-weight: 900;
+}
+.shop-card-text small {
+  font-size: 12px;
+  color: #45525c;
+}
+.shop-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 5px 14px;
+  border: 2px solid #c98a00;
+  border-radius: 999px;
+  background: linear-gradient(#ffe48a, #f4b81c);
+  box-shadow: 0 2px 0 #a86f00;
+  color: #3b2600;
+  font-size: 13px;
+  font-weight: 900;
+}
+/* Celular deitado / tela baixa e larga: loja e botão principal dividem a segunda linha. */
+@media (max-height: 500px) and (min-width: 600px) {
+  .app-home .shop-card {
+    grid-area: 2 / 2;
+    align-self: center;
+  }
+  .app-home .continue-button {
+    grid-area: 2 / 1;
+  }
 }

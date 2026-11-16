@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ShareResultButton } from "../../components/ShareResultButton";
 import { motion } from "motion/react";
 import { economy, type BotLevel } from "../../game/crossword-engine";
 import {
@@ -25,6 +26,8 @@ interface Props {
   online?: boolean;
   onNext: () => void;
   onReplay: () => void;
+  /** Texto do resultado para compartilhar (desafio do dia). */
+  shareResult?: string;
 }
 /** Painel que substitui o banco de letras quando a grade fecha. */
 export function VictoryPanel({
@@ -41,6 +44,7 @@ export function VictoryPanel({
   online,
   onNext,
   onReplay,
+  shareResult,
 }: Props) {
   const campaignWin = result === "win" && !daily && !casual;
   return (
@@ -83,6 +87,7 @@ export function VictoryPanel({
           Próxima descoberta <ArrowRight size={18} />
         </Link>
       )}
+      {shareResult && <ShareResultButton text={shareResult} />}
       <Link className="text-link" to={backTo}>
         {online
           ? "Desafiar de novo"

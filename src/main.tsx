@@ -19,6 +19,7 @@ import {
   Profile,
 } from "./features/pages";
 import { Credits } from "./features/Credits";
+import { Shop } from "./features/Shop";
 // A partida (motor, animações, confete) só é baixada ao abrir uma fase.
 // O duelo ao vivo (salas e servidor) só é baixado por quem abre o modo online.
 const OnlineLobby = lazy(() =>
@@ -27,11 +28,15 @@ const OnlineLobby = lazy(() =>
 const OnlineMatch = lazy(() =>
   import("./features/OnlinePage").then((m) => ({ default: m.OnlineMatch })),
 );
+const OnlineSetup = lazy(() =>
+  import("./features/OnlinePage").then((m) => ({ default: m.OnlineSetup })),
+);
 const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
 );
 import { usePlayer } from "./stores/player";
 import { refreshContent, startContent } from "./content/content";
+import { checkLiveUpdate, confirmBundle } from "./services/liveUpdate";
 import "./app/styles.css";
 import "./animations/animations.css";
 // Depois das animações: refina a janela de resultado definida lá.
@@ -41,6 +46,7 @@ import { unlockAudio } from "./services/sound";
 import { keepScreenOn } from "./services/wakeLock";
 import { resumeMusic } from "./services/music";
 import { MusicController } from "./components/MusicController";
+import { Toasts } from "./components/ResumeMatchToast";
 import { PlayGamesSync } from "./features/PlayGamesCard";
 import { installErrorReporting, trackScreen } from "./services/telemetry";
 // O primeiro toque em qualquer lugar libera o áudio (política de autoplay do navegador e do WebView).
@@ -68,11 +74,17 @@ function GameRoute() {
     </Suspense>
   );
 }
-function OnlineRoute({ match }: { match?: boolean }) {
+function OnlineRoute({ match, setup }: { match?: boolean; setup?: boolean }) {
   const { pathname } = useLocation();
   return (
     <Suspense fallback={<div className="loading">Abrindo o duelo…</div>}>
-      {match ? <OnlineMatch key={pathname} /> : <OnlineLobby />}
+      {setup ? (
+        <OnlineSetup />
+      ) : match ? (
+        <OnlineMatch key={pathname} />
+      ) : (
+        <OnlineLobby />
+      )}
     </Suspense>
   );
 }
@@ -89,11 +101,14 @@ function App() {
   }, [hydrate]);
   useEffect(() => {
     if (!ready) return;
-    // Novidades do servidor ficam para a próxima abertura; a conferência espera o app assentar.
-    const t = window.setTimeout(
-      () => void refreshContent(usePlayer.getState().player),
-      4000,
-    );
+    // O app abriu e carregou o progresso: esta versão do pacote está boa (senão o plugin a desfaz).
+    void confirmBundle();
+    // Novidades do servidor (conteúdo e versão do app) ficam para a próxima abertura; a
+    // conferência espera o app assentar.
+    const t = window.setTimeout(() => {
+      void refreshContent(usePlayer.getState().player);
+      void checkLiveUpdate();
+    }, 4000);
     return () => window.clearTimeout(t);
   }, [ready]);
   const loading = (
@@ -108,6 +123,7 @@ function App() {
       {ready ? (
         <MotionConfig reducedMotion={player.animations ? "user" : "always"}>
           <BrowserRouter>
+            <Toasts />
             <MusicController />
             <PlayGamesSync />
             <ScreenTracker />
@@ -121,8 +137,10 @@ function App() {
                   <Route path="daily" element={<Daily />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="credits" element={<Credits />} />
+                  <Route path="loja" element={<Shop />} />
                   <Route path="play/:id" element={<GameRoute />} />
                   <Route path="online" element={<OnlineRoute />} />
+                  <Route path="online/nova" element={<OnlineRoute setup />} />
                   <Route path="online/:code" element={<OnlineRoute match />} />
                   <Route path="*" element={<Home />} />
                 </Route>

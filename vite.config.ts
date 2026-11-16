@@ -67,6 +67,11 @@ export default defineConfig(({ mode }) => ({
       },
     }),
   ],
+  // Versão do pacote web: "builtin" no que vai dentro do APK; a publicação ao vivo
+  // (scripts/publish-app.mjs) gera cada pacote com BUNDLE_VERSION próprio.
+  define: {
+    __BUNDLE_VERSION__: JSON.stringify(process.env.BUNDLE_VERSION ?? "builtin"),
+  },
   test: {
     environment: "jsdom",
     setupFiles: ["./src/tests/setup.ts"],

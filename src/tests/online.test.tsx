@@ -21,6 +21,7 @@ import {
   themeOfPuzzle,
   cleanCode,
   inviteText,
+  inviteReward,
   flip,
   newCode,
   onlinePuzzle,
@@ -34,7 +35,12 @@ import {
 import { memoryBackend, setOnlineBackend } from "../services/online";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
-import { OnlineLobby, OnlineMatch } from "../features/OnlinePage";
+import {
+  OnlineLobby,
+  OnlineMatch,
+  OnlineSetup,
+  RIVAL_OFFLINE_MS,
+} from "../features/OnlinePage";
 
 vi.mock("../services/repository", async (importOriginal) => {
   const mod = await importOriginal<typeof import("../services/repository")>();
@@ -231,16 +237,24 @@ describe("telas do duelo ao vivo", () => {
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route path="online" element={<OnlineLobby />} />
+          <Route path="online/nova" element={<OnlineSetup />} />
           <Route path="online/:code" element={<OnlineMatch />} />
         </Routes>
       </MemoryRouter>,
     );
   const bia = { uid: "guest", name: "Bia", avatar: "panda" };
   /** Cria a partida pela tela e devolve o código mostrado na sala de espera. */
-  async function createRoom() {
-    open();
-    fireEvent.click(screen.getByRole("button", { name: "Criar partida" }));
+  /** No lobby, "Configurar partida"; na configuração, as escolhas e "Criar partida". */
+  async function configureAndCreate(choose?: () => void) {
+    fireEvent.click(screen.getByRole("button", { name: /Configurar partida/ }));
+    await screen.findByRole("heading", { name: "Configurar partida" });
+    choose?.();
+    fireEvent.click(screen.getByRole("button", { name: /Criar partida/ }));
     await screen.findByRole("heading", { name: "Chame seu amigo" });
+  }
+  async function createRoom(choose?: () => void) {
+    open();
+    await configureAndCreate(choose);
     return [...mem.rooms.keys()][0];
   }
 
@@ -251,8 +265,7 @@ describe("telas do duelo ao vivo", () => {
     expect(screen.getByRole("radio", { name: "Surpresa" })).toBeChecked();
     fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
     expect(screen.getByRole("radio", { name: "Natureza" })).toBeChecked();
-    fireEvent.click(screen.getByRole("button", { name: "Criar partida" }));
-    await screen.findByRole("heading", { name: "Chame seu amigo" });
+    await configureAndCreate();
     const room = [...mem.rooms.values()][0];
     expect(room.puzzleId).toMatch(/^casual-natureza-/);
     expect(screen.getByText("Natureza")).toBeInTheDocument();
@@ -384,5 +397,270 @@ describe("telas do duelo ao vivo", () => {
     await screen.findByRole("heading", { name: "Vitória!" });
     expect(usePlayer.getState().player.coins).toBe(before + economy.duel.win);
     expect(usePlayer.getState().player.duels[sessionKeyOf(code)]).toBe("win");
+  });
+  it("partida terminada com um amigo novo rende moedas de convite a quem criou a sala, uma vez por amigo", async () => {
+    const code = await createRoom();
+    // A sala de espera avisa do bônus; o convite leva o link da loja.
+    expect(screen.getByText(/Ganhe 30 moedas quando um/)).toBeInTheDocument();
+    expect(inviteText(code)).toContain(
+      "play.google.com/store/apps/details?id=br.com.wordquest.game",
+    );
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    const before = usePlayer.getState().player.coins;
+    const room = mem.rooms.get(code)!;
+    await act(async () => {
+      await mem
+        .as("guest")
+        .play({ ...room, rev: room.rev + 1, status: "finished" });
+    });
+    expect(
+      await screen.findByText(/Convite recompensado: \+30/),
+    ).toBeInTheDocument();
+    const after = usePlayer.getState().player;
+    expect(after.coins).toBe(before + economy.invite);
+    expect(after.invitedFriends).toEqual(["guest"]);
+  });
+  it("sair sem querer: a seta pergunta antes, e a partida segue marcada para voltar", async () => {
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    expect(usePlayer.getState().player.activeOnline).toBe(code);
+    // Cancelar a pergunta mantém na partida.
+    const ask = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByRole("link", { name: "Voltar" }));
+    expect(ask).toHaveBeenCalledOnce();
+    expect(ask.mock.calls[0][0]).toContain(code);
+    expect(
+      screen.getByRole("heading", { name: "Contra Bia" }),
+    ).toBeInTheDocument();
+    // Confirmar sai para o lobby; a partida continua marcada, e o aviso no topo das telas
+    // ("Partida em andamento · Voltar", ver "Aviso da partida em andamento") leva de volta.
+    ask.mockReturnValue(true);
+    fireEvent.click(screen.getByRole("link", { name: "Voltar" }));
+    expect(
+      await screen.findByRole("heading", { name: "Jogar com um amigo" }),
+    ).toBeInTheDocument();
+    expect(usePlayer.getState().player.activeOnline).toBe(code);
+  });
+  it("o amigo só pode encerrar depois de 2 minutos; quem ficou fora vê quem encerrou", async () => {
+    expect(RIVAL_OFFLINE_MS).toBe(120_000);
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    // O amigo encerra porque o anfitrião ficou fora.
+    await act(async () => {
+      await mem.as("guest").abandon(code, "host", "guest");
+    });
+    expect(
+      await screen.findByText(
+        "Bia encerrou a partida porque você ficou fora por mais de 2 minutos.",
+      ),
+    ).toBeInTheDocument();
+    // A partida acabou: o lobby não oferece mais voltar.
+    expect(usePlayer.getState().player.activeOnline).toBeUndefined();
+  });
+  it("configuração: quem cria escolhe tempo por jogada e aposta, e a sala de espera mostra as regras", async () => {
+    usePlayer.setState((st) => ({ player: { ...st.player, coins: 40 } }));
+    const code = await createRoom(() => {
+      // Apostas acima do saldo (40) ficam desligadas.
+      expect(screen.getByRole("radio", { name: "50" })).toBeDisabled();
+      fireEvent.click(screen.getByRole("radio", { name: "1 min" }));
+      fireEvent.click(screen.getByRole("radio", { name: "25" }));
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "Cada um aposta 25: quem vencer leva 50 moedas.",
+      );
+    });
+    expect(mem.rooms.get(code)!.rules).toEqual({ turnSeconds: 60, bet: 25 });
+    const rules = screen.getByRole("list", { name: "Regras da partida" });
+    expect(rules).toHaveTextContent("Jogada: 1 min");
+    expect(rules).toHaveTextContent("Aposta: 25 moedas");
+  });
+  it("aposta: cada um reserva ao começar e quem vence leva as duas", async () => {
+    const code = await createRoom(() =>
+      fireEvent.click(screen.getByRole("radio", { name: "25" })),
+    );
+    const before = usePlayer.getState().player.coins;
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    // Partida começou: a aposta sai do saldo e fica reservada.
+    expect(usePlayer.getState().player.coins).toBe(before - 25);
+    expect(usePlayer.getState().player.wagers).toEqual({ [code]: 25 });
+    // Termina com o anfitrião na frente (o estado da sala é do ponto de vista dele).
+    const room = mem.rooms.get(code)!;
+    await act(async () => {
+      await mem.as("guest").play({
+        ...room,
+        rev: room.rev + 1,
+        status: "finished",
+        state: { ...room.state, scores: { p: 12, ai: 5 } },
+      });
+    });
+    expect(
+      await screen.findByText(/Aposta ganha: \+25 moedas/),
+    ).toBeInTheDocument();
+    const after = usePlayer.getState().player;
+    // Devolve as duas apostas (a dele e a do amigo); fora isso, o convite de amigo novo.
+    expect(after.coins - (before - 25)).toBe(50 + economy.invite);
+    expect(after.wagers).toEqual({});
+  });
+  it("aposta: quem fica quando o amigo abandona leva as duas; quem sai perde a sua", async () => {
+    const code = await createRoom(() =>
+      fireEvent.click(screen.getByRole("radio", { name: "10" })),
+    );
+    const before = usePlayer.getState().player.coins;
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    await act(async () => {
+      await mem.as("guest").abandon(code, "guest");
+    });
+    await screen.findByRole("heading", { name: "Vitória!" });
+    expect(usePlayer.getState().player.coins).toBe(
+      before - 10 + 20 + economy.duel.win,
+    );
+  });
+  it("convidado vê as regras antes de entrar e só entra com moedas para a aposta", async () => {
+    // Sala de outro jogador com aposta de 50 e 30 s por jogada.
+    await mem.as("ana").create({
+      code: "QWE234",
+      puzzleId: puzzle.id,
+      grid: puzzle,
+      host: { uid: "ana", name: "Ana", avatar: "panda" },
+      status: "waiting",
+      rev: 0,
+      rules: { turnSeconds: 30, bet: 50 },
+      state: startOnline(puzzle.id, "s", puzzle),
+    });
+    usePlayer.setState((st) => ({ player: { ...st.player, coins: 30 } }));
+    open();
+    fireEvent.click(screen.getByRole("tab", { name: "Entrar com código" }));
+    fireEvent.change(screen.getByLabelText("Código da partida"), {
+      target: { value: "QWE234" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: /Entrar/ }));
+    expect(
+      await screen.findByRole("heading", { name: "Partida de Ana" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Regras da partida" }),
+    ).toHaveTextContent("Jogada: 30 s");
+    expect(screen.getByText(/não dá para apostar 50/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Entrar e apostar 50/ }),
+    ).toBeDisabled();
+    // Com saldo, entra (e a sala ainda não tinha convidado).
+    act(() =>
+      usePlayer.setState((st) => ({ player: { ...st.player, coins: 80 } })),
+    );
+    expect(mem.rooms.get("QWE234")!.guest).toBeUndefined();
+    await act(async () => {
+      fireEvent.click(
+        screen.getByRole("button", { name: /Entrar e apostar 50/ }),
+      );
+    });
+    expect(
+      await screen.findByRole("heading", { name: "Contra Ana" }),
+    ).toBeInTheDocument();
+    expect(mem.rooms.get("QWE234")!.guest?.uid).toBe("host");
+    // Na partida vale o relógio da sala (30 s), quando é a vez de quem entrou.
+    expect(usePlayer.getState().player.coins).toBe(30);
+  });
+  it("relógio: com tempo por jogada, a vez de quem joga corre no relógio da sala; sem limite, não há relógio", async () => {
+    const code = await createRoom(() =>
+      fireEvent.click(screen.getByRole("radio", { name: "30 s" })),
+    );
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    expect(screen.getByRole("timer")).toHaveAccessibleName(
+      "Relógio do turno: 30 segundos",
+    );
+    cleanup();
+    mem = memoryBackend();
+    setOnlineBackend(mem.as("host"));
+    const plain = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(plain, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    expect(screen.queryByRole("timer")).toBeNull();
+  });
+  it("convite: só amigo novo e até 5 amigos", () => {
+    expect(inviteReward(undefined, "a")).toBe(economy.invite);
+    expect(inviteReward(["a"], "a")).toBe(0);
+    expect(inviteReward(["a", "b", "c", "d", "e"], "f")).toBe(0);
+    expect(inviteReward([], undefined)).toBe(0);
+  });
+});
+
+describe("Aviso da partida em andamento", () => {
+  afterEach(cleanup);
+  const at = async (path: string) => {
+    const { Layout } = await import("../components/Layout");
+    const { Toasts } = await import("../components/ResumeMatchToast");
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Toasts />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="*" element={<p>tela</p>} />
+          </Route>
+        </Routes>
+      </MemoryRouter>,
+    );
+  };
+  it("aparece fora da partida, em todas as telas, e leva de volta à sala", async () => {
+    usePlayer.setState({
+      player: { ...structuredClone(initialPlayer), activeOnline: "ABC234" },
+      ready: true,
+    });
+    for (const path of ["/", "/casual", "/daily", "/profile"]) {
+      await at(path);
+      expect(
+        await screen.findByRole("link", {
+          name: "Voltar para a partida ABC234",
+        }),
+      ).toHaveAttribute("href", "/online/ABC234");
+      expect(screen.getByText(/Partida em andamento/)).toBeInTheDocument();
+      cleanup();
+    }
+  });
+  it("não aparece dentro da partida, no mapa nem sem partida em andamento", async () => {
+    usePlayer.setState({
+      player: { ...structuredClone(initialPlayer), activeOnline: "ABC234" },
+      ready: true,
+    });
+    for (const path of ["/online/ABC234", "/map/floresta"]) {
+      await at(path);
+      await act(async () => {
+        await new Promise((r) => setTimeout(r, 50));
+      });
+      expect(
+        screen.queryByRole("link", { name: /Voltar para a partida/ }),
+      ).toBeNull();
+      cleanup();
+    }
+    usePlayer.setState({
+      player: structuredClone(initialPlayer),
+      ready: true,
+    });
+    await at("/");
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(
+      screen.queryByRole("link", { name: /Voltar para a partida/ }),
+    ).toBeNull();
   });
 });

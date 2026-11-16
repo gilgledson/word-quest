@@ -472,3 +472,32 @@
     padding: 2px 0;
   }
 }
+/* Desafio do dia já jogado: compartilhar o resultado e revisitar, lado a lado. */
+.calendar-card > .daily-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+.calendar-card > .daily-actions .button {
+  width: 100%;
+  min-height: 48px;
+  padding-inline: 8px;
+}
+.calendar-card > .daily-actions .share-note,
+.result-dialog .share-note,
+.victory .share-note {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #1f6b3a;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+.app-version {
+  display: block;
+  margin-top: 4px;
+  text-align: center;
+  font-size: 11px;
+  color: #64786b;
+}

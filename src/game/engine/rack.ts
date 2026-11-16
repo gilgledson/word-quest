@@ -171,7 +171,8 @@ export class RackManager {
     }
     // A letra que falta está na mão do oponente: ele a devolve ao jogador.
     if (!s.rack.some(useful) && !s.history.length) {
-      const held = s.botRack.find(useful);
+      // Só letra comum: o curinga do adversário (comprado na loja, no duelo ao vivo) fica com ele.
+      const held = s.botRack.find((id) => !s.tiles[id].joker && useful(id));
       if (held) {
         s.botRack = s.botRack.filter((id) => id !== held);
         s.rack.push(held);
@@ -451,6 +452,55 @@ export class RackManager {
     this.draw(s, economy.rackStart, undefined, true);
     return s;
   }
+  /**
+   * Abre espaço no banco cheio para uma peça comprada: devolve à reserva uma letra comum, de
+   * preferência uma que sobra (já há outra igual servindo à mesma casa). Sem letra comum no
+   * banco (só curingas), não há como abrir espaço.
+   */
+  private makeRoom(s: Session) {
+    if (s.rack.length < economy.rackMax) return true;
+    const spare = this.spare(s, s.rack);
+    const plain = s.rack.filter((id) => !s.tiles[id].joker);
+    if (!plain.length) return false;
+    const out =
+      plain.find((id) => (spare[s.tiles[id].letter] ?? 0) < 0) ?? plain.at(-1)!;
+    s.rack = s.rack.filter((id) => id !== out);
+    s.supply.push(out);
+    return true;
+  }
+  /** Item da loja: um curinga a mais no banco do jogador (sempre acerta a casa ao confirmar). */
+  addJoker(input: Session): Session | undefined {
+    const s = copy(input);
+    if (!this.makeRoom(s)) return undefined;
+    const count = Object.values(s.tiles).filter((t) => t.joker).length;
+    const id = `${JOKER_ID}-${count + 1}`;
+    s.tiles[id] = { id, letter: JOKER_LETTER, joker: true };
+    s.rack.push(id);
+    return s;
+  }
+  /** Letras que podem vir da reserva para o banco agora: ainda necessárias e disponíveis lá. */
+  takeable(s: Session, letters: string[]) {
+    const spare = this.spare(s, s.rack);
+    return letters.filter(
+      (letter) =>
+        (spare[letter] ?? 0) > 0 &&
+        s.supply.some(
+          (id) => !s.tiles[id].joker && s.tiles[id].letter === letter,
+        ),
+    );
+  }
+  /** Item da loja: traz da reserva para o banco uma peça com a letra pedida (se a grade precisa dela). */
+  takeLetter(input: Session, letter: string): Session | undefined {
+    if (!this.takeable(input, [letter]).length) return undefined;
+    const s = copy(input);
+    if (!this.makeRoom(s)) return undefined;
+    const id = s.supply.find(
+      (t) => !s.tiles[t].joker && s.tiles[t].letter === letter,
+    )!;
+    s.supply = s.supply.filter((t) => t !== id);
+    s.rack.push(id);
+    return s;
+  }
   /** Lista violações das regras de conservação; vazia quando consistente. */
   audit(s: Session) {
     const errors: string[] = [];
@@ -476,8 +526,9 @@ export class RackManager {
       sorted(Object.values(this.solution))
     )
       errors.push("Letras diferentes da solução");
-    if (tiles.filter((t) => t.joker).length > 1)
-      errors.push("Mais de um curinga");
+    // Um curinga por partida vem do jogo (`joker`); os da loja têm ids `joker-N`.
+    if (tiles.some((t) => t.joker && !t.id.startsWith(JOKER_ID)))
+      errors.push("Curinga inválido");
     for (const [k, letter] of Object.entries(s.letters))
       if (this.tileAt(s, k)?.letter !== letter) errors.push("Casa sem peça");
     for (const k of s.locked)

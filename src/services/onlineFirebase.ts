@@ -87,6 +87,10 @@ export function firebaseBackend(): OnlineBackend {
       );
       return result.committed;
     },
+    async peek(code: string) {
+      await uid();
+      return unpack((await get(room(code))).val());
+    },
     async join(code: string, seat: OnlineSeat): Promise<JoinResult> {
       await uid();
       if (!(await get(room(code))).exists())
@@ -129,11 +133,11 @@ export function firebaseBackend(): OnlineBackend {
       );
       return result.committed;
     },
-    async abandon(code, who) {
+    async abandon(code, who, by = who) {
       const snap = await get(room(code));
       const current = snap.val() as StoredRoom | null;
       if (!current || current.status === "finished") return;
-      await update(room(code), { status: "abandoned", left: who });
+      await update(room(code), { status: "abandoned", left: who, endedBy: by });
     },
     presence(code, who, onOnline) {
       const mine = ref(db, `rooms/${code}/online/${who}`);

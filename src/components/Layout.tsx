@@ -1,6 +1,7 @@
 import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
+import { ResumeMatchToast } from "./ResumeMatchToast";
 import {
   Compass,
   Shapes,
@@ -11,6 +12,7 @@ import {
   ArrowLeft,
   Volume2,
   VolumeX,
+  Plus,
 } from "lucide-react";
 import { motion } from "motion/react";
 import { usePlayer } from "../stores/player";
@@ -24,9 +26,16 @@ export function Wallet() {
         <Star size={17} fill="currentColor" />
         {Object.values(p.stars).reduce((a, b) => a + b, 0)}
       </span>
-      <span>
+      <span className="wallet-coins">
         <CoinIcon />
         {p.coins}
+        <Link
+          className="wallet-shop"
+          to="/loja"
+          aria-label={`${p.coins} moedas: abrir a loja`}
+        >
+          <Plus aria-hidden="true" />
+        </Link>
       </span>
     </div>
   );
@@ -51,6 +60,8 @@ export function Layout() {
   const { pathname } = useLocation();
   const enabled = usePlayer((s) => s.player.animations);
   const toClaim = usePlayer((s) => claimableCount(s.player));
+  // Duelo ao vivo que ficou para trás (saiu sem querer): um atalho em todas as telas.
+  const activeOnline = usePlayer((s) => s.player.activeOnline);
   const home = pathname === "/";
   const playing = isPlayPath(pathname);
   const map = pathname.startsWith("/map");
@@ -96,6 +107,7 @@ export function Layout() {
           </Link>
         )}
       </header>
+      <ResumeMatchToast code={activeOnline} visible={!playing && !map} />
       {error && (
         <p role="alert" className="error">
           {error}

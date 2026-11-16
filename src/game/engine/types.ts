@@ -44,6 +44,9 @@ export const economy = {
   /** Preço de cada peça trocada, na ordem: a terceira custa mais, para a troca não virar sorteio da mão toda. */
   swap: [10, 10, 15],
   daily: 70,
+  /** Moedas para quem criou a sala quando um amigo novo termina um duelo ao vivo com ele (até `inviteMax` amigos). */
+  invite: 30,
+  inviteMax: 5,
   /** Baús da tela inicial: um a cada 25 palavras descobertas (sem repetir fases); prêmio crescente, em moedas, na ordem de abertura (o último vale para os seguintes). */
   chest: [50, 75, 100, 125, 150],
   chestWords: 25,

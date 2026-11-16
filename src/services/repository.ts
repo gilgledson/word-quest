@@ -38,6 +38,16 @@ export interface Player {
   chestsOpened: number;
   /** Palavras descobertas pelo jogador em cada fase (ids); a fase refeita não conta de novo. */
   wordsFound: Record<string, string[]>;
+  /** Quando o jogo pediu avaliação na loja (ISO), do mais antigo ao mais novo. */
+  reviewAsks?: string[];
+  /** Itens da loja no inventário (usos restantes de cada um). */
+  items?: Partial<Record<"curinga" | "vogal", number>>;
+  /** Apostas reservadas em duelos ao vivo ainda não acertados (código da sala → moedas). */
+  wagers?: Record<string, number>;
+  /** Código do duelo ao vivo em andamento (o lobby oferece voltar a ele). */
+  activeOnline?: string;
+  /** Amigos (uid do duelo ao vivo) que já renderam moedas de convite. */
+  invitedFriends?: string[];
   /** Grade em uso em cada fase (índice da variante); ausente = a original. Muda a cada revanche. */
   variants?: Record<string, number>;
   /** Últimas partidas concluídas (a mais recente primeiro). */
