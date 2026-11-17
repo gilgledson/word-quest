@@ -177,30 +177,7 @@
 .result-dialog .result-score span:last-child .opponent-avatar {
   border-color: #7045c8;
 }
-/* A fala do rival sai do lado dele, como um balão. */
-.result-dialog .result-quote {
-  position: relative;
-  margin: 2px 0 0;
-  padding: 6px 12px;
-  border: 2px solid #efe6c8;
-  border-radius: 14px;
-  background: #fff;
-  font-size: 13px;
-  text-align: center;
-  color: #3a4b5f;
-}
-.result-dialog .result-quote::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  right: 22%;
-  width: 12px;
-  height: 12px;
-  border: 2px solid #efe6c8;
-  border-width: 2px 0 0 2px;
-  background: #fff;
-  transform: rotate(45deg);
-}
+
 .result-dialog .result-coins {
   display: inline-flex;
   align-items: center;
@@ -229,38 +206,7 @@
   padding: 5px 10px;
   font-size: 12px;
 }
-/* O resumo vira uma linha só: três números lado a lado, sem caixas. */
-.result-dialog .match-stats {
-  gap: 0;
-  margin: 2px 0 0;
-  padding: 4px 0;
-  border-top: 1px solid #efe2bd;
-  border-bottom: 1px solid #efe2bd;
-}
-.result-dialog .match-stats div {
-  display: flex;
-  flex-direction: column-reverse;
-  padding: 0;
-  border: 0;
-  background: none;
-}
-.result-dialog .match-stats dd {
-  font-size: 16px;
-  line-height: 1.1;
-}
-.result-dialog .medals {
-  gap: 4px;
-  margin: 2px 0 0;
-}
-.result-dialog .medals li {
-  padding: 1px 6px;
-  font-size: 11px;
-  white-space: nowrap;
-}
-.result-dialog .result-next {
-  font-size: 12px;
-  color: #45525c;
-}
+
 /* "Próxima fase" na linha de cima; os outros dois dividem a de baixo em partes iguais. */
 .result-dialog .result-actions {
   display: grid;
@@ -303,14 +249,7 @@
   padding-top: calc(env(safe-area-inset-top) + 48px);
   padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
 }
-/* A fala do rival cabe numa linha. */
-.result-dialog .result-quote {
-  max-width: 100%;
-  padding: 5px 12px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
+
 /* Celulares comuns (até ~860 de altura útil): tudo um pouco menor para caber sem rolar. */
 @media (max-height: 860px) {
   .result-dialog {
@@ -343,9 +282,6 @@
   .result-dialog .result-coins {
     font-size: 16px;
   }
-  .result-dialog .result-next {
-    display: none;
-  }
 }
 @media (max-height: 700px) {
   .result-dialog .result-icon {
@@ -363,8 +299,173 @@
     width: 44px;
     height: 44px;
   }
-  .result-dialog .match-stats {
-    display: none;
+}
+/* Versão limpa: placar em destaque (com a fala do rival num balão), prêmios numa linha, progresso
+   fino e os botões, com o próximo rival dentro de "Próxima fase". */
+.result-dialog {
+  gap: 10px;
+}
+.result-dialog .result-rewards {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: center;
+  gap: 8px 10px;
+  width: 100%;
+}
+.result-dialog .result-rewards > p {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  min-height: 38px;
+  margin: 0;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-size: 15px;
+  white-space: nowrap;
+}
+/* A conquista encolhe (com "…") antes de as moedas quebrarem a linha. */
+.result-dialog .result-rewards .result-achievement {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+.result-dialog .result-rewards .result-achievement {
+  max-width: 100%;
+  border: 2px solid #f0c75a;
+  background: linear-gradient(#fffaf0, #fff0c4);
+  color: #4a3a10;
+  box-shadow: 0 3px 0 #d9b04a;
+}
+.result-dialog .result-rewards .result-achievement b {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.result-dialog .result-rewards .result-achievement svg {
+  color: #d18f12;
+}
+.result-dialog .result-progress {
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid #efe2bd;
+  font-size: 14px;
+  font-style: italic;
+  color: #45525c;
+}
+.result-dialog .result-progress .bar {
+  height: 8px;
+}
+
+/* Balão da fala do rival: uma linha apoiada na borda do placar, com a ponta no rosto dele. */
+.result-dialog .result-score {
+  position: relative;
+  margin-top: 14px;
+  padding-top: 16px;
+}
+.result-dialog .result-bubble {
+  position: absolute;
+  top: -15px;
+  right: 10px;
+  z-index: 2;
+  max-width: 84%;
+  padding: 3px 10px;
+  border: 2px solid #f0d9a0;
+  border-radius: 12px;
+  background: #fffaf0;
+  color: #4a3a10;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.3;
+  box-shadow: 0 2px 0 #e3c983;
+}
+/* O texto corta com "…" por dentro; a ponta do balão fica de fora. */
+.result-dialog .result-bubble > span {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.result-dialog .result-bubble::before {
+  content: none;
+}
+.result-dialog .result-bubble::after {
+  content: "";
+  position: absolute;
+  right: 34px;
+  bottom: -7px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #f0d9a0;
+  border-width: 0 2px 2px 0;
+  background: #fffaf0;
+  transform: rotate(45deg);
+}
+/* Selos das medalhas, menores que os das moedas. */
+.result-dialog {
+  grid-template-columns: minmax(0, 1fr);
+}
+.result-dialog .result-rewards {
+  gap: 6px;
+  min-width: 0;
+}
+.result-dialog .result-rewards > p {
+  gap: 4px;
+  min-height: 32px;
+  padding: 3px 10px;
+  font-size: 13.5px;
+}
+.result-dialog .result-medals {
+  display: contents;
+}
+.result-dialog .result-medals li {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  min-height: 32px;
+  padding: 3px 8px;
+  border: 2px solid #f0c75a;
+  border-radius: 999px;
+  background: linear-gradient(#fffaf0, #fff0c4);
+  color: #4a3a10;
+  font-size: 12.5px;
+  font-weight: 800;
+  white-space: nowrap;
+  box-shadow: 0 2px 0 #d9b04a;
+  list-style: none;
+}
+.result-dialog .result-medals li.more {
+  padding-inline: 8px;
+}
+/* "Próxima fase · vs Fagulha", com o rostinho do próximo rival à esquerda. */
+.result-dialog .result-actions .result-go {
+  gap: 10px;
+  font-size: 16px;
+}
+.result-dialog .result-go .opponent-avatar {
+  flex: none;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #ffe9c2;
+}
+.result-dialog .result-go > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Linha de baixo: "Ver o tabuleiro" largo e o compartilhar só com o ícone. */
+.result-dialog .result-actions:has(.result-share) {
+  grid-template-columns: minmax(0, 1fr) 64px;
+}
+.result-dialog .result-actions .result-share {
+  padding-inline: 0;
+}
+@media (max-height: 860px) {
+  .result-dialog {
+    gap: 8px;
+  }
+}
+@media (max-height: 700px) {
+  .result-dialog {
+    gap: 6px;
   }
 }
 /* Em pé, cabeça e corpo não existem para o layout: os itens seguem na coluna da janela. */
@@ -394,8 +495,8 @@
   .result-dialog .result-icon {
     margin-top: -34px;
   }
-  .result-dialog .match-stats,
-  .result-dialog .result-next {
-    display: none;
-  }
+}
+/* Foco posto pelo app ao abrir: sem anel até alguém usar o teclado. */
+.result-dialog .quiet-focus:focus-visible {
+  outline: none;
 }

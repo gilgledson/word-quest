@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShareResultButton } from "../components/ShareResultButton";
 import { Award, Frown, Handshake, Trophy } from "lucide-react";
@@ -10,9 +10,7 @@ import { CoinIcon } from "../components/CoinIcon";
 import { avatarOf } from "../game/avatars";
 import { usePlayer } from "../stores/player";
 import type { Mood, OpponentProfile } from "../game/opponents";
-import type { GameRecord } from "../services/repository";
-import { MatchRecap } from "./puzzle/MatchRecap";
-import type { MatchSummary } from "./puzzle/summary";
+import { medalsFor, type MatchSummary } from "./puzzle/summary";
 
 export type DuelResult = "win" | "draw" | "loss";
 
@@ -30,15 +28,16 @@ interface Props {
   nextTo?: string;
   /** Nome do oponente da próxima fase. */
   nextRival?: string;
+  /** Id do oponente da próxima fase (o rostinho dentro de "Próxima fase"). */
+  nextRivalId?: string;
   /** Progresso do mundo e das estrelas (vitória na campanha). */
   progress?: { world: string; done: number; total: number; stars: number };
   /** Nome do mundo que acabou de ser desbloqueado, se foi o caso. */
   unlocked?: string;
   /** Títulos das conquistas que esta partida completou. */
   achievements?: string[];
-  /** Resumo da partida e histórico (opcionais). */
+  /** Resumo da partida (as medalhas saem dele). */
   summary?: MatchSummary;
-  history?: GameRecord[];
   enabled: boolean;
   /** Texto do resultado para compartilhar (desafio do dia). */
   shareResult?: string;
@@ -75,11 +74,11 @@ export function ResultPopup({
   stars,
   nextTo,
   nextRival,
+  nextRivalId,
   progress,
   unlocked,
   achievements = [],
   summary,
-  history = [],
   enabled,
   onClose,
   shareResult,
@@ -95,7 +94,16 @@ export function ResultPopup({
         ? rival.lose
         : rival.tagline;
   const avatar = usePlayer((s) => s.player.avatar);
+  // Selos ao lado das moedas: uma medalha à vista e o resto em "+N". Conquista nova tem a vez:
+  // nessa partida as medalhas não aparecem (não cabem três selos numa linha de celular).
+  const medals = summary && achievements.length === 0 ? medalsFor(summary) : [];
+  const medalRoom = 1;
+  const shownMedals = medals.slice(0, medalRoom);
+  const moreMedals = medals.slice(medalRoom);
   const close = useRef<HTMLButtonElement>(null);
+  // O foco vai para o botão (teclado e leitor de tela), mas sem o anel azul enquanto ninguém usa
+  // o teclado: no toque ele parecia uma borda sobrando em volta de "Ver o tabuleiro".
+  const [quietFocus, setQuietFocus] = useState(true);
   useEffect(() => close.current?.focus(), []);
   return (
     <motion.div
@@ -105,7 +113,10 @@ export function ResultPopup({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.18 }}
       onClick={onClose}
-      onKeyDown={(e) => e.key === "Escape" && onClose()}
+      onKeyDown={(e) => {
+        setQuietFocus(false);
+        if (e.key === "Escape") onClose();
+      }}
     >
       <motion.div
         className={`result-dialog ${result}`}
@@ -134,6 +145,10 @@ export function ResultPopup({
           )}
           <p className="result-text">{text(rival.name)}</p>
           <div className="result-score" aria-label="Placar final">
+            {/* A fala do rival sai do rosto dele, como um balão. */}
+            <q className="result-bubble">
+              <span>{quote}</span>
+            </q>
             <span>
               <OpponentAvatar opponent={avatarOf(avatar)} size={58} />
               <b>{scores.p}</b> Você
@@ -150,24 +165,61 @@ export function ResultPopup({
               <b>{scores.ai}</b> {rival.name}
             </span>
           </div>
-          <p className="result-quote">
-            <span>
-              <b>{rival.name}:</b> “{quote}”
-            </span>
-          </p>
         </div>
         <div className="result-body">
-          {coins !== 0 && (
-            <p className={`result-coins ${coins < 0 ? "lost" : ""}`}>
-              <CoinIcon size={20} /> {coins > 0 ? `+${coins}` : `−${-coins}`}{" "}
-              moedas
-            </p>
+          {/* Prêmios numa linha só: moedas e conquistas como selos. */}
+          {(coins !== 0 || achievements.length > 0 || medals.length > 0) && (
+            <div className="result-rewards">
+              {coins !== 0 && (
+                <p className={`result-coins ${coins < 0 ? "lost" : ""}`}>
+                  <CoinIcon size={18} />{" "}
+                  {coins > 0 ? `+${coins}` : `−${-coins}`} moedas
+                </p>
+              )}
+              {achievements.length > 0 && (
+                <p
+                  className="result-achievement"
+                  role="status"
+                  title="Resgate no Perfil"
+                >
+                  <Award size={16} aria-hidden="true" />
+                  <span className="sr-only">
+                    {achievements.length === 1 ? "Conquista" : "Conquistas"}
+                    :{" "}
+                  </span>
+                  <b>{achievements.join(", ")}</b>
+                  <span className="sr-only">. Resgate no Perfil.</span>
+                </p>
+              )}
+              {medals.length > 0 && (
+                <ul
+                  className="result-medals"
+                  aria-label="Medalhas desta partida"
+                >
+                  {shownMedals.map((m) => (
+                    <li key={m.id} title={m.hint}>
+                      <span aria-hidden="true">🏅</span> {m.label}
+                    </li>
+                  ))}
+                  {moreMedals.length > 0 && (
+                    <li
+                      className="more"
+                      title={moreMedals.map((m) => m.label).join(", ")}
+                    >
+                      <span className="sr-only">
+                        {moreMedals.map((m) => m.label).join(", ")}
+                      </span>
+                      <span aria-hidden="true">+{moreMedals.length}</span>
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
           )}
           {progress && (
             <div className="result-progress">
               <span>
-                {progress.world} · {progress.done}/{progress.total} fases · ★{" "}
-                {progress.stars}
+                {progress.world} · {progress.done}/{progress.total}
               </span>
               <span
                 className="bar"
@@ -190,25 +242,6 @@ export function ResultPopup({
               Novo mundo aberto: <b>{unlocked}</b>!
             </p>
           )}
-          {achievements.length > 0 && (
-            <p className="result-achievement" role="status">
-              <Award size={18} aria-hidden="true" />
-              <span>
-                {achievements.length === 1 ? "Conquista" : "Conquistas"}:{" "}
-                <b>{achievements.join(", ")}</b>. Resgate no Perfil.
-              </span>
-            </p>
-          )}
-          {summary && (
-            <MatchRecap
-              rivalName={rival.name}
-              summary={summary}
-              history={history}
-            />
-          )}
-          {nextTo && nextRival && (
-            <p className="result-next">Próximo rival: {nextRival}</p>
-          )}
           {/* "Próxima fase" ocupa a linha; embaixo, "Ver o tabuleiro" e "Compartilhar" dividem outra. */}
           <div className="result-actions">
             {nextTo && (
@@ -217,12 +250,20 @@ export function ResultPopup({
                 to={nextTo}
                 onClick={onClose}
               >
-                Próxima fase
+                {nextRivalId && (
+                  <OpponentAvatar opponent={{ id: nextRivalId }} size={36} />
+                )}
+                <span>
+                  Próxima fase
+                  {nextRival && (
+                    <span className="result-go-rival"> · vs {nextRival}</span>
+                  )}
+                </span>
               </Link>
             )}
             <button
               ref={close}
-              className={`button result-close ${nextTo ? "result-ghost" : "primary"}`}
+              className={`button result-close ${nextTo ? "result-ghost" : "primary"} ${quietFocus ? "quiet-focus" : ""}`}
               onClick={onClose}
             >
               {nextTo ? "Ver o tabuleiro" : "Continuar"}
@@ -230,7 +271,7 @@ export function ResultPopup({
             {shareResult && (
               <ShareResultButton
                 text={shareResult}
-                label="Compartilhar"
+                label=""
                 className="button result-ghost result-share"
               />
             )}

@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Map, RotateCcw, Swords, Shapes } from "lucide-react";
 import { Link } from "react-router-dom";
 import { ShareResultButton } from "../../components/ShareResultButton";
 import { motion } from "motion/react";
@@ -106,24 +106,39 @@ export function VictoryPanel({
           </button>
         )
       )}
-      <div className="victory-links">
+      {/* Atalhos como botões de verdade, do mesmo tamanho (os links de texto eram difíceis de tocar). */}
+      <div className="victory-actions">
         {shareResult && (
           <ShareResultButton
             text={shareResult}
             label="Compartilhar"
-            className="text-link"
+            className="victory-action"
           />
         )}
-        <Link className="text-link" to={backTo}>
-          {online
-            ? "Desafiar de novo"
-            : casual
-              ? "Escolher outro tema"
-              : "Voltar à jornada"}
+        <Link
+          className="victory-action"
+          to={backTo}
+          aria-label={
+            online
+              ? "Desafiar de novo"
+              : casual
+                ? "Escolher outro tema"
+                : "Voltar à jornada"
+          }
+        >
+          {online ? <Swords /> : casual ? <Shapes /> : <Map />}
+          {online ? "Desafiar" : casual ? "Outro tema" : "Jornada"}
         </Link>
         {!online && (result !== "loss" || nextTo) && (
-          <button className="text-link" onClick={onReplay}>
-            {result === "loss" ? "Tentar de novo" : "Jogar novamente"}
+          <button
+            className="victory-action"
+            onClick={onReplay}
+            aria-label={
+              result === "loss" ? "Tentar de novo" : "Jogar novamente"
+            }
+          >
+            <RotateCcw />
+            {result === "loss" ? "Tentar de novo" : "Jogar de novo"}
           </button>
         )}
       </div>

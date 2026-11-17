@@ -124,9 +124,7 @@ describe("janela de vitória", () => {
         />
       </MemoryRouter>,
     );
-    expect(
-      screen.getByText(/Vila das Palavras · 5\/5 fases/),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/Vila das Palavras · 5\/5/)).toBeInTheDocument();
     expect(screen.getByRole("progressbar")).toHaveAttribute(
       "aria-valuenow",
       "5",
@@ -134,7 +132,10 @@ describe("janela de vitória", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "Floresta dos Enigmas",
     );
-    expect(screen.getByText("Próximo rival: Sabi")).toBeInTheDocument();
+    // O próximo rival vai dentro do botão "Próxima fase".
+    expect(
+      screen.getByRole("link", { name: /Próxima fase · vs Sabi/ }),
+    ).toBeInTheDocument();
   });
   it("sem os dados novos, a janela continua igual", () => {
     render(
@@ -143,6 +144,6 @@ describe("janela de vitória", () => {
       </MemoryRouter>,
     );
     expect(screen.queryByRole("progressbar")).toBeNull();
-    expect(screen.queryByText(/Próximo rival/)).toBeNull();
+    expect(screen.queryByText(/vs /)).toBeNull();
   });
 });

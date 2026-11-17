@@ -1,9 +1,12 @@
-import { render, screen } from "@testing-library/react";
-import { expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { afterEach, expect, it } from "vitest";
 import type { Session } from "../game/crossword-engine";
 import { medalsFor, summarize } from "../features/puzzle/summary";
-import { MatchRecap } from "../features/puzzle/MatchRecap";
-import type { GameRecord } from "../services/repository";
+import { ResultPopup } from "../features/ResultPopup";
+import { OPPONENTS } from "../game/opponents";
+
+afterEach(cleanup);
 
 const session = (
   owners: Record<string, "p" | "ai">,
@@ -46,34 +49,47 @@ it("medalhas: só vitória rende, e cada uma tem seu critério", () => {
   const loss = summarize(session({ ...owners }, ["a"], { p: 1, ai: 9 }));
   expect(medalsFor(loss)).toEqual([]);
 });
-const panel = (history: GameRecord[]) =>
+const popup = (
+  summary: ReturnType<typeof summarize>,
+  achievements: string[] = [],
+) =>
   render(
-    <MatchRecap
-      rivalName="Bolota"
-      summary={summarize(session({ a: "p", b: "ai" }, ["a", "b"]))}
-      history={history}
-    />,
+    <MemoryRouter>
+      <ResultPopup
+        result="win"
+        rival={OPPONENTS[0]}
+        mood="sad"
+        moodKey={1}
+        scores={{ p: 16, ai: 4 }}
+        coins={50}
+        stars={1}
+        summary={summary}
+        achievements={achievements}
+        enabled={false}
+        onClose={() => {}}
+      />
+    </MemoryRouter>,
   );
-it("a tela de resultado mostra resumo e medalhas", () => {
-  panel([]);
-  expect(screen.getByLabelText("Resumo da partida")).toHaveTextContent(
-    "Suas letras1",
+const threeMedals = () =>
+  summarize(
+    session({ a: "p", b: "p", c: "p", d: "ai" }, ["a", "b", "c", "d"], {
+      p: 16,
+      ai: 4,
+    }),
   );
-  expect(screen.getByLabelText("Medalhas desta partida")).toHaveTextContent(
-    "Sem ajuda",
-  );
-  expect(screen.queryByText("Últimas partidas")).toBeNull();
+it("as medalhas viram selos ao lado das moedas: uma à vista e o resto em +N", () => {
+  popup(threeMedals());
+  const medals = screen.getByLabelText("Medalhas desta partida");
+  expect(medals).toHaveTextContent("Sem ajuda");
+  expect(medals).toHaveTextContent("+2");
+  // As outras não somem: ficam no "+2" para leitores de tela.
+  expect(medals).toHaveTextContent("Vitória folgada");
+  expect(medals).toHaveTextContent("Dono da grade");
 });
-it("lista as últimas partidas quando há mais de uma", () => {
-  const g = (result: GameRecord["result"]): GameRecord => ({
-    puzzleId: "vila-1",
-    result,
-    p: 10,
-    ai: 3,
-    date: "2026-10-31",
-  });
-  panel([g("win"), g("loss"), g("draw")]);
-  expect(screen.getByText("Últimas partidas")).toBeInTheDocument();
-  expect(screen.getByText("Derrota")).toBeInTheDocument();
-  expect(screen.getByText("Empate")).toBeInTheDocument();
+it("com conquista nova, ela ocupa o lugar das medalhas", () => {
+  popup(threeMedals(), ["Mão certeira"]);
+  expect(screen.getByRole("status")).toHaveTextContent(
+    "Conquista: Mão certeira. Resgate no Perfil.",
+  );
+  expect(screen.queryByLabelText("Medalhas desta partida")).toBeNull();
 });

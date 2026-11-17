@@ -732,19 +732,3 @@
   height: 26px;
   margin: 0 2px 0 4px;
 }
-.result-quote {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 6px 0 0;
-  padding: 6px 10px;
-  border-radius: 14px;
-  background: #fff6dc;
-  font-size: 13px;
-  text-align: left;
-  color: #5b4a1a;
-}
-.result-quote .opponent-avatar {
-  flex-shrink: 0;
-  margin: 0;
-}

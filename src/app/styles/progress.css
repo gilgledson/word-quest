@@ -48,12 +48,7 @@
   color: #1c6b43;
   font-size: 14px;
 }
-.result-next {
-  margin: 0;
-  font-size: 13px;
-  font-weight: 700;
-  color: #5f6f52;
-}
+
 .result-actions .text-link {
   justify-self: center;
 }

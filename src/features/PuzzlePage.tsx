@@ -1122,13 +1122,15 @@ export function Duel({
               ? opponentById(OPPONENT_BY_LEVEL[puzzle.number + 1])?.name
               : undefined
           }
+          nextRivalId={
+            nextTo ? OPPONENT_BY_LEVEL[puzzle.number + 1] : undefined
+          }
           progress={progress}
           unlocked={unlocked}
           achievements={achievementStatus(player)
             .filter((a) => a.done && !achBase.ids.includes(a.id))
             .map((a) => a.title)}
           summary={summarize(session)}
-          history={player.history}
           enabled={prefs.enabled}
           shareResult={shareResult}
           onClose={() => {

@@ -40,7 +40,7 @@ describe("Janela de resultado do duelo", () => {
     expect(screen.getByLabelText("Placar final")).toBeInTheDocument();
     // O painel atrás da janela também tem "Próxima fase": vale o botão da janela.
     expect(
-      within(dialog).getByRole("link", { name: "Próxima fase" }),
+      within(dialog).getByRole("link", { name: /^Próxima fase/ }),
     ).toHaveAttribute("href", expect.stringContaining("/play/vila-2"));
     void sc;
   });

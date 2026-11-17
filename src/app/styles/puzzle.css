@@ -412,9 +412,22 @@
   .app-playing .puzzle-tools {
     grid-area: 4/2;
   }
-  /* O painel do fim fica abaixo do placar, sem cobri-lo. */
+  /* O painel do fim fica abaixo do placar, sem cobri-lo, e enxuto para caber sem rolar:
+     sem o selo e com o placar numa linha. */
   .app-playing .victory {
     grid-area: 2/2/5/3;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .app-playing .victory .victory-badge {
+    display: none;
+  }
+  .app-playing .victory p.victory-line {
+    flex-wrap: nowrap;
+    font-size: 14px;
+  }
+  .app-playing .victory > .button {
+    min-height: 44px;
   }
 }
 .app-playing .board {
