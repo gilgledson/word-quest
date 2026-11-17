@@ -8,7 +8,9 @@
   gap: 6px;
   padding: 0 16px 16px;
 }
-.result-dialog > :not(.result-rays) {
+.result-dialog > :not(.result-rays),
+.result-dialog > .result-head > *,
+.result-dialog > .result-body > * {
   position: relative;
   z-index: 1;
 }
@@ -259,25 +261,30 @@
   font-size: 12px;
   color: #45525c;
 }
+/* "Próxima fase" na linha de cima; os outros dois dividem a de baixo em partes iguais. */
 .result-dialog .result-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 8px;
+  width: 100%;
   margin-top: 4px;
 }
-/* Com próxima fase, os dois botões dividem a linha: o principal à direita e maior. */
-.result-dialog .result-actions:has(.result-ghost) {
-  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
-}
-.result-dialog .result-actions .result-ghost {
-  order: -1;
+.result-dialog .result-actions .result-go,
+.result-dialog .result-actions:not(:has(.result-share)) .result-close,
+.result-dialog .result-actions:not(:has(.result-close)) .result-share {
+  grid-column: 1 / -1;
 }
 .result-dialog .result-actions .button {
   width: 100%;
-  min-height: 52px;
+  min-height: 50px;
   padding-inline: 8px;
-  font-size: 16px;
+  font-size: 17px;
+  white-space: nowrap;
 }
 .result-dialog .result-actions .button.result-ghost {
-  font-size: 14px;
+  min-height: 44px;
+  gap: 6px;
+  font-size: 15px;
 }
 .button.result-ghost {
   padding: 0 8px;
@@ -287,6 +294,58 @@
   font-size: 14px;
   line-height: 1.15;
   box-shadow: 0 3px 0 #b9cdea;
+}
+/* A janela nunca passa da tela: centralizada quando cabe, e rola no fundo quando não cabe
+   (com "safe", o topo com o troféu nunca fica fora do alcance). */
+.result-backdrop {
+  overflow-y: auto;
+  align-items: safe center;
+  padding-top: calc(env(safe-area-inset-top) + 48px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
+}
+/* A fala do rival cabe numa linha. */
+.result-dialog .result-quote {
+  max-width: 100%;
+  padding: 5px 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* Celulares comuns (até ~860 de altura útil): tudo um pouco menor para caber sem rolar. */
+@media (max-height: 860px) {
+  .result-dialog {
+    gap: 5px;
+  }
+  .result-dialog .result-icon {
+    width: 64px;
+    height: 64px;
+    margin-top: -36px;
+  }
+  .result-dialog h2 {
+    font-size: 26px;
+  }
+  .result-dialog .victory-stars {
+    font-size: 32px;
+  }
+  .result-dialog .victory-stars > :nth-child(2) {
+    font-size: 42px;
+  }
+  .result-dialog .result-score > span:not([aria-hidden]) {
+    grid-template-rows: 48px auto;
+  }
+  .result-dialog .result-score .opponent-avatar {
+    width: 48px;
+    height: 48px;
+  }
+  .result-dialog .result-score b {
+    font-size: 30px;
+  }
+  .result-dialog .result-coins {
+    font-size: 16px;
+  }
+  .result-dialog .result-next {
+    display: none;
+  }
 }
 @media (max-height: 700px) {
   .result-dialog .result-icon {
@@ -305,6 +364,38 @@
     height: 44px;
   }
   .result-dialog .match-stats {
+    display: none;
+  }
+}
+/* Em pé, cabeça e corpo não existem para o layout: os itens seguem na coluna da janela. */
+.result-dialog > .result-head,
+.result-dialog > .result-body {
+  display: contents;
+}
+/* Celular deitado: duas colunas. À esquerda o resultado (troféu, faixa, estrelas, placar);
+   à direita prêmios, progresso e botões. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .result-backdrop {
+    padding-top: calc(env(safe-area-inset-top) + 36px);
+  }
+  .result-dialog {
+    width: min(100%, 720px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    align-items: center;
+    column-gap: 18px;
+  }
+  .result-dialog > .result-head,
+  .result-dialog > .result-body {
+    display: grid;
+    justify-items: center;
+    gap: 5px;
+    min-width: 0;
+  }
+  .result-dialog .result-icon {
+    margin-top: -34px;
+  }
+  .result-dialog .match-stats,
+  .result-dialog .result-next {
     display: none;
   }
 }

@@ -118,104 +118,123 @@ export function ResultPopup({
         onClick={(e) => e.stopPropagation()}
       >
         <span className="result-rays" aria-hidden="true" />
-        <span className="result-icon" aria-hidden="true">
-          <Icon size={40} />
-        </span>
-        <h2>{title}</h2>
-        {stars > 0 && (
-          <VictoryStars count={stars} total={3} enabled={enabled} decorative />
-        )}
-        <p className="result-text">{text(rival.name)}</p>
-        <div className="result-score" aria-label="Placar final">
-          <span>
-            <OpponentAvatar opponent={avatarOf(avatar)} size={58} />
-            <b>{scores.p}</b> Você
+        {/* Cabeça (resultado) e corpo (prêmios e botões): uma coluna em pé, duas deitado. */}
+        <div className="result-head">
+          <span className="result-icon" aria-hidden="true">
+            <Icon size={40} />
           </span>
-          <span aria-hidden="true">×</span>
-          <span>
-            <OpponentPortrait
-              opponent={rival}
-              mood={mood}
-              moodKey={moodKey}
-              size={58}
-              animate={enabled}
+          <h2>{title}</h2>
+          {stars > 0 && (
+            <VictoryStars
+              count={stars}
+              total={3}
+              enabled={enabled}
+              decorative
             />
-            <b>{scores.ai}</b> {rival.name}
-          </span>
-        </div>
-        <p className="result-quote">
-          <span>
-            <b>{rival.name}:</b> “{quote}”
-          </span>
-        </p>
-        {coins !== 0 && (
-          <p className={`result-coins ${coins < 0 ? "lost" : ""}`}>
-            <CoinIcon size={20} /> {coins > 0 ? `+${coins}` : `−${-coins}`}{" "}
-            moedas
-          </p>
-        )}
-        {progress && (
-          <div className="result-progress">
+          )}
+          <p className="result-text">{text(rival.name)}</p>
+          <div className="result-score" aria-label="Placar final">
             <span>
-              {progress.world} · {progress.done}/{progress.total} fases · ★{" "}
-              {progress.stars}
+              <OpponentAvatar opponent={avatarOf(avatar)} size={58} />
+              <b>{scores.p}</b> Você
             </span>
-            <span
-              className="bar"
-              role="progressbar"
-              aria-label={`Progresso em ${progress.world}`}
-              aria-valuenow={progress.done}
-              aria-valuemin={0}
-              aria-valuemax={progress.total}
-            >
-              <i
-                style={{ width: `${(progress.done / progress.total) * 100}%` }}
+            <span aria-hidden="true">×</span>
+            <span>
+              <OpponentPortrait
+                opponent={rival}
+                mood={mood}
+                moodKey={moodKey}
+                size={58}
+                animate={enabled}
               />
+              <b>{scores.ai}</b> {rival.name}
             </span>
           </div>
-        )}
-        {unlocked && (
-          <p className="result-unlocked" role="status">
-            Novo mundo aberto: <b>{unlocked}</b>!
-          </p>
-        )}
-        {achievements.length > 0 && (
-          <p className="result-achievement" role="status">
-            <Award size={18} aria-hidden="true" />
+          <p className="result-quote">
             <span>
-              {achievements.length === 1 ? "Conquista" : "Conquistas"}:{" "}
-              <b>{achievements.join(", ")}</b>. Resgate no Perfil.
+              <b>{rival.name}:</b> “{quote}”
             </span>
           </p>
-        )}
-        {summary && (
-          <MatchRecap
-            rivalName={rival.name}
-            summary={summary}
-            history={history}
-          />
-        )}
-        {nextTo && nextRival && (
-          <p className="result-next">Próximo rival: {nextRival}</p>
-        )}
-        <div className="result-actions">
-          {nextTo && (
-            <Link className="button primary" to={nextTo} onClick={onClose}>
-              Próxima fase
-            </Link>
+        </div>
+        <div className="result-body">
+          {coins !== 0 && (
+            <p className={`result-coins ${coins < 0 ? "lost" : ""}`}>
+              <CoinIcon size={20} /> {coins > 0 ? `+${coins}` : `−${-coins}`}{" "}
+              moedas
+            </p>
           )}
-          {shareResult && (
-            <ShareResultButton text={shareResult} className="button primary" />
+          {progress && (
+            <div className="result-progress">
+              <span>
+                {progress.world} · {progress.done}/{progress.total} fases · ★{" "}
+                {progress.stars}
+              </span>
+              <span
+                className="bar"
+                role="progressbar"
+                aria-label={`Progresso em ${progress.world}`}
+                aria-valuenow={progress.done}
+                aria-valuemin={0}
+                aria-valuemax={progress.total}
+              >
+                <i
+                  style={{
+                    width: `${(progress.done / progress.total) * 100}%`,
+                  }}
+                />
+              </span>
+            </div>
           )}
-          <button
-            ref={close}
-            className={
-              nextTo || shareResult ? "button result-ghost" : "button primary"
-            }
-            onClick={onClose}
-          >
-            {nextTo ? "Ver o tabuleiro" : "Continuar"}
-          </button>
+          {unlocked && (
+            <p className="result-unlocked" role="status">
+              Novo mundo aberto: <b>{unlocked}</b>!
+            </p>
+          )}
+          {achievements.length > 0 && (
+            <p className="result-achievement" role="status">
+              <Award size={18} aria-hidden="true" />
+              <span>
+                {achievements.length === 1 ? "Conquista" : "Conquistas"}:{" "}
+                <b>{achievements.join(", ")}</b>. Resgate no Perfil.
+              </span>
+            </p>
+          )}
+          {summary && (
+            <MatchRecap
+              rivalName={rival.name}
+              summary={summary}
+              history={history}
+            />
+          )}
+          {nextTo && nextRival && (
+            <p className="result-next">Próximo rival: {nextRival}</p>
+          )}
+          {/* "Próxima fase" ocupa a linha; embaixo, "Ver o tabuleiro" e "Compartilhar" dividem outra. */}
+          <div className="result-actions">
+            {nextTo && (
+              <Link
+                className="button primary result-go"
+                to={nextTo}
+                onClick={onClose}
+              >
+                Próxima fase
+              </Link>
+            )}
+            <button
+              ref={close}
+              className={`button result-close ${nextTo ? "result-ghost" : "primary"}`}
+              onClick={onClose}
+            >
+              {nextTo ? "Ver o tabuleiro" : "Continuar"}
+            </button>
+            {shareResult && (
+              <ShareResultButton
+                text={shareResult}
+                label="Compartilhar"
+                className="button result-ghost result-share"
+              />
+            )}
+          </div>
         </div>
       </motion.div>
     </motion.div>

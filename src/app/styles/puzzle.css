@@ -279,9 +279,10 @@
 }
 .app-playing .victory {
   grid-row: 3/6;
+  align-content: center;
   overflow: auto;
   margin: 0;
-  padding: 18px;
+  padding: 12px 14px;
 }
 @media (min-width: 600px) and (min-height: 700px) {
   .app-playing {
@@ -411,8 +412,9 @@
   .app-playing .puzzle-tools {
     grid-area: 4/2;
   }
+  /* O painel do fim fica abaixo do placar, sem cobri-lo. */
   .app-playing .victory {
-    grid-area: 1/2/5/3;
+    grid-area: 2/2/5/3;
   }
 }
 .app-playing .board {

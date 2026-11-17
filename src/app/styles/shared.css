@@ -874,13 +874,73 @@ footer {
   font-size: 11px;
   color: #866222;
 }
+/* Painel do fim da partida: uma faixa curta (selo, placar com prêmio, um botão e atalhos). */
 .victory {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
   text-align: center;
   background: #fff8e4;
   border: 1px solid #eee2bc;
-  padding: 24px 16px;
+  padding: 12px 14px;
   margin-top: 20px;
   border-radius: 20px;
+}
+.victory h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.victory .victory-badge {
+  margin: 0;
+}
+.victory p.victory-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 6px 12px;
+  margin: 0;
+  color: #4b4630;
+  font-size: 15px;
+  font-weight: 700;
+}
+.victory .victory-coins {
+  padding: 3px 12px;
+  border-radius: 999px;
+  background: linear-gradient(#fff3bf, #ffdb7c);
+  color: #5b3a00;
+  font-weight: 800;
+  box-shadow: 0 2px 0 #c99a2a;
+}
+.victory .victory-coins.lost {
+  background: linear-gradient(#ffe1dc, #f7b9b0);
+  color: #8a1c12;
+  box-shadow: 0 2px 0 #d68f85;
+}
+.victory .victory-line .victory-stars {
+  font-size: 22px;
+}
+.victory p.victory-hint {
+  margin: 0;
+  font-size: 13px;
+}
+.victory > .button {
+  width: min(100%, 360px);
+  min-height: 48px;
+}
+.victory-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2px 18px;
+}
+.victory-links .text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 36px;
+  margin: 0;
+  font-size: 14px;
 }
 .victory-stars {
   font-size: 44px;
@@ -891,11 +951,6 @@ footer {
   font-size: 14px;
   color: #796a40;
   margin: 10px 0;
-}
-.victory .text-link {
-  display: flex;
-  justify-content: center;
-  margin-inline: auto;
 }
 .loading {
   height: 100dvh;

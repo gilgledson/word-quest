@@ -498,3 +498,21 @@
     grid-area: 2 / 1;
   }
 }
+/* Celulares estreitos (360): logo, moedas e som dividem a linha sem a carteira cobrir o logo. */
+@media (max-width: 380px) {
+  .app > header .brand-wordmark {
+    width: 104px;
+  }
+  .app > header .art-book {
+    width: 34px;
+    height: 45px;
+  }
+  .app > header .wallet {
+    gap: 4px;
+  }
+  .app > header .wallet > span {
+    min-height: 30px;
+    padding: 3px 6px;
+    font-size: 12px;
+  }
+}

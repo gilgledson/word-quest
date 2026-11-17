@@ -47,6 +47,12 @@ export function VictoryPanel({
   shareResult,
 }: Props) {
   const campaignWin = result === "win" && !daily && !casual;
+  const coins = daily
+    ? result === "win"
+      ? economy.daily
+      : 0
+    : economy.duel[result];
+  // Painel curto: a grade continua grande e legível depois do fim.
   return (
     <motion.section
       initial={animated ? { opacity: 0, y: 15 } : false}
@@ -54,55 +60,73 @@ export function VictoryPanel({
       className="victory"
     >
       {campaignWin && <VictoryBadge enabled={fxEnabled} />}
-      <h2>
+      <h2 className={campaignWin ? "sr-only" : undefined}>
         {result === "win"
           ? "Você venceu o duelo!"
           : result === "draw"
             ? "Empate!"
             : `${rivalName} venceu`}
       </h2>
-      <p>
-        Você {scores.p} × {scores.ai} {rivalName}
-      </p>
-      <p>
-        {daily
-          ? result === "win"
-            ? `Recompensa diária: ${economy.daily} moedas`
-            : "Vença o oponente para concluir o desafio do dia."
-          : economy.duel[result] < 0
-            ? `A derrota custou ${-economy.duel[result]} moedas`
-            : `Recompensa do duelo: ${economy.duel[result]} moedas`}
+      <p className="victory-line">
+        <span>
+          Você {scores.p} × {scores.ai} {rivalName}
+        </span>
+        {coins !== 0 && (
+          <span
+            className={`victory-coins ${coins < 0 ? "lost" : ""}`}
+            aria-label={
+              coins < 0
+                ? `A derrota custou ${-coins} moedas`
+                : daily
+                  ? `Recompensa diária: ${coins} moedas`
+                  : `Recompensa do duelo: ${coins} moedas`
+            }
+          >
+            {coins > 0 ? `+${coins}` : coins} moedas
+          </span>
+        )}
         {campaignWin && (
-          <>
-            {" · "}
-            <VictoryStars
-              count={economy.duelStars[level]}
-              enabled={fxEnabled}
-            />
-          </>
+          <VictoryStars count={economy.duelStars[level]} enabled={fxEnabled} />
         )}
       </p>
-      {nextTo && (
+      {daily && result !== "win" && (
+        <p className="victory-hint">
+          Vença o oponente para concluir o desafio do dia.
+        </p>
+      )}
+      {nextTo ? (
         <Link className="button primary" to={nextTo} onClick={onNext}>
-          Próxima descoberta <ArrowRight size={18} />
+          Próxima fase <ArrowRight size={18} />
         </Link>
+      ) : (
+        result === "loss" &&
+        !online && (
+          <button className="button primary" onClick={onReplay}>
+            Tentar de novo
+          </button>
+        )
       )}
-      {shareResult && <ShareResultButton text={shareResult} />}
-      <Link className="text-link" to={backTo}>
-        {online
-          ? "Desafiar de novo"
-          : casual
-            ? "Escolher outro tema"
-            : "Voltar à jornada"}
-      </Link>
-      {!online && (
-        <button
-          className={result === "loss" ? "button primary" : "text-link"}
-          onClick={onReplay}
-        >
-          {result === "loss" ? "Tentar de novo" : "Jogar novamente"}
-        </button>
-      )}
+      <div className="victory-links">
+        {shareResult && (
+          <ShareResultButton
+            text={shareResult}
+            label="Compartilhar"
+            className="text-link"
+          />
+        )}
+        <Link className="text-link" to={backTo}>
+          {online
+            ? "Desafiar de novo"
+            : casual
+              ? "Escolher outro tema"
+              : "Voltar à jornada"}
+        </Link>
+        {!online && (result !== "loss" || nextTo) && (
+          <button className="text-link" onClick={onReplay}>
+            {result === "loss" ? "Tentar de novo" : "Jogar novamente"}
+          </button>
+        )}
+      </div>
     </motion.section>
   );
 }

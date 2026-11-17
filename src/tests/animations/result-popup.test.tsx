@@ -1,4 +1,10 @@
-import { act, cleanup, fireEvent, screen } from "@testing-library/react";
+import {
+  act,
+  cleanup,
+  fireEvent,
+  screen,
+  within,
+} from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { economy } from "../../game/crossword-engine";
 import { finishScenario, load, mountWithLayout } from "./helpers";
@@ -32,10 +38,10 @@ describe("Janela de resultado do duelo", () => {
     expect(dialog).toHaveTextContent("Vitória!");
     expect(dialog).toHaveTextContent(`+${economy.duel.win} moedas`);
     expect(screen.getByLabelText("Placar final")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Próxima fase" })).toHaveAttribute(
-      "href",
-      expect.stringContaining("/play/vila-2"),
-    );
+    // O painel atrás da janela também tem "Próxima fase": vale o botão da janela.
+    expect(
+      within(dialog).getByRole("link", { name: "Próxima fase" }),
+    ).toHaveAttribute("href", expect.stringContaining("/play/vila-2"));
     void sc;
   });
   it("derrota: mostra que perdeu e quantas moedas saíram, sem próxima fase", () => {
