@@ -30,6 +30,10 @@ interface Props {
   /** Usos de itens da loja no inventário; com algum, aparece o botão "Itens". */
   itemsCount?: number;
   onItems?: () => void;
+  /** Tutorial: ✓ desligado até a palavra guiada ficar inteira. */
+  confirmLocked?: boolean;
+  /** Tutorial: Trocar e Dica desligados durante a jogada guiada. */
+  toolsLocked?: boolean;
 }
 /** Banco de letras e a barra de ações (trocar, confirmar/passar, dica). */
 export function TurnControls({
@@ -50,6 +54,8 @@ export function TurnControls({
   onHint,
   itemsCount = 0,
   onItems,
+  confirmLocked = false,
+  toolsLocked = false,
 }: Props) {
   const slots = useRackSlots(
     rack.map((t) => t.id),
@@ -102,7 +108,7 @@ export function TurnControls({
       </div>
       <div className={`puzzle-tools ${itemsCount > 0 ? "with-items" : ""}`}>
         <button
-          disabled={!mine || !rack.length || swapped}
+          disabled={!mine || !rack.length || swapped || toolsLocked}
           onClick={onSwap}
           aria-label="Trocar"
         >
@@ -125,7 +131,7 @@ export function TurnControls({
         )}
         <motion.button
           className={`confirm-button ${hasPending ? "" : "is-pass"}`}
-          disabled={!mine}
+          disabled={!mine || confirmLocked}
           onClick={onConfirm}
           whileTap={fxEnabled ? { scale: 0.94 } : undefined}
           aria-label={hasPending ? confirmLabel : "Passar a vez"}
@@ -140,7 +146,7 @@ export function TurnControls({
         </motion.button>
         <button
           className={hinting ? "fx-hint-btn" : ""}
-          disabled={!mine}
+          disabled={!mine || toolsLocked}
           onClick={onHint}
           aria-label="Dica"
         >

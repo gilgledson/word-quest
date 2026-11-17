@@ -37,6 +37,11 @@ const anyRunning = () => {
   return [...latest.values()].some((c) => c.run);
 };
 const jokerTour = () => last(".letter-bank button.joker");
+/** A dica que está montada agora (ao terminar uma, o componente reinicia sem dica e com run=false). */
+const currentTip = () =>
+  calls()
+    .filter((c) => c.steps[0].target !== ".letter-bank button.joker")
+    .at(-1)!;
 beforeEach(() => {
   (globalThis as { __joyride?: JoyProps[] }).__joyride = [];
 });
@@ -61,56 +66,37 @@ function open(
 
 describe("Dicas curtas da fase 1 (react-joyride)", () => {
   const seen = () => usePlayer.getState().player.tipsSeen;
-  it("a primeira dica roda na primeira vez da fase 1, com um só passo em português", () => {
+  /** Primeira jogada guiada: toca as letras do banco (todas da palavra) e confirma. */
+  const playGuided = () => {
+    for (let i = 0; i < 6; i++) {
+      if (
+        document.querySelector(".coach")?.getAttribute("data-step") ===
+        "confirm"
+      )
+        break;
+      const tiles = screen.queryAllByRole("button", { name: /^Inserir letra/ });
+      if (!tiles.length) break;
+      fireEvent.click(tiles[0]);
+    }
+    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+  };
+  it("na jogada guiada nenhuma dica abre: o guia já explica (a dica do início saiu da fase 1)", () => {
     open();
-    const tip = tipAt(".selected-clue");
+    expect(document.querySelector(".coach")).not.toBeNull();
+    expect(anyRunning()).toBe(false);
+    fireEvent.click(
+      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
+    );
+    expect(anyRunning()).toBe(false);
+  });
+  it("a dica do duelo surge na primeira vez do rival, com um só passo em português; trocar e Dica na vez seguinte", () => {
+    open();
+    playGuided();
+    const tip = tipAt(".versus-score");
     expect(tip.run).toBe(true);
     expect(tip.steps).toHaveLength(1);
     expect(tip.locale).toMatchObject({ last: "Entendi", skip: "Dispensar" });
-    expect(tip.options.buttons).toEqual(["skip", "primary"]);
     expect(tip.options.skipBeacon).toBe(true);
-    expect(document.querySelector(".selected-clue")).not.toBeNull();
-  });
-  it("‘Entendi’ marca só essa dica como vista e ela não volta", () => {
-    open();
-    act(() => tipAt(".selected-clue").onEvent({ status: "finished" }));
-    expect(seen()).toEqual(["inicio"]);
-    expect(usePlayer.getState().player.tourDone).toBe(false);
-    expect(tipAt(".selected-clue").run).toBe(false);
-  });
-  it("‘Dispensar’ desliga todas as dicas", () => {
-    open();
-    act(() => tipAt(".selected-clue").onEvent({ status: "skipped" }));
-    expect(usePlayer.getState().player.tourDone).toBe(true);
-    fireEvent.click(
-      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
-    );
-    expect(anyRunning()).toBe(false);
-  });
-  it("passos intermediários não encerram a dica", () => {
-    open();
-    act(() => tipAt(".selected-clue").onEvent({ status: "running" }));
-    expect(seen()).toEqual([]);
-    expect(tipAt(".selected-clue").run).toBe(true);
-  });
-  it("colocar a primeira letra não abre balão: o passo do tutorial explica o Confirmar e a pontuação", () => {
-    open({ tipsSeen: ["inicio"] });
-    expect(anyRunning()).toBe(false);
-    fireEvent.click(
-      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
-    );
-    expect(anyRunning()).toBe(false);
-    expect(screen.getByRole("note")).toHaveTextContent(
-      "Toque em Confirmar: certa +1, errada −1",
-    );
-  });
-  it("a dica do duelo surge na primeira vez do rival; trocar e Dica na vez seguinte do jogador", () => {
-    open({ tipsSeen: ["inicio", "confirmar"] });
-    fireEvent.click(
-      screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
-    );
-    fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
-    expect(tipAt(".versus-score").run).toBe(true);
     act(() => tipAt(".versus-score").onEvent({ status: "finished" }));
     expect(seen()).toContain("duelo");
     // De volta à vez do jogador.
@@ -130,6 +116,24 @@ describe("Dicas curtas da fase 1 (react-joyride)", () => {
       }),
     );
     expect(tipAt(".puzzle-tools").run).toBe(true);
+  });
+  it("‘Entendi’ marca só essa dica como vista; passos intermediários não a encerram", () => {
+    open();
+    playGuided();
+    act(() => tipAt(".versus-score").onEvent({ status: "running" }));
+    expect(seen()).not.toContain("duelo");
+    expect(tipAt(".versus-score").run).toBe(true);
+    act(() => tipAt(".versus-score").onEvent({ status: "finished" }));
+    expect(seen()).toContain("duelo");
+    expect(usePlayer.getState().player.tourDone).toBe(false);
+    expect(currentTip().run).toBe(false);
+  });
+  it("‘Dispensar’ desliga todas as dicas", () => {
+    open();
+    playGuided();
+    act(() => tipAt(".versus-score").onEvent({ status: "skipped" }));
+    expect(usePlayer.getState().player.tourDone).toBe(true);
+    expect(currentTip().run).toBe(false);
   });
   it("não roda para quem já fez o tutorial, nem fora da fase 1", () => {
     open({ tutorialDone: true });

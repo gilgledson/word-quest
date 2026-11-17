@@ -107,7 +107,8 @@ describe("Sons na partida", () => {
     );
   const open = (sound: boolean) => {
     usePlayer.setState({
-      player: { ...structuredClone(initialPlayer), sound },
+      // Sons das jogadas comuns, fora da jogada guiada do tutorial.
+      player: { ...structuredClone(initialPlayer), sound, tutorialDone: true },
       ready: true,
     });
     mount();
@@ -133,7 +134,11 @@ describe("Sons na partida", () => {
   });
   it("ações recusadas fazem o som de erro", () => {
     usePlayer.setState({
-      player: { ...structuredClone(initialPlayer), coins: 0 },
+      player: {
+        ...structuredClone(initialPlayer),
+        coins: 0,
+        tutorialDone: true,
+      },
       ready: true,
     });
     mount();

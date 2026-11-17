@@ -14,7 +14,6 @@ const startDuel = async (page: Page) => {
   await page.goto("/play/vila-1?vs=dificil");
   await expect(page.locator(".board .cell")).toHaveCount(80);
   await dismissTour(page);
-  await page.getByRole("button", { name: "Pular" }).click();
 };
 
 test("o relógio é opcional: vem desligado e a preferência é gravada", async ({

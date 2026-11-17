@@ -82,14 +82,34 @@ describe("estados da grade sem depender de cor", () => {
 });
 
 describe("tutorial da fase 1", () => {
-  it("acompanha em 4 passos: depois do rival, explica que a vez voltou", () => {
+  /** Toca as letras do banco até a palavra guiada ficar inteira (o guia passa ao passo do ✓). */
+  const fillGuided = () => {
+    for (let i = 0; i < 6; i++) {
+      if (
+        document.querySelector(".coach")?.getAttribute("data-step") ===
+        "confirm"
+      )
+        break;
+      const tiles = rackButtons();
+      if (!tiles.length) break;
+      fireEvent.click(tiles[0]);
+    }
+  };
+  it("primeira jogada guiada: monta a palavra, confirma e depois explica a vez do rival", () => {
     vi.useFakeTimers();
     open(false);
-    expect(screen.getByRole("note")).toHaveTextContent("1/4");
-    expect(document.querySelector("[data-tutorial='1']")).not.toBeNull();
-    fireEvent.click(rackButtons()[0]);
-    expect(screen.getByRole("note")).toHaveTextContent("2/4");
+    const guide = screen.getByRole("region", { name: "Tutorial" });
+    expect(guide).toHaveTextContent("Monte sua primeira palavra!");
+    expect(guide).toHaveTextContent(/0 de \d letras/);
+    // O passo de rival ainda não aparece; o ✓ espera a palavra inteira.
+    expect(screen.queryByRole("note")).toBeNull();
+    expect(screen.getByRole("button", { name: /Passar a vez/ })).toBeDisabled();
+    fillGuided();
+    expect(screen.getByRole("region", { name: "Tutorial" })).toHaveTextContent(
+      /Palavra completa!.*\+\d+ pontos/,
+    );
     fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
+    expect(screen.queryByRole("region", { name: "Tutorial" })).toBeNull();
     expect(screen.getByRole("note")).toHaveTextContent("3/4");
     act(() => {
       vi.advanceTimersByTime(3000);
@@ -106,13 +126,17 @@ describe("tutorial da fase 1", () => {
   it("colocar a próxima letra depois do rival também encerra o tutorial", () => {
     vi.useFakeTimers();
     open(false);
-    fireEvent.click(rackButtons()[0]);
+    fillGuided();
     fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
     act(() => {
       vi.advanceTimersByTime(3000);
     });
     expect(screen.getByRole("note")).toHaveTextContent("4/4");
-    fireEvent.click(rackButtons()[0]);
+    // Depois da palavra guiada, a peça que serve numa palavra aberta brilha, como antes.
+    const pick = document.querySelector<HTMLElement>(
+      ".letter-bank .tutorial-pick",
+    );
+    fireEvent.click(pick ?? rackButtons()[0]);
     expect(usePlayer.getState().player.tutorialDone).toBe(true);
   });
   it("Pular encerra o tutorial e grava a preferência", async () => {

@@ -42,9 +42,10 @@ function mount(path = "/play/vila-1?vs=medio") {
     </MemoryRouter>,
   );
 }
+// Mecânicas da partida, fora do tutorial (que tem testes próprios e escolhe a palavra pelo banco).
 function open(coins = initialPlayer.coins, path?: string) {
   usePlayer.setState({
-    player: { ...structuredClone(initialPlayer), coins },
+    player: { ...structuredClone(initialPlayer), coins, tutorialDone: true },
     ready: true,
   });
   mount(path);
@@ -116,6 +117,10 @@ function placeCorrectTiles() {
 }
 
 it("mostra a grade fixa 8×10, densa, sem rolagem e sem barra de navegação", () => {
+  usePlayer.setState({
+    player: { ...structuredClone(initialPlayer), tutorialDone: true },
+    ready: true,
+  });
   render(
     <MemoryRouter initialEntries={["/play/vila-1"]}>
       <Routes>
@@ -125,7 +130,6 @@ it("mostra a grade fixa 8×10, densa, sem rolagem e sem barra de navegação", (
       </Routes>
     </MemoryRouter>,
   );
-  usePlayer.setState({ player: structuredClone(initialPlayer), ready: true });
   const board = document.querySelector<HTMLElement>(".board")!;
   expect(board.querySelectorAll(".cell")).toHaveLength(80);
   expect(board.style.gridTemplateColumns).toContain("repeat(8");
@@ -601,7 +605,11 @@ it("mostra '+N' animado sobre as casas que pontuaram e o brilho nelas, e some de
 });
 it("sem animações não há '+N' flutuante (a mensagem continua avisando os pontos)", () => {
   usePlayer.setState({
-    player: { ...structuredClone(initialPlayer), animations: false },
+    player: {
+      ...structuredClone(initialPlayer),
+      animations: false,
+      tutorialDone: true,
+    },
     ready: true,
   });
   mount();

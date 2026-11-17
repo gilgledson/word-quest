@@ -1,89 +1,137 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
+import { dismissTour } from "./tour";
+import { waitSaved } from "./storage";
 
 const dialog = (page: Page) =>
   page.locator("#react-joyride-portal [role=alertdialog]");
+const guide = (page: Page) => page.getByRole("region", { name: "Tutorial" });
 const open = async (page: Page) => {
   await page.goto("/play/vila-1");
   await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(guide(page)).toBeVisible();
 };
-
-const inside = async (page: Page) => {
-  // O balão fica inteiro dentro da tela de 360×800.
-  const box = (await dialog(page).boundingBox())!;
-  expect(box.x).toBeGreaterThanOrEqual(0);
-  expect(box.x + box.width).toBeLessThanOrEqual(360);
-  expect(box.y).toBeGreaterThanOrEqual(0);
-  expect(box.y + box.height).toBeLessThanOrEqual(800);
+const center = async (l: Locator) => {
+  const b = (await l.boundingBox())!;
+  return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
 };
+/** Arrasta com o mouse, de verdade, a peça sugerida até a casa sugerida (através da tela escura). */
+async function dragSuggested(page: Page) {
+  const from = await center(page.locator(".coach-ring.tile"));
+  const to = await center(page.locator(".coach-ring:not(.tile)"));
+  await page.mouse.move(from.x, from.y);
+  await page.mouse.down();
+  await page.mouse.move((from.x + to.x) / 2, (from.y + to.y) / 2, {
+    steps: 6,
+  });
+  await page.mouse.move(to.x, to.y, { steps: 6 });
+  await page.mouse.up();
+}
+const progress = (page: Page) =>
+  guide(page).locator(".coach-progress").innerText();
 
-test("as dicas surgem uma a uma, quando a mecânica aparece", async ({
+test("jogada guiada: arrasta as letras pela tela escura, confirma e segue para a dica do duelo", async ({
   page,
 }) => {
   await open(page);
-  await expect(dialog(page)).toContainText("Comece pela pista");
-  await inside(page);
-  await page.getByRole("button", { name: "Entendi" }).click();
-  await expect(dialog(page)).toHaveCount(0);
-  // Sem o overlay, a partida responde ao toque; o passo do tutorial (sem balão) pede o Confirmar.
-  await page
-    .getByRole("button", { name: /^Inserir letra/ })
-    .first()
-    .click();
-  await expect(page.locator(".cell.pending")).toHaveCount(1);
-  await expect(dialog(page)).toHaveCount(0);
-  await expect(page.getByRole("note")).toContainText("Toque em Confirmar");
-  // Ao confirmar, é a vez do rival: surge a dica do duelo.
+  const height = () =>
+    page.evaluate(() => document.querySelector(".board-area")!.clientHeight);
+  const h0 = await height();
+  await expect(guide(page)).toContainText("Monte sua primeira palavra!");
+  await expect(
+    page.getByRole("button", { name: /Passar a vez/ }),
+  ).toBeDisabled();
+  for (let i = 1; i <= 4; i++) {
+    await dragSuggested(page);
+    if (i < 4) await expect(guide(page)).toContainText(`${i} de 4 letras`);
+  }
+  await expect(guide(page)).toContainText("Palavra completa!");
+  await expect(guide(page)).toContainText(/\+\d+ pontos/);
+  // O guia não mexe no tamanho da grade.
+  expect(await height()).toBe(h0);
   await page.getByRole("button", { name: /^Confirmar/ }).click();
+  await expect(guide(page)).toHaveCount(0);
   await expect(dialog(page)).toContainText("vez do rival");
-  await inside(page);
   await page.getByRole("button", { name: "Entendi" }).click();
   await expect(dialog(page)).toHaveCount(0);
+  await waitSaved(page, "tipsSeen", ["palavra", "duelo"]);
 });
 
-test("‘Dispensar’ desliga todas as dicas e a escolha é lembrada", async ({
+test("toques fora das letras e da palavra não chegam ao jogo", async ({
   page,
 }) => {
   await open(page);
+  const before = await progress(page);
+  // "Trocar" fica sob a tela escura: o toque é barrado e o diálogo não abre.
+  const swap = await center(page.getByRole("button", { name: "Trocar" }));
+  await page.mouse.click(swap.x, swap.y);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // Uma pista qualquer da grade também não responde.
+  const clue = await center(page.locator(".board .cell.clue").first());
+  await page.mouse.click(clue.x, clue.y);
+  expect(await progress(page)).toBe(before);
+  // As letras continuam livres.
+  await dragSuggested(page);
+  await expect(guide(page)).toContainText("1 de 4 letras");
+});
+
+test.describe("em 360×640", () => {
+  test.use({ viewport: { width: 360, height: 640 } });
+  test("o Pular cabe na tela e, girando o celular, os recortes acompanham o banco", async ({
+    page,
+  }) => {
+    await open(page);
+    const skip = page.getByRole("button", { name: "Pular" });
+    await expect(skip).toBeInViewport();
+    await dragSuggested(page);
+    await page.setViewportSize({ width: 640, height: 360 });
+    await expect
+      .poll(async () => {
+        const bank = (await page.locator(".letter-bank").boundingBox())!;
+        const holes = await page
+          .locator("#coach-mask rect[fill=black]")
+          .evaluateAll((rs) =>
+            rs.map((r) => ({
+              x: Number(r.getAttribute("x")),
+              y: Number(r.getAttribute("y")),
+            })),
+          );
+        // Um dos recortes fica em volta do banco (6 px de folga).
+        return holes.some(
+          (h) =>
+            Math.abs(h.x - (bank.x - 6)) < 3 &&
+            Math.abs(h.y - (bank.y - 6)) < 3,
+        );
+      })
+      .toBe(true);
+    await expect(skip).toBeInViewport();
+    await skip.click();
+    await expect(guide(page)).toHaveCount(0);
+    await waitSaved(page, "tutorialDone", true);
+  });
+});
+
+test("‘Dispensar’ desliga as dicas seguintes e a escolha é lembrada", async ({
+  page,
+}) => {
+  await open(page);
+  for (let i = 0; i < 4; i++) await dragSuggested(page);
+  await page.getByRole("button", { name: /^Confirmar/ }).click();
+  await expect(dialog(page)).toContainText("vez do rival");
   await page.getByRole("button", { name: "Dispensar" }).click();
   await expect(dialog(page)).toHaveCount(0);
-  await page
-    .getByRole("button", { name: /^Inserir letra/ })
-    .first()
-    .click();
-  await page.waitForTimeout(800);
-  await expect(dialog(page)).toHaveCount(0);
+  await waitSaved(page, "tourDone", true);
   await page.reload();
   await expect(page.locator(".board .cell")).toHaveCount(80);
   await page.waitForTimeout(1500);
   await expect(dialog(page)).toHaveCount(0);
 });
 
-test("o overlay bloqueia a partida enquanto o tour está aberto e nada fica preso depois", async ({
-  page,
-}) => {
-  await open(page);
-  await expect(dialog(page)).toBeVisible();
-  const before = await page.locator(".cell.pending").count();
-  await page
-    .getByRole("button", { name: /^Inserir letra/ })
-    .first()
-    .click({ force: true })
-    .catch(() => {});
-  expect(await page.locator(".cell.pending").count()).toBe(before);
-  await page.getByRole("button", { name: "Dispensar" }).click();
-  await page
-    .getByRole("button", { name: /^Inserir letra/ })
-    .first()
-    .click();
-  await expect(page.locator(".cell.pending")).toHaveCount(1);
-});
-
 test("a apresentação do curinga aparece uma vez e depois não volta", async ({
   page,
 }) => {
-  await open(page);
-  await page.getByRole("button", { name: "Dispensar" }).click();
-  await page.getByRole("button", { name: "Pular" }).click();
+  await page.goto("/play/vila-1");
+  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await dismissTour(page);
   await page
     .getByRole("button", { name: /^Inserir letra/ })
     .first()

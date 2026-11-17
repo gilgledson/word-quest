@@ -44,6 +44,8 @@ export function useLetterDrag(
   const source = useRef<HTMLElement | null>(null);
   const returning = useRef<number>(0);
   const [drag, setDrag] = useState<LetterDrag | null>(null);
+  /** Dedo (ou mouse) apertado numa peça, arrastando ou não: o guia do tutorial some nesse tempo. */
+  const [pressing, setPressing] = useState(false);
 
   const place = () => {
     if (ghost.current)
@@ -90,6 +92,7 @@ export function useLetterDrag(
       event.currentTarget.releasePointerCapture(event.pointerId);
     origin.current = null;
     clearMark();
+    setPressing(false);
     const rect = el?.isConnected ? el.getBoundingClientRect() : undefined;
     const calm = window.matchMedia?.(
       "(prefers-reduced-motion: reduce)",
@@ -115,9 +118,34 @@ export function useLetterDrag(
     origin.current = null;
     clearMark();
     setDrag(null);
+    setPressing(false);
   };
+  /** Encerra qualquer gesto em andamento, sem soltar a peça em lugar nenhum. */
+  const cancel = useCallback(() => {
+    origin.current = null;
+    suppressClick.current = false;
+    clearMark();
+    window.clearTimeout(returning.current);
+    returning.current = 0;
+    setDrag(null);
+    setPressing(false);
+  }, []);
+  // O app perdeu o foco (notificação, troca de app) no meio do gesto: nada pode ficar preso.
+  useEffect(() => {
+    const onHide = () => {
+      if (document.visibilityState === "hidden") cancel();
+    };
+    window.addEventListener("blur", cancel);
+    document.addEventListener("visibilitychange", onHide);
+    return () => {
+      window.removeEventListener("blur", cancel);
+      document.removeEventListener("visibilitychange", onHide);
+    };
+  }, [cancel]);
   return {
     drag,
+    pressing,
+    cancel,
     ghostRef,
     clickAllowed: (keyboard = false) => {
       if (keyboard) {
@@ -144,6 +172,7 @@ export function useLetterDrag(
           moved: false,
         };
         event.currentTarget.setPointerCapture?.(event.pointerId);
+        setPressing(true);
       },
       onPointerMove: (event: ReactPointerEvent<HTMLButtonElement>) => {
         const start = origin.current;

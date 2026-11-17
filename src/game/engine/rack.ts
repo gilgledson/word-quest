@@ -430,6 +430,26 @@ export class RackManager {
     if (missing > 0) this.draw(s, missing);
     return s;
   }
+  /**
+   * Tutorial: o banco do jogador passa a ter exatamente as peças das casas vazias da palavra
+   * (letras repetidas contam uma vez cada). O banco anterior volta à reserva; nenhuma peça é
+   * criada ou perdida. Sem alguma das letras na reserva (ou sem caber no banco), não muda nada.
+   */
+  dealWord(input: Session, word: PuzzleWord): Session | undefined {
+    const s = copy(input);
+    s.supply.push(...s.rack);
+    s.rack = [];
+    for (const c of positions(word)) {
+      if (s.letters[c.key]) continue;
+      const id = s.supply.find(
+        (x) => !s.tiles[x].joker && s.tiles[x].letter === c.letter,
+      );
+      if (!id) return undefined;
+      s.supply = s.supply.filter((x) => x !== id);
+      s.rack.push(id);
+    }
+    return s.rack.length && s.rack.length <= economy.rackMax ? s : undefined;
+  }
   /** Sorteia a mão inicial do oponente (peças úteis da reserva, ao acaso). */
   dealBot(input: Session) {
     const s = copy(input);

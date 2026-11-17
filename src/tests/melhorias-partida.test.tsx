@@ -10,8 +10,6 @@ import { afterEach, expect, it, vi } from "vitest";
 import { PuzzlePage } from "../features/PuzzlePage";
 import { initialPlayer, type Player } from "../services/repository";
 import { usePlayer } from "../stores/player";
-import { levels } from "../data/catalog";
-import { positions } from "../game/crossword-engine";
 vi.mock("../services/repository", async (importOriginal) => {
   const mod = await importOriginal<typeof import("../services/repository")>();
   return {
@@ -66,26 +64,6 @@ it("depois da vez do rival fica um resumo dela e as casas dele marcadas até o j
   fireEvent.click(confirmButton());
   expect(document.querySelector(".last-move")).toBeNull();
   expect(document.querySelector(".cell.last-bot")).toBeNull();
-});
-
-it("tutorial: só a peça que serve na casa azul brilha e o passo diz qual letra tocar", () => {
-  open();
-  const first = positions(levels[0].words[0])[0];
-  const picks = document.querySelectorAll(".letter-bank .tutorial-pick");
-  const fits = screen.queryAllByRole("button", {
-    name: `Inserir letra ${first.letter}`,
-  });
-  const tip = screen.getByRole("note");
-  if (fits.length) {
-    expect(picks).toHaveLength(1);
-    expect(fits).toContain(picks[0]);
-    expect(tip).toHaveTextContent(`Toque no ${first.letter} que brilha`);
-    fireEvent.click(picks[0]);
-    expect(session().letters[first.key]).toBe(first.letter);
-  } else {
-    expect(picks).toHaveLength(0);
-    expect(tip).toHaveTextContent("Toque numa letra do banco");
-  }
 });
 
 it("alto contraste do Perfil vale na partida", () => {

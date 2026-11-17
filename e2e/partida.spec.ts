@@ -118,37 +118,6 @@ test("arrasta uma peça do banco até uma casa da grade", async ({ page }) => {
   await expect(bank(page).getByRole("button")).toHaveCount(4);
 });
 
-test("tutorial da fase 1 não muda o tamanho da grade e termina no último passo", async ({
-  page,
-}) => {
-  const cols = () =>
-    page.evaluate(
-      () =>
-        getComputedStyle(
-          document.querySelector(".board")!,
-        ).gridTemplateColumns.split(" ").length,
-    );
-  const height = () =>
-    page.evaluate(() => document.querySelector(".board-area")!.clientHeight);
-  const tip = page.getByRole("note");
-  await expect(tip).toContainText("1/4");
-  const h0 = await height();
-  expect(await cols()).toBe(8);
-  await bank(page).getByRole("button").first().click();
-  await expect(tip).toContainText("2/4");
-  expect(await height()).toBe(h0);
-  await page.getByRole("button", { name: "Confirmar" }).click();
-  await expect(page.getByText("◀ sua vez")).toBeVisible({ timeout: 15_000 });
-  // A vez voltou: o último passo explica como se vence e some no "Entendi".
-  await expect(tip).toContainText("4/4");
-  expect(await height()).toBe(h0);
-  await tip.getByRole("button", { name: "Entendi" }).click();
-  await expect(tip).toHaveCount(0);
-  // Sem a dica a grade continua do mesmo tamanho e em pé.
-  expect(await height()).toBe(h0);
-  expect(await cols()).toBe(8);
-});
-
 test("tocar numa casa define onde a próxima peça entra", async ({ page }) => {
   const { word, letters } = await pickWord(page);
   await clue(page, word.clue).first().click();

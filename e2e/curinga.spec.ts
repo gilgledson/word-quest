@@ -8,7 +8,6 @@ async function withJoker(page: Page) {
   await page.goto(URL);
   await expect(page.locator(".board .cell")).toHaveCount(80);
   await dismissTour(page);
-  await page.getByRole("button", { name: "Pular" }).click();
   await page
     .getByRole("button", { name: /^Inserir letra/ })
     .first()

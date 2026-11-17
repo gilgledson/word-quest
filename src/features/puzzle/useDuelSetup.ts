@@ -14,6 +14,7 @@ import {
   type Session,
 } from "../../game/crossword-engine";
 import { opponentFor } from "../../game/opponents";
+import { tutorialWord } from "./tutorialPick";
 import { usePlayer } from "../../stores/player";
 
 /** Descobre qual grade e qual oponente a rota pede e retoma (ou cria) a sessão do duelo. */
@@ -53,6 +54,12 @@ export function useDuelSetup() {
     () => (puzzle ? new PuzzleEngine(puzzle) : undefined),
     [puzzle],
   );
+  const tutorial =
+    !player.tutorialDone && !daily && !casual && puzzle?.number === 1;
+  const guidedWord = useMemo(
+    () => (tutorial && puzzle ? tutorialWord(puzzle) : undefined),
+    [tutorial, puzzle],
+  );
   const sessionKey = daily
     ? `daily:${date}:${botLevel}`
     : `vs:${puzzle?.id}:${botLevel}`;
@@ -68,10 +75,13 @@ export function useDuelSetup() {
   const session: Session | undefined = engine
     ? resumable
       ? stored
-      : engine.start(sessionKey, botLevel, {
-          style: assigned?.style,
-          opponent: assigned?.id,
-        })
+      : engine.start(
+          sessionKey,
+          botLevel,
+          { style: assigned?.style, opponent: assigned?.id },
+          // Tutorial da fase 1: a partida nova começa com as letras exatas da palavra guiada.
+          tutorial ? guidedWord : undefined,
+        )
     : undefined;
   return {
     daily,
@@ -84,6 +94,8 @@ export function useDuelSetup() {
     engine,
     sessionKey,
     session,
+    /** Palavra que o tutorial da fase 1 guia (só enquanto o tutorial não foi concluído). */
+    guidedWord,
   };
 }
 

@@ -13,14 +13,16 @@ interface Props {
   /** Letra do banco que serve na casa azul (só no primeiro passo): o passo diz qual tocar. */
   letter?: string;
   botTurn: boolean;
-  /** Chamado ao terminar (o jogador volta a jogar depois do rival) ou ao pular. */
+  /** Chamado ao terminar (o jogador volta a jogar depois do rival, ou toca "Entendi"). */
   onDone: () => void;
+  /** "Pular" antes do fim; sem ele, vale `onDone`. */
+  onSkip?: () => void;
 }
 /**
  * Dica contextual da fase 1: acompanha a primeira rodada em 4 passos. Depois que o rival joga, o
  * último passo explica que a vez voltou e como se vence; some no "Entendi" ou na jogada seguinte.
  */
-export function TutorialTip({ step, letter, botTurn, onDone }: Props) {
+export function TutorialTip({ step, letter, botTurn, onDone, onSkip }: Props) {
   const [sawRival, setSawRival] = useState(false);
   const back = sawRival && !botTurn;
   useEffect(() => {
@@ -41,7 +43,7 @@ export function TutorialTip({ step, letter, botTurn, onDone }: Props) {
           ? `Toque no ${letter} que brilha para jogar`
           : STEPS[shown]}
       </span>
-      <button type="button" onClick={onDone}>
+      <button type="button" onClick={back ? onDone : (onSkip ?? onDone)}>
         {back ? "Entendi" : "Pular"}
       </button>
     </div>

@@ -61,6 +61,8 @@ import { confirmMessage } from "./puzzle/messages";
 import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
 import { VictoryPanel } from "./puzzle/VictoryPanel";
+import { TutorialCoach } from "./puzzle/TutorialCoach";
+import { guided, guideUsable, tutorialPick } from "./puzzle/tutorialPick";
 import { settleSession } from "./puzzle/settleSession";
 import { track } from "../services/telemetry";
 import { achievedIds, achievementStatus } from "../game/achievements";
@@ -148,16 +150,36 @@ export function Duel({
     engine,
     sessionKey,
     session,
+    guidedWord,
   } = setup;
   // Quem joga esta partida: o amigo (ao vivo) ou o personagem gravado na sessão.
   const rival = online?.rival ?? opponentOfSession(session?.versus);
+  // No tutorial da fase 1 a partida começa na palavra guiada (o banco tem as letras dela). Numa
+  // sessão antiga sem essas letras, vale o modelo anterior: uma palavra que o banco preenche.
+  const [firstPick] = useState(() => {
+    if (
+      !puzzle ||
+      !session ||
+      player.tutorialDone ||
+      daily ||
+      casual ||
+      puzzle.number !== 1
+    )
+      return undefined;
+    const g = guidedWord && guided(guidedWord, session);
+    if (g && guideUsable(g, session))
+      return { wordId: g.wordId, cell: (g.next ?? g.cells[0]).key };
+    return tutorialPick(puzzle, session);
+  });
   const [selected, setSelected] = useState(
     () =>
+      firstPick?.wordId ??
       puzzle?.words.find((w) => session && !PuzzleValidator.correct(w, session))
-        ?.id ?? "",
+        ?.id ??
+      "",
   );
   // Casa tocada na grade: a próxima peça entra nela (e não na primeira vazia da palavra).
-  const [target, setTarget] = useState<string | null>(null);
+  const [target, setTarget] = useState<string | null>(firstPick?.cell ?? null);
   const [message, setMessage] = useState(HINT_MESSAGE);
   const [feedback, setFeedback] = useState(false);
   // O jogador escolheu uma pista enquanto o rival joga (planejando a próxima jogada).
@@ -317,6 +339,65 @@ export function Duel({
   // Relógio opcional: ao zerar, a jogada pendente é confirmada (ou a vez passa).
   const inTutorial =
     !player.tutorialDone && !daily && !casual && puzzle?.number === 1;
+  // Palavra guiada do tutorial: a primeira jogada monta essa palavra (ver `TutorialCoach`).
+  const guide =
+    inTutorial && guidedWord && session
+      ? guided(guidedWord, session)
+      : undefined;
+  const guideActive = !!guide && !!session && guideUsable(guide, session);
+  const coachOn =
+    guideActive &&
+    session?.versus?.turn === "p" &&
+    !!engine &&
+    !engine.complete(session);
+  // A palavra guiada foi confirmada: conta uma vez só (fica marcada em `tipsSeen`).
+  const guideConfirmed = !!guide?.confirmed;
+  useEffect(() => {
+    if (!inTutorial || !guideConfirmed || player.tipsSeen.includes("palavra"))
+      return;
+    track("tutorial_word_done", { word_length: guide?.cells.length ?? 0 });
+    update((p) => ({ ...p, tipsSeen: [...p.tipsSeen, "palavra"] }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inTutorial, guideConfirmed]);
+  // Tutorial: quando a vez volta ao jogador, a palavra escolhida ainda precisa ter uma casa que o
+  // banco preencha; se não tiver (o rival fechou, ou as letras acabaram), o tutorial troca de palavra.
+  useEffect(() => {
+    if (
+      !inTutorial ||
+      guideActive ||
+      !puzzle ||
+      !session ||
+      session.versus?.turn !== "p"
+    )
+      return;
+    const pendingNow = session.history.some(
+      (k) => session.letters[k] && !session.locked.includes(k),
+    );
+    if (pendingNow || engine?.complete(session)) return;
+    const w = puzzle.words.find((x) => x.id === selected);
+    const cells = w ? positions(w) : [];
+    const cur =
+      cells.find((c) => c.key === target && !session.letters[c.key]) ??
+      cells.find((c) => !session.letters[c.key]);
+    const playable =
+      !!cur &&
+      session.rack.some(
+        (id) =>
+          !session.tiles[id].joker && session.tiles[id].letter === cur.letter,
+      );
+    if (playable) return;
+    const pick = tutorialPick(puzzle, session);
+    if (!pick) return;
+    setSelected(pick.wordId);
+    setTarget(pick.cell);
+    // Só na volta da vez (e na abertura): a escolha do jogador no meio da vez é respeitada.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    inTutorial,
+    sessionKey,
+    session?.versus?.rngCount,
+    session?.versus?.turn,
+  ]);
   // No duelo ao vivo vale o tempo da sala; nas outras partidas, a opção do jogador.
   const turnSeconds = online ? (online.turnSeconds ?? 0) : TURN_SECONDS;
   const timerActive =
@@ -372,7 +453,7 @@ export function Duel({
   const seen = player.tipsSeen;
   const tip: TipId | undefined =
     inTutorial && !player.tourDone && !complete
-      ? !seen.includes("inicio")
+      ? !seen.includes("inicio") && !guidedWord
         ? "inicio"
         : botTurn && !seen.includes("duelo")
           ? "duelo"
@@ -497,8 +578,18 @@ export function Duel({
     sfx("error");
     return false;
   };
+  const guideName = guidedWord
+    ? positions(guidedWord)
+        .map((c) => c.letter)
+        .join("")
+    : "";
   const choose = (wordId: string, cell?: string) => {
     const w = puzzle.words.find((w) => w.id === wordId)!;
+    // Tutorial: enquanto a palavra guiada não sai, as outras pistas esperam.
+    if (coachOn && guide && wordId !== guide.wordId) {
+      setMessage(`Monte ${guideName} primeiro.`);
+      return w;
+    }
     if (botTurn) setChosenWhileWaiting(true);
     setSelected(wordId);
     setTarget(cell ?? null);
@@ -511,12 +602,35 @@ export function Duel({
   };
   const insert = (tileId: string, cellKey = current?.key) => {
     if (!mine) return false;
+    if (coachOn && guide) {
+      // Tutorial: a letra vai para uma casa da palavra guiada que pede essa letra (qualquer ordem).
+      const letter = session.tiles[tileId]?.letter;
+      const want = (key?: string) =>
+        guide.cells.find(
+          (c) =>
+            c.key === key && c.letter === letter && !session.letters[c.key],
+        );
+      const spot =
+        want(cellKey) ??
+        guide.cells.find((c) => c.letter === letter && !session.letters[c.key]);
+      if (!spot) {
+        setMessage(`Essa letra não entra em ${guideName}.`);
+        sfx("error");
+        return false;
+      }
+      cellKey = spot.key;
+    }
     if (!word) {
       setMessage("Toque em uma pista para começar.");
       return false;
     }
     if (!cellKey || complete) return false;
-    const next = engine.insert(session, word.id, tileId, cellKey);
+    const next = engine.insert(
+      session,
+      coachOn && guide ? guide.wordId : word.id,
+      tileId,
+      cellKey,
+    );
     if (next === session) return false;
     setMessage("Confirme com ✓ quando terminar a jogada.");
     setTarget(null);
@@ -544,7 +658,23 @@ export function Duel({
       setMessage("Solte em uma casa que ainda não foi confirmada.");
       return false;
     }
+    if (coachOn && guide) {
+      // Tutorial: só casas da palavra guiada, e só com a letra que cada uma pede.
+      const spot = guide.cells.find((c) => c.key === cell);
+      if (!spot) {
+        setMessage(`Monte ${guideName} primeiro.`);
+        return false;
+      }
+      if (session.tiles[tileId]?.letter !== spot.letter) {
+        setMessage(`Essa casa pede o ${spot.letter}.`);
+        sfx("error");
+        return false;
+      }
+    }
     const w =
+      (coachOn && guide
+        ? belongs.find((x) => x.id === guide.wordId)
+        : undefined) ??
       belongs.find((x) => x.id === selected) ??
       belongs.find((x) => !solved.some((s) => s.id === x.id)) ??
       belongs[0];
@@ -585,6 +715,11 @@ export function Duel({
   };
   const confirm = () => {
     if (!mine || complete) return;
+    // Tutorial: o ✓ só vale com a palavra guiada inteira (nunca vira "passar" nem jogada parcial).
+    if (coachOn && guide && !guide.complete) {
+      setMessage(`Complete ${guideName} para confirmar.`);
+      return;
+    }
     const r = engine.confirm(session, "p");
     setLastBot(null);
     setTarget(null);
@@ -674,7 +809,8 @@ export function Duel({
   };
   const hint = () => {
     const target = firstOpen();
-    if (!mine || !target || complete || !afford(economy.hint)) return;
+    if (coachOn || !mine || !target || complete || !afford(economy.hint))
+      return;
     const next = engine.hint(session, target.id);
     if (!next) {
       setMessage("Nenhuma das suas letras serve para uma dica agora.");
@@ -766,10 +902,20 @@ export function Duel({
   // Tutorial da fase 1 (só na campanha, para quem ainda não o concluiu).
   const tutorial =
     !player.tutorialDone && !daily && !casual && puzzle.number === 1;
+  /** Pular o tutorial: encerra o gesto em andamento (as letras postas ficam) e conta onde parou. */
+  const skipTutorial = (step: "word" | "confirm" | "rival") => {
+    letterDrag.cancel();
+    track("tutorial_skipped", {
+      step,
+      letters_placed: guide?.filled ?? 0,
+      word_length: guide?.cells.length ?? 0,
+    });
+    update((p) => ({ ...p, tutorialDone: true }));
+  };
   const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
   // Primeiro passo: a peça do banco que serve na casa azul brilha sozinha, e o passo diz qual é.
   const spotlight =
-    tutorial && tutorialStep === 1 && mine && current
+    tutorial && !guideActive && tutorialStep === 1 && mine && current
       ? rack.find(
           (t) => !t.joker && t.letter === engine.rack.solution[current.key],
         )
@@ -1003,7 +1149,7 @@ export function Duel({
                   )}
                 </p>
               )}
-              {tutorial && (
+              {tutorial && !coachOn && (
                 <TutorialTip
                   step={tutorialStep}
                   letter={spotlight?.letter}
@@ -1012,6 +1158,7 @@ export function Duel({
                     track("tutorial_complete");
                     update((p) => ({ ...p, tutorialDone: true }));
                   }}
+                  onSkip={() => skipTutorial("rival")}
                 />
               )}
             </div>
@@ -1043,13 +1190,30 @@ export function Duel({
             flying={tileFlights.flying}
             onInsert={insert}
             swapped={!!session.swapped}
-            onSwap={() => setSwapping([])}
+            onSwap={() => !coachOn && setSwapping([])}
             onConfirm={confirm}
             onHint={hint}
+            confirmLocked={coachOn && !guide?.complete}
+            toolsLocked={coachOn}
           />
         </>
       )}
       <TileFlights flights={tileFlights.flights} land={tileFlights.land} />
+      {coachOn && guide && (
+        <TutorialCoach
+          guide={guide}
+          word={guideName}
+          rack={rack}
+          gained={
+            guide.complete
+              ? engine.previewConfirm(session, "p").gained
+              : undefined
+          }
+          animated={prefs.enabled}
+          pressing={letterDrag.pressing}
+          onSkip={() => skipTutorial(guide.complete ? "confirm" : "word")}
+        />
+      )}
       <TipTour
         tip={tip}
         onSeen={(id) =>

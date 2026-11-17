@@ -837,6 +837,8 @@ export function OnlineMatch() {
           theme: undefined,
           botLevel: "medio",
           engine,
+          // Duelo ao vivo não tem tutorial.
+          guidedWord: undefined,
           sessionKey,
           // A tela guarda as letras ainda não confirmadas; sem nada salvo, vale o servidor.
           session: stored?.puzzleId === puzzle.id ? stored : view,

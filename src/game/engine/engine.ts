@@ -23,8 +23,13 @@ export class PuzzleEngine {
     seed: string,
     level: BotLevel,
     who: { style?: BotStyle; opponent?: string } = {},
+    /** Tutorial: o jogador começa com exatamente as letras desta palavra. */
+    firstWord?: PuzzleWord,
   ): Session {
-    return this.rack.dealBot(this.rack.create(seed, level, who));
+    const created = this.rack.create(seed, level, who);
+    const dealt = firstWord && this.rack.dealWord(created, firstWord);
+    // A mão do oponente sai depois, do que sobrou na reserva.
+    return this.rack.dealBot(dealt ?? created);
   }
   matrix(): PuzzleCell[] {
     const cells: PuzzleCell[] = Array.from(
@@ -149,6 +154,14 @@ export class PuzzleEngine {
   }
   complete(s: Session) {
     return this.solved(s).length === this.puzzle.words.length;
+  }
+  /**
+   * Quanto o ✓ renderia agora (letras, bônus de palavra completa e descontos), sem mudar a
+   * sessão: `confirm` trabalha sobre uma cópia.
+   */
+  previewConfirm(s: Session, who: Owner = "p") {
+    const r = this.confirm(s, who);
+    return { gained: r.session.scores[who] - s.scores[who] };
   }
   /** Sem jogada possível, o oponente troca a mão e passa a vez. */
   exchangeBot(s: Session) {
