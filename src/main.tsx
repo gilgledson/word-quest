@@ -36,7 +36,11 @@ const PuzzlePage = lazy(() =>
 );
 import { usePlayer } from "./stores/player";
 import { refreshContent, startContent } from "./content/content";
-import { checkLiveUpdate, confirmBundle } from "./services/liveUpdate";
+import {
+  bundleVersion,
+  checkLiveUpdate,
+  confirmBundle,
+} from "./services/liveUpdate";
 import "./app/styles.css";
 import "./animations/animations.css";
 // Depois das animações: refina a janela de resultado definida lá.
@@ -48,7 +52,11 @@ import { resumeMusic } from "./services/music";
 import { MusicController } from "./components/MusicController";
 import { Toasts } from "./components/ResumeMatchToast";
 import { PlayGamesSync } from "./features/PlayGamesCard";
-import { installErrorReporting, trackScreen } from "./services/telemetry";
+import {
+  installErrorReporting,
+  trackAppReady,
+  trackScreen,
+} from "./services/telemetry";
 // O primeiro toque em qualquer lugar libera o áudio (política de autoplay do navegador e do WebView).
 for (const type of ["pointerdown", "touchend", "click", "keydown"])
   window.addEventListener(
@@ -103,6 +111,7 @@ function App() {
     if (!ready) return;
     // O app abriu e carregou o progresso: esta versão do pacote está boa (senão o plugin a desfaz).
     void confirmBundle();
+    trackAppReady(bundleVersion());
     // Novidades do servidor (conteúdo e versão do app) ficam para a próxima abertura; a
     // conferência espera o app assentar.
     const t = window.setTimeout(() => {

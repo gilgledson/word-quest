@@ -10,6 +10,9 @@ describe("medição de uso", () => {
     expect(screenOf("/profile")).toBe("perfil");
     expect(screenOf("/online")).toBe("online_lobby");
     expect(screenOf("/online/ABC234")).toBe("partida_online");
+    // A configuração do duelo não é partida, e a loja tem nome próprio.
+    expect(screenOf("/online/nova")).toBe("online_configurar");
+    expect(screenOf("/loja")).toBe("loja");
     expect(screenOf("/play/daily")).toBe("partida_diario");
     expect(screenOf("/play/casual-animais-3")).toBe("partida_casual");
     expect(screenOf("/play/vila-1")).toBe("partida_aventura");

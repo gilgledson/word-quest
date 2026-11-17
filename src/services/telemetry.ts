@@ -28,12 +28,24 @@ export function screenOf(pathname: string) {
   if (pathname === "/daily") return "diario";
   if (pathname === "/profile") return "perfil";
   if (pathname === "/credits") return "creditos";
+  if (pathname === "/loja") return "loja";
   if (pathname === "/online") return "online_lobby";
+  if (pathname === "/online/nova") return "online_configurar";
   if (pathname.startsWith("/online/")) return "partida_online";
   if (pathname === "/play/daily") return "partida_diario";
   if (pathname.startsWith("/play/casual-")) return "partida_casual";
   if (pathname.startsWith("/play/")) return "partida_aventura";
   return "outra";
+}
+/**
+ * O app terminou de carregar e mostrou a primeira tela. Comparado com `first_open` e
+ * `session_start`, diz quantas aberturas morrem no carregamento e quanto ele demora.
+ */
+export function trackAppReady(bundle: string) {
+  track("app_ready", {
+    load_ms: Math.round(performance.now()),
+    bundle,
+  });
 }
 /** Tela aberta: vira `screen_view` no Analytics e contexto do próximo relatório de falha. */
 export function trackScreen(pathname: string) {
