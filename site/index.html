@@ -20,7 +20,7 @@
     <meta property="og:url" content="https://wordquest.com.br/" />
     <link rel="canonical" href="https://wordquest.com.br/" />
     <meta property="og:type" content="website" />
-    <meta name="theme-color" content="#eaf4ff" />
+    <meta name="theme-color" content="#2da2fd" />
     <link rel="icon" href="site/icon-192.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -68,10 +68,14 @@
         margin-inline: auto;
       }
 
-      /* Topo: só um degradê azul-céu suave, sem cenário. */
+      /* Topo: o céu e a vila do jogo, que se dissolvem no fundo claro atrás dos botões. A cor de
+         baixo (#2da2fd) é a do céu na borda da imagem, para não aparecer emenda. */
       .hero {
-        padding: 22px 0 8px;
-        background: linear-gradient(var(--azul-claro) 0%, var(--fundo) 62%);
+        padding: 24px 0 6px;
+        background:
+          linear-gradient(to bottom, #fbfaf600 56%, var(--fundo) 86%),
+          url("site/cenario.webp") 64% top / auto 500px no-repeat,
+          #2da2fd;
       }
       .hero .wrap {
         display: grid;
@@ -81,9 +85,14 @@
       }
       .marca {
         width: min(62vw, 260px);
+        filter: drop-shadow(0 4px 10px #0b2a5c55);
       }
       h1 {
         margin-top: 10px;
+        color: #fff;
+        -webkit-text-stroke: 7px #0f3f86;
+        paint-order: stroke fill;
+        text-shadow: 0 5px 14px #0b2a5c59;
         font-size: clamp(36px, 10.5vw, 64px);
         font-weight: 900;
         line-height: 1.04;
@@ -94,10 +103,28 @@
         font-weight: 900;
       }
       .sub {
-        max-width: 26em;
-        margin: 14px auto 0;
+        max-width: 24em;
+        margin: 12px auto 0;
         font-size: clamp(17px, 4.6vw, 21px);
-        color: var(--texto-2);
+        font-weight: 800;
+        color: #fff;
+        text-shadow:
+          0 1px 2px #0b2a5ccc,
+          0 2px 10px #0b2a5c80;
+      }
+      /* Espaço em que a vila e o castelo aparecem, entre o texto e os botões. */
+      .cenario {
+        height: clamp(150px, 42vw, 280px);
+      }
+      .hero .botoes {
+        margin-top: 0;
+      }
+      .vitrine {
+        padding: 10px 0 8px;
+      }
+      .vitrine .wrap {
+        display: grid;
+        justify-items: center;
       }
       .botoes {
         display: flex;
@@ -276,27 +303,20 @@
       }
       @media (min-width: 900px) {
         .hero {
-          padding: 36px 0 24px;
-        }
-        .hero .wrap {
-          grid-template-columns: minmax(0, 1fr) auto;
-          justify-items: start;
-          align-items: center;
-          gap: 48px;
-          text-align: left;
-        }
-        .hero .texto {
-          display: grid;
-          justify-items: start;
+          padding: 36px 0 10px;
+          background-size: auto, cover, auto;
+          background-position:
+            0 0,
+            center 26%,
+            0 0;
         }
         h1 {
           max-width: 9.5em;
+          margin-inline: auto;
+          -webkit-text-stroke-width: 9px;
         }
-        .sub {
-          margin-left: 0;
-        }
-        .botoes {
-          justify-content: flex-start;
+        .cenario {
+          height: 240px;
         }
         .celular {
           width: 320px;
@@ -339,6 +359,7 @@
           <p class="sub">
             Desafie um amigo e veja quem faz mais pontos na mesma cruzadinha.
           </p>
+          <div class="cenario" aria-hidden="true"></div>
           <div class="botoes">
             <a
               class="botao loja"
@@ -382,6 +403,11 @@
           </div>
           <p class="nota">Grátis · sem anúncios · em português</p>
         </div>
+      </div>
+    </header>
+
+    <div class="vitrine">
+      <div class="wrap">
         <div class="celular">
           <img
             src="site/partida.jpg"
@@ -391,7 +417,7 @@
           />
         </div>
       </div>
-    </header>
+    </div>
 
     <main>
       <section class="amigo">
