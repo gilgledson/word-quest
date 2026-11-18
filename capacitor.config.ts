@@ -9,6 +9,11 @@ const config: CapacitorConfig = {
   // O index.html usa viewport-fit=cover: avisar de antemão evita um salto de layout na abertura.
   plugins: {
     SystemBars: { initialViewportFitValueHint: "cover" },
+    // Lembrete diário (src/services/reminders.ts): ícone branco do livro, pintado de azul.
+    LocalNotifications: {
+      smallIcon: "ic_stat_wordquest",
+      iconColor: "#1C6FD8",
+    },
     // Atualização ao vivo (src/services/liveUpdate.ts): o app só fala com o nosso Firebase Hosting.
     // Os endereços da Capgo (atualizações, estatísticas, canais) ficam vazios: nada vai para eles.
     CapacitorUpdater: {

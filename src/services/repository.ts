@@ -59,6 +59,10 @@ export interface Player {
   cleanWins: number;
   /** O jogador confirmou nome e avatar (pedidos antes do primeiro duelo ao vivo). */
   profileSet?: boolean;
+  /** Recompensa por voltar: último dia pego e o dia do ciclo de 7 (ver game/loginReward). */
+  loginReward?: { last: string; day: number };
+  /** Lembretes diários por notificação (padrão: ligados; o Android ainda pede permissão). */
+  reminders?: boolean;
   /**
    * Última conta do Play Games que entrou neste aparelho (nome e foto). Fica só aqui, como cache:
    * o Perfil mostra a conta na hora, sem esperar o login automático nem depender de internet.

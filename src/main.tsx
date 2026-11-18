@@ -8,6 +8,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { followLinks } from "./services/links";
+import { followReminderTaps, syncReminders } from "./services/reminders";
+import { currentStreak } from "./game/dailyShare";
+import { today } from "./data/catalog";
 import { useEffect } from "react";
 import { MotionConfig } from "motion/react";
 import "@fontsource/nunito/latin-400.css";
@@ -112,6 +115,22 @@ function OnlineRoute({ match, setup }: { match?: boolean; setup?: boolean }) {
 function LinkFollower() {
   const navigate = useNavigate();
   useEffect(() => followLinks((route) => navigate(route)), [navigate]);
+  // Tocar no lembrete diário também abre o jogo na tela certa.
+  useEffect(() => followReminderTaps((route) => navigate(route)), [navigate]);
+  return null;
+}
+/** Lembretes do dia refeitos quando muda o que eles anunciam (recompensa, diário, opção). */
+function ReminderSync() {
+  const reminders = usePlayer((s) => s.player.reminders);
+  const loginReward = usePlayer((s) => s.player.loginReward);
+  const daily = usePlayer((s) => s.player.daily);
+  useEffect(() => {
+    const date = today();
+    void syncReminders(
+      { reminders, loginReward, daily, streak: currentStreak(daily, date) },
+      date,
+    );
+  }, [reminders, loginReward, daily]);
   return null;
 }
 function Guarded({ children }: { children: React.ReactNode }) {
@@ -154,6 +173,7 @@ function App() {
             <PlayGamesSync />
             <ScreenTracker />
             <LinkFollower />
+            <ReminderSync />
             <Guarded>
               <Routes>
                 <Route element={<Layout />}>

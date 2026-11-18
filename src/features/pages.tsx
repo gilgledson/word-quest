@@ -10,6 +10,7 @@ import {
   Volume2,
   Activity,
   Timer,
+  BellRing,
   Contrast,
   Check,
   PawPrint,
@@ -64,6 +65,11 @@ import {
   randomOpponent,
 } from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
+import { DailyRewardFlow } from "./DailyReward";
+import {
+  askReminderPermission,
+  remindersSupported,
+} from "../services/reminders";
 import { OpponentAvatar } from "../components/OpponentAvatar";
 import { AssetImage } from "../components/AssetImage";
 import { Deck } from "../components/Deck";
@@ -161,6 +167,7 @@ export function Home() {
       <Link className="button primary continue-button" to={`/play/${next.id}`}>
         {action} <ArrowRight size={24} />
       </Link>
+      <DailyRewardFlow />
       <div className="gentle-note">
         <Compass size={23} />
         <div>
@@ -817,6 +824,24 @@ function ProfileSettings() {
           }
         />
       </label>
+      {remindersSupported() && (
+        <label className="toggle">
+          <span>
+            <BellRing />
+            Lembrete diário (18h30)
+          </span>
+          <input
+            type="checkbox"
+            checked={p.reminders === true}
+            onChange={async (e) => {
+              const on = e.target.checked;
+              // Ligar pede a permissão do Android; sem ela, a opção volta a desligada.
+              const granted = on ? await askReminderPermission() : false;
+              update((s) => ({ ...s, reminders: on && granted }));
+            }}
+          />
+        </label>
+      )}
       <label className="toggle">
         <span>
           <Timer />

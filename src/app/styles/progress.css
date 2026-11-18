@@ -215,3 +215,137 @@
 .chest-dialog .chest-reward {
   border-width: 3px;
 }
+
+/* Recompensa por voltar (tela inicial): a mesma janela da vitória, com a faixa dourada no título,
+   a grade dos 7 dias (o 7º maior, com o baú) e o botão azul. */
+.daily-dialog,
+.reminder-dialog {
+  width: min(100%, 360px);
+  padding-top: 0;
+}
+.daily-art {
+  width: 72px;
+  height: 72px;
+  margin: -40px auto 0;
+  filter: drop-shadow(0 6px 10px #8a5a0055);
+}
+.daily-sub {
+  margin: 2px 0 4px;
+  color: #4a3a12;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.daily-days {
+  display: grid;
+  width: 100%;
+  justify-self: stretch;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+}
+.daily-day {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 2px;
+  min-height: 84px;
+  padding: 6px 2px;
+  border: 2px solid #eadfc4;
+  border-radius: 14px;
+  background: #f3efe6;
+  color: #2b2410;
+}
+.daily-day.big {
+  grid-column: span 2;
+}
+.daily-day-name {
+  font-size: 13px;
+  font-weight: 800;
+}
+.daily-day b {
+  font-size: 18px;
+  font-weight: 900;
+}
+.daily-coins-art {
+  display: inline-flex;
+}
+.daily-coins-art svg + svg {
+  margin-left: -10px;
+}
+.daily-chest {
+  width: 52px;
+  height: 40px;
+}
+/* Hoje: borda dourada que brilha. */
+.daily-day.today {
+  border-color: #f5c518;
+  background: #fff6cf;
+  box-shadow:
+    0 0 0 3px #ffe58a,
+    0 6px 14px #f0a81e55;
+}
+/* Já pego: apagado, com o visto verde. */
+.daily-day.got {
+  opacity: 0.62;
+}
+.daily-mark {
+  position: absolute;
+  top: -7px;
+  right: -6px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #fff;
+}
+.daily-mark.got {
+  background: #2fa35a;
+  box-shadow: 0 2px 0 #1d7a3f;
+}
+.daily-mark.locked {
+  width: 20px;
+  height: 20px;
+  background: #8f8a7c;
+  box-shadow: 0 2px 0 #6c675b;
+}
+.daily-claim {
+  width: 100%;
+  font-size: 19px;
+}
+.daily-next {
+  margin: 0;
+  color: #4a3a12;
+  font-size: 14px;
+  font-weight: 800;
+}
+/* Lembrete: o sino dourado no lugar do troféu. */
+.reminder-bell {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin: -40px auto 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ffe48a, #f0a81e 70%);
+  color: #7a4a00;
+  box-shadow:
+    0 4px 0 #b98312,
+    0 10px 20px #8a5a0044;
+}
+.reminder-later {
+  margin: 0 auto;
+  padding: 6px 12px;
+  border: 0;
+  background: none;
+  color: #4a3a12;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
