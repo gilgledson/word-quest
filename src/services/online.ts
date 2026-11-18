@@ -4,7 +4,12 @@
  * abre o modo online. Trocar de servidor depois (uma VPS, por exemplo) é escrever outra
  * implementação desta interface.
  */
-import type { OnlineRoom, OnlineSeat } from "../game/online";
+import {
+  ROOM_EXPIRED,
+  isLive,
+  type OnlineRoom,
+  type OnlineSeat,
+} from "../game/online";
 import { onlineConfigured } from "./firebaseConfig";
 
 export type JoinResult =
@@ -29,6 +34,8 @@ export interface OnlineBackend {
   play(room: OnlineRoom): Promise<boolean>;
   /** Encerra a partida porque `uid` saiu; `by` é quem encerrou (padrão: o próprio `uid`). */
   abandon(code: string, uid: string, by?: string): Promise<void>;
+  /** Encerra uma sala que ficou parada (ver `isExpired`), sem vencedor. Só se ainda estiver aberta. */
+  expire(code: string): Promise<void>;
   /**
    * Marca este jogador como conectado e avisa quando a lista de conectados muda. O servidor
    * desmarca sozinho se a conexão cair. Devolve como parar.
@@ -72,7 +79,8 @@ export function memoryBackend() {
     uid: async () => uid,
     async create(room) {
       if (rooms.has(room.code)) return false;
-      rooms.set(room.code, copy(room));
+      const now = Date.now();
+      rooms.set(room.code, { createdAt: now, updatedAt: now, ...copy(room) });
       tell(room.code);
       return true;
     },
@@ -87,6 +95,7 @@ export function memoryBackend() {
         if (room.status !== "waiting") return { ok: false, reason: "over" };
         room.guest = copy(me);
         room.status = "playing";
+        room.updatedAt = Date.now();
         tell(code);
       }
       return { ok: true, room: copy(room) };
@@ -104,7 +113,11 @@ export function memoryBackend() {
       const current = rooms.get(room.code);
       if (!current || current.status !== "playing") return false;
       if (current.rev !== room.rev - 1) return false;
-      rooms.set(room.code, { ...current, ...copy(room) });
+      rooms.set(room.code, {
+        ...current,
+        ...copy(room),
+        updatedAt: Date.now(),
+      });
       tell(room.code);
       return true;
     },
@@ -114,6 +127,16 @@ export function memoryBackend() {
       room.status = "abandoned";
       room.left = who;
       room.endedBy = by;
+      room.updatedAt = Date.now();
+      tell(code);
+    },
+    async expire(code) {
+      const room = rooms.get(code);
+      if (!room || !isLive(room)) return;
+      room.status = "abandoned";
+      delete room.left;
+      room.endedBy = ROOM_EXPIRED;
+      room.updatedAt = Date.now();
       tell(code);
     },
     presence(code, who, onOnline) {

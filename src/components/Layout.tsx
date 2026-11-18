@@ -2,6 +2,10 @@ import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
 import { ResumeMatchToast } from "./ResumeMatchToast";
+import {
+  endOnlineMatch,
+  useActiveOnlineCheck,
+} from "../features/onlineCleanup";
 import { WebAppBar } from "./WebAppBar";
 import {
   Compass,
@@ -63,6 +67,11 @@ export function Layout() {
   const toClaim = usePlayer((s) => claimableCount(s.player));
   // Duelo ao vivo que ficou para trás (saiu sem querer): um atalho em todas as telas.
   const activeOnline = usePlayer((s) => s.player.activeOnline);
+  // Sala que sumiu, acabou ou ficou parada: o aviso sai sozinho.
+  useActiveOnlineCheck(
+    activeOnline,
+    !!activeOnline && pathname === `/online/${activeOnline}`,
+  );
   const home = pathname === "/";
   const playing = isPlayPath(pathname);
   const map = pathname.startsWith("/map");
@@ -108,7 +117,11 @@ export function Layout() {
           </Link>
         )}
       </header>
-      <ResumeMatchToast code={activeOnline} visible={!playing && !map} />
+      <ResumeMatchToast
+        code={activeOnline}
+        visible={!playing && !map}
+        onEnd={endOnlineMatch}
+      />
       {/* Só na tela inicial (nas outras cobriria o título); o aviso de partida em andamento ocupa
           o mesmo lugar, então um de cada vez. */}
       <WebAppBar visible={home && !activeOnline} />

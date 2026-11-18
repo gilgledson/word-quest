@@ -30,6 +30,10 @@ import {
   startOnline,
   toShared,
   toView,
+  isExpired,
+  wonByForfeitOf,
+  ROOM_EXPIRE_MS,
+  ROOM_EXPIRED,
   type OnlineRoom,
 } from "../game/online";
 import { memoryBackend, setOnlineBackend } from "../services/online";
@@ -204,6 +208,29 @@ describe("servidor em memória", () => {
         .play({ ...current, rev: 1, state: toShared(move, "host") }),
     ).toBe(false);
     expect(mem.rooms.get("ABC234")!.rev).toBe(1);
+  });
+
+  it("sala parada expira sem vencedor; partida que já acabou não muda", async () => {
+    const mem = memoryBackend();
+    await mem.as("h").create(room());
+    const created = mem.rooms.get("ABC234")!;
+    expect(created.createdAt).toBeTypeOf("number");
+    expect(isExpired(created)).toBe(false);
+    expect(isExpired(created, created.updatedAt! + ROOM_EXPIRE_MS + 1)).toBe(
+      true,
+    );
+    await mem.as("h").expire("ABC234");
+    const expired = mem.rooms.get("ABC234")!;
+    expect(expired.status).toBe("abandoned");
+    expect(expired.endedBy).toBe(ROOM_EXPIRED);
+    expect(expired.left).toBeUndefined();
+    expect(wonByForfeitOf(expired, "h")).toBe(false);
+    expect(wonByForfeitOf(expired, "g")).toBe(false);
+    // Encerrada não expira de novo nem volta a ficar aberta.
+    expect(isExpired(expired, Date.now() + 2 * ROOM_EXPIRE_MS)).toBe(false);
+    mem.rooms.set("FIM234", { ...room(), code: "FIM234", status: "finished" });
+    await mem.as("h").expire("FIM234");
+    expect(mem.rooms.get("FIM234")!.status).toBe("finished");
   });
 });
 
@@ -397,6 +424,30 @@ describe("telas do duelo ao vivo", () => {
     await screen.findByRole("heading", { name: "Vitória!" });
     expect(usePlayer.getState().player.coins).toBe(before + economy.duel.win);
     expect(usePlayer.getState().player.duels[sessionKeyOf(code)]).toBe("win");
+  });
+
+  it("sala parada há mais de um dia é encerrada ao abrir, sem vitória para ninguém", async () => {
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    cleanup();
+    const old = Date.now() - ROOM_EXPIRE_MS - 1000;
+    mem.rooms.set(code, {
+      ...mem.rooms.get(code)!,
+      createdAt: old,
+      updatedAt: old,
+    });
+    const before = usePlayer.getState().player.coins;
+    open(`/online/${code}`);
+    await screen.findByRole("heading", { name: "Partida encerrada" });
+    expect(
+      screen.getByText(/ficou parada por mais de um dia/),
+    ).toBeInTheDocument();
+    expect(mem.rooms.get(code)!.endedBy).toBe(ROOM_EXPIRED);
+    expect(usePlayer.getState().player.coins).toBe(before);
+    expect(usePlayer.getState().player.activeOnline).toBeUndefined();
   });
   it("partida terminada com um amigo novo rende moedas de convite a quem criou a sala, uma vez por amigo", async () => {
     const code = await createRoom();
@@ -604,7 +655,28 @@ describe("telas do duelo ao vivo", () => {
 });
 
 describe("Aviso da partida em andamento", () => {
-  afterEach(cleanup);
+  let mem: ReturnType<typeof memoryBackend>;
+  const waiting = (over: Partial<OnlineRoom> = {}): OnlineRoom => ({
+    code: "ABC234",
+    puzzleId: puzzle.id,
+    host: { uid: "eu", name: "Gil", avatar: "jogador" },
+    status: "waiting",
+    rev: 0,
+    state: startOnline(puzzle.id, "semente"),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...over,
+  });
+  beforeEach(() => {
+    mem = memoryBackend();
+    mem.rooms.set("ABC234", waiting());
+    setOnlineBackend(mem.as("eu"));
+  });
+  afterEach(() => {
+    cleanup();
+    setOnlineBackend(undefined);
+    vi.restoreAllMocks();
+  });
   const at = async (path: string) => {
     const { Layout } = await import("../components/Layout");
     const { Toasts } = await import("../components/ResumeMatchToast");
@@ -661,5 +733,68 @@ describe("Aviso da partida em andamento", () => {
     expect(
       screen.queryByRole("link", { name: /Voltar para a partida/ }),
     ).toBeNull();
+  });
+
+  const marked = (extra: Partial<typeof initialPlayer> = {}) =>
+    usePlayer.setState({
+      player: {
+        ...structuredClone(initialPlayer),
+        activeOnline: "ABC234",
+        ...extra,
+      },
+      ready: true,
+    });
+  it("sai sozinho quando a sala não existe mais ou já acabou", async () => {
+    for (const set of [
+      () => mem.rooms.delete("ABC234"),
+      () => mem.rooms.set("ABC234", waiting({ status: "finished" })),
+    ]) {
+      set();
+      marked();
+      await at("/");
+      await waitFor(() =>
+        expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
+      );
+      cleanup();
+    }
+  });
+  it("sala parada há mais de um dia expira, o aviso sai e a aposta volta", async () => {
+    const old = Date.now() - ROOM_EXPIRE_MS - 1000;
+    mem.rooms.set("ABC234", waiting({ createdAt: old, updatedAt: old }));
+    marked({ coins: 50, wagers: { ABC234: 10 } });
+    await at("/");
+    await waitFor(() =>
+      expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
+    );
+    expect(mem.rooms.get("ABC234")!.endedBy).toBe(ROOM_EXPIRED);
+    expect(usePlayer.getState().player.coins).toBe(60);
+    expect(usePlayer.getState().player.wagers?.ABC234).toBeUndefined();
+  });
+  it("sala aberta e recente continua com o aviso", async () => {
+    marked();
+    await at("/");
+    await screen.findByRole("link", { name: "Voltar para a partida ABC234" });
+    await act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
+    });
+    expect(usePlayer.getState().player.activeOnline).toBe("ABC234");
+  });
+  it("Encerrar no aviso pergunta antes, fecha a sala e tira o aviso", async () => {
+    marked();
+    await at("/");
+    const end = await screen.findByRole("button", {
+      name: "Encerrar a partida ABC234",
+    });
+    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false);
+    fireEvent.click(end);
+    expect(confirm).toHaveBeenCalled();
+    expect(mem.rooms.get("ABC234")!.status).toBe("waiting");
+    confirm.mockReturnValueOnce(true);
+    fireEvent.click(end);
+    await waitFor(() =>
+      expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
+    );
+    expect(mem.rooms.get("ABC234")!.status).toBe("abandoned");
+    expect(mem.rooms.get("ABC234")!.left).toBe("eu");
   });
 });

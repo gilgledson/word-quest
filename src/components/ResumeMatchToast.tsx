@@ -12,9 +12,12 @@ const TOAST_ID = "partida-em-andamento";
 export function ResumeMatchToast({
   code,
   visible,
+  onEnd,
 }: {
   code: string | undefined;
   visible: boolean;
+  /** Encerra a partida (o jogador confirma antes). Sem isto, o aviso só oferece voltar. */
+  onEnd?: (code: string) => void;
 }) {
   const closedFor = useRef<string | undefined>(undefined);
   const leaving = useRef(false);
@@ -29,20 +32,47 @@ export function ResumeMatchToast({
     if (toast.isActive(TOAST_ID)) return;
     toast(
       <div className="resume-toast">
-        <Swords size={20} aria-hidden="true" />
-        <span>
-          Partida em andamento <b>{code}</b>
+        <div className="resume-toast-text">
+          <strong>Partida em andamento</strong>
+          <span>
+            Código <b>{code}</b>
+          </span>
+        </div>
+        <div className="resume-toast-actions">
+          <Link
+            to={`/online/${code}`}
+            aria-label={`Voltar para a partida ${code}`}
+            onClick={() => {
+              leaving.current = true;
+              toast.dismiss(TOAST_ID);
+            }}
+          >
+            Voltar
+          </Link>
+          {onEnd && (
+            <button
+              type="button"
+              className="resume-toast-end"
+              aria-label={`Encerrar a partida ${code}`}
+              onClick={() => {
+                if (
+                  !window.confirm(
+                    `Encerrar a partida ${code}? Se ela já começou, conta como derrota para você.`,
+                  )
+                )
+                  return;
+                leaving.current = true;
+                toast.dismiss(TOAST_ID);
+                onEnd(code);
+              }}
+            >
+              Encerrar
+            </button>
+          )}
+        </div>
+        <span className="resume-toast-art" aria-hidden="true">
+          <Swords size={24} />
         </span>
-        <Link
-          to={`/online/${code}`}
-          aria-label={`Voltar para a partida ${code}`}
-          onClick={() => {
-            leaving.current = true;
-            toast.dismiss(TOAST_ID);
-          }}
-        >
-          Voltar
-        </Link>
       </div>,
       {
         toastId: TOAST_ID,
@@ -55,7 +85,7 @@ export function ResumeMatchToast({
         },
       },
     );
-  }, [code, visible]);
+  }, [code, visible, onEnd]);
   return null;
 }
 

@@ -34,6 +34,10 @@ import {
   cleanCode,
   inviteText,
   inviteReward,
+  isExpired,
+  isLive,
+  ROOM_EXPIRED,
+  wonByForfeitOf,
   BET_OPTIONS,
   betPayout,
   NO_RULES,
@@ -618,19 +622,26 @@ export function OnlineMatch() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingRev, room?.rev, room?.status]);
 
-  // Partida em andamento fica marcada no jogador: o lobby oferece voltar a ela.
-  const live = room?.status === "waiting" || room?.status === "playing";
+  // Partida em andamento fica marcada no jogador: o aviso no topo oferece voltar a ela. Sala que
+  // sumiu ou acabou deixa de ser marcada (senão o aviso não sai mais da tela).
+  const live = isLive(room);
   useEffect(() => {
-    if (!role || room === undefined) return;
+    if (room === undefined) return;
     const active = usePlayer.getState().player.activeOnline;
-    if (live && active !== code) update((p) => ({ ...p, activeOnline: code }));
-    if (!live && active === code)
+    if (live && role && active !== code)
+      update((p) => ({ ...p, activeOnline: code }));
+    if ((!live || !role) && active === code)
       update((p) => ({ ...p, activeOnline: undefined }));
   }, [live, role, room, code, update]);
 
+  // Sala parada há muito tempo (ninguém entrou ou ninguém joga): encerra sem vencedor.
+  const expired = !!room && isExpired(room);
+  useEffect(() => {
+    if (expired && backend) void backend.expire(code).catch(() => {});
+  }, [expired, backend, code]);
+
   // O amigo abandonou: a vitória (e as moedas dela) fica com quem ficou, uma vez só.
-  const wonByForfeit =
-    room?.status === "abandoned" && !!uid && room.left !== uid;
+  const wonByForfeit = wonByForfeitOf(room, uid);
   useEffect(() => {
     if (!wonByForfeit) return;
     update((p) =>
@@ -682,7 +693,12 @@ export function OnlineMatch() {
     if (reserved === undefined) return;
     let result: "win" | "draw" | "loss" | undefined;
     if (room.status === "abandoned")
-      result = room.left !== uid ? "win" : "loss";
+      result =
+        room.endedBy === ROOM_EXPIRED
+          ? "draw"
+          : room.left !== uid
+            ? "win"
+            : "loss";
     if (room.status === "finished") {
       const mine = toView(room.state, role).scores;
       result = mine.p > mine.ai ? "win" : mine.p === mine.ai ? "draw" : "loss";
@@ -795,9 +811,11 @@ export function OnlineMatch() {
         )
       : heading(
           "Partida encerrada",
-          room.endedBy && room.endedBy !== uid
-            ? `${rivalProfile(rival).name} encerrou a partida porque você ficou fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos.`
-            : "Você saiu desta partida.",
+          room.endedBy === ROOM_EXPIRED
+            ? "A partida ficou parada por mais de um dia e foi encerrada. Ninguém ganhou nem perdeu."
+            : room.endedBy && room.endedBy !== uid
+              ? `${rivalProfile(rival).name} encerrou a partida porque você ficou fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos.`
+              : "Você saiu desta partida.",
         );
 
   return (

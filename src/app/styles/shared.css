@@ -1021,7 +1021,7 @@ footer {
 .wq-toasts {
   --toastify-toast-top: calc(62px + env(safe-area-inset-top));
   --toastify-toast-width: min(420px, calc(100vw - 24px));
-  --toastify-toast-min-height: 52px;
+  --toastify-toast-min-height: 0px;
   --toastify-font-family: inherit;
   --toastify-color-light: #fff6dc;
   --toastify-text-color-light: #3b2600;
@@ -1036,33 +1036,97 @@ footer {
 }
 .wq-toasts .Toastify__toast {
   margin: 0 0 8px;
-  padding: 8px 10px 8px 14px;
-  border: 2px solid #f0a500;
+  padding: 6px 8px 8px 10px;
+  border: 2px solid #f0b432;
   border-radius: 18px;
-  box-shadow: 0 6px 18px #3b260033;
+  background: linear-gradient(#fffaf0, #fff0cc);
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 6px 18px #3b260040;
 }
+/* Aviso de partida em andamento: medalha à esquerda; título, código e botões à direita. */
 .resume-toast {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    "art text"
+    "art actions";
   align-items: center;
-  gap: 8px;
+  gap: 0 10px;
   width: 100%;
-  font-size: 14px;
-  font-weight: 800;
+  color: #3b2600;
 }
-.resume-toast span {
-  flex: 1;
+/* Quadrado dourado translúcido com brilho, à esquerda, com o ícone do duelo. */
+.resume-toast-art {
+  grid-area: art;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(145deg, #fff1c2d9, #ffd56ad9);
+  border: 2px solid #ffe7a0;
+  box-shadow:
+    inset 0 0 0 1px #fffbeacc,
+    inset 0 -6px 10px #f0b43255,
+    0 0 10px #ffcf5a99;
+  color: #5b3a0ae6;
+}
+.resume-toast-text {
+  grid-area: text;
+  display: grid;
+  line-height: 1.2;
+}
+.resume-toast-text strong {
+  font-size: 14px;
+  font-weight: 900;
+}
+.resume-toast-text span {
+  font-size: 12px;
+  font-weight: 800;
+  color: #6b4a1a;
+}
+.resume-toast-text b {
+  white-space: nowrap;
+  color: #3b2600;
+}
+.resume-toast-actions {
+  grid-area: actions;
+  display: flex;
+  gap: 6px;
+  margin-top: 4px;
+}
+.resume-toast-actions > * {
+  flex: 1 1 0;
+  display: grid;
+  place-items: center;
+  min-height: 28px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 900;
+  text-align: center;
+  cursor: pointer;
+}
+.resume-toast-actions a {
+  color: #fff;
+  background: linear-gradient(#24b9ff, #1767f2);
+  border: 2px solid #92e6ff;
+  box-shadow: 0 2px 0 #1553ae;
+}
+.resume-toast-actions .resume-toast-end {
+  color: #3b2600;
+  background: #fffaf0;
+  border: 2px solid #3b2600;
+  box-shadow: 0 2px 0 #3b260033;
 }
 .wq-toasts .Toastify__close-button {
-  align-self: center;
+  position: static;
+  align-self: flex-start;
   margin-left: 6px;
   color: #3b2600;
   opacity: 0.6;
-}
-.resume-toast a {
-  padding: 7px 14px;
-  border-radius: 999px;
-  background: #3b2600;
-  color: #fff6dc;
 }
 /* Moedas no topo: tocar abre a loja (o link cobre a pílula inteira; o "+" sinaliza). */
 .wallet > span.wallet-coins {
