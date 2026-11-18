@@ -84,6 +84,33 @@ describe("Quando um pacote vale para este aparelho", () => {
   });
 });
 
+describe("App da loja sem pacote ao vivo", () => {
+  // Como o plugin responde de verdade num aparelho (moto g14, app 5.3): id "builtin" com a
+  // versão da loja, e não "builtin".
+  it("vale a data em que o app da loja foi gerado, não o número da versão", () => {
+    const store = {
+      id: "builtin",
+      version: "5.3",
+      native: "5.3",
+      builtStamp: "20261116-2302",
+    };
+    expect(applies(release, store)).toBe(true);
+    expect(applies(release, { ...store, builtStamp: "21000101-0000" })).toBe(
+      false,
+    );
+    // Mesmo sem o id, uma versão sem data é a da loja.
+    expect(applies(release, { ...store, id: undefined })).toBe(true);
+  });
+  it("na abertura baixa o pacote novo", async () => {
+    updater.current.mockResolvedValue({
+      bundle: { id: "builtin", version: "5.3" },
+      native: "5.3",
+    });
+    expect(await checkLiveUpdate(serve(release))).toBe("ready");
+    expect(updater.next).toHaveBeenCalledWith({ id: "b1" });
+  });
+});
+
 describe("Conferência na abertura", () => {
   it("versão nova: baixa só pela lista de arquivos e deixa para a próxima abertura", async () => {
     const fetcher = serve(release);
