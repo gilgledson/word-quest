@@ -5,7 +5,6 @@ import {
   type Puzzle,
   type Session,
 } from "./crossword-engine";
-import { STORE_URL } from "./dailyShare";
 import { JOKER_ID } from "./engine/rack";
 import { avatarOf } from "./avatars";
 import type { OpponentProfile } from "./opponents";
@@ -179,9 +178,12 @@ export function rivalProfile(seat: OnlineSeat | undefined): OpponentProfile {
 }
 
 /** Texto do convite que vai pelo WhatsApp e afins. */
+/** Link do convite: abre a sala no jogo ou, sem o jogo, a página que leva à Play Store. */
+export const inviteLink = (code: string) =>
+  `https://wordquest.com.br/c/${code}`;
 export const inviteText = (code: string) =>
-  `Te desafio no WordQuest! Abra o jogo, toque em "Jogar com um amigo" e digite o código ${code}.\n` +
-  `Ainda não tem o jogo? Baixe grátis: ${STORE_URL}`;
+  `Te desafio no WordQuest! Toque para entrar no duelo: ${inviteLink(code)}\n` +
+  `Ou abra o jogo, toque em "Jogar com um amigo" e digite o código ${code}.`;
 /** Moedas de convite que este amigo rende ao anfitrião: só amigo novo, até o limite. */
 export const inviteReward = (
   invited: string[] | undefined,

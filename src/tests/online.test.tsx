@@ -400,11 +400,10 @@ describe("telas do duelo ao vivo", () => {
   });
   it("partida terminada com um amigo novo rende moedas de convite a quem criou a sala, uma vez por amigo", async () => {
     const code = await createRoom();
-    // A sala de espera avisa do bônus; o convite leva o link da loja.
+    // A sala de espera avisa do bônus; o convite leva o link da sala (que leva à loja sem o jogo).
     expect(screen.getByText(/Ganhe 30 moedas quando um/)).toBeInTheDocument();
-    expect(inviteText(code)).toContain(
-      "play.google.com/store/apps/details?id=br.com.wordquest.game",
-    );
+    expect(inviteText(code)).toContain(`https://wordquest.com.br/c/${code}`);
+    expect(inviteText(code)).toContain(`digite o código ${code}`);
     await act(async () => {
       await mem.as("guest").join(code, bia);
     });

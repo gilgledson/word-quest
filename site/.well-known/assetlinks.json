@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "br.com.wordquest.game",
+      "sha256_cert_fingerprints": [
+        "65:B7:57:17:9C:BB:D9:54:28:3B:3B:6E:9F:06:DC:5E:32:B3:9A:EC:B7:1D:28:7C:AE:06:12:02:22:35:0D:10"
+      ]
+    }
+  }
+]

@@ -25,6 +25,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Convites (https://wordquest.com.br/c/CODIGO) abrem direto no jogo. O autoVerify confere o
+                 arquivo /.well-known/assetlinks.json do domínio; sem ele, o link abre no navegador. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" />
+                <data android:host="wordquest.com.br" />
+                <data android:host="www.wordquest.com.br" />
+                <data android:pathPrefix="/c/" />
+            </intent-filter>
+
         </activity>
 
         <!-- Projeto dos Serviços do Google Play Games (vazio = integração desligada). -->
@@ -39,6 +51,14 @@
         <meta-data
             android:name="google_analytics_default_allow_ad_personalization_signals"
             android:value="false" />
+
+        <!-- Coleta ligada só no build da loja (release); o build de teste (.teste) não envia nada. -->
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="${telemetryEnabled}" />
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${telemetryEnabled}" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -1,6 +1,13 @@
 import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+import { followLinks } from "./services/links";
 import { useEffect } from "react";
 import { MotionConfig } from "motion/react";
 import "@fontsource/nunito/latin-400.css";
@@ -97,6 +104,12 @@ function OnlineRoute({ match, setup }: { match?: boolean; setup?: boolean }) {
   );
 }
 /** Uma tela que quebra não derruba as outras: o erro some quando o jogador navega. */
+/** Links do site (convites) levam à tela certa: ao abrir o app, com ele aberto e após instalar. */
+function LinkFollower() {
+  const navigate = useNavigate();
+  useEffect(() => followLinks((route) => navigate(route)), [navigate]);
+  return null;
+}
 function Guarded({ children }: { children: React.ReactNode }) {
   const { pathname } = useLocation();
   return <ErrorBoundary resetKey={pathname}>{children}</ErrorBoundary>;
@@ -136,6 +149,7 @@ function App() {
             <MusicController />
             <PlayGamesSync />
             <ScreenTracker />
+            <LinkFollower />
             <Guarded>
               <Routes>
                 <Route element={<Layout />}>

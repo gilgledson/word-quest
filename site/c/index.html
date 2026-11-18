@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Você foi desafiado no WordQuest!</title>
+    <meta
+      name="description"
+      content="Seu amigo te chamou para um duelo de palavras cruzadas. Toque para entrar na partida."
+    />
+    <!-- Prévia no WhatsApp: igual para todo convite (o código vai no texto da mensagem). -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WordQuest" />
+    <meta property="og:title" content="Você foi desafiado no WordQuest!" />
+    <meta
+      property="og:description"
+      content="Duelo de palavras cruzadas ao vivo: toque para entrar na partida do seu amigo."
+    />
+    <meta
+      property="og:image"
+      content="https://wordquest.com.br/site/poster.jpg"
+    />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#123c86" />
+    <link rel="icon" href="/site/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+      body {
+        font-family: "Nunito", system-ui, sans-serif;
+        color: #fff;
+        background:
+          linear-gradient(#123c86e6 0%, #1c5fc4b3 45%, #123c86f7 100%),
+          url("/site/vila.webp") center top / cover no-repeat,
+          #123c86;
+        display: grid;
+        place-items: center;
+        padding: 24px 16px;
+        min-height: 100vh;
+      }
+      main {
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+      }
+      .logo {
+        width: 200px;
+        max-width: 70%;
+        height: auto;
+      }
+      h1 {
+        font-size: 28px;
+        font-weight: 900;
+        margin: 12px 0 6px;
+        line-height: 1.15;
+      }
+      .lead {
+        margin: 0 0 20px;
+        font-size: 17px;
+        font-weight: 600;
+        opacity: 0.92;
+      }
+      .card {
+        background: #fff5de;
+        color: #3a2a00;
+        border-radius: 20px;
+        padding: 18px 16px;
+        box-shadow: 0 10px 30px #0004;
+      }
+      .card small {
+        display: block;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        font-size: 12px;
+        opacity: 0.75;
+      }
+      .code {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin: 8px 0 14px;
+      }
+      .code span {
+        width: 42px;
+        height: 52px;
+        border-radius: 10px;
+        background: #fff;
+        border: 2px solid #e8c56a;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        font-weight: 900;
+        color: #123c86;
+      }
+      .button {
+        display: block;
+        width: 100%;
+        padding: 15px 16px;
+        border-radius: 14px;
+        font: inherit;
+        font-size: 18px;
+        font-weight: 900;
+        text-decoration: none;
+        border: 0;
+        cursor: pointer;
+        margin-top: 10px;
+      }
+      .primary {
+        background: #ffd23f;
+        color: #3a2a00;
+        box-shadow: 0 5px 0 #b98312;
+      }
+      .ghost {
+        background: transparent;
+        color: #123c86;
+        border: 2px solid #123c86;
+      }
+      .steps {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 14px 0 0;
+        line-height: 1.4;
+      }
+      .note {
+        margin-top: 16px;
+        font-size: 14px;
+        font-weight: 600;
+        opacity: 0.85;
+      }
+      .note a {
+        color: #fff;
+      }
+      [hidden] {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a href="/"
+        ><img class="logo" src="/site/logo.webp" alt="WordQuest" width="200"
+      /></a>
+      <h1>Você foi desafiado!</h1>
+      <p class="lead">
+        Seu amigo te chamou para um duelo de palavras cruzadas ao vivo.
+      </p>
+      <section class="card">
+        <div id="with-code">
+          <small>Código da partida</small>
+          <div class="code" id="code" aria-label="Código da partida"></div>
+        </div>
+        <a class="button primary" id="install" href="#"
+          >Baixar grátis no Google Play</a
+        >
+        <a class="button ghost" id="open" href="#">Já tenho o jogo</a>
+        <p class="steps" id="steps">
+          Depois de instalar, abra o WordQuest: a partida do seu amigo abre
+          sozinha. Se não abrir, toque em “Jogar com um amigo” e digite o
+          código.
+        </p>
+      </section>
+      <p class="note" id="not-android" hidden>
+        O WordQuest é para celulares Android. Abra este link no Android para
+        entrar no duelo.
+      </p>
+      <p class="note"><a href="/">Conheça o WordQuest</a></p>
+    </main>
+    <script>
+      (function () {
+        var PKG = "br.com.wordquest.game";
+        var match = location.pathname.match(/^\/c\/([^/?#]+)/);
+        var code = match
+          ? decodeURIComponent(match[1])
+              .toUpperCase()
+              .replace(/[^A-Z0-9]/g, "")
+          : "";
+        var valid = /^[A-Z0-9]{6}$/.test(code);
+        // A Play Store guarda o "referrer" e entrega ao app na primeira abertura: é por ele que o
+        // jogo recém-instalado entra direto na sala.
+        var referrer =
+          "utm_source=convite&utm_medium=link" + (valid ? "&sala=" + code : "");
+        var store =
+          "https://play.google.com/store/apps/details?id=" +
+          PKG +
+          "&referrer=" +
+          encodeURIComponent(referrer);
+        document.getElementById("install").href = store;
+        // Quem já tem o jogo (versão sem os links): abre o app; sem ele, cai na loja.
+        document.getElementById("open").href =
+          "intent://wordquest.com.br" +
+          location.pathname +
+          "#Intent;scheme=https;package=" +
+          PKG +
+          ";S.browser_fallback_url=" +
+          encodeURIComponent(store) +
+          ";end";
+        if (valid) {
+          var box = document.getElementById("code");
+          code.split("").forEach(function (c) {
+            var s = document.createElement("span");
+            s.textContent = c;
+            box.appendChild(s);
+          });
+        } else {
+          document.getElementById("with-code").hidden = true;
+          document.getElementById("steps").textContent =
+            "Abra o WordQuest e toque em “Jogar com um amigo” para criar ou entrar numa partida.";
+        }
+        if (!/Android/i.test(navigator.userAgent)) {
+          document.getElementById("open").hidden = true;
+          document.getElementById("not-android").hidden = false;
+        }
+      })();
+    </script>
+  </body>
+</html>

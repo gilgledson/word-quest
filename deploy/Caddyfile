@@ -1,0 +1,29 @@
+# Site wordquest.com.br no servidor da DigitalOcean (Caddy: HTTPS automático pelo Let's Encrypt).
+# Acrescentado ao /etc/caddy/Caddyfile por deploy/setup-server.sh; os arquivos vêm da pasta site/
+# do repositório (workflow "Site").
+#
+# O www serve o mesmo conteúdo, sem redirecionar: o Android confere o assetlinks.json de cada
+# domínio do filtro de links e não segue redirecionamentos.
+wordquest.com.br, www.wordquest.com.br {
+	root * /var/www/wordquest
+	encode zstd gzip
+
+	# Prova ao Android que o domínio é do jogo (App Links).
+	@assetlinks path /.well-known/assetlinks.json
+	header @assetlinks Content-Type application/json
+
+	# Convite: /c/CODIGO é sempre a mesma página (o código é lido do endereço).
+	@convite path_regexp ^/c/[^/]+/?$
+	rewrite @convite /c/index.html
+
+	@assets path /site/*
+	header @assets Cache-Control "public, max-age=604800"
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		-Server
+	}
+
+	file_server
+}

@@ -43,8 +43,11 @@ android {
         // Build de teste: outro id de pacote, para instalar ao lado da versão da loja sem mexer nela.
         debug {
             applicationIdSuffix ".teste"
+            // Testes não entram nas métricas: Analytics e Crashlytics desligados no build de teste.
+            manifestPlaceholders += [telemetryEnabled: "false"]
         }
         release {
+            manifestPlaceholders += [telemetryEnabled: "true"]
             if (keystoreProps['storeFile']) { signingConfig signingConfigs.release }
             // R8: remove código e recursos sem uso e otimiza o que sobra (app menor e mais leve).
             minifyEnabled true
@@ -69,6 +72,8 @@ dependencies {
     implementation "com.google.android.gms:play-services-games-v2:22.1.0"
     // Avaliação dentro do app (janela de estrelas do Google Play).
     implementation "com.google.android.play:review:2.0.2"
+    // Convite: o código da sala que veio no link da Play Store chega ao app recém-instalado.
+    implementation "com.android.installreferrer:installreferrer:2.2"
     // Firebase: medição de uso (Analytics) e relatórios de falha (Crashlytics). As versões vêm do BoM.
     implementation platform("com.google.firebase:firebase-bom:33.7.0")
     implementation "com.google.firebase:firebase-analytics"

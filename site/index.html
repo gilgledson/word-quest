@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WordQuest: Palavras Cruzadas em duelo</title>
+    <meta
+      name="description"
+      content="Palavras cruzadas em duelo: você e um rival dividem a mesma cruzadinha, e quem fizer mais pontos vence. Grátis para Android."
+    />
+    <meta property="og:title" content="WordQuest: Palavras Cruzadas em duelo" />
+    <meta
+      property="og:description"
+      content="Você e um rival dividem a mesma cruzadinha. Cada letra certa vale pontos. Grátis para Android."
+    />
+    <meta
+      property="og:image"
+      content="https://wordquest.com.br/site/poster.jpg"
+    />
+    <meta property="og:url" content="https://wordquest.com.br/" />
+    <link rel="canonical" href="https://wordquest.com.br/" />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#1c5fc4" />
+    <link rel="icon" href="site/icon-192.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --azul: #1c5fc4;
+        --azul-escuro: #123c86;
+        --creme: #fffcf5;
+        --creme-2: #fff1d2;
+        --borda: #fff2c9;
+        --sombra: #c9b985;
+        --ouro: #f0a81e;
+        --texto: #12264a;
+        --texto-2: #45525c;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        margin: 0;
+        font-family: "Nunito", system-ui, sans-serif;
+        font-weight: 600;
+        line-height: 1.5;
+        color: var(--texto);
+        background: #f5f7ee;
+      }
+      img,
+      video {
+        display: block;
+        max-width: 100%;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      .wrap {
+        width: min(100% - 32px, 1040px);
+        margin-inline: auto;
+      }
+
+      /* Topo: a vila do jogo ao fundo, o logo, a chamada e o vídeo dentro de um celular. */
+      .hero {
+        position: relative;
+        overflow: hidden;
+        padding: 28px 0 44px;
+        color: #fff;
+        background:
+          linear-gradient(#123c86cc 0%, #1c5fc499 45%, #123c86f2 100%),
+          url("site/vila.webp") center top / cover no-repeat,
+          var(--azul-escuro);
+      }
+      .hero .wrap {
+        display: grid;
+        gap: 28px;
+        justify-items: center;
+        text-align: center;
+      }
+      .logo {
+        width: min(78vw, 380px);
+        filter: drop-shadow(0 6px 12px #0006);
+      }
+      .hero h1 {
+        font-size: clamp(30px, 8vw, 50px);
+        font-weight: 900;
+        line-height: 1.08;
+        text-shadow: 0 3px 0 #0b2a5c;
+      }
+      .hero h1 b {
+        color: #ffd54a;
+      }
+      .hero .sub {
+        max-width: 30em;
+        margin-top: 12px;
+        font-size: clamp(16px, 4.4vw, 19px);
+        text-shadow: 0 1px 2px #0b2a5c;
+      }
+      .cta {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        min-height: 60px;
+        margin-top: 22px;
+        padding: 0 28px;
+        border: 3px solid #fff3c4;
+        border-radius: 18px;
+        background: linear-gradient(#ffd75a, #f0a81e);
+        color: #4a3200;
+        font-size: 19px;
+        font-weight: 900;
+        text-decoration: none;
+        box-shadow:
+          0 5px 0 #b98312,
+          0 12px 24px #0b2a5c66;
+      }
+      .cta:active {
+        transform: translateY(3px);
+        box-shadow: 0 2px 0 #b98312;
+      }
+      .cta svg {
+        flex: none;
+      }
+      .nota {
+        margin-top: 12px;
+        font-size: 14px;
+        font-weight: 800;
+        opacity: 0.92;
+      }
+      .celular {
+        width: min(72vw, 300px);
+        padding: 9px;
+        border-radius: 36px;
+        background: #0d2550;
+        box-shadow:
+          0 0 0 2px #ffffff30,
+          0 24px 50px #0008;
+      }
+      .celular video {
+        width: 100%;
+        aspect-ratio: 9 / 16;
+        border-radius: 28px;
+        background: #123c86;
+      }
+
+      section {
+        padding: 44px 0;
+      }
+      h2 {
+        font-size: clamp(25px, 6.4vw, 34px);
+        font-weight: 900;
+        line-height: 1.15;
+        text-align: center;
+      }
+      .lead {
+        max-width: 34em;
+        margin: 10px auto 0;
+        text-align: center;
+        color: var(--texto-2);
+      }
+
+      /* Como funciona: três passos numerados. */
+      .passos {
+        display: grid;
+        gap: 14px;
+        margin: 26px 0 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: passo;
+      }
+      .passos li {
+        position: relative;
+        padding: 18px 18px 18px 74px;
+        border: 3px solid var(--borda);
+        border-radius: 22px;
+        background: linear-gradient(#fffef7, var(--creme-2));
+        box-shadow: 0 5px 0 var(--sombra);
+        counter-increment: passo;
+      }
+      .passos li::before {
+        content: counter(passo);
+        position: absolute;
+        left: 16px;
+        top: 18px;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(#35b3ff, #1678ee);
+        color: #fff;
+        font-size: 22px;
+        font-weight: 900;
+        box-shadow: 0 3px 0 var(--azul-escuro);
+      }
+      .passos h3,
+      .card h3 {
+        font-size: 19px;
+        font-weight: 900;
+      }
+      .passos p,
+      .card p {
+        margin-top: 2px;
+        color: var(--texto-2);
+      }
+
+      /* O que tem no jogo: cartões com a arte do próprio jogo. */
+      .faixa {
+        background: #e9f1fb;
+      }
+      .cards {
+        display: grid;
+        gap: 14px;
+        margin-top: 26px;
+      }
+      .card {
+        padding: 18px;
+        border: 3px solid var(--borda);
+        border-radius: 22px;
+        background: var(--creme);
+        box-shadow: 0 5px 0 var(--sombra);
+      }
+      .arte {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .arte img {
+        flex: 1;
+        min-width: 0;
+        aspect-ratio: 1;
+        border-radius: 16px;
+        object-fit: cover;
+        background: linear-gradient(#bfe6ff, #eaf7ff);
+      }
+      .arte.medalhas img {
+        background: none;
+        object-fit: contain;
+      }
+      .selo {
+        display: grid;
+        place-items: center;
+        width: 54px;
+        height: 54px;
+        margin-bottom: 12px;
+        border-radius: 16px;
+        background: linear-gradient(#35b3ff, #1678ee);
+        color: #fff;
+        box-shadow: 0 3px 0 var(--azul-escuro);
+      }
+
+      .final {
+        text-align: center;
+        color: #fff;
+        background: linear-gradient(#1c5fc4, #123c86);
+      }
+      .final .lead {
+        color: #e6efff;
+      }
+      footer {
+        padding: 22px 0 30px;
+        text-align: center;
+        font-size: 14px;
+        color: var(--texto-2);
+      }
+      footer a {
+        color: var(--azul);
+        font-weight: 800;
+      }
+      :focus-visible {
+        outline: 3px solid #ffd54a;
+        outline-offset: 3px;
+      }
+
+      @media (min-width: 760px) {
+        .hero {
+          padding: 56px 0 64px;
+        }
+        .hero .wrap {
+          grid-template-columns: 1.1fr auto;
+          align-items: center;
+          justify-items: start;
+          gap: 48px;
+          text-align: left;
+        }
+        .logo {
+          width: 400px;
+        }
+        .passos,
+        .cards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        section {
+          padding: 64px 0;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="wrap">
+        <div>
+          <img
+            class="logo"
+            src="site/logo.webp"
+            alt="WordQuest — A Jornada das Palavras"
+            width="900"
+            height="300"
+          />
+          <h1>Palavras cruzadas<br />em <b>duelo</b></h1>
+          <p class="sub">
+            Você e um rival dividem a mesma cruzadinha. Cada letra certa vale
+            pontos, e quem fizer mais leva a fase.
+          </p>
+          <a
+            class="cta"
+            data-play
+            href="https://play.google.com/store/apps/details?id=br.com.wordquest.game"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 2.6v18.8c0 .5.5.8 1 .5l15.6-9.4c.4-.2.4-.8 0-1L5 2.1c-.5-.3-1 0-1 .5z"
+              />
+            </svg>
+            Baixar grátis no Google Play
+          </a>
+          <p class="nota">Para Android · em português · grátis</p>
+        </div>
+        <div class="celular">
+          <video
+            src="site/wordquest.mp4"
+            poster="site/poster.jpg"
+            width="540"
+            height="960"
+            autoplay
+            muted
+            loop
+            playsinline
+            preload="metadata"
+            aria-label="Vídeo do jogo: uma partida, a tela de vitória, os personagens e os temas"
+          ></video>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section>
+        <div class="wrap">
+          <h2>Como funciona</h2>
+          <p class="lead">
+            É a cruzadinha de sempre, com um detalhe: tem alguém jogando contra
+            você na mesma grade.
+          </p>
+          <ol class="passos">
+            <li>
+              <h3>Monte com as suas letras</h3>
+              <p>
+                Cada jogador tem uma mão de letras para encaixar nas palavras da
+                grade.
+              </p>
+            </li>
+            <li>
+              <h3>Dispute cada casa</h3>
+              <p>
+                Letra certa vale ponto para quem colocou. O rival joga na vez
+                dele.
+              </p>
+            </li>
+            <li>
+              <h3>Vença e avance</h3>
+              <p>
+                Quem soma mais pontos ganha estrelas, moedas e abre a próxima
+                fase.
+              </p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="faixa">
+        <div class="wrap">
+          <h2>O que tem no jogo</h2>
+          <div class="cards">
+            <article class="card">
+              <div class="arte">
+                <img
+                  src="site/bolota.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+                <img
+                  src="site/sabi.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+                <img
+                  src="site/raposo.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+                <img
+                  src="site/polvo.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+              </div>
+              <h3>11 personagens</h3>
+              <p>
+                Do esquilo cuidadoso ao Capitão Polvo: cada rival tem seu nível
+                e seu jeito de jogar.
+              </p>
+            </article>
+            <article class="card">
+              <div class="arte">
+                <img
+                  src="site/tema-animais.webp"
+                  alt=""
+                  width="320"
+                  height="320"
+                  loading="lazy"
+                />
+                <img
+                  src="site/tema-comida.webp"
+                  alt=""
+                  width="320"
+                  height="320"
+                  loading="lazy"
+                />
+                <img
+                  src="site/tema-natureza.webp"
+                  alt=""
+                  width="320"
+                  height="320"
+                  loading="lazy"
+                />
+                <img
+                  src="site/tema-casa.webp"
+                  alt=""
+                  width="320"
+                  height="320"
+                  loading="lazy"
+                />
+              </div>
+              <h3>Temas para partidas rápidas</h3>
+              <p>
+                Animais, comida, natureza e casa: escolha o assunto e jogue no
+                seu ritmo.
+              </p>
+            </article>
+            <article class="card">
+              <div class="arte medalhas">
+                <img
+                  src="site/medalha-duelos-5.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+                <img
+                  src="site/medalha-chefe.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+                <img
+                  src="site/medalha-palavras-100.webp"
+                  alt=""
+                  width="256"
+                  height="256"
+                  loading="lazy"
+                />
+              </div>
+              <h3>Conquistas que rendem moedas</h3>
+              <p>
+                São 14 medalhas para colecionar enquanto você descobre palavras
+                e vence duelos.
+              </p>
+            </article>
+            <article class="card">
+              <span class="selo" aria-hidden="true">
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z" />
+                  <path d="M9 4v14M15 6v14" />
+                </svg>
+              </span>
+              <h3>25 fases em 5 mundos</h3>
+              <p>
+                Da Vila das Palavras às Ilhas do Conhecimento, com um chefe no
+                fim de cada mundo.
+              </p>
+            </article>
+            <article class="card">
+              <span class="selo" aria-hidden="true">
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <circle cx="9" cy="8" r="3.5" />
+                  <path
+                    d="M2.5 20c.6-3.6 3.200-5.500 6.500-5.500s5.900 1.900 6.500 5.500"
+                  />
+                  <circle cx="17.5" cy="9" r="2.6" />
+                  <path d="M17.500 14.300c2.200.2 3.700 1.700 4.200 4.200" />
+                </svg>
+              </span>
+              <h3>Duelo ao vivo com um amigo</h3>
+              <p>
+                Crie a partida, mande o código e joguem os dois na mesma
+                cruzadinha.
+              </p>
+            </article>
+            <article class="card">
+              <span class="selo" aria-hidden="true">
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="3.5" y="5" width="17" height="15.500" rx="3" />
+                  <path d="M3.500 10h17M8 3v4M16 3v4" />
+                </svg>
+              </span>
+              <h3>Um desafio novo todo dia</h3>
+              <p>
+                Uma cruzadinha diferente a cada dia, com recompensa para quem
+                vence.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="final">
+        <div class="wrap">
+          <h2>Pronto para o primeiro duelo?</h2>
+          <p class="lead">A primeira fase ensina tudo em poucos minutos.</p>
+          <a
+            class="cta"
+            data-play
+            href="https://play.google.com/store/apps/details?id=br.com.wordquest.game"
+          >
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                d="M4 2.6v18.8c0 .5.5.8 1 .5l15.6-9.4c.4-.2.4-.8 0-1L5 2.1c-.5-.3-1 0-1 .5z"
+              />
+            </svg>
+            Baixar grátis no Google Play
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="wrap">
+        WordQuest é um jogo da Lunara Games ·
+        <a href="privacidade/">Política de privacidade</a>
+        <br />
+        Google Play é uma marca do Google LLC.
+      </div>
+    </footer>
+
+    <script>
+      // Repassa a origem da visita (utm_source etc.) para a Play Store, para o Play Console mostrar
+      // de onde veio cada instalação. Sem parâmetros, a origem fica como "site".
+      (function () {
+        var here = new URLSearchParams(location.search);
+        var ref = new URLSearchParams();
+        ["utm_source", "utm_medium", "utm_campaign", "utm_content"].forEach(
+          function (k) {
+            var v = here.get(k);
+            if (v) ref.set(k, v.slice(0, 60));
+          },
+        );
+        if (!ref.has("utm_source")) ref.set("utm_source", "site");
+        document.querySelectorAll("a[data-play]").forEach(function (a) {
+          var url = new URL(a.href);
+          url.searchParams.set("referrer", ref.toString());
+          a.href = url.toString();
+        });
+      })();
+    </script>
+  </body>
+</html>

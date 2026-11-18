@@ -1,0 +1,51 @@
+name: Site
+
+# Publica a pasta site/ (página inicial, convites /c/CODIGO e o assetlinks.json dos links do app)
+# no servidor do wordquest.com.br. Roda a cada push na main que mexe no site, ou à mão.
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", ".github/workflows/site.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Conferir o assetlinks.json
+        run: node -e 'JSON.parse(require("fs").readFileSync("site/.well-known/assetlinks.json","utf8"))'
+      - name: Restaurar a chave do usuário deploy
+        env:
+          SITE_DEPLOY_KEY: ${{ secrets.SITE_DEPLOY_KEY }}
+          SITE_KNOWN_HOSTS: ${{ secrets.SITE_KNOWN_HOSTS }}
+        run: |
+          if [ -z "$SITE_DEPLOY_KEY" ] || [ -z "$SITE_KNOWN_HOSTS" ]; then
+            echo "::error::Faltam os segredos SITE_DEPLOY_KEY e SITE_KNOWN_HOSTS."
+            exit 1
+          fi
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SITE_DEPLOY_KEY" > ~/.ssh/site_deploy
+          printf '%s\n' "$SITE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/site_deploy ~/.ssh/known_hosts
+      - name: Enviar o site
+        env:
+          SITE_HOST: ${{ vars.SITE_HOST }}
+        run: |
+          rsync -rlz --delete --chmod=D755,F644 \
+            -e "ssh -i ~/.ssh/site_deploy -o IdentitiesOnly=yes" \
+            site/ "deploy@${SITE_HOST}:/var/www/wordquest/"
+      - name: Remover a chave do runner
+        if: always()
+        run: rm -f ~/.ssh/site_deploy
+      - name: Conferir no ar
+        run: |
+          curl -fsS https://wordquest.com.br/.well-known/assetlinks.json > /dev/null
+          curl -fsS -o /dev/null https://wordquest.com.br/c/TESTE1
+          echo "Site no ar: https://wordquest.com.br" >> "$GITHUB_STEP_SUMMARY"
