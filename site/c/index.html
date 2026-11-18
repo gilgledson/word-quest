@@ -143,6 +143,13 @@
       .note a {
         color: #fff;
       }
+      .web-link {
+        display: block;
+        margin-top: 12px;
+        color: #123c86;
+        font-weight: 800;
+        font-size: 15px;
+      }
       [hidden] {
         display: none !important;
       }
@@ -162,10 +169,16 @@
           <small>Código da partida</small>
           <div class="code" id="code" aria-label="Código da partida"></div>
         </div>
+        <a class="button primary" id="web-first" href="#" hidden
+          >Jogar agora no navegador</a
+        >
         <a class="button primary" id="install" href="#"
           >Baixar grátis no Google Play</a
         >
         <a class="button ghost" id="open" href="#">Já tenho o jogo</a>
+        <a class="web-link" id="web-later" href="#"
+          >Ou jogue agora no navegador, sem instalar</a
+        >
         <p class="steps" id="steps">
           Depois de instalar, abra o WordQuest: a partida do seu amigo abre
           sozinha. Se não abrir, toque em “Jogar com um amigo” e digite o
@@ -173,8 +186,8 @@
         </p>
       </section>
       <p class="note" id="not-android" hidden>
-        O WordQuest é para celulares Android. Abra este link no Android para
-        entrar no duelo.
+        No iPhone e no computador o WordQuest roda direto no navegador. No
+        Android também tem o app.
       </p>
       <p class="note"><a href="/">Conheça o WordQuest</a></p>
     </main>
@@ -219,9 +232,19 @@
           document.getElementById("steps").textContent =
             "Abra o WordQuest e toque em “Jogar com um amigo” para criar ou entrar numa partida.";
         }
+        // Versão web do jogo: abre a sala direto (ou o lobby, sem código).
+        var web =
+          "https://jogar.wordquest.com.br/online" + (valid ? "/" + code : "");
+        document.getElementById("web-first").href = web;
+        document.getElementById("web-later").href = web;
         if (!/Android/i.test(navigator.userAgent)) {
+          // iPhone e computador: o navegador é o caminho (o app é só Android).
+          document.getElementById("web-first").hidden = false;
+          document.getElementById("web-later").hidden = true;
+          document.getElementById("install").hidden = true;
           document.getElementById("open").hidden = true;
           document.getElementById("not-android").hidden = false;
+          document.getElementById("steps").hidden = true;
         }
       })();
     </script>

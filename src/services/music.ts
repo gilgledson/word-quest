@@ -3,6 +3,7 @@
  * Música está ligada. Navegadores e o WebView do Android só liberam o som depois de um toque,
  * então o primeiro toque do jogador chama `resumeMusic`.
  */
+import { Capacitor } from "@capacitor/core";
 export const MUSIC_SRC = "/audio/where-the-river-bends.mp3";
 const VOLUME = 0.35;
 let audio: HTMLAudioElement | null = null;
@@ -12,7 +13,8 @@ const element = () => {
     audio = new Audio(MUSIC_SRC);
     audio.loop = true;
     audio.volume = VOLUME;
-    audio.preload = "auto";
+    // No app o arquivo já está no aparelho; no navegador (4 MB) só baixa quando for tocar.
+    audio.preload = Capacitor.isNativePlatform() ? "auto" : "none";
   }
   return audio;
 };

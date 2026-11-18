@@ -9,6 +9,8 @@ export const firebaseConfig = {
   authDomain: "wordquest-online.firebaseapp.com",
   databaseURL: "https://wordquest-online-default-rtdb.firebaseio.com",
   projectId: "wordquest-online",
+  // Analytics da versão web (jogar.wordquest.com.br): mesma propriedade do app Android.
+  measurementId: "G-ZYZ48LXV3C",
   appId: "1:896431008098:web:6258966b3e71359a8d243b",
 };
 export const onlineConfigured = firebaseConfig.apiKey !== "";

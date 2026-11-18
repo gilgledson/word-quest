@@ -65,6 +65,33 @@ jobs:
       - name: Remover a credencial do runner
         if: always()
         run: rm -rf "$RUNNER_TEMP/firebase"
+      # Versão web (jogar.wordquest.com.br): o mesmo código, no build web (PWA).
+      - name: Build da versão web
+        run: npx vite build
+      - name: Restaurar a chave do servidor
+        env:
+          SITE_DEPLOY_KEY: ${{ secrets.SITE_DEPLOY_KEY }}
+          SITE_KNOWN_HOSTS: ${{ secrets.SITE_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$SITE_DEPLOY_KEY" > ~/.ssh/site_deploy
+          printf '%s\n' "$SITE_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/site_deploy ~/.ssh/known_hosts
+      - name: Publicar a versão web
+        env:
+          SITE_HOST: ${{ vars.SITE_HOST }}
+        # Sem --delete: quem está com o jogo aberto ainda pode pedir arquivos da versão anterior.
+        # O index.html e o service worker vão por último, depois dos arquivos que eles citam.
+        run: |
+          ssh_cmd="ssh -i $HOME/.ssh/site_deploy -o IdentitiesOnly=yes"
+          rsync -rlz --chmod=D755,F644 -e "$ssh_cmd" \
+            --exclude index.html --exclude sw.js \
+            dist/ "wqdeploy@${SITE_HOST}:/var/www/wordquest-jogo/"
+          rsync -rlz --chmod=D755,F644 -e "$ssh_cmd" \
+            dist/index.html dist/sw.js "wqdeploy@${SITE_HOST}:/var/www/wordquest-jogo/"
+      - name: Remover a chave do servidor
+        if: always()
+        run: rm -f ~/.ssh/site_deploy
       - name: Versão publicada
         run: |
           curl -s https://wordquest-online.web.app/app/latest.json \

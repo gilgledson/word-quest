@@ -13,11 +13,32 @@ interface TelemetryPlugin {
 }
 const Telemetry = registerPlugin<TelemetryPlugin>("Telemetry");
 const native = () => Capacitor.isNativePlatform();
+/** Versão web publicada (jogar.wordquest.com.br): mede também; localhost e testes, nunca. */
+const publishedWeb = () =>
+  !native() &&
+  typeof location !== "undefined" &&
+  /(^|\.)wordquest\.com\.br$/.test(location.hostname);
+type Logger = (name: string, params: Params) => void;
+let web: Promise<Logger | undefined> | undefined;
+const webLogger = () =>
+  (web ??= import("./webAnalytics")
+    .then((m) => m.startWebAnalytics())
+    .catch(() => undefined));
 
 /** Registra um evento do jogo. Falha de rede ou de plugin nunca chega ao jogador. */
 export function track(name: string, params: Params = {}) {
-  if (!native()) return;
-  void Telemetry.logEvent({ name, params }).catch(() => {});
+  if (native()) {
+    void Telemetry.logEvent({ name, params }).catch(() => {});
+    return;
+  }
+  if (publishedWeb())
+    void webLogger().then((log) => {
+      try {
+        log?.(name, params);
+      } catch {
+        /* Medição é opcional. */
+      }
+    });
 }
 
 /** Nome da tela a partir da rota, sem o que identifica a partida (código da sala, número da grade). */
@@ -49,9 +70,9 @@ export function trackAppReady(bundle: string) {
 }
 /** Tela aberta: vira `screen_view` no Analytics e contexto do próximo relatório de falha. */
 export function trackScreen(pathname: string) {
-  if (!native()) return;
   const name = screenOf(pathname);
   track("screen_view", { screen_name: name, screen_class: "WordQuest" });
+  if (!native()) return;
   void Telemetry.setContext({ key: "tela", value: name }).catch(() => {});
 }
 

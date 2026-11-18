@@ -2,6 +2,7 @@ import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
 import { ResumeMatchToast } from "./ResumeMatchToast";
+import { WebAppBar } from "./WebAppBar";
 import {
   Compass,
   Shapes,
@@ -108,6 +109,8 @@ export function Layout() {
         )}
       </header>
       <ResumeMatchToast code={activeOnline} visible={!playing && !map} />
+      {/* O aviso de partida em andamento ocupa o mesmo lugar: um de cada vez. */}
+      <WebAppBar visible={!playing && !map && !activeOnline} />
       {error && (
         <p role="alert" className="error">
           {error}

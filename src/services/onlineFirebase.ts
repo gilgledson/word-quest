@@ -3,7 +3,7 @@
  * `rooms/<código>`; o estado da partida vai como texto (JSON), porque o banco descarta listas
  * e objetos vazios e a partida depende deles.
  */
-import { initializeApp } from "firebase/app";
+import { firebaseApp } from "./firebaseApp";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import {
   get,
@@ -18,7 +18,6 @@ import {
 } from "firebase/database";
 import type { OnlineRoom, OnlineSeat } from "../game/online";
 import type { JoinResult, OnlineBackend } from "./online";
-import { firebaseConfig } from "./firebaseConfig";
 
 interface StoredRoom extends Omit<OnlineRoom, "state" | "grid"> {
   state: string;
@@ -62,7 +61,7 @@ const unpack = (stored: StoredRoom | null): OnlineRoom | null => {
 };
 
 export function firebaseBackend(): OnlineBackend {
-  const app = initializeApp(firebaseConfig);
+  const app = firebaseApp();
   const auth = getAuth(app);
   const db = getDatabase(app);
   const room = (code: string) => ref(db, `rooms/${code}`);
