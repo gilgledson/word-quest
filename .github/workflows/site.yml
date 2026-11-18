@@ -40,7 +40,7 @@ jobs:
         run: |
           rsync -rlz --delete --chmod=D755,F644 \
             -e "ssh -i ~/.ssh/site_deploy -o IdentitiesOnly=yes" \
-            site/ "deploy@${SITE_HOST}:/var/www/wordquest/"
+            site/ "wqdeploy@${SITE_HOST}:/var/www/wordquest/"
       - name: Remover a chave do runner
         if: always()
         run: rm -f ~/.ssh/site_deploy
