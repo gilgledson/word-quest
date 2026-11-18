@@ -9,6 +9,7 @@ import {
   today,
 } from "../../data/catalog";
 import {
+  economy,
   PuzzleEngine,
   type BotLevel,
   type Session,
@@ -72,17 +73,25 @@ export function useDuelSetup() {
     !!stored.botRack &&
     !!stored.versus &&
     fitsGrid(engine, stored);
-  const session: Session | undefined = engine
-    ? resumable
-      ? stored
-      : engine.start(
+  const fresh =
+    engine && !resumable
+      ? engine.start(
           sessionKey,
           botLevel,
           { style: assigned?.style, opponent: assigned?.id },
           // Tutorial da fase 1: a partida nova começa com as letras exatas da palavra guiada.
           tutorial ? guidedWord : undefined,
         )
-    : undefined;
+      : undefined;
+  const session: Session | undefined = resumable
+    ? stored
+    : fresh && tutorial
+      ? // O primeiro duelo é curto: poucas rodadas, para a primeira vitória vir logo.
+        {
+          ...fresh,
+          versus: { ...fresh.versus, rounds: economy.firstDuelRounds },
+        }
+      : fresh;
   return {
     daily,
     casual,

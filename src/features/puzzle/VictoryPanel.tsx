@@ -1,4 +1,12 @@
-import { ArrowRight, Map, RotateCcw, Swords, Shapes } from "lucide-react";
+import {
+  ArrowRight,
+  Map,
+  RotateCcw,
+  Swords,
+  Shapes,
+  Users,
+} from "lucide-react";
+import { track } from "../../services/telemetry";
 import { Link } from "react-router-dom";
 import { ShareResultButton } from "../../components/ShareResultButton";
 import { motion } from "motion/react";
@@ -28,6 +36,8 @@ interface Props {
   onReplay: () => void;
   /** Texto do resultado para compartilhar (desafio do dia). */
   shareResult?: string;
+  /** Atalho para o duelo online (primeiras vitórias de quem ainda não chamou um amigo). */
+  invite?: boolean;
 }
 /** Painel que substitui o banco de letras quando a grade fecha. */
 export function VictoryPanel({
@@ -45,6 +55,7 @@ export function VictoryPanel({
   onNext,
   onReplay,
   shareResult,
+  invite,
 }: Props) {
   const campaignWin = result === "win" && !daily && !casual;
   const coins = daily
@@ -129,6 +140,17 @@ export function VictoryPanel({
           {online ? <Swords /> : casual ? <Shapes /> : <Map />}
           {online ? "Desafiar" : casual ? "Outro tema" : "Jornada"}
         </Link>
+        {invite && (
+          <Link
+            className="victory-action"
+            to="/online"
+            aria-label="Desafiar um amigo online"
+            onClick={() => track("online_cta_clicked", { from: "panel" })}
+          >
+            <Users />
+            Amigo
+          </Link>
+        )}
         {!online && (result !== "loss" || nextTo) && (
           <button
             className="victory-action"

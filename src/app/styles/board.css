@@ -1026,6 +1026,11 @@
   letter-spacing: 0.02em;
   opacity: 0.8;
 }
+/* Duelo curto: a última rodada fica dourada, para o fim não pegar o jogador de surpresa. */
+.words-pill.last-round {
+  background: #ffd23f;
+  color: #3a2a00;
+}
 .app-playing .versus-score {
   position: relative;
   margin: 3px 0 0;

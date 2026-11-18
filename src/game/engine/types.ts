@@ -31,6 +31,11 @@ export interface VersusState {
   /** Estilo e personagem do oponente desta partida (partidas antigas não têm). */
   style?: BotStyle;
   opponent?: string;
+  /**
+   * Duelo curto: termina quando o oponente fecha esta rodada (cada um jogou `rounds` vezes), mesmo
+   * com a grade aberta. Só o primeiro duelo do jogador novo tem; sem o campo, vale a grade inteira.
+   */
+  rounds?: number;
 }
 export const economy = {
   hint: 20,
@@ -56,6 +61,8 @@ export const economy = {
   swapMax: 3,
   /** O curinga chega ao banco depois de tantas jogadas do oponente (uma peça por partida). */
   jokerAfter: 2,
+  /** Rodadas do primeiro duelo (fase 1 com o tutorial): curto, para a primeira vitória vir em poucos minutos. */
+  firstDuelRounds: 6,
 };
 /** Custo total de trocar `count` peças de uma vez. */
 export const swapPrice = (count: number) =>

@@ -19,6 +19,7 @@ import {
   economy,
   normalize,
   positions,
+  roundOf,
   swapPrice,
   type Session,
 } from "../game/crossword-engine";
@@ -69,6 +70,8 @@ import { achievedIds, achievementStatus } from "../game/achievements";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
 /** Duração do relógio opcional do turno do jogador. */
 const TURN_SECONDS = 25;
+/** Até esta fase da campanha, a vitória convida para o duelo online (quem ainda não chamou amigo). */
+const INVITE_UNTIL_LEVEL = 3;
 /** Intervalo entre as letras que o rival coloca na grade. */
 const BOT_LETTER_MS = 260;
 const HINT_MESSAGE = "Arraste as letras até as casas ou toque para preencher.";
@@ -437,6 +440,7 @@ export function Duel({
   const active = word ? positions(word) : [];
   const solved = engine.solved(session);
   const complete = engine.complete(session);
+  const shortDuel = roundOf(session);
   // Progresso da palavra escolhida: letras já na grade (confirmadas ou não) e o que fechar vale.
   const filled = active.filter((c) => session.letters[c.key]).length;
   const wordClosed = !!word && solved.some((w) => w.id === word.id);
@@ -517,12 +521,19 @@ export function Duel({
         if (turn.bonus) sfx("word", turn.gained);
         else if (!animated) sfx("botMove", turn.gained);
       } else sfx("botPass");
+      const rounds = roundOf(turn.session);
+      const last =
+        !!rounds &&
+        rounds.round === rounds.rounds &&
+        rounds.rounds > 1 &&
+        !engine.complete(turn.session);
       setMessage(
-        turn.passed
+        (turn.passed
           ? `${rival.name} passou a vez.`
           : turn.gained
             ? `${rival.name} confirmou ${turn.gained} letra${turn.gained > 1 ? "s" : ""} (+${total}). Sua vez!`
-            : `${rival.name} errou e passou a vez. Sua vez!`,
+            : `${rival.name} errou e passou a vez. Sua vez!`) +
+          (last ? " Última rodada!" : ""),
       );
     };
     const at = (ms: number, fn: () => void) =>
@@ -938,6 +949,13 @@ export function Duel({
     campaignWin && nextWorld && worldDone === worldList.length
       ? nextWorld.nome
       : undefined;
+  // Depois das primeiras vitórias, quem ainda não chamou um amigo é convidado para o duelo online.
+  const inviteOnline =
+    campaignWin &&
+    !online &&
+    puzzle.number <= INVITE_UNTIL_LEVEL &&
+    !player.invitedFriends?.length &&
+    !player.activeOnline;
   const nextTo =
     !daily && !casual && winner === "win" && puzzle.number < levels.length
       ? `/play/${levels[puzzle.number].id}`
@@ -988,13 +1006,24 @@ export function Duel({
                     : `Fase ${puzzle.number}`}
             </h2>
           </div>
-          <span
-            className="pill words-pill"
-            aria-label={`${solved.length} de ${puzzle.words.length} palavras fechadas`}
-          >
-            {solved.length}/{puzzle.words.length}
-            <small aria-hidden="true">palavras</small>
-          </span>
+          {shortDuel ? (
+            // Duelo curto: o que importa é quantas rodadas faltam, não a grade inteira.
+            <span
+              className={`pill words-pill ${shortDuel.round === shortDuel.rounds && !complete ? "last-round" : ""}`}
+              aria-label={`Rodada ${shortDuel.round} de ${shortDuel.rounds}`}
+            >
+              {shortDuel.round}/{shortDuel.rounds}
+              <small aria-hidden="true">rodada</small>
+            </span>
+          ) : (
+            <span
+              className="pill words-pill"
+              aria-label={`${solved.length} de ${puzzle.words.length} palavras fechadas`}
+            >
+              {solved.length}/{puzzle.words.length}
+              <small aria-hidden="true">palavras</small>
+            </span>
+          )}
           <button
             className="round-button rotate-board"
             aria-label="Girar tabuleiro"
@@ -1062,6 +1091,7 @@ export function Duel({
           online={!!online}
           onNext={() => setSelected("")}
           shareResult={shareResult}
+          invite={inviteOnline}
           onReplay={() => {
             // Na campanha a revanche troca de grade: quem perdeu não joga de novo as mesmas palavras.
             const count = variantCount(puzzle.id);
@@ -1297,6 +1327,7 @@ export function Duel({
           summary={summarize(session)}
           enabled={prefs.enabled}
           shareResult={shareResult}
+          invite={inviteOnline}
           onClose={() => {
             setResultOpen(false);
             // Vitória na Aventura: bom momento para pedir a nota na loja (com limites, ver review.ts).

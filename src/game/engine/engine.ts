@@ -11,6 +11,20 @@ import {
 import { key, positions } from "./grid";
 import { PuzzleValidator } from "./validator";
 import { RackManager } from "./rack";
+/**
+ * Rodada atual do duelo curto (1 a `rounds`), ou undefined num duelo de grade inteira. Cada
+ * rodada é uma vez do jogador e uma do oponente; `rngCount` conta as vezes do oponente.
+ */
+export function roundOf(s: Session) {
+  const rounds = s.versus?.rounds;
+  if (!rounds) return undefined;
+  return { round: Math.min(rounds, s.versus.rngCount + 1), rounds };
+}
+/** O oponente fechou a última rodada do duelo curto (a vez voltou ao jogador). */
+function roundsOver(s: Session) {
+  const rounds = s.versus?.rounds;
+  return !!rounds && s.versus.rngCount >= rounds && s.versus.turn === "p";
+}
 export class PuzzleEngine {
   readonly rack: RackManager;
   constructor(public puzzle: Puzzle) {
@@ -152,8 +166,9 @@ export class PuzzleEngine {
       positions(w).every((c) => s.locked.includes(c.key)),
     );
   }
+  /** O duelo acabou: a grade fechou ou, no duelo curto, as rodadas acabaram. */
   complete(s: Session) {
-    return this.solved(s).length === this.puzzle.words.length;
+    return this.solved(s).length === this.puzzle.words.length || roundsOver(s);
   }
   /**
    * Quanto o ✓ renderia agora (letras, bônus de palavra completa e descontos), sem mudar a

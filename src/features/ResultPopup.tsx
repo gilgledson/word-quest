@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ShareResultButton } from "../components/ShareResultButton";
-import { Award, Frown, Handshake, Trophy } from "lucide-react";
+import { Award, Frown, Handshake, Swords, Trophy } from "lucide-react";
+import { economy } from "../game/crossword-engine";
+import { track } from "../services/telemetry";
 import { motion } from "motion/react";
 import { VictoryStars } from "../animations/components/VictoryCelebration";
 import { OpponentPortrait } from "../components/OpponentPortrait";
@@ -41,6 +43,8 @@ interface Props {
   enabled: boolean;
   /** Texto do resultado para compartilhar (desafio do dia). */
   shareResult?: string;
+  /** Convidar para o duelo online (primeiras vitórias de quem ainda não chamou um amigo). */
+  invite?: boolean;
   onClose: () => void;
 }
 
@@ -82,6 +86,7 @@ export function ResultPopup({
   enabled,
   onClose,
   shareResult,
+  invite,
 }: Props) {
   const Icon =
     result === "win" ? Trophy : result === "draw" ? Handshake : Frown;
@@ -241,6 +246,22 @@ export function ResultPopup({
             <p className="result-unlocked" role="status">
               Novo mundo aberto: <b>{unlocked}</b>!
             </p>
+          )}
+          {invite && (
+            <Link
+              className="result-invite"
+              to="/online"
+              onClick={() => {
+                track("online_cta_clicked", { from: "result" });
+                onClose();
+              }}
+            >
+              <Swords size={20} aria-hidden="true" />
+              <span>
+                <b>Desafie um amigo online</b>
+                <small>+{economy.invite} moedas por amigo novo</small>
+              </span>
+            </Link>
           )}
           {/* "Próxima fase" ocupa a linha; embaixo, "Ver o tabuleiro" e "Compartilhar" dividem outra. */}
           <div className="result-actions">
