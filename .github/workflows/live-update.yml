@@ -1,0 +1,72 @@
+name: Atualização ao vivo
+
+# Publica uma versão nova do app (código, telas e arte) no Firebase Hosting, sem passar pela
+# Play Store: quem tem a versão da loja indicada no build.gradle recebe na próxima abertura.
+# Só roda à mão (Actions > Atualização ao vivo > Run workflow) e nunca em pull request, para que
+# o segredo do Firebase não fique ao alcance de código vindo de fora.
+on:
+  workflow_dispatch:
+
+# Uma publicação por vez (a segunda espera a primeira terminar).
+concurrency:
+  group: live-update
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # Ambiente "production": em Settings > Environments dá para exigir aprovação antes de publicar.
+    environment: production
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      # As mesmas checagens do CI: se alguma falhar, nada é publicado.
+      - name: Lint
+        run: npm run lint
+      - name: Formatting
+        run: npm run format:check
+      - name: Typecheck
+        run: npx tsc -b
+      - name: Tests
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Instalar o navegador do Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Testes de ponta a ponta (360×800)
+        run: npm run test:e2e
+      - name: Relatório do Playwright
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces
+          path: test-results/
+      - name: Restaurar a credencial do Firebase
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "::error::Falta o segredo FIREBASE_SERVICE_ACCOUNT (chave JSON da conta de serviço)."
+            exit 1
+          fi
+          dir="$RUNNER_TEMP/firebase"
+          mkdir -p "$dir"
+          printf '%s' "$FIREBASE_SERVICE_ACCOUNT" > "$dir/service-account.json"
+          chmod 600 "$dir/service-account.json"
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$dir/service-account.json" >> "$GITHUB_ENV"
+      - name: Gerar o pacote e publicar
+        run: node scripts/publish-app.mjs --deploy
+      - name: Remover a credencial do runner
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/firebase"
+      - name: Versão publicada
+        run: |
+          curl -s https://wordquest-online.web.app/app/latest.json \
+            | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const r=JSON.parse(s);console.log(`Em vigor: ${r.version} (loja ${r.natives.join(", ")})`)})' \
+            | tee -a "$GITHUB_STEP_SUMMARY"
