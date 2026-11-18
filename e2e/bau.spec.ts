@@ -1,11 +1,27 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
-/** Grava um jogador com `words` palavras descobertas e `chestsOpened` baús abertos. */
-const seed = async (page: Page, words: number, chestsOpened = 0) => {
+/**
+ * Grava um jogador com `words` palavras descobertas e `chestsOpened` baús abertos. A recompensa
+ * diária de hoje já vem pega (senão a janela dela abre por cima da home), a menos que
+ * `rewardPending` peça o contrário.
+ */
+const seed = async (
+  page: Page,
+  words: number,
+  chestsOpened = 0,
+  rewardPending = false,
+) => {
   await page.goto("/");
   await page.evaluate(
-    async ({ words, chestsOpened }) => {
+    async ({ words, chestsOpened, rewardPending }) => {
+      // Mesmo dia do jogo (today() em src/data/catalog.ts): fuso de São Paulo.
+      const today = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "America/Sao_Paulo",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
       const wordsFound = {
         "vila-1": Array.from({ length: words }, (_, i) => `w${i}`),
       };
@@ -33,6 +49,9 @@ const seed = async (page: Page, words: number, chestsOpened = 0) => {
               animations: true,
               tutorialDone: true,
               chestsOpened,
+              ...(rewardPending
+                ? {}
+                : { loginReward: { last: today, day: 1 } }),
             },
           });
           tx.oncomplete = () => res();
@@ -40,7 +59,7 @@ const seed = async (page: Page, words: number, chestsOpened = 0) => {
         };
       });
     },
-    { words, chestsOpened },
+    { words, chestsOpened, rewardPending },
   );
   await page.goto("/");
 };
@@ -96,4 +115,20 @@ test("a home com baú pronto e com baú fechado não tem violações de acessibi
       `${words} palavras`,
     ).toEqual([]);
   }
+});
+
+test("a recompensa diária abre na primeira visita do dia, paga uma vez e não volta", async ({
+  page,
+}) => {
+  await seed(page, 0, 0, true);
+  const dialog = page.getByRole("dialog", { name: "Recompensa diária" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog).toContainText("Amanhã: +30 moedas");
+  await dialog.getByRole("button", { name: "Pegar +20 moedas" }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(saldo(page)).toContainText("120");
+  await page.reload();
+  await expect(saldo(page)).toContainText("120");
+  await page.waitForTimeout(800);
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 });
