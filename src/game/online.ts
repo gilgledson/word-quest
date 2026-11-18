@@ -61,9 +61,42 @@ export interface OnlineRoom {
   rules?: RoomRules;
   /** Quem saiu, quando a partida foi abandonada. */
   left?: string;
-  /** Quem encerrou: o próprio `left` (saiu ou cancelou) ou o amigo, depois de esperar demais. */
+  /**
+   * Quem encerrou: o próprio `left` (saiu ou cancelou), o amigo (depois de esperar demais) ou
+   * `ROOM_EXPIRED` (a sala ficou parada mais que `ROOM_EXPIRE_MS`, sem vencedor).
+   */
   endedBy?: string;
+  /** Quando a sala foi criada (ms). */
+  createdAt?: number;
+  /** Último movimento na sala: criação, entrada do amigo, jogada ou encerramento (ms). */
+  updatedAt?: number;
 }
+
+/** Sala parada (ninguém entrou ou ninguém jogou) há mais que isto é encerrada sozinha. */
+export const ROOM_EXPIRE_MS = 24 * 60 * 60 * 1000;
+/** `endedBy` de uma sala encerrada por ficar parada: ninguém ganha nem perde. */
+export const ROOM_EXPIRED = "expirada";
+/** A partida ainda não acabou (esperando o amigo ou em jogo). */
+export const isLive = (room: Pick<OnlineRoom, "status"> | null | undefined) =>
+  room?.status === "waiting" || room?.status === "playing";
+/** Sala ainda aberta, mas parada há mais que `ROOM_EXPIRE_MS`. Salas sem horário não expiram. */
+export const isExpired = (
+  room: Pick<OnlineRoom, "status" | "createdAt" | "updatedAt">,
+  now = Date.now(),
+) => {
+  const last = room.updatedAt ?? room.createdAt;
+  return isLive(room) && last !== undefined && now - last > ROOM_EXPIRE_MS;
+};
+/** A partida acabou porque o outro jogador saiu (e não por ficar parada): `uid` fica com a vitória. */
+export const wonByForfeitOf = (
+  room: OnlineRoom | null | undefined,
+  uid: string | undefined,
+) =>
+  room?.status === "abandoned" &&
+  !!uid &&
+  !!room.left &&
+  room.left !== uid &&
+  room.endedBy !== ROOM_EXPIRED;
 
 /** Grades que podem cair num duelo ao vivo: as da Aventura e as do Casual (do catálogo em uso). */
 export const onlinePuzzles = () => [...levels, ...casualPuzzles];

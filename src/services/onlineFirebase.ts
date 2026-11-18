@@ -16,7 +16,12 @@ import {
   set,
   update,
 } from "firebase/database";
-import type { OnlineRoom, OnlineSeat } from "../game/online";
+import {
+  ROOM_EXPIRED,
+  isLive,
+  type OnlineRoom,
+  type OnlineSeat,
+} from "../game/online";
 import type { JoinResult, OnlineBackend } from "./online";
 
 interface StoredRoom extends Omit<OnlineRoom, "state" | "grid"> {
@@ -24,7 +29,6 @@ interface StoredRoom extends Omit<OnlineRoom, "state" | "grid"> {
   /** A grade em texto (JSON), gravada só ao criar a sala: as jogadas não a reenviam. */
   grid?: string;
   online?: Record<string, true>;
-  createdAt?: number;
 }
 const pack = (room: OnlineRoom): StoredRoom => {
   const { state, guest, left, grid: _grid, ...rest } = room;
@@ -46,13 +50,7 @@ const gridOf = (text: string) => {
 };
 const unpack = (stored: StoredRoom | null): OnlineRoom | null => {
   if (!stored?.state) return null;
-  const {
-    online: _online,
-    createdAt: _createdAt,
-    state,
-    grid,
-    ...rest
-  } = stored;
+  const { online: _online, state, grid, ...rest } = stored;
   return {
     ...rest,
     ...(grid ? { grid: gridOf(grid) } : {}),
@@ -81,6 +79,7 @@ export function firebaseBackend(): OnlineBackend {
               ...pack(data),
               ...(data.grid ? { grid: JSON.stringify(data.grid) } : {}),
               createdAt: Date.now(),
+              updatedAt: Date.now(),
             }
           : undefined,
       );
@@ -110,7 +109,12 @@ export function firebaseBackend(): OnlineBackend {
             reason = "over";
             return undefined;
           }
-          return { ...current, guest: seat, status: "playing" };
+          return {
+            ...current,
+            guest: seat,
+            status: "playing",
+            updatedAt: Date.now(),
+          };
         },
       );
       const joined = unpack(result.snapshot.val());
@@ -127,7 +131,7 @@ export function firebaseBackend(): OnlineBackend {
         (current: StoredRoom | null) => {
           if (!current || current.status !== "playing") return undefined;
           if (current.rev !== data.rev - 1) return undefined;
-          return { ...current, ...next };
+          return { ...current, ...next, updatedAt: Date.now() };
         },
       );
       return result.committed;
@@ -136,7 +140,23 @@ export function firebaseBackend(): OnlineBackend {
       const snap = await get(room(code));
       const current = snap.val() as StoredRoom | null;
       if (!current || current.status === "finished") return;
-      await update(room(code), { status: "abandoned", left: who, endedBy: by });
+      await update(room(code), {
+        status: "abandoned",
+        left: who,
+        endedBy: by,
+        updatedAt: Date.now(),
+      });
+    },
+    async expire(code) {
+      await uid();
+      const current = (await get(room(code))).val() as StoredRoom | null;
+      if (!current || !isLive(current)) return;
+      await update(room(code), {
+        status: "abandoned",
+        left: null,
+        endedBy: ROOM_EXPIRED,
+        updatedAt: Date.now(),
+      });
     },
     presence(code, who, onOnline) {
       const mine = ref(db, `rooms/${code}/online/${who}`);
