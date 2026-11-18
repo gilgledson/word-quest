@@ -33,10 +33,14 @@ const OnlineLobby = lazy(() =>
   import("./features/OnlinePage").then((m) => ({ default: m.OnlineLobby })),
 );
 const OnlineMatch = lazy(() =>
-  import("./features/OnlinePage").then((m) => ({ default: m.OnlineMatch })),
+  import("./features/OnlinePage").then((m) => ({
+    default: m.OnlineMatchRoute,
+  })),
 );
 const OnlineSetup = lazy(() =>
-  import("./features/OnlinePage").then((m) => ({ default: m.OnlineSetup })),
+  import("./features/OnlinePage").then((m) => ({
+    default: m.OnlineSetupRoute,
+  })),
 );
 const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),

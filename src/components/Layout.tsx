@@ -109,8 +109,9 @@ export function Layout() {
         )}
       </header>
       <ResumeMatchToast code={activeOnline} visible={!playing && !map} />
-      {/* O aviso de partida em andamento ocupa o mesmo lugar: um de cada vez. */}
-      <WebAppBar visible={!playing && !map && !activeOnline} />
+      {/* Só na tela inicial (nas outras cobriria o título); o aviso de partida em andamento ocupa
+          o mesmo lugar, então um de cada vez. */}
+      <WebAppBar visible={home && !activeOnline} />
       {error && (
         <p role="alert" className="error">
           {error}

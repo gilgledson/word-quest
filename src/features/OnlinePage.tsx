@@ -1,4 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
 import {
   Link,
   useNavigate,
@@ -56,7 +63,13 @@ import { Duel } from "./PuzzlePage";
 import { copyText, shareText } from "../services/share";
 import { track } from "../services/telemetry";
 import { OpponentAvatar } from "../components/OpponentAvatar";
-import { avatarOf } from "../game/avatars";
+import {
+  avatarOf,
+  needsProfile,
+  NAME_MAX,
+  NAME_MIN,
+  PLAYER_AVATARS,
+} from "../game/avatars";
 import { CoinIcon } from "../components/CoinIcon";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
@@ -859,5 +872,98 @@ export function OnlineMatch() {
         }}
       />
     </>
+  );
+}
+
+/**
+ * Antes do duelo ao vivo, quem ainda está com o nome e o avatar padrão escolhe os dois: é assim que
+ * o amigo o vê na partida. Fica na frente da sala (antes de entrar nela) e da criação da partida.
+ */
+export function OnlineProfileGate({
+  joining,
+  children,
+}: {
+  /** Entrando na sala de um amigo (o botão diz "Entrar no duelo"). */
+  joining: boolean;
+  children: ReactNode;
+}) {
+  const player = usePlayer((s) => s.player);
+  const update = usePlayer((s) => s.update);
+  const [done, setDone] = useState(() => !needsProfile(player));
+  const [name, setName] = useState("");
+  const [avatar, setAvatar] = useState(() => avatarOf(player.avatar).id);
+  if (done) return <>{children}</>;
+  const clean = name.trim().replace(/\s+/g, " ");
+  const valid = clean.length >= NAME_MIN;
+  const save = (e: FormEvent) => {
+    e.preventDefault();
+    if (!valid) return;
+    update((p) => ({ ...p, name: clean, avatar, profileSet: true }));
+    track("online_profile_set", { avatar, joining });
+    setDone(true);
+  };
+  return (
+    <>
+      <div className="page-heading">
+        <span className="eyebrow">DUELO AO VIVO</span>
+        <h1>Quem vai jogar?</h1>
+      </div>
+      <form
+        className="online-card online-profile"
+        aria-label="Seu nome e avatar"
+        onSubmit={save}
+      >
+        <p className="online-hint">
+          Seu amigo vai ver este nome e este avatar na partida.
+        </p>
+        <span className="profile-dialog-label">Escolha seu avatar</span>
+        <ul className="avatar-picker" aria-label="Avatares">
+          {PLAYER_AVATARS.map((a) => (
+            <li key={a.id}>
+              <button
+                type="button"
+                className={a.id === avatar ? "selected" : ""}
+                aria-pressed={a.id === avatar}
+                aria-label={a.name}
+                onClick={() => setAvatar(a.id)}
+              >
+                <OpponentAvatar opponent={a} size={52} />
+                <small>{a.name}</small>
+              </button>
+            </li>
+          ))}
+        </ul>
+        <label className="profile-dialog-name">
+          Seu nome
+          <input
+            value={name}
+            maxLength={NAME_MAX}
+            placeholder="Como seu amigo te chama"
+            autoComplete="nickname"
+            enterKeyHint="go"
+            onChange={(e) => setName(e.target.value)}
+          />
+        </label>
+        <button type="submit" className="button primary" disabled={!valid}>
+          {joining ? "Entrar no duelo" : "Continuar"}{" "}
+          <ArrowRight size={20} aria-hidden="true" />
+        </button>
+      </form>
+    </>
+  );
+}
+/** Rotas do duelo ao vivo com o pedido de nome e avatar na frente. */
+export function OnlineMatchRoute() {
+  return (
+    <OnlineProfileGate joining>
+      <OnlineMatch />
+    </OnlineProfileGate>
+  );
+}
+export function OnlineSetupRoute() {
+  return (
+    <OnlineProfileGate joining={false}>
+      <OnlineSetup />
+    </OnlineProfileGate>
   );
 }

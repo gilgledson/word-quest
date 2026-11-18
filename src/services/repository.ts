@@ -1,5 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { BotLevel, Session } from "../game/crossword-engine";
+import { DEFAULT_NAME } from "../game/avatars";
 export interface Player {
   name: string;
   /** Id de `PLAYER_AVATARS`. */
@@ -56,6 +57,8 @@ export interface Player {
   achievements: string[];
   /** Vitórias sem nenhuma letra errada (alimenta a conquista "Mão certeira"). */
   cleanWins: number;
+  /** O jogador confirmou nome e avatar (pedidos antes do primeiro duelo ao vivo). */
+  profileSet?: boolean;
   /**
    * Última conta do Play Games que entrou neste aparelho (nome e foto). Fica só aqui, como cache:
    * o Perfil mostra a conta na hora, sem esperar o login automático nem depender de internet.
@@ -78,7 +81,7 @@ export interface GameRecord {
 }
 export const HISTORY_MAX = 10;
 export const initialPlayer: Player = {
-  name: "Explorador",
+  name: DEFAULT_NAME,
   avatar: "jogador",
   coins: 100,
   stars: {},

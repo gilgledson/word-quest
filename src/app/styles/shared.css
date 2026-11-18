@@ -961,6 +961,15 @@ footer {
   width: 20px;
   height: 20px;
 }
+/* Rótulo nunca quebra no meio da palavra ("Compartil/har"); com quatro atalhos, letra menor. */
+.victory-action {
+  overflow-wrap: normal;
+  word-break: keep-all;
+}
+.victory-actions:has(> .victory-action:nth-child(4)) .victory-action {
+  padding-inline: 2px;
+  font-size: 11.5px;
+}
 .victory-action:active {
   transform: translateY(2px);
   box-shadow: 0 1px 0 #b9cdea;

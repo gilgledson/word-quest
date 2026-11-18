@@ -3,7 +3,8 @@
 // Uso:
 //   node scripts/publish-app.mjs            # gera e confere o pacote, sem publicar
 //   node scripts/publish-app.mjs --deploy   # gera e publica no Firebase Hosting
-//   [--native 5.3,5.4]                      # versões da loja que recebem (padrão: a do build.gradle)
+//   [--native 5.3,5.4]                      # versões da loja que recebem (padrão: a do build.gradle
+//                                           # mais as que já recebiam a versão em vigor)
 //
 // O pacote só pode mudar o que roda no WebView. Plugin nativo novo, permissão, ícone ou versão do
 // Android exigem uma versão nova na loja (e aí este script passa a mirar a versão nova).
@@ -49,7 +50,7 @@ const gradle = fs.readFileSync(
 const nativeVersion = gradle.match(/versionName "([^"]+)"/)?.[1];
 if (!nativeVersion)
   fail("versionName não encontrado em android/app/build.gradle.");
-const natives = (option("native") ?? nativeVersion)
+let natives = (option("native") ?? nativeVersion)
   .split(",")
   .map((v) => v.trim());
 const stamp = new Date()
@@ -111,8 +112,13 @@ async function keepLive() {
   console.log(
     `Versão em vigor ${live.version} mantida (${fetched ? `${fetched} arquivos baixados` : "já estava aqui"}).`,
   );
+  return live;
 }
-await keepLive();
+const live = await keepLive();
+// Versão nova da loja em revisão: quem ainda está na anterior continua recebendo as atualizações
+// (o código novo precisa funcionar nas duas; um plugin nativo novo é usado só se existir).
+if (!option("native") && live?.natives)
+  natives = [...new Set([...live.natives, nativeVersion])];
 
 // 3. Copia para o Hosting e monta a lista de arquivos com sha256.
 const target = path.join(appDir, version);
