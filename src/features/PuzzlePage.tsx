@@ -1205,7 +1205,7 @@ export function Duel({
                   ? `VEZ DE ${shortName(rival).toUpperCase()}`
                   : "VEZ DO OPONENTE"
                 : word
-                  ? `${word.direction === "horizontal" ? "→ HORIZONTAL" : "↓ VERTICAL"} · ${normalize(word.answer).length} LETRAS`
+                  ? `${(word.direction === "horizontal") !== grid.rotated ? "→ HORIZONTAL" : "↓ VERTICAL"} · ${normalize(word.answer).length} LETRAS`
                   : "TOQUE EM UMA PISTA"}
             </span>
             <h2>

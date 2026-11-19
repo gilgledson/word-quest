@@ -542,7 +542,7 @@ it("versus com zero moedas: partida inteira, pontuação, recompensa única e pe
   expect(player().coins).toBe(economy.duel[result]);
 }, 120_000);
 
-it("gira só o tabuleiro: 10×8, setas viradas e o resto da tela igual", () => {
+it("deita só o tabuleiro: 10×8 transposto, leitura normal e o resto da tela igual", () => {
   open();
   const board = document.querySelector<HTMLElement>(".board")!;
   expect(board.style.gridTemplateColumns).toContain("repeat(8");
@@ -554,16 +554,32 @@ it("gira só o tabuleiro: 10×8, setas viradas e o resto da tela igual", () => {
   expect(turn).toHaveAttribute("aria-pressed", "true");
   expect(board.style.gridTemplateColumns).toContain("repeat(10");
   expect(board.style.gridTemplateRows).toContain("repeat(8");
-  // Um quarto de volta anti-horário: (linha, coluna) vai para (colunas − coluna, linha + 1).
+  // Transposto: (linha, coluna) vai para (coluna + 1, linha + 1). Nada é lido de baixo para cima.
   const el = screen.getByLabelText(label);
-  expect(el.style.gridRow).toBe(String(level.cols - c));
+  expect(el.style.gridRow).toBe(String(c + 1));
   expect(el.style.gridColumn).toBe(String(r + 1));
-  // Girado, "→" vira "↑" e "↓" vira "→".
-  expect(document.querySelector(".clue-half .clue-arrow.to-up")).not.toBeNull();
+  // "→" vira "↓" e "↓" vira "→"; nenhuma seta para cima.
+  expect(document.querySelector(".clue-arrow.to-up")).toBeNull();
   expect(
     document.querySelector(".clue-half .clue-arrow.to-right"),
   ).not.toBeNull();
-  expect(document.querySelector(".clue-half .clue-arrow.to-down")).toBeNull();
+  expect(
+    document.querySelector(".clue-half .clue-arrow.to-down"),
+  ).not.toBeNull();
+  // Cada palavra continua com as casas em sequência, na ordem de leitura da tela.
+  for (const w of level.words) {
+    const cells = positions(w).map(
+      (p) =>
+        document.querySelector<HTMLElement>(`[data-cell="${p.key}"]`)!.style,
+    );
+    // Deitado, a vertical dos dados aparece na horizontal da tela.
+    const across = w.direction === "vertical";
+    cells.forEach((s, i) => {
+      const [row, col] = [Number(s.gridRow), Number(s.gridColumn)];
+      const [r0, c0] = [Number(cells[0].gridRow), Number(cells[0].gridColumn)];
+      expect([row, col]).toEqual(across ? [r0, c0 + i] : [r0 + i, c0]);
+    });
+  }
   // O restante do jogo não muda: banco, ações e jogo continuam iguais.
   expect(rackButtons()).toHaveLength(5);
   expect(screen.getByRole("button", { name: "Dica" })).toBeInTheDocument();

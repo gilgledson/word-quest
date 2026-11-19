@@ -68,18 +68,20 @@ export function Board({
   const hiddenJoker = (cell: string) => pending(cell) && !!tileOf(cell)?.joker;
   const tileOf = (cell: string) =>
     Object.values(session.tiles).find((t) => t.cell === cell);
-  // A quarter turn counter-clockwise: words that ran right now run up, and down becomes right.
-  // A seta fica na borda da casa da pista, apontando para dentro da resposta.
+  // Deitado, o tabuleiro é transposto (linha vira coluna), não girado: as palavras continuam
+  // sendo lidas da esquerda para a direita e de cima para baixo, com a pista antes da resposta.
+  // (Girar fazia as horizontais serem lidas de baixo para cima, com sequências que pareciam
+  // palavras sem pista.) A seta fica na borda da casa da pista, apontando para a resposta.
   const arrowTo = (arrow: PuzzleWord["arrow"]) =>
-    arrow === "right" ? (rotated ? "up" : "right") : rotated ? "right" : "down";
+    (arrow === "right") !== rotated ? "right" : "down";
   const place = (r: number, c: number): CSSProperties | undefined =>
-    rotated ? { gridRow: puzzle.cols - c, gridColumn: r + 1 } : undefined;
+    rotated ? { gridRow: c + 1, gridColumn: r + 1 } : undefined;
   const clueHalf = (w: PuzzleWord) => (
     <button
       key={w.id}
       className={`clue-half ${selected === w.id ? "selected-clue" : ""}`}
       onClick={() => onChoose(w.id)}
-      aria-label={`Pista: ${w.clue}, ${w.direction === "horizontal" ? "horizontal" : "vertical"}`}
+      aria-label={`Pista: ${w.clue}, ${arrowTo(w.arrow) === "right" ? "horizontal" : "vertical"}`}
     >
       {w.icon && (
         <span className={`game-art art-${w.icon}`} aria-hidden="true" />
@@ -103,8 +105,11 @@ export function Board({
         {engine.matrix().map((cell) => {
           const { row: r, col: c, key: ck } = cell;
           if (cell.kind === "clue") {
+            // Na casa dupla, a pista que aponta para a direita (na tela) fica em cima.
             const halves = [...cell.words].sort(
-              (a, b) => Number(a.arrow === "down") - Number(b.arrow === "down"),
+              (a, b) =>
+                Number(arrowTo(a.arrow) === "down") -
+                Number(arrowTo(b.arrow) === "down"),
             );
             return (
               <div
