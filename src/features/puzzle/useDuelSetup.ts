@@ -83,14 +83,17 @@ export function useDuelSetup() {
           tutorial ? guidedWord : undefined,
         )
       : undefined;
+  // O primeiro duelo é curto (poucas rodadas, para a primeira vitória vir logo), e as fases 2 a 4
+  // também: a curva do começo da Aventura (ver `economy.campaignRounds`).
+  const rounds = tutorial
+    ? economy.firstDuelRounds
+    : !daily && !casual && puzzle
+      ? economy.campaignRounds[puzzle.number]
+      : undefined;
   const session: Session | undefined = resumable
     ? stored
-    : fresh && tutorial
-      ? // O primeiro duelo é curto: poucas rodadas, para a primeira vitória vir logo.
-        {
-          ...fresh,
-          versus: { ...fresh.versus, rounds: economy.firstDuelRounds },
-        }
+    : fresh && rounds
+      ? { ...fresh, versus: { ...fresh.versus, rounds } }
       : fresh;
   return {
     daily,

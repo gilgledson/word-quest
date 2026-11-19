@@ -57,6 +57,8 @@ export interface Player {
   achievements: string[];
   /** Vitórias sem nenhuma letra errada (alimenta a conquista "Mão certeira"). */
   cleanWins: number;
+  /** Tentativas em cada fase da Aventura (id da fase → quantas vezes começou), para a medição. */
+  levelAttempts?: Record<string, number>;
   /** O jogador confirmou nome e avatar (pedidos antes do primeiro duelo ao vivo). */
   profileSet?: boolean;
   /** Recompensa por voltar: último dia pego e o dia do ciclo de 7 (ver game/loginReward). */

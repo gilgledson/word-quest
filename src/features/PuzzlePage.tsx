@@ -16,6 +16,7 @@ import {
 import {
   PuzzleEngine,
   PuzzleValidator,
+  easyDuel,
   economy,
   normalize,
   positions,
@@ -279,6 +280,61 @@ export function Duel({
   }, [botTurn]);
   const finished = !!engine && !!session && engine.complete(session);
   const wasFinished = useRef(finished);
+  // Medição da Aventura fase a fase (como nos jogos de fase): início, fim e abandono, com o número
+  // da fase e da tentativa. Casual, Diário e duelo ao vivo não entram.
+  const campaign =
+    !daily &&
+    !casual &&
+    !online &&
+    !!puzzle &&
+    // Fase bloqueada (a anterior ainda não foi vencida) não conta: o jogador nem jogou.
+    (puzzle.number === 1 || !!player.stars[levels[puzzle.number - 2]?.id]);
+  const levelOpened = useRef<number>(Date.now());
+  const levelAttempt = useRef(0);
+  useEffect(() => {
+    levelOpened.current = Date.now();
+    if (!campaign || !session || !puzzle || finished) return;
+    const fresh = session.versus.rngCount === 0 && !session.history.length;
+    levelAttempt.current =
+      usePlayer.getState().player.levelAttempts?.[puzzle.id] ?? 0;
+    if (!fresh) return;
+    const attempt = levelAttempt.current + 1;
+    levelAttempt.current = attempt;
+    update((p) => ({
+      ...p,
+      levelAttempts: { ...p.levelAttempts, [puzzle.id]: attempt },
+    }));
+    track("level_start", {
+      level_number: puzzle.number,
+      level_id: puzzle.id,
+      bot_level: session.versus.level,
+      opponent: session.versus.opponent ?? "",
+      rounds: session.versus.rounds ?? 0,
+      attempt,
+    });
+    // Uma vez por partida aberta (a revanche começa outra com outra semente).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionKey, session?.versus?.seed]);
+  const quit = useRef<Record<string, string | number> | null>(null);
+  quit.current =
+    campaign && session && puzzle && !finished
+      ? {
+          level_number: puzzle.number,
+          level_id: puzzle.id,
+          attempt: levelAttempt.current,
+          round: session.versus.rngCount,
+          score_player: session.scores.p,
+          score_rival: session.scores.ai,
+          duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
+        }
+      : null;
+  useEffect(
+    () => () => {
+      // Saiu da fase no meio da partida (voltar, outra tela ou fechar o app pela navegação).
+      if (quit.current) track("level_quit", quit.current);
+    },
+    [sessionKey],
+  );
   useEffect(() => {
     // Toca o resultado só quando a partida termina agora, não ao reabrir uma já concluída.
     if (finished && !wasFinished.current && session) {
@@ -298,6 +354,13 @@ export function Duel({
         level: session.versus.level,
         score_player: p,
         score_rival: ai,
+        ...(campaign && puzzle
+          ? {
+              level_number: puzzle.number,
+              attempt: levelAttempt.current,
+              duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
+            }
+          : {}),
       });
     }
     wasFinished.current = finished;
@@ -364,7 +427,7 @@ export function Duel({
   }, [inTutorial, guideConfirmed]);
   // Tutorial e primeiro duelo: quando a vez volta ao jogador, a palavra escolhida precisa fechar
   // com o banco (ou ao menos ter uma casa que ele preencha); senão, troca para uma que feche.
-  const firstDuel = !!session?.versus?.rounds && puzzle?.number === 1;
+  const firstDuel = !daily && !casual && !online && easyDuel(session);
   useEffect(() => {
     if (
       !(inTutorial || firstDuel) ||

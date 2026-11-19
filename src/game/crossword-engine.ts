@@ -4,4 +4,4 @@ export { normalize, key, positions } from "./engine/grid";
 export { PuzzleValidator } from "./engine/validator";
 export { seededRandom } from "./engine/random";
 export { RackManager } from "./engine/rack";
-export { PuzzleEngine, roundOf } from "./engine/engine";
+export { PuzzleEngine, roundOf, easyDuel } from "./engine/engine";
