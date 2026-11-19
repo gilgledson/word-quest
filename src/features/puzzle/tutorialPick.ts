@@ -78,9 +78,9 @@ export function guided(word: PuzzleWord, session: Session): GuidedState {
 }
 
 /**
- * Palavra e casa para o tutorial da fase 1: uma casa vazia cuja letra o jogador TEM no banco.
- * Entre as palavras ainda abertas, vale a que o banco preenche em mais casas (a primeira jogada já
- * rende pontos); o curinga não conta, porque o passo pede uma letra específica.
+ * Palavra e casa para o tutorial e o primeiro duelo da fase 1: uma casa vazia cuja letra o jogador
+ * TEM no banco. Primeiro as palavras que o banco fecha inteiras (a mais curta), depois a que ele
+ * preenche em mais casas; o curinga não conta, porque o passo pede uma letra específica.
  */
 export function tutorialPick(
   puzzle: Puzzle,
@@ -91,22 +91,34 @@ export function tutorialPick(
     const t = session.tiles[id];
     if (!t.joker) inBank.set(t.letter, (inBank.get(t.letter) ?? 0) + 1);
   }
-  let best: { wordId: string; cell: string; covered: number } | undefined;
+  let best:
+    | { wordId: string; cell: string; covered: number; closes: boolean }
+    | undefined;
   for (const w of puzzle.words) {
     if (PuzzleValidator.correct(w, session)) continue;
     const left = new Map(inBank);
     let cell: string | undefined;
     let covered = 0;
+    let empty = 0;
     for (const c of positions(w)) {
       if (session.letters[c.key]) continue;
+      empty++;
       const n = left.get(c.letter) ?? 0;
       if (!n) continue;
       left.set(c.letter, n - 1);
       covered++;
       cell ??= c.key;
     }
-    if (cell && (!best || covered > best.covered))
-      best = { wordId: w.id, cell, covered };
+    if (!cell) continue;
+    const closes = covered === empty;
+    const better = !best
+      ? true
+      : closes !== best.closes
+        ? closes
+        : closes
+          ? covered < best.covered
+          : covered > best.covered;
+    if (better) best = { wordId: w.id, cell, covered, closes };
   }
   return best && { wordId: best.wordId, cell: best.cell };
 }

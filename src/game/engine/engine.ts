@@ -88,6 +88,13 @@ export class PuzzleEngine {
     if (!word) throw new Error("Palavra inexistente");
     return word;
   }
+  /**
+   * No primeiro duelo (o curto, com `rounds`), a mão do jogador sempre fecha alguma palavra: vale
+   * depois da jogada dele (a reposição) e depois da do oponente (que pode ter tomado as casas).
+   */
+  private firstDuelHand(s: Session) {
+    return s.versus?.rounds ? this.rack.keepCompletable(s) : s;
+  }
   private refresh(s: Session | undefined, focus?: PuzzleWord) {
     return s && this.rack.ensurePlayable(s, focus);
   }
@@ -191,7 +198,9 @@ export class PuzzleEngine {
     const bonus = this.completionBonus(s, r.session, done, r.gained);
     r.session.scores[who] += bonus;
     return {
-      session: this.rack.ensurePlayable(this.rack.topUpBot(r.session)),
+      session: this.firstDuelHand(
+        this.rack.ensurePlayable(this.rack.topUpBot(r.session)),
+      ),
       gained: r.gained,
       bonus,
     };
@@ -209,7 +218,12 @@ export class PuzzleEngine {
     result.session.scores[who] += bonus;
     return {
       // Ao concluir o turno o jogador recebe peças até voltar a cinco.
-      session: this.rack.ensurePlayable(this.rack.topUp(result.session)),
+      session:
+        who === "p"
+          ? this.firstDuelHand(
+              this.rack.ensurePlayable(this.rack.topUp(result.session)),
+            )
+          : this.rack.ensurePlayable(this.rack.topUp(result.session)),
       gained: result.gained,
       bonus,
       returned: result.returned,
