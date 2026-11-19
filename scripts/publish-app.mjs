@@ -17,6 +17,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { execFileSync } from "node:child_process";
+import { keepLiveApp } from "./lib/live-app.mjs";
 
 const root = path.resolve(
   path.dirname(
@@ -75,46 +76,13 @@ const appDir = path.join(root, "content", "hosting", "app");
 const sha256 = (data) => crypto.createHash("sha256").update(data).digest("hex");
 
 // 2b. A versão em vigor no servidor também vai no deploy: o Hosting troca o site inteiro, e quem
-// está no meio do download dela não pode ficar sem os arquivos. Num runner novo (GitHub Actions)
-// content/hosting/app começa vazio, então ela é baixada de lá e conferida pelo sha256.
-async function keepLive() {
-  let response;
-  try {
-    response = await fetch(`${HOST}/app/latest.json`, { cache: "no-store" });
-  } catch (e) {
-    fail(`Sem acesso ao Hosting para ler a versão em vigor (${e.message}).`);
-  }
-  if (response.status === 404)
-    return console.log("Nenhuma versão no ar ainda.");
-  if (!response.ok) fail(`latest.json respondeu ${response.status}.`);
-  const live = await response.json();
-  const dir = path.join(appDir, live.version);
-  let fetched = 0;
-  for (const { file_name, file_hash, download_url } of live.manifest) {
-    const dest = path.join(dir, ...file_name.split("/"));
-    if (fs.existsSync(dest) && sha256(fs.readFileSync(dest)) === file_hash)
-      continue;
-    const r = await fetch(download_url);
-    if (!r.ok) fail(`Falha ao baixar ${download_url} (${r.status}).`);
-    const data = Buffer.from(await r.arrayBuffer());
-    if (sha256(data) !== file_hash) fail(`sha256 diferente em ${file_name}.`);
-    fs.mkdirSync(path.dirname(dest), { recursive: true });
-    fs.writeFileSync(dest, data);
-    fetched++;
-  }
-  const zip = path.join(appDir, `${live.version}.zip`);
-  if (!fs.existsSync(zip)) {
-    const r = await fetch(live.url);
-    if (!r.ok) fail(`Falha ao baixar ${live.url} (${r.status}).`);
-    fs.writeFileSync(zip, Buffer.from(await r.arrayBuffer()));
-    fetched++;
-  }
-  console.log(
-    `Versão em vigor ${live.version} mantida (${fetched ? `${fetched} arquivos baixados` : "já estava aqui"}).`,
-  );
-  return live;
+// está no meio do download dela não pode ficar sem os arquivos (ver scripts/lib/live-app.mjs).
+let live;
+try {
+  live = await keepLiveApp({ host: HOST, appDir });
+} catch (e) {
+  fail(`Sem a versão em vigor: ${e.message}`);
 }
-const live = await keepLive();
 // Versão nova da loja em revisão: quem ainda está na anterior continua recebendo as atualizações
 // (o código novo precisa funcionar nas duas; um plugin nativo novo é usado só se existir).
 if (!option("native") && live?.natives)
