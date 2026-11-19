@@ -1185,7 +1185,13 @@ export function Duel({
         />
       ) : (
         <>
-          <section className="selected-word">
+          <section
+            className={
+              puzzle.words.some((w) => w.dica)
+                ? "selected-word has-dica"
+                : "selected-word"
+            }
+          >
             {mine && lastBot && (
               <button
                 type="button"
@@ -1213,7 +1219,8 @@ export function Duel({
                 ? online
                   ? (online.notice ?? `${rival.name} está jogando…`)
                   : `${rival.name} pensando…`
-                : (word?.clue ?? "Escolha por onde começar")}
+                : // A pista completa (quando a palavra tem) vai no painel; a casa da grade mostra o rótulo curto.
+                  (word?.dica ?? word?.clue ?? "Escolha por onde começar")}
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
             <div className="message-slot">

@@ -1,10 +1,12 @@
-/* Fixed 8×10 board: useFitGrid sets --cell so the grid always keeps 8:10 and never scrolls. */
+/* Fixed board (8×10, or 6×6 in the short levels): useFitGrid sets --cell so the grid keeps its
+   proportion and never scrolls. A board that does not fill the area sits in its middle. */
 .board-area {
   width: 100%;
   height: 100%;
   min-height: 0;
   display: grid;
   place-items: center;
+  place-content: center;
   overflow: hidden;
 }
 .app-playing .board-card {

@@ -15,6 +15,8 @@ const strip = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
 export const MAX_CLUE = 18;
 export const MAX_TOKEN = 9;
 export const MAX_LINES = 2;
+/** Pista completa (painel do jogo): o mesmo limite de `DICA_MAX_CHARS` no app. */
+export const MAX_DICA = 70;
 export const lineCount = (clue, width = MAX_TOKEN) => {
   let lines = 1;
   let used = 0;
@@ -42,7 +44,10 @@ export const loadDictionary = () => {
     fs.readFileSync(dictionaryPath, "utf8").split("\n").filter(Boolean),
   );
 };
-/** Catálogo: lista de { palavra, pista, nivel, tipo } (uma entrada por linha no arquivo). */
+/**
+ * Catálogo: lista de { palavra, pista, nivel, tipo, dica? } (uma entrada por linha no arquivo). `pista` é o
+ * rótulo curto da casa da grade; `dica` é a pista completa do painel (até MAX_DICA caracteres).
+ */
 export const loadCatalog = () =>
   fs.existsSync(catalogPath)
     ? JSON.parse(fs.readFileSync(catalogPath, "utf8"))
@@ -59,6 +64,7 @@ export const saveCatalog = (list) =>
             pista: e.pista,
             nivel: e.nivel,
             tipo: e.tipo,
+            ...(e.dica && { dica: e.dica }),
           }),
         )
         .join(",\n") +
@@ -75,6 +81,17 @@ export function validateEntry(e, dictionary, pistas) {
   if (lineCount(clue) > MAX_LINES) return "não cabe em 2 linhas";
   if (word.length > 3 && strip(clue).toUpperCase().includes(word))
     return "pista contém a resposta";
+  if (e.dica !== undefined) {
+    if (typeof e.dica !== "string" || !e.dica.trim()) return "dica vazia";
+    if (e.dica.length > MAX_DICA) return `dica longa (${e.dica.length})`;
+    if (
+      strip(e.dica)
+        .toUpperCase()
+        .split(/[^A-Z]+/)
+        .includes(word)
+    )
+      return "dica contém a resposta";
+  }
   const key = strip(clue).toLowerCase();
   if (pistas.has(key) && pistas.get(key) !== word)
     return `igual à pista de ${pistas.get(key)}`;
@@ -98,6 +115,7 @@ export function validateClues() {
         tier: NIVEL_TIER[e.nivel] ?? 1,
         nivel: e.nivel,
         tipo: e.tipo,
+        dica: e.dica,
       });
     }
   }

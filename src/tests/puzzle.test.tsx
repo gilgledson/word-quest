@@ -121,7 +121,7 @@ function placeCorrectTiles() {
   return placed;
 }
 
-it("mostra a grade fixa 8×10, densa, sem rolagem e sem barra de navegação", () => {
+it("mostra a grade inteira da fase (6×6 na Vila), densa, sem rolagem e sem barra de navegação", () => {
   usePlayer.setState({
     player: { ...structuredClone(initialPlayer), tutorialDone: true },
     ready: true,
@@ -136,9 +136,10 @@ it("mostra a grade fixa 8×10, densa, sem rolagem e sem barra de navegação", (
     </MemoryRouter>,
   );
   const board = document.querySelector<HTMLElement>(".board")!;
-  expect(board.querySelectorAll(".cell")).toHaveLength(80);
-  expect(board.style.gridTemplateColumns).toContain("repeat(8");
-  expect(board.style.gridTemplateRows).toContain("repeat(10");
+  expect(level.rows * level.cols).toBe(36);
+  expect(board.querySelectorAll(".cell")).toHaveLength(level.rows * level.cols);
+  expect(board.style.gridTemplateColumns).toContain(`repeat(${level.cols}`);
+  expect(board.style.gridTemplateRows).toContain(`repeat(${level.rows}`);
   expect(board.querySelectorAll(".cell.blocked").length).toBeLessThanOrEqual(5);
   expect(board.querySelectorAll(".cell.clue.double").length).toBeGreaterThan(0);
   expect(document.querySelector(".board-scroll")).toBeNull();
@@ -547,18 +548,18 @@ it("versus com zero moedas: partida inteira, pontuação, recompensa única e pe
   expect(player().coins).toBe(economy.duel[result]);
 }, 120_000);
 
-it("deita só o tabuleiro: 10×8 transposto, leitura normal e o resto da tela igual", () => {
+it("deita só o tabuleiro: transposto, leitura normal e o resto da tela igual", () => {
   open();
   const board = document.querySelector<HTMLElement>(".board")!;
-  expect(board.style.gridTemplateColumns).toContain("repeat(8");
+  expect(board.style.gridTemplateColumns).toContain(`repeat(${level.cols}`);
   const turn = screen.getByRole("button", { name: "Girar tabuleiro" });
   expect(turn).toHaveAttribute("aria-pressed", "false");
   const [r, c] = positions(firstWord)[0].key.split(",").map(Number);
   const label = `Linha ${r + 1}, coluna ${c + 1}: vazia`;
   fireEvent.click(turn);
   expect(turn).toHaveAttribute("aria-pressed", "true");
-  expect(board.style.gridTemplateColumns).toContain("repeat(10");
-  expect(board.style.gridTemplateRows).toContain("repeat(8");
+  expect(board.style.gridTemplateColumns).toContain(`repeat(${level.rows}`);
+  expect(board.style.gridTemplateRows).toContain(`repeat(${level.cols}`);
   // Transposto: (linha, coluna) vai para (coluna + 1, linha + 1). Nada é lido de baixo para cima.
   const el = screen.getByLabelText(label);
   expect(el.style.gridRow).toBe(String(c + 1));
@@ -595,11 +596,11 @@ it("deita só o tabuleiro: 10×8 transposto, leitura normal e o resto da tela ig
   mount();
   expect(
     document.querySelector<HTMLElement>(".board")!.style.gridTemplateColumns,
-  ).toContain("repeat(10");
+  ).toContain(`repeat(${level.rows}`);
   fireEvent.click(screen.getByRole("button", { name: "Girar tabuleiro" }));
   expect(
     document.querySelector<HTMLElement>(".board")!.style.gridTemplateColumns,
-  ).toContain("repeat(8");
+  ).toContain(`repeat(${level.cols}`);
 });
 
 it("mostra '+N' animado sobre as casas que pontuaram e o brilho nelas, e some depois", () => {

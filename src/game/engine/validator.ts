@@ -3,8 +3,11 @@ import {
   CLUE_MAX_CHARS,
   CLUE_MAX_WORD,
   CLUE_MAX_BLOCKS,
+  DICA_MAX_CHARS,
   GRID_COLS,
   GRID_ROWS,
+  LEVEL_GRIDS,
+  gridSpec,
   type Puzzle,
   type PuzzleWord,
   type Session,
@@ -22,6 +25,19 @@ export class PuzzleValidator {
         errors.push("Resposta inválida");
       if (p.words.filter((other) => other.id === w.id).length !== 1)
         errors.push("ID de palavra duplicado");
+      if (w.dica !== undefined) {
+        if (typeof w.dica !== "string" || !w.dica.trim())
+          errors.push("Pista completa vazia");
+        else if (w.dica.length > DICA_MAX_CHARS)
+          errors.push("Pista completa longa");
+        // A pista completa não pode trazer a própria resposta (nem sem acento).
+        else if (
+          normalize(w.dica)
+            .split(/[^A-Z]+/)
+            .includes(normalize(w.answer))
+        )
+          errors.push("Pista completa com a resposta");
+      }
       const ck = key(w.clueRow, w.clueCol);
       const shared = clues.get(ck) ?? [];
       // Uma célula de pista guarda até duas pistas, uma para cada direção.
@@ -57,13 +73,15 @@ export class PuzzleValidator {
     return errors;
   }
   /**
-   * Regras extras do catálogo: toda fase tem a mesma grade, é densa (poucos blocos), sem
-   * respostas curtas demais e com pistas que cabem na célula.
+   * Regras extras do catálogo: a grade tem um dos tamanhos de `LEVEL_GRIDS`, é densa (poucos
+   * blocos), sem respostas curtas demais e com pistas que cabem na célula.
    */
   static validateCatalog(p: Puzzle) {
     const errors = this.validate(p);
-    if (p.rows !== GRID_ROWS || p.cols !== GRID_COLS)
-      errors.push(`Grade deve ter ${GRID_COLS}×${GRID_ROWS}`);
+    if (!gridSpec(p))
+      errors.push(
+        `Grade deve ter ${LEVEL_GRIDS.map((g) => `${g.cols}×${g.rows}`).join(" ou ")}`,
+      );
     const occupied = new Set<string>();
     for (const w of p.words) {
       occupied.add(key(w.clueRow, w.clueCol));

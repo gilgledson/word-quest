@@ -1,7 +1,12 @@
-// Gerador de cruzadinhas densas (arrowword) 8×10: moldes de pistas + solver por backtracking.
-// Fora do app React: roda em Node e só publica tabuleiros completos e válidos.
-export const ROWS = 10;
-export const COLS = 8;
+// Gerador de cruzadinhas densas (arrowword): moldes de pistas + solver por backtracking. A grade padrão
+// é 8×10; `setSize` troca o tamanho (fases curtas usam 6×6). Fora do app React: roda em Node e só
+// publica tabuleiros completos e válidos.
+export let ROWS = 10;
+export let COLS = 8;
+export function setSize(rows, cols) {
+  ROWS = rows;
+  COLS = cols;
+}
 export const rng = (seed) => {
   let s = seed >>> 0;
   return () => {

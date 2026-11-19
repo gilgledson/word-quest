@@ -85,8 +85,8 @@ describe("palavra do tutorial", () => {
 });
 
 describe("palavra guiada do tutorial", () => {
-  it("na fase 1 é JOGO; em todas as fases e variantes há uma horizontal de 3 a 5 letras", () => {
-    expect(tutorialWord(puzzle)?.answer).toBe("JOGO");
+  it("na fase 1 é AGUA; em todas as fases e variantes há uma horizontal de 3 a 5 letras", () => {
+    expect(tutorialWord(puzzle)?.answer).toBe("AGUA");
     for (const level of levels)
       for (let v = 0; v < variantCount(level.id); v++) {
         const grid = levelGrid(level.id, v)!;

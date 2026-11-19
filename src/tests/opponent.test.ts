@@ -269,8 +269,9 @@ describe("Partidas completas contra os três níveis", () => {
       LEVELS.map((level) => {
         let share = 0;
         let games = 0;
-        // Cinco fases bastam para a calibração (são 25, e a conta é por nível e semente).
-        for (const puzzle of levels.slice(0, 5))
+        // Cinco fases 8×10 bastam para a calibração (a conta é por nível e semente). As 6×6 da Vila
+        // ficam de fora: na grade curta a partida acaba antes de o nível do rival pesar.
+        for (const puzzle of levels.filter((l) => l.rows === 10).slice(0, 5))
           for (const seed of seeds) {
             const { s } = playMatch(puzzle, level, seed);
             share += s.scores.ai / (s.scores.ai + s.scores.p);

@@ -1,8 +1,20 @@
 # Geração das fases (fora do app React)
 
 As fases do WordQuest são geradas antes, validadas e gravadas em `src/data/levels.json`. O app não depende
-destes scripts. Só entram no jogo grades **completas** 8×10, com pistas simples e duplas e sem células
-isoladas.
+destes scripts. Só entram no jogo grades **completas**, com pistas simples e duplas e sem células
+isoladas. A grade cresce a cada mundo (`LEVEL_GRIDS` em `src/game/engine/types.ts`):
+
+| Mundo    | Fases | Grade (colunas×linhas) | Comando                                                 |
+| -------- | ----- | ---------------------- | ------------------------------------------------------- |
+| Vila     | 1–5   | 6×6                    | `--only 1,2,3,4,5 --rows 6 --cols 6 --reuse-short`      |
+| Floresta | 6–10  | 7×7                    | `--only 6,7,8,9,10 --rows 7 --cols 7 --reuse-short`     |
+| Deserto  | 11–15 | 7×8                    | `--only 11,12,13,14,15 --rows 8 --cols 7 --reuse-short` |
+| Reino    | 16–20 | 8×8                    | `--only 16,17,18,19,20 --rows 8 --cols 8 --reuse-short` |
+| Ilhas    | 21–25 | 8×10                   | padrão                                                  |
+
+Cada palavra tem duas pistas: a `pista` curta (cabe na casa da grade) e a `dica`, a pista completa do painel
+da palavra selecionada (até 70 caracteres, sem a resposta). `node scripts/apply-dicas.mjs dicas.txt` grava
+dicas novas (linhas `PALAVRA|pista completa`) no catálogo e copia as do catálogo para fases e variantes.
 
 ## Três camadas
 

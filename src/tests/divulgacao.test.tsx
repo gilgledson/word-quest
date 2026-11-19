@@ -150,15 +150,15 @@ describe("Tabuleiro compartilhado (Aventura e Casual)", () => {
   const symbols = (row: string) => [
     ...row.matchAll(/\p{So}[\uFE0E\u2005]?|[^\uFE0E\u2005]/gu),
   ];
-  it("cabeçalho, placar, tabuleiro 8×10, legenda e link", () => {
+  it("cabeçalho, placar, tabuleiro da fase, legenda e link", () => {
     expect(lines.slice(0, 3)).toEqual([
       "🏆 WordQuest · Fase 4 · Vila das Palavras",
       "⚔️ Vitória sobre Fagulha!",
       "",
     ]);
-    expect(board).toHaveLength(10);
-    for (const row of board) expect(symbols(row)).toHaveLength(8);
-    expect(lines.slice(13)).toEqual([
+    expect(board).toHaveLength(puzzle.rows);
+    for (const row of board) expect(symbols(row)).toHaveLength(puzzle.cols);
+    expect(lines.slice(3 + puzzle.rows)).toEqual([
       "Preenchidas: minhas letras · Vazadas: Fagulha",
       "",
       "🎯 Pontuação: 41 × 23",
