@@ -450,6 +450,51 @@ export class RackManager {
     }
     return s.rack.length && s.rack.length <= economy.rackMax ? s : undefined;
   }
+  /** O banco tem as letras de todas as casas vazias da palavra (a palavra fecha nesta vez). */
+  completes(s: Session, word: PuzzleWord) {
+    const bank = new Map<string, number>();
+    for (const id of s.rack) {
+      const t = s.tiles[id];
+      if (!t.joker) bank.set(t.letter, (bank.get(t.letter) ?? 0) + 1);
+    }
+    const empty = positions(word).filter((c) => !s.letters[c.key]);
+    if (!empty.length) return false;
+    for (const c of empty) {
+      const n = bank.get(c.letter) ?? 0;
+      if (!n) return false;
+      bank.set(c.letter, n - 1);
+    }
+    return true;
+  }
+  /**
+   * Primeiro duelo: se nenhuma palavra fecha com o banco, ele passa a ter as letras de uma palavra
+   * curta (as peças voltam à reserva e saem dela; nenhuma é criada) e completa até cinco peças.
+   * Quem acabou de aprender a jogar não fica com um banco que não fecha palavra nenhuma.
+   */
+  keepCompletable(input: Session): Session {
+    const open = this.puzzle.words
+      .map((w) => ({
+        w,
+        empty: positions(w).filter((c) => !input.letters[c.key]).length,
+      }))
+      .filter((x) => x.empty > 0);
+    if (!open.length || open.some((x) => this.completes(input, x.w)))
+      return input;
+    // A mais curta que ainda pede mais de uma letra (fechar com uma só ensina pouco).
+    const order = open
+      .filter((x) => x.empty <= economy.rackStart)
+      .sort(
+        (a, b) =>
+          Number(a.empty < 2) - Number(b.empty < 2) || a.empty - b.empty,
+      );
+    for (const { w } of order) {
+      const dealt = this.dealWord(input, w);
+      if (!dealt) continue;
+      this.draw(dealt, economy.rackStart - dealt.rack.length);
+      return dealt;
+    }
+    return input;
+  }
   /** Sorteia a mão inicial do oponente (peças úteis da reserva, ao acaso). */
   dealBot(input: Session) {
     const s = copy(input);

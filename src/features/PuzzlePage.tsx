@@ -362,11 +362,12 @@ export function Duel({
     update((p) => ({ ...p, tipsSeen: [...p.tipsSeen, "palavra"] }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inTutorial, guideConfirmed]);
-  // Tutorial: quando a vez volta ao jogador, a palavra escolhida ainda precisa ter uma casa que o
-  // banco preencha; se não tiver (o rival fechou, ou as letras acabaram), o tutorial troca de palavra.
+  // Tutorial e primeiro duelo: quando a vez volta ao jogador, a palavra escolhida precisa fechar
+  // com o banco (ou ao menos ter uma casa que ele preencha); senão, troca para uma que feche.
+  const firstDuel = !!session?.versus?.rounds && puzzle?.number === 1;
   useEffect(() => {
     if (
-      !inTutorial ||
+      !(inTutorial || firstDuel) ||
       guideActive ||
       !puzzle ||
       !session ||
@@ -388,7 +389,9 @@ export function Duel({
         (id) =>
           !session.tiles[id].joker && session.tiles[id].letter === cur.letter,
       );
-    if (playable) return;
+    // No primeiro duelo só fica a palavra que fecha com o banco; antes dele, basta uma casa.
+    const closes = !!w && !!engine?.rack.completes(session, w);
+    if (closes || (!firstDuel && playable)) return;
     const pick = tutorialPick(puzzle, session);
     if (!pick) return;
     setSelected(pick.wordId);
