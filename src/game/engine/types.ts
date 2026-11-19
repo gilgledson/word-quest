@@ -33,7 +33,8 @@ export interface VersusState {
   opponent?: string;
   /**
    * Duelo curto: termina quando o oponente fecha esta rodada (cada um jogou `rounds` vezes), mesmo
-   * com a grade aberta. Só o primeiro duelo do jogador novo tem; sem o campo, vale a grade inteira.
+   * com a grade aberta. O primeiro duelo do jogador novo e as fases 2 a 4 têm (`campaignRounds`);
+   * sem o campo, vale a grade inteira.
    */
   rounds?: number;
 }
@@ -63,6 +64,12 @@ export const economy = {
   jokerAfter: 2,
   /** Rodadas do primeiro duelo (fase 1 com o tutorial): curto, para a primeira vitória vir em poucos minutos. */
   firstDuelRounds: 6,
+  /**
+   * Curva do começo da Aventura (como nos jogos de fase): as fases 2 e 3 são duelos curtos contra
+   * rival fácil, com a mão sempre fechando uma palavra; a 4 é a primeira média (rival médio, sem
+   * ajuda, um pouco mais longa). A fase 1 é curta só no tutorial. Da 5 em diante, a grade inteira.
+   */
+  campaignRounds: { 2: 8, 3: 10, 4: 12 } as Record<number, number>,
 };
 /** Custo total de trocar `count` peças de uma vez. */
 export const swapPrice = (count: number) =>

@@ -25,6 +25,9 @@ function roundsOver(s: Session) {
   const rounds = s.versus?.rounds;
   return !!rounds && s.versus.rngCount >= rounds && s.versus.turn === "p";
 }
+/** Duelo curto contra rival fácil: a mão do jogador sempre fecha uma palavra. */
+export const easyDuel = (s: Session | undefined) =>
+  !!s?.versus?.rounds && s.versus.level === "facil";
 export class PuzzleEngine {
   readonly rack: RackManager;
   constructor(public puzzle: Puzzle) {
@@ -89,11 +92,12 @@ export class PuzzleEngine {
     return word;
   }
   /**
-   * No primeiro duelo (o curto, com `rounds`), a mão do jogador sempre fecha alguma palavra: vale
-   * depois da jogada dele (a reposição) e depois da do oponente (que pode ter tomado as casas).
+   * Nos duelos curtos contra rival fácil (o começo da Aventura), a mão do jogador sempre fecha
+   * alguma palavra: vale depois da jogada dele (a reposição) e depois da do oponente (que pode ter
+   * tomado as casas). A primeira fase média (rival médio) já não tem essa ajuda.
    */
   private firstDuelHand(s: Session) {
-    return s.versus?.rounds ? this.rack.keepCompletable(s) : s;
+    return easyDuel(s) ? this.rack.keepCompletable(s) : s;
   }
   private refresh(s: Session | undefined, focus?: PuzzleWord) {
     return s && this.rack.ensurePlayable(s, focus);
