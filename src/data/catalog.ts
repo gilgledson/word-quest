@@ -109,6 +109,23 @@ export const levelGrid = (id: string | undefined, variant = 0) => {
   return list?.[variant % list.length];
 };
 export const isCasual = (id: string | undefined) => !!id?.startsWith("casual-");
+/**
+ * Partida casual num tamanho que os temas não têm (eles só têm o 8×10): usa uma grade da Aventura
+ * (fase e variante) com id próprio, "casual-livre-<fase>-<variante>". Assim ela conta como casual
+ * (sem estrelas nem progresso de fase) e a sessão não se mistura com a da Aventura.
+ */
+export const FREE_CASUAL = "casual-livre-";
+export const freeCasualId = (levelId: string, variant: number) =>
+  `${FREE_CASUAL}${levelId}-${variant}`;
+/** A grade de uma partida casual: a de um tema ou a da Aventura de "casual-livre-…". */
+export function casualGrid(id: string | undefined): Puzzle | undefined {
+  const themed = casualPuzzles.find((p) => p.id === id);
+  if (themed || !id?.startsWith(FREE_CASUAL)) return themed;
+  const m = /^(.+)-(\d+)$/.exec(id.slice(FREE_CASUAL.length));
+  const grid = m ? levelGrid(m[1], Number(m[2])) : undefined;
+  return grid && { ...grid, id };
+}
+
 export const today = () =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Sao_Paulo",

@@ -1,10 +1,18 @@
 import fs from "node:fs";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { afterEach, describe, expect, it } from "vitest";
 import { Casual } from "../features/pages";
+import { CasualSetup } from "../features/CasualSetup";
 import { PuzzlePage } from "../features/PuzzlePage";
 import { casualThemes, casualPuzzles } from "../data/catalog";
+import { OPPONENTS } from "../game/opponents";
 import { PuzzleEngine, PuzzleValidator } from "../game/crossword-engine";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
@@ -23,6 +31,7 @@ function open(path = "/casual") {
       <Where />
       <Routes>
         <Route path="/casual" element={<Casual />} />
+        <Route path="/casual/nova" element={<CasualSetup />} />
         <Route path="/play/:id" element={<PuzzlePage />} />
       </Routes>
     </MemoryRouter>,
@@ -78,15 +87,61 @@ describe("Modo casual", () => {
       expect(new Set(keys).size).toBe(keys.length);
     }
   });
-  it("mostra os temas e abre um duelo ao escolher um", () => {
+  it("mostra os temas; Jogar abre a configuração com tamanho e adversário", () => {
     open();
     expect(
       screen.getAllByRole("button", { name: /^Jogar tema / }),
     ).toHaveLength(4);
     fireEvent.click(screen.getByRole("button", { name: "Jogar tema Animais" }));
+    expect(screen.getByTestId("where").textContent).toBe(
+      "/casual/nova?tema=animais",
+    );
+    expect(
+      screen.getByRole("heading", { name: "Configurar partida" }),
+    ).toBeInTheDocument();
+    // Tamanho e adversário; sem aposta nem tempo por jogada.
+    const sizes = screen.getByRole("radiogroup", {
+      name: "Tamanho do tabuleiro",
+    });
+    expect(within(sizes).getAllByRole("radio")).toHaveLength(4);
+    expect(
+      within(sizes).getByRole("radio", { name: /^7×7, Médio/ }),
+    ).toBeChecked();
+    expect(screen.queryByRole("radiogroup", { name: "Aposta" })).toBeNull();
+    expect(
+      screen.queryByRole("radiogroup", { name: "Tempo por jogada" }),
+    ).toBeNull();
+    const rivals = screen.getByRole("radiogroup", { name: "Adversário" });
+    // "Sorteio" vem marcado; os rivais do jogo vêm depois, com o nível.
+    expect(
+      within(rivals).getByRole("radio", { name: /^Sorteio/ }),
+    ).toBeChecked();
+    expect(within(rivals).getAllByRole("radio")).toHaveLength(
+      OPPONENTS.length + 1,
+    );
+    fireEvent.click(within(rivals).getByRole("radio", { name: "Sabi, Médio" }));
+    expect(
+      screen.getByText("Partida contra Sabi, sem aposta."),
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: /Começar partida/ }));
     const where = screen.getByTestId("where").textContent!;
-    expect(where).toMatch(/^\/play\/casual-animais-\d+\?vs=[a-z]+$/);
-    expect(screen.getByText(/CASUAL · ANIMAIS/)).toBeInTheDocument();
+    // Os temas só têm grades 8×10: no 7×7 a partida é livre, numa grade da Aventura desse tamanho.
+    expect(where).toMatch(/^\/play\/casual-livre-deserto-\d+-\d+\?vs=sabi$/);
+    expect(screen.getByText(/CASUAL · 7×7/)).toBeInTheDocument();
+    expect(screen.getAllByText("Sabi").length).toBeGreaterThan(0);
+  });
+  it("outro tamanho joga uma grade da Aventura como partida livre, sem estrelas", () => {
+    open("/casual/nova?tema=natureza");
+    fireEvent.click(screen.getByRole("radio", { name: /^6×6, Rápido/ }));
+    // O tema só tem grades 8×10: a linha do tema já mostra que a partida é Surpresa.
+    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Surpresa");
+    fireEvent.click(screen.getByRole("button", { name: /Começar partida/ }));
+    const where = screen.getByTestId("where").textContent!;
+    expect(where).toMatch(/^\/play\/casual-livre-vila-\d+-\d+\?vs=[a-z]+$/);
+    expect(screen.getByText(/CASUAL · 6×6/)).toBeInTheDocument();
+    expect(screen.getByText("Partida livre")).toBeInTheDocument();
+    expect(document.querySelectorAll(".board .cell")).toHaveLength(36);
+    expect(usePlayer.getState().player.stars).toEqual({});
   });
   it("o duelo casual não bloqueia por fase anterior e vencer não dá estrelas", () => {
     open("/play/casual-natureza-3?vs=medio");

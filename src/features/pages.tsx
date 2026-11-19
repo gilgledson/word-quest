@@ -62,7 +62,6 @@ import {
   OPPONENT_BY_LEVEL,
   opponentById,
   opponentFor,
-  randomOpponent,
 } from "../game/opponents";
 import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
 import { DailyRewardFlow } from "./DailyReward";
@@ -385,25 +384,14 @@ const THEME_ICONS: Record<string, typeof Shapes> = {
 /** Modo casual: escolha um tema e jogue um duelo numa grade com palavras dele. */
 export function Casual() {
   const p = usePlayer((s) => s.player);
-  const update = usePlayer((s) => s.update);
   const navigate = useNavigate();
   // As partidas do casual têm oponente sorteado (nível variável): vale qualquer sessão da grade.
   const keysOf = (id: string) =>
     Object.keys(p.sessions).filter((k) => k.startsWith(`vs:${id}:`));
   const done = (id: string) => keysOf(id).some((k) => p.sessions[k].claimed);
-  const play = (theme: CasualTheme) => {
-    const open = theme.puzzles.filter((g) => !done(g.id));
-    const pool = open.length ? open : theme.puzzles;
-    const pick = pool[Math.floor(Math.random() * pool.length)];
-    // Grade já jogada até o fim: recomeça do zero (a recompensa só vale na primeira vez).
-    if (!open.length)
-      update((q) => {
-        const sessions = { ...q.sessions };
-        for (const k of keysOf(pick.id)) delete sessions[k];
-        return { ...q, sessions };
-      });
-    navigate(`/play/${pick.id}?vs=${randomOpponent().id}`);
-  };
+  // "Jogar" abre a configuração da partida (tamanho do tabuleiro e tempo por jogada).
+  const play = (theme: CasualTheme) =>
+    navigate(`/casual/nova?tema=${theme.id}`);
   return (
     <>
       <div className="page-heading">

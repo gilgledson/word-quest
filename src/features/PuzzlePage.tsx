@@ -965,7 +965,7 @@ export function Duel({
           })
         : boardShareText({
             title: casual
-              ? `Casual: ${theme?.nome ?? "tema"}`
+              ? `Casual: ${theme?.nome ?? `tabuleiro ${puzzle.cols}×${puzzle.rows}`}`
               : `Fase ${puzzle.number} · ${mapOf(puzzle.world).nome}`,
             puzzle,
             session,
@@ -1057,7 +1057,7 @@ export function Duel({
                   {daily
                     ? "DESAFIO DO DIA"
                     : casual
-                      ? `CASUAL · ${theme?.nome.toUpperCase()}`
+                      ? `CASUAL · ${theme ? theme.nome.toUpperCase() : `${puzzle.cols}×${puzzle.rows}`}`
                       : "DUELO"}{" "}
                   · {OPPONENT_LEVELS[versus.level].label.toUpperCase()}
                 </>
@@ -1069,7 +1069,9 @@ export function Duel({
                 : daily
                   ? "Uma descoberta diária"
                   : casual
-                    ? `Grade ${puzzle.number}`
+                    ? theme
+                      ? `Grade ${puzzle.number}`
+                      : "Partida livre"
                     : `Fase ${puzzle.number}`}
             </h2>
           </div>

@@ -82,7 +82,8 @@
     "palavra": "ABRIDOR",
     "pista": "Tira a tampa",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Utensílio da gaveta que tira a tampinha da garrafa"
   },
   {
     "palavra": "ABRIGO",
@@ -229,7 +230,8 @@
     "palavra": "ACUCAR",
     "pista": "Adoça o café",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Vai no cafezinho ou no bolo para deixar tudo doce"
   },
   {
     "palavra": "ADAGA",
@@ -254,7 +256,8 @@
     "palavra": "ADEPTO",
     "pista": "Seguidor fiel",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quem segue com fidelidade uma ideia, um time ou um estilo"
   },
   {
     "palavra": "ADEUS",
@@ -280,7 +283,8 @@
     "palavra": "ADULTO",
     "pista": "Maior de idade",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pessoa que já passou dos 18 anos e é maior de idade"
   },
   {
     "palavra": "ADVOGADO",
@@ -322,7 +326,8 @@
     "palavra": "AGIL",
     "pista": "Ligeiro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Rápido e esperto nos movimentos, como um gato"
   },
   {
     "palavra": "AGIR",
@@ -335,7 +340,8 @@
     "palavra": "AGORA",
     "pista": "Neste momento",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Neste exato instante, já, sem esperar mais nada"
   },
   {
     "palavra": "AGOURO",
@@ -347,13 +353,15 @@
     "palavra": "AGRADAR",
     "pista": "Deixar contente",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Fazer alguém ficar feliz, como com um presente surpresa"
   },
   {
     "palavra": "AGRIAO",
     "pista": "Folha de salada",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Verdura de folhas pequenas e sabor picante, boa na salada"
   },
   {
     "palavra": "AGUA",
@@ -488,7 +496,8 @@
     "palavra": "ALBUM",
     "pista": "Coleção de fotos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Livro onde se guardam as fotos do casamento ou da família"
   },
   {
     "palavra": "ALCANCE",
@@ -531,7 +540,8 @@
     "palavra": "ALDEIA",
     "pista": "Povoado indígena",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pequeno povoado onde vive uma comunidade indígena"
   },
   {
     "palavra": "ALEGRE",
@@ -556,7 +566,8 @@
     "palavra": "ALFACE",
     "pista": "Folha da salada",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Verdura de folhas verdes, base da salada do almoço"
   },
   {
     "palavra": "ALFINETE",
@@ -593,7 +604,8 @@
     "palavra": "ALHOS",
     "pista": "Temperos fortes",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Dentes de tempero forte que se amassam para refogar o feijão"
   },
   {
     "palavra": "ALI",
@@ -700,7 +712,8 @@
     "palavra": "ALTAR",
     "pista": "Mesa da igreja",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mesa sagrada onde se celebra a missa na igreja"
   },
   {
     "palavra": "ALTO",
@@ -713,7 +726,8 @@
     "palavra": "ALTURA",
     "pista": "Medida vertical",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Medida de baixo para cima, como a de uma pessoa em pé"
   },
   {
     "palavra": "ALUDE",
@@ -892,7 +906,8 @@
     "palavra": "AMIZADE",
     "pista": "Laço de amigos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sentimento que une dois colegas inseparáveis desde a escola"
   },
   {
     "palavra": "AMOR",
@@ -1035,7 +1050,8 @@
     "palavra": "ANTIGOS",
     "pista": "De tempos idos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Como os móveis da casa da bisavó, de muito tempo atrás"
   },
   {
     "palavra": "ANTILOPE",
@@ -1084,7 +1100,8 @@
     "palavra": "APENAS",
     "pista": "Somente",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quer dizer somente, como em: quero ___ um copo de suco"
   },
   {
     "palavra": "APERTO",
@@ -1130,7 +1147,8 @@
     "palavra": "APOIAR",
     "pista": "Dar suporte",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dar suporte ou ajuda a alguém, como um amigo faz"
   },
   {
     "palavra": "APOSTA",
@@ -1310,7 +1328,8 @@
     "palavra": "ARGOLA",
     "pista": "Aro de metal",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Aro de metal, como o da cortina ou de um brinco"
   },
   {
     "palavra": "ARIDO",
@@ -1348,7 +1367,8 @@
     "palavra": "ARMAS",
     "pista": "Espadas e pistolas",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Objetos de ataque, como espadas, revólveres e lanças"
   },
   {
     "palavra": "ARO",
@@ -1434,7 +1454,8 @@
     "palavra": "ARROZES",
     "pista": "Grãos brancos",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Variedades do grão branco que acompanha o feijão"
   },
   {
     "palavra": "ARRUMAR",
@@ -1535,7 +1556,8 @@
     "palavra": "ASSALTO",
     "pista": "Roubo violento",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Crime em que o ladrão rouba usando ameaça ou força"
   },
   {
     "palavra": "ASSAR",
@@ -1606,7 +1628,8 @@
     "palavra": "ATALHO",
     "pista": "Caminho curto",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Caminho mais curto para chegar logo a algum lugar"
   },
   {
     "palavra": "ATAQUE",
@@ -1633,7 +1656,8 @@
     "palavra": "ATITUDE",
     "pista": "Modo de agir",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Jeito de agir diante de uma situação, bom ou ruim"
   },
   {
     "palavra": "ATIVIDADE",
@@ -1652,7 +1676,8 @@
     "palavra": "ATLETA",
     "pista": "Pratica esporte",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pessoa que pratica esporte e treina para competir"
   },
   {
     "palavra": "ATO",
@@ -1702,7 +1727,8 @@
     "palavra": "ATRASO",
     "pista": "Chegada tardia",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Chegar depois da hora marcada, como o ônibus que demora"
   },
   {
     "palavra": "ATRIO",
@@ -1902,13 +1928,15 @@
     "palavra": "AZEDO",
     "pista": "Sabor de limão",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sabor ácido do limão ou do leite estragado"
   },
   {
     "palavra": "AZEITE",
     "pista": "Óleo da oliva",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Óleo de oliva que se rega na salada e no bacalhau"
   },
   {
     "palavra": "AZEITONA",
@@ -1939,7 +1967,8 @@
     "palavra": "BABADO",
     "pista": "Enfeite de roupa",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Enfeite franzido na barra de saias e vestidos"
   },
   {
     "palavra": "BABUINO",
@@ -1989,7 +2018,8 @@
     "palavra": "BAGAGEM",
     "pista": "Malas de viagem",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Conjunto de malas que você despacha no aeroporto"
   },
   {
     "palavra": "BAGRE",
@@ -2026,7 +2056,8 @@
     "palavra": "BAIRRO",
     "pista": "Parte da cidade",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Parte da cidade onde fica sua rua e a vizinhança"
   },
   {
     "palavra": "BAIXA",
@@ -2062,7 +2093,8 @@
     "palavra": "BALANCO",
     "pista": "Brinquedo de praça",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Brinquedo de praça com assento que vai e vem"
   },
   {
     "palavra": "BALAO",
@@ -2100,13 +2132,15 @@
     "palavra": "BALE",
     "pista": "Dança clássica",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dança clássica com sapatilha de ponta e tutu"
   },
   {
     "palavra": "BALEIA",
     "pista": "Maior mamífero",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Maior mamífero do mundo, vive no mar e solta jato d'água"
   },
   {
     "palavra": "BALIR",
@@ -2206,7 +2240,8 @@
     "palavra": "BANHO",
     "pista": "Higiene com água",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Momento no chuveiro para se lavar com sabonete"
   },
   {
     "palavra": "BANQUETE",
@@ -2304,7 +2339,8 @@
     "palavra": "BARRO",
     "pista": "Terra molhada",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Terra molhada que suja o sapato em dia de chuva"
   },
   {
     "palavra": "BARROS",
@@ -2372,13 +2408,15 @@
     "palavra": "BATENTE",
     "pista": "Moldura da porta",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Moldura fixa da porta, onde ela encosta ao fechar"
   },
   {
     "palavra": "BATER",
     "pista": "Dar pancada",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dar pancada, como na porta antes de entrar"
   },
   {
     "palavra": "BATERIA",
@@ -2636,7 +2674,8 @@
     "palavra": "BICO",
     "pista": "Boca da ave",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Parte dura da boca do papagaio e da galinha"
   },
   {
     "palavra": "BIDE",
@@ -2727,7 +2766,8 @@
     "palavra": "BIS",
     "pista": "De novo!",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pedido da plateia para o artista cantar mais uma vez"
   },
   {
     "palavra": "BISAVO",
@@ -2800,7 +2840,8 @@
     "palavra": "BODE",
     "pista": "Par da cabra",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Macho da cabra, tem barbicha e chifres"
   },
   {
     "palavra": "BODES",
@@ -3041,7 +3082,8 @@
     "palavra": "BRACOS",
     "pista": "Ombro à mão",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Membros do corpo entre o ombro e a mão, com o cotovelo no meio"
   },
   {
     "palavra": "BRADO",
@@ -3277,7 +3319,8 @@
     "palavra": "BULES",
     "pista": "Servem chá",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Recipientes com bico para servir chá ou café à mesa"
   },
   {
     "palavra": "BUQUE",
@@ -3337,7 +3380,8 @@
     "palavra": "CABELO",
     "pista": "Cobre a cabeça",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Fios que cobrem a cabeça e a gente penteia"
   },
   {
     "palavra": "CABIDE",
@@ -3382,7 +3426,8 @@
     "palavra": "CACADOR",
     "pista": "Persegue animais",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pessoa que persegue animais na mata com arma ou armadilha"
   },
   {
     "palavra": "CACAR",
@@ -3432,7 +3477,8 @@
     "palavra": "CACTO",
     "pista": "Planta do deserto",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Planta cheia de espinhos que aguenta o sol do sertão"
   },
   {
     "palavra": "CACULA",
@@ -3456,7 +3502,8 @@
     "palavra": "CADEIRA",
     "pista": "Tem encosto",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Assento com encosto e quatro pés, usado na mesa de jantar"
   },
   {
     "palavra": "CADELA",
@@ -3468,7 +3515,8 @@
     "palavra": "CAFE",
     "pista": "Bebida matinal",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Bebida preta e quente, coada de manhã no Brasil inteiro"
   },
   {
     "palavra": "CAFETEIRA",
@@ -3492,7 +3540,8 @@
     "palavra": "CAIR",
     "pista": "Ir ao chão",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ir ao chão depois de tropeçar ou escorregar"
   },
   {
     "palavra": "CAIS",
@@ -3516,7 +3565,8 @@
     "palavra": "CAIXAS",
     "pista": "Guardam objetos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Recipientes de papelão que guardam coisas na mudança"
   },
   {
     "palavra": "CAIXILHO",
@@ -3528,7 +3578,8 @@
     "palavra": "CAIXOTE",
     "pista": "Caixa de madeira",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Engradado de madeira onde a feira guarda tomates e laranjas"
   },
   {
     "palavra": "CAJU",
@@ -3579,7 +3630,8 @@
     "palavra": "CALCADO",
     "pista": "Sapato",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Nome geral para sapato, tênis, chinelo ou sandália"
   },
   {
     "palavra": "CALCAO",
@@ -3622,7 +3674,8 @@
     "palavra": "CALMA",
     "pista": "Sossego",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sossego e tranquilidade, o contrário de pressa"
   },
   {
     "palavra": "CALMO",
@@ -3641,7 +3694,8 @@
     "palavra": "CAMA",
     "pista": "Móvel de dormir",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Móvel do quarto com colchão, onde dormimos à noite"
   },
   {
     "palavra": "CAMAFEU",
@@ -3653,7 +3707,8 @@
     "palavra": "CAMARAO",
     "pista": "Crustáceo rosa",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Crustáceo rosado do mar, ótimo no bobó e na moqueca"
   },
   {
     "palavra": "CAMAROTE",
@@ -3822,7 +3877,8 @@
     "palavra": "CANELA",
     "pista": "Pau aromático",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Casca aromática do arroz-doce e do chocolate quente"
   },
   {
     "palavra": "CANETA",
@@ -3960,13 +4016,15 @@
     "palavra": "CAPACHO",
     "pista": "Tapete de entrada",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Tapetinho da porta de entrada para limpar os pés"
   },
   {
     "palavra": "CAPAS",
     "pista": "Cobrem o sofá",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Panos que cobrem e protegem o sofá da sujeira"
   },
   {
     "palavra": "CAPATAZ",
@@ -3978,7 +4036,8 @@
     "palavra": "CAPIM",
     "pista": "Pasto",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Vegetação do pasto que a vaca e o cavalo comem"
   },
   {
     "palavra": "CAPITAO",
@@ -4014,7 +4073,8 @@
     "palavra": "CARACOL",
     "pista": "Tem concha",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Bichinho lento que carrega a concha nas costas"
   },
   {
     "palavra": "CARAMBOLA",
@@ -4124,7 +4184,8 @@
     "palavra": "CARONA",
     "pista": "Viagem de graça",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Viagem de graça no carro de outra pessoa"
   },
   {
     "palavra": "CARPA",
@@ -4173,7 +4234,8 @@
     "palavra": "CARROS",
     "pista": "Veículos de rua",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Veículos de quatro rodas que enchem as ruas no trânsito"
   },
   {
     "palavra": "CARTA",
@@ -4192,7 +4254,8 @@
     "palavra": "CARTAS",
     "pista": "Vão no correio",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mensagens em papel, com envelope e selo, enviadas pelo correio"
   },
   {
     "palavra": "CARTAZ",
@@ -4262,7 +4325,8 @@
     "palavra": "CASARAO",
     "pista": "Casa grande",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Residência enorme e antiga, como as sedes de fazenda"
   },
   {
     "palavra": "CASAS",
@@ -4343,7 +4407,8 @@
     "palavra": "CAUDA",
     "pista": "Rabo",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Rabo de animal, ou a parte de trás do vestido de noiva"
   },
   {
     "palavra": "CAULE",
@@ -4391,7 +4456,8 @@
     "palavra": "CAVALO",
     "pista": "Animal de montaria",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Animal de montaria com crina, que galopa e relincha"
   },
   {
     "palavra": "CAVALOS",
@@ -4697,7 +4763,8 @@
     "palavra": "CHAMAR",
     "pista": "Dizer em voz alta",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dizer o nome de alguém em voz alta para que venha"
   },
   {
     "palavra": "CHAMINE",
@@ -4721,7 +4788,8 @@
     "palavra": "CHAO",
     "pista": "Piso",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Piso onde pisamos, que se varre e passa pano"
   },
   {
     "palavra": "CHAPEU",
@@ -4986,7 +5054,8 @@
     "palavra": "CIGARRA",
     "pista": "Inseto que canta",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Inseto que canta alto nas árvores em dias de calor"
   },
   {
     "palavra": "CIGARRO",
@@ -5303,7 +5372,8 @@
     "palavra": "COISA",
     "pista": "Objeto qualquer",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Palavra para qualquer objeto cujo nome não lembramos"
   },
   {
     "palavra": "COIVARA",
@@ -5403,7 +5473,8 @@
     "palavra": "COLMEIA",
     "pista": "Casa das abelhas",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Casa das abelhas, onde elas fazem o mel"
   },
   {
     "palavra": "COLO",
@@ -5458,7 +5529,8 @@
     "palavra": "COMECAR",
     "pista": "Dar início",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dar início, como na largada de uma corrida"
   },
   {
     "palavra": "COMECO",
@@ -5537,7 +5609,8 @@
     "palavra": "COMPRAR",
     "pista": "Pagar por algo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pagar para levar algo do mercado ou da loja"
   },
   {
     "palavra": "COMPRAS",
@@ -5621,7 +5694,8 @@
     "palavra": "COPA",
     "pista": "Topo da árvore",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Parte de cima da árvore, onde ficam os galhos e as folhas"
   },
   {
     "palavra": "COPAS",
@@ -5692,7 +5766,8 @@
     "palavra": "CORDAS",
     "pista": "Amarram",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Fios grossos usados para amarrar ou pular"
   },
   {
     "palavra": "CORDEIRO",
@@ -5717,7 +5792,8 @@
     "palavra": "CORPO",
     "pista": "Estrutura física",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Estrutura física formada por cabeça, tronco e membros"
   },
   {
     "palavra": "CORREDOR",
@@ -5802,7 +5878,8 @@
     "palavra": "CORVO",
     "pista": "Ave negra",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Ave de penas pretas, comum em histórias de mistério"
   },
   {
     "palavra": "COSE",
@@ -5864,7 +5941,8 @@
     "palavra": "COURO",
     "pista": "Pele curtida",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pele de animal curtida, usada em sapatos e cintos"
   },
   {
     "palavra": "COUVE",
@@ -5980,13 +6058,15 @@
     "palavra": "CRESCER",
     "pista": "Ficar maior",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ficar maior, como a criança que espicha a cada ano"
   },
   {
     "palavra": "CRIA",
     "pista": "Filhote",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Filhote recém-nascido, como o bezerro da vaca"
   },
   {
     "palavra": "CRIACAO",
@@ -6084,7 +6164,8 @@
     "palavra": "CRU",
     "pista": "Não cozido",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Alimento que não foi ao fogo, como o peixe do sushi"
   },
   {
     "palavra": "CRUA",
@@ -6300,7 +6381,8 @@
     "palavra": "DANCA",
     "pista": "Ritmo com o corpo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Movimentos do corpo no ritmo do forró ou do samba"
   },
   {
     "palavra": "DANCAR",
@@ -6326,7 +6408,8 @@
     "palavra": "DATA",
     "pista": "Dia, mês e ano",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dia, mês e ano anotados no calendário ou num documento"
   },
   {
     "palavra": "DE",
@@ -6437,7 +6520,8 @@
     "palavra": "DEGRAUS",
     "pista": "Partes da escada",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Cada uma das partes da escada onde pisamos ao subir"
   },
   {
     "palavra": "DEIXAR",
@@ -6461,7 +6545,8 @@
     "palavra": "DELIRIO",
     "pista": "Devaneio",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Estado de quem imagina coisas, como numa febre alta"
   },
   {
     "palavra": "DELTA",
@@ -6660,7 +6745,8 @@
     "palavra": "DETALHE",
     "pista": "Pormenor",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pormenor pequeno que quase ninguém percebe"
   },
   {
     "palavra": "DETALHES",
@@ -6708,7 +6794,8 @@
     "palavra": "DEZ",
     "pista": "Número após nove",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Número que vem logo depois do nove, os dedos das mãos"
   },
   {
     "palavra": "DEZEMBRO",
@@ -6720,7 +6807,8 @@
     "palavra": "DIA",
     "pista": "Oposto de noite",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Período claro entre o nascer e o pôr do sol, oposto da noite"
   },
   {
     "palavra": "DIABO",
@@ -6751,7 +6839,8 @@
     "palavra": "DIARIO",
     "pista": "Livro de segredos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Caderno com cadeado onde se anotam segredos"
   },
   {
     "palavra": "DICA",
@@ -6806,7 +6895,8 @@
     "palavra": "DIREITO",
     "pista": "Oposto de esquerdo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Lado oposto ao esquerdo, com que a maioria escreve"
   },
   {
     "palavra": "DIREITOS",
@@ -6867,7 +6957,8 @@
     "palavra": "DIVA",
     "pista": "Musa do palco",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Grande estrela do palco, admirada pelo público"
   },
   {
     "palavra": "DIVERTIR",
@@ -7014,7 +7105,8 @@
     "palavra": "DONA",
     "pista": "Senhora",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Tratamento para senhora, como em \"___ Maria\""
   },
   {
     "palavra": "DONO",
@@ -7033,7 +7125,8 @@
     "palavra": "DOR",
     "pista": "Sensação ruim",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sensação ruim que sentimos ao bater o dedo na quina"
   },
   {
     "palavra": "DORMIR",
@@ -7071,7 +7164,8 @@
     "palavra": "DOURADO",
     "pista": "Cor de ouro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cor brilhante como a do ouro e da medalha de campeão"
   },
   {
     "palavra": "DRAGA",
@@ -7139,7 +7233,8 @@
     "palavra": "DUNAS",
     "pista": "Montes de areia",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Montes de areia formados pelo vento, como nos Lençóis Maranhenses"
   },
   {
     "palavra": "DUO",
@@ -7207,7 +7302,8 @@
     "palavra": "EDITORA",
     "pista": "Publica livros",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Empresa que publica e lança os livros nas livrarias"
   },
   {
     "palavra": "EDREDOM",
@@ -7428,7 +7524,8 @@
     "palavra": "EMPADA",
     "pista": "Torta pequena",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Tortinha assada de frango ou palmito, salgado clássico de festa"
   },
   {
     "palavra": "EMPADAO",
@@ -7502,7 +7599,8 @@
     "palavra": "ENERGIA",
     "pista": "Força",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Força e disposição que a gente sente depois de descansar"
   },
   {
     "palavra": "ENFEITE",
@@ -7520,7 +7618,8 @@
     "palavra": "ENGANO",
     "pista": "Equívoco",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Erro sem querer, como ligar para o número errado"
   },
   {
     "palavra": "ENGENHO",
@@ -7593,7 +7692,8 @@
     "palavra": "ENTRAR",
     "pista": "Ir para dentro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ir para dentro de um lugar, como passar pela porta"
   },
   {
     "palavra": "ENTREGA",
@@ -7697,7 +7797,8 @@
     "palavra": "EROSAO",
     "pista": "Desgaste do solo",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Desgaste do solo causado pela chuva e pelo vento"
   },
   {
     "palavra": "ERRO",
@@ -7717,13 +7818,15 @@
     "palavra": "ERVA",
     "pista": "Tempero fresco",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Tempero fresco e verde, como o manjericão ou a hortelã"
   },
   {
     "palavra": "ERVAS",
     "pista": "Temperos verdes",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Temperos verdes como salsinha, manjericão e cebolinha"
   },
   {
     "palavra": "ERVILHA",
@@ -7759,7 +7862,8 @@
     "palavra": "ESCADAS",
     "pista": "Sobem e descem",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Ligam um andar ao outro por meio de degraus"
   },
   {
     "palavra": "ESCAMA",
@@ -7786,7 +7890,8 @@
     "palavra": "ESCOLHA",
     "pista": "Opção",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Decisão entre duas ou mais opções, como sabor de sorvete"
   },
   {
     "palavra": "ESCOLHER",
@@ -7810,7 +7915,8 @@
     "palavra": "ESCOVA",
     "pista": "Pentea ou limpa",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Usada para pentear o cabelo ou limpar os dentes"
   },
   {
     "palavra": "ESCOVAS",
@@ -7860,7 +7966,8 @@
     "palavra": "ESCURO",
     "pista": "Sem luz",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sem luz nenhuma, como o quarto à noite"
   },
   {
     "palavra": "ESCUTAR",
@@ -7975,7 +8082,8 @@
     "palavra": "ESPETO",
     "pista": "Carne na vara",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Vareta onde se enfia a carne do churrasco"
   },
   {
     "palavra": "ESPIAO",
@@ -8030,13 +8138,15 @@
     "palavra": "ESPOSA",
     "pista": "Mulher casada",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mulher casada, em relação ao seu marido"
   },
   {
     "palavra": "ESPUMA",
     "pista": "Bolhas de sabão",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Bolhas brancas que o sabão faz na água"
   },
   {
     "palavra": "ESQUECER",
@@ -8102,7 +8212,8 @@
     "palavra": "ESTANTE",
     "pista": "Guarda livros",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Móvel com prateleiras para guardar livros"
   },
   {
     "palavra": "ESTANTES",
@@ -8163,7 +8274,8 @@
     "palavra": "ESTRADA",
     "pista": "Rodovia",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Rodovia por onde passam carros e caminhões na viagem"
   },
   {
     "palavra": "ESTRAGAR",
@@ -8275,7 +8387,8 @@
     "palavra": "EXAME",
     "pista": "Teste médico",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Teste médico, como o de sangue feito no laboratório"
   },
   {
     "palavra": "EXATO",
@@ -8367,13 +8480,15 @@
     "palavra": "FACAS",
     "pista": "Cortam alimentos",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Talheres de lâmina usados para cortar alimentos"
   },
   {
     "palavra": "FACIL",
     "pista": "Sem esforço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Feito sem esforço, simples, o contrário de difícil"
   },
   {
     "palavra": "FADA",
@@ -8496,7 +8611,8 @@
     "palavra": "FARDA",
     "pista": "Uniforme militar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Uniforme de militares, bombeiros e policiais"
   },
   {
     "palavra": "FARDO",
@@ -8538,7 +8654,8 @@
     "palavra": "FASE",
     "pista": "Etapa",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Etapa de um processo, como cada nível de um jogo"
   },
   {
     "palavra": "FASTIO",
@@ -8556,7 +8673,8 @@
     "palavra": "FATIAR",
     "pista": "Cortar em fatias",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Cortar em pedaços finos, como pão ou queijo"
   },
   {
     "palavra": "FATO",
@@ -8586,7 +8704,8 @@
     "palavra": "FAVELA",
     "pista": "Bairro de morro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Comunidade de casas simples, geralmente no morro"
   },
   {
     "palavra": "FAVOR",
@@ -8851,7 +8970,8 @@
     "palavra": "FIGO",
     "pista": "Fruta da figueira",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Fruta roxa e doce, por dentro cheia de sementinhas"
   },
   {
     "palavra": "FIGOS",
@@ -8918,7 +9038,8 @@
     "palavra": "FIM",
     "pista": "Término",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Término, a última parte de um filme ou de uma história"
   },
   {
     "palavra": "FINAL",
@@ -8943,7 +9064,8 @@
     "palavra": "FIO",
     "pista": "Linha fina",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Linha fina usada para costurar ou para levar a luz"
   },
   {
     "palavra": "FIOS",
@@ -9235,7 +9357,8 @@
     "palavra": "FORMAS",
     "pista": "Contornos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Contornos dos objetos, como círculo, quadrado e triângulo"
   },
   {
     "palavra": "FORMATURA",
@@ -9307,7 +9430,8 @@
     "palavra": "FOTOS",
     "pista": "Imagens da câmera",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Imagens tiradas com a câmera ou o celular"
   },
   {
     "palavra": "FOZ",
@@ -9542,7 +9666,8 @@
     "palavra": "FUNERAL",
     "pista": "Despedida do morto",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cerimônia de despedida de quem faleceu"
   },
   {
     "palavra": "FUNIL",
@@ -9653,7 +9778,8 @@
     "palavra": "GALHO",
     "pista": "Parte da árvore",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Parte da árvore que sai do tronco e segura as folhas"
   },
   {
     "palavra": "GALHOS",
@@ -9690,7 +9816,8 @@
     "palavra": "GALOS",
     "pista": "Cantam de manhã",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Aves que cantam de manhãzinha no quintal da roça"
   },
   {
     "palavra": "GALPAO",
@@ -9732,7 +9859,8 @@
     "palavra": "GANSOS",
     "pista": "Aves de lagoa",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Aves de lagoa, parecidas com patos, que grasnam alto"
   },
   {
     "palavra": "GARAGEM",
@@ -9805,7 +9933,8 @@
     "palavra": "GAROA",
     "pista": "Chuva fina",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Chuva fina e fria, típica de São Paulo"
   },
   {
     "palavra": "GAROTA",
@@ -9931,7 +10060,8 @@
     "palavra": "GELADO",
     "pista": "Muito frio",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Muito frio, como o mar do Sul no inverno"
   },
   {
     "palavra": "GELEIA",
@@ -9943,7 +10073,8 @@
     "palavra": "GELEIRA",
     "pista": "Rio de gelo",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Enorme massa congelada que desce devagar pelas montanhas"
   },
   {
     "palavra": "GELEIRAS",
@@ -10004,7 +10135,8 @@
     "palavra": "GENTIL",
     "pista": "Muito educado",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Muito educado e atencioso com as pessoas"
   },
   {
     "palavra": "GEO",
@@ -10325,13 +10457,15 @@
     "palavra": "GRAO",
     "pista": "Um do feijão",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Cada unidade pequena do feijão, do arroz ou do milho"
   },
   {
     "palavra": "GRAOS",
     "pista": "Feijão e lentilha",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Feijão, lentilha e milho são exemplos deles"
   },
   {
     "palavra": "GRASNAR",
@@ -10392,7 +10526,8 @@
     "palavra": "GRELHAR",
     "pista": "Assar na brasa",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Assar na brasa ou na chapa, como bife ou peixe"
   },
   {
     "palavra": "GRILHAO",
@@ -10452,7 +10587,8 @@
     "palavra": "GUARANA",
     "pista": "Bebida amazônica",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Fruta amazônica que dá nome a um refrigerante bem brasileiro"
   },
   {
     "palavra": "GUARDA",
@@ -10689,7 +10825,8 @@
     "palavra": "HORARIO",
     "pista": "Hora marcada",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Momento marcado no relógio para a aula ou a consulta"
   },
   {
     "palavra": "HORIZONTE",
@@ -10707,13 +10844,15 @@
     "palavra": "HORTELA",
     "pista": "Folha do chá",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Folha verde e perfumada usada em chá e no quibe"
   },
   {
     "palavra": "HOSPEDE",
     "pista": "Visita na casa",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Visita que dorme na sua casa ou no hotel"
   },
   {
     "palavra": "HOSPITAL",
@@ -10755,7 +10894,8 @@
     "palavra": "HUMANO",
     "pista": "Homem ou mulher",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ser como você, homem ou mulher, criança ou adulto"
   },
   {
     "palavra": "HUMILDE",
@@ -10805,7 +10945,8 @@
     "palavra": "IDADE",
     "pista": "Anos de vida",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quantos anos de vida uma pessoa tem"
   },
   {
     "palavra": "IDEAL",
@@ -10829,7 +10970,8 @@
     "palavra": "IDIOMA",
     "pista": "Língua",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Língua de um povo, como português ou inglês"
   },
   {
     "palavra": "IGAPO",
@@ -10988,7 +11130,8 @@
     "palavra": "INDICAR",
     "pista": "Mostrar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mostrar o caminho ou recomendar alguém para uma vaga"
   },
   {
     "palavra": "INDIO",
@@ -11081,7 +11224,8 @@
     "palavra": "INUTIL",
     "pista": "Sem serventia",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Que não tem serventia nenhuma, não serve para nada"
   },
   {
     "palavra": "INVERNO",
@@ -11205,7 +11349,8 @@
     "palavra": "JANEIRO",
     "pista": "Primeiro mês",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Primeiro mês do ano, quando começam as férias de verão"
   },
   {
     "palavra": "JANELA",
@@ -11284,7 +11429,8 @@
     "palavra": "JAVALI",
     "pista": "Porco selvagem",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Porco selvagem com presas, que vive no mato"
   },
   {
     "palavra": "JAZ",
@@ -11376,7 +11522,8 @@
     "palavra": "JOGO",
     "pista": "Partida",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Partida de futebol, de cartas ou de tabuleiro"
   },
   {
     "palavra": "JOGOS",
@@ -11594,7 +11741,8 @@
     "palavra": "LADO",
     "pista": "Flanco",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Flanco, como a parte esquerda ou direita de algo"
   },
   {
     "palavra": "LADOS",
@@ -11612,7 +11760,8 @@
     "palavra": "LAGARTA",
     "pista": "Vira borboleta",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Bichinho que come folhas e depois vira borboleta"
   },
   {
     "palavra": "LAGARTIXA",
@@ -11798,7 +11947,8 @@
     "palavra": "LAREIRA",
     "pista": "Fogo da sala",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Lugar da sala onde se acende fogo para aquecer no frio"
   },
   {
     "palavra": "LARGAR",
@@ -11810,7 +11960,8 @@
     "palavra": "LARGO",
     "pista": "Largura grande",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Bem amplo de um lado ao outro, o contrário de estreito"
   },
   {
     "palavra": "LARVA",
@@ -11855,7 +12006,8 @@
     "palavra": "LATAO",
     "pista": "Metal amarelo",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Metal amarelado que mistura cobre e zinco"
   },
   {
     "palavra": "LATIDO",
@@ -11867,7 +12019,8 @@
     "palavra": "LATIR",
     "pista": "Voz do cão",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "O que o cachorro faz quando ouve alguém no portão"
   },
   {
     "palavra": "LAUDO",
@@ -11886,7 +12039,8 @@
     "palavra": "LAVABO",
     "pista": "Banheiro pequeno",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Banheiro pequeno para visitas, só com pia e vaso"
   },
   {
     "palavra": "LAVAR",
@@ -11981,7 +12135,8 @@
     "palavra": "LEIS",
     "pista": "Normas do país",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Normas que todos os cidadãos do país devem cumprir"
   },
   {
     "palavra": "LEITAO",
@@ -11999,7 +12154,8 @@
     "palavra": "LEITO",
     "pista": "Fundo do rio",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Fundo do rio, por onde corre a correnteza"
   },
   {
     "palavra": "LEITOA",
@@ -12011,7 +12167,8 @@
     "palavra": "LEITOR",
     "pista": "Quem lê",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quem lê livros, jornais ou revistas"
   },
   {
     "palavra": "LEITURA",
@@ -12180,7 +12337,8 @@
     "palavra": "LEVAR",
     "pista": "Carregar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Carregar algo de um lugar para outro"
   },
   {
     "palavra": "LEVE",
@@ -12192,7 +12350,8 @@
     "palavra": "LHAMA",
     "pista": "Parente do camelo",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Animal dos Andes de pescoço longo, parente do camelo"
   },
   {
     "palavra": "LHE",
@@ -12272,7 +12431,8 @@
     "palavra": "LIGEIRO",
     "pista": "Rápido",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Rápido, como quem sai correndo para não perder o ônibus"
   },
   {
     "palavra": "LILAS",
@@ -12291,7 +12451,8 @@
     "palavra": "LIMITE",
     "pista": "Fronteira",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Fronteira ou linha que não se deve ultrapassar"
   },
   {
     "palavra": "LIMOEIRO",
@@ -12371,7 +12532,8 @@
     "palavra": "LINHACA",
     "pista": "Semente saudável",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Semente pequena e marrom que se põe no iogurte"
   },
   {
     "palavra": "LINHAS",
@@ -12414,7 +12576,8 @@
     "palavra": "LISTA",
     "pista": "Relação de itens",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Relação de itens, como a do supermercado"
   },
   {
     "palavra": "LITORAL",
@@ -12440,7 +12603,8 @@
     "palavra": "LIVRES",
     "pista": "Soltos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Soltos, sem prisão, como passarinhos fora da gaiola"
   },
   {
     "palavra": "LIVRO",
@@ -12471,7 +12635,8 @@
     "palavra": "LOBA",
     "pista": "Fêmea do lobo",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Fêmea do animal selvagem que uiva para a lua"
   },
   {
     "palavra": "LOBINHO",
@@ -12496,7 +12661,8 @@
     "palavra": "LOCAIS",
     "pista": "Lugares",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pontos ou endereços onde algo acontece, como lojas e praças"
   },
   {
     "palavra": "LOCAL",
@@ -12508,7 +12674,8 @@
     "palavra": "LOCUTOR",
     "pista": "Fala no rádio",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pessoa que fala no rádio ou narra a partida de futebol"
   },
   {
     "palavra": "LOGO",
@@ -12557,7 +12724,8 @@
     "palavra": "LONTRAS",
     "pista": "Nadadoras ágeis",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Mamíferos nadadores e ágeis que vivem em rios"
   },
   {
     "palavra": "LOTE",
@@ -12738,7 +12906,8 @@
     "palavra": "LUZ",
     "pista": "Clarão",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Clarão que ilumina, como o do sol ou da lâmpada"
   },
   {
     "palavra": "LUZES",
@@ -12821,7 +12990,8 @@
     "palavra": "MAES",
     "pista": "Têm filhos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mulheres que têm filhos e são homenageadas em maio"
   },
   {
     "palavra": "MAGIA",
@@ -12839,7 +13009,8 @@
     "palavra": "MAGICO",
     "pista": "Faz truques",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Artista que tira coelho da cartola e faz truques"
   },
   {
     "palavra": "MAGO",
@@ -12857,7 +13028,8 @@
     "palavra": "MAIO",
     "pista": "Mês das noivas",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mês das noivas e do Dia das Mães, o quinto do ano"
   },
   {
     "palavra": "MAIONESE",
@@ -12984,7 +13156,8 @@
     "palavra": "MANGA",
     "pista": "Fruta tropical",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Fruta tropical amarela e doce, de caroço grande"
   },
   {
     "palavra": "MANGAS",
@@ -13125,7 +13298,8 @@
     "palavra": "MARCAS",
     "pista": "Sinais",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sinais deixados, como pegadas na areia ou cicatrizes"
   },
   {
     "palavra": "MARCHA",
@@ -13156,7 +13330,8 @@
     "palavra": "MARES",
     "pista": "Sobe e desce",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Subidas e descidas do nível do oceano ao longo do dia"
   },
   {
     "palavra": "MARFIM",
@@ -13211,7 +13386,8 @@
     "palavra": "MARMITA",
     "pista": "Refeição embalada",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Refeição embalada que se leva de casa para o trabalho"
   },
   {
     "palavra": "MARMORE",
@@ -13301,7 +13477,8 @@
     "palavra": "MATAR",
     "pista": "Tirar a vida",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Tirar a vida, como o inseticida faz com a barata"
   },
   {
     "palavra": "MATAS",
@@ -13314,7 +13491,8 @@
     "palavra": "MATE",
     "pista": "Chá gaúcho",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Chá gaúcho tomado na cuia, o famoso chimarrão"
   },
   {
     "palavra": "MATERIAL",
@@ -13370,7 +13548,8 @@
     "palavra": "MEDALHA",
     "pista": "Prêmio do atleta",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Prêmio de ouro, prata ou bronze no pescoço do atleta"
   },
   {
     "palavra": "MEDIAR",
@@ -13382,7 +13561,8 @@
     "palavra": "MEDICA",
     "pista": "Doutora",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Doutora que atende pacientes no consultório"
   },
   {
     "palavra": "MEDICO",
@@ -13500,7 +13680,8 @@
     "palavra": "MENOS",
     "pista": "Oposto de mais",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "O contrário de mais, como em: dois ___ um é igual a um"
   },
   {
     "palavra": "MENSAL",
@@ -13655,7 +13836,8 @@
     "palavra": "MEU",
     "pista": "Pertence a mim",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Indica que algo é de quem fala, como em: este livro é ___"
   },
   {
     "palavra": "MEXER",
@@ -13693,7 +13875,8 @@
     "palavra": "MICO",
     "pista": "Macaco leve",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Macaquinho leve, como o famoso ___-leão-dourado"
   },
   {
     "palavra": "MICROFONE",
@@ -13748,7 +13931,8 @@
     "palavra": "MILITAR",
     "pista": "Soldado",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Soldado do Exército, da Marinha ou da Aeronáutica"
   },
   {
     "palavra": "MIM",
@@ -13773,7 +13957,8 @@
     "palavra": "MINA",
     "pista": "Fonte de minério",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Lugar escavado de onde se tira ouro, ferro ou carvão"
   },
   {
     "palavra": "MINERAL",
@@ -13792,7 +13977,8 @@
     "palavra": "MINERIO",
     "pista": "Rocha com metal",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Rocha de onde se extrai metal, como ferro ou cobre"
   },
   {
     "palavra": "MINGAU",
@@ -13860,7 +14046,8 @@
     "palavra": "MIRAR",
     "pista": "Apontar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Apontar para o alvo antes de chutar ou atirar"
   },
   {
     "palavra": "MISERO",
@@ -14228,7 +14415,8 @@
     "palavra": "MOTOR",
     "pista": "Move a máquina",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Peça que faz o carro ou a máquina se mover"
   },
   {
     "palavra": "MOTORISTA",
@@ -14253,7 +14441,8 @@
     "palavra": "MOVEL",
     "pista": "Mesa ou cama",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Peça como mesa, sofá ou armário que decora a casa"
   },
   {
     "palavra": "MOVER",
@@ -14351,7 +14540,8 @@
     "palavra": "MUNDO",
     "pista": "Planeta Terra",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Planeta Terra, com todos os países e pessoas"
   },
   {
     "palavra": "MURAL",
@@ -14383,7 +14573,8 @@
     "palavra": "MUSGO",
     "pista": "Veludo verde",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Plantinha verde e macia que cresce em pedras úmidas"
   },
   {
     "palavra": "MUSGOS",
@@ -14544,7 +14735,8 @@
     "palavra": "NAVE",
     "pista": "Parte da igreja",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Parte central da igreja, onde ficam os bancos dos fiéis"
   },
   {
     "palavra": "NAVEGAR",
@@ -14668,7 +14860,8 @@
     "palavra": "NINAR",
     "pista": "Fazer dormir",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cantar para o bebê dormir no colo, embalando devagar"
   },
   {
     "palavra": "NINGUEM",
@@ -14730,7 +14923,8 @@
     "palavra": "NOMADE",
     "pista": "Sem lar fixo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quem vive mudando de lugar, sem lar fixo"
   },
   {
     "palavra": "NOME",
@@ -14992,7 +15186,8 @@
     "palavra": "OCULOS",
     "pista": "Ajudam a ver",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Lentes com armação que ajudam a enxergar melhor"
   },
   {
     "palavra": "OCUPADO",
@@ -15004,7 +15199,8 @@
     "palavra": "OCUPAR",
     "pista": "Preencher espaço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Preencher um espaço, como os móveis numa sala"
   },
   {
     "palavra": "ODA",
@@ -15041,7 +15237,8 @@
     "palavra": "OFERTA",
     "pista": "Promoção",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Promoção com preço baixo no mercado"
   },
   {
     "palavra": "OFICIAL",
@@ -15079,7 +15276,8 @@
     "palavra": "OITO",
     "pista": "Depois do sete",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Número que vem depois do sete e antes do nove"
   },
   {
     "palavra": "OLA",
@@ -15142,7 +15340,8 @@
     "palavra": "OLIVA",
     "pista": "Dá o azeite",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Fruto que dá o azeite, o mesmo que azeitona"
   },
   {
     "palavra": "OLIVEIRA",
@@ -15161,7 +15360,8 @@
     "palavra": "ONCA",
     "pista": "Gata pintada",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Grande felina pintada do Pantanal e da Amazônia"
   },
   {
     "palavra": "ONDA",
@@ -15174,7 +15374,8 @@
     "palavra": "ONDAS",
     "pista": "Movem o mar",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Movimentos do mar que quebram na praia e atraem surfistas"
   },
   {
     "palavra": "ONIBUS",
@@ -15218,7 +15419,8 @@
     "palavra": "OPCOES",
     "pista": "Escolhas",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Escolhas possíveis, como os sabores do cardápio"
   },
   {
     "palavra": "OPERA",
@@ -15276,7 +15478,8 @@
     "palavra": "ORELHA",
     "pista": "Parte do ouvido",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Parte de fora do ouvido, onde se põe o brinco"
   },
   {
     "palavra": "ORFANATO",
@@ -15301,7 +15504,8 @@
     "palavra": "ORIGEM",
     "pista": "Começo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Começo ou ponto de partida de alguma coisa"
   },
   {
     "palavra": "ORIGINAL",
@@ -15411,7 +15615,8 @@
     "palavra": "OURICO",
     "pista": "Todo espinhos",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Bichinho coberto de espinhos que se enrola em bola"
   },
   {
     "palavra": "OURO",
@@ -15430,7 +15635,8 @@
     "palavra": "OUTRO",
     "pista": "Diferente",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Diferente, não este: \"Quero ___ sabor de sorvete\""
   },
   {
     "palavra": "OUVIDO",
@@ -15443,7 +15649,8 @@
     "palavra": "OUVIDOS",
     "pista": "Captam sons",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Órgãos que captam os sons, um de cada lado da cabeça"
   },
   {
     "palavra": "OUVINTE",
@@ -15530,7 +15737,8 @@
     "palavra": "PACOCA",
     "pista": "Doce de amendoim",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Doce de amendoim moído, típico das festas juninas"
   },
   {
     "palavra": "PACOTE",
@@ -15607,7 +15815,8 @@
     "palavra": "PAGINA",
     "pista": "Folha do livro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cada folha de um livro, que tem número no canto"
   },
   {
     "palavra": "PAGO",
@@ -15711,7 +15920,8 @@
     "palavra": "PALMA",
     "pista": "Folha do coqueiro",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Folha grande do coqueiro, usada para cobrir quiosques"
   },
   {
     "palavra": "PALMAS",
@@ -15872,7 +16082,8 @@
     "palavra": "PARA",
     "pista": "Rumo a",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Preposição de rumo: \"Vou ___ a praia no domingo\""
   },
   {
     "palavra": "PARADA",
@@ -15970,7 +16181,8 @@
     "palavra": "PARTE",
     "pista": "Pedaço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pedaço de um todo, como uma fatia de bolo"
   },
   {
     "palavra": "PARTES",
@@ -16000,7 +16212,8 @@
     "palavra": "PASSADO",
     "pista": "Tempo que já foi",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Tempo que já foi, como a época dos nossos avós"
   },
   {
     "palavra": "PASSAR",
@@ -16087,7 +16300,8 @@
     "palavra": "PATE",
     "pista": "Creme de fígado",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Creme de fígado ou atum para passar no pão"
   },
   {
     "palavra": "PATETA",
@@ -16141,7 +16355,8 @@
     "palavra": "PAUTA",
     "pista": "Lista de assuntos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Lista de assuntos de uma reunião ou do jornal"
   },
   {
     "palavra": "PAVAO",
@@ -16253,7 +16468,8 @@
     "palavra": "PEGAR",
     "pista": "Segurar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Segurar com as mãos, como a bola que vem pelo ar"
   },
   {
     "palavra": "PEITO",
@@ -16534,7 +16750,8 @@
     "palavra": "PERUCA",
     "pista": "Cabelo postiço",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Cabelo postiço usado em fantasias ou no teatro"
   },
   {
     "palavra": "PERUS",
@@ -16558,7 +16775,8 @@
     "palavra": "PESCA",
     "pista": "Captura de peixes",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Captura de peixes com vara, anzol ou rede"
   },
   {
     "palavra": "PESCADOR",
@@ -16577,7 +16795,8 @@
     "palavra": "PESO",
     "pista": "Medido na balança",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quantos quilos marca a balança quando você sobe nela"
   },
   {
     "palavra": "PESQUISA",
@@ -16626,7 +16845,8 @@
     "palavra": "PETICAO",
     "pista": "Pedido formal",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pedido formal por escrito feito a uma autoridade"
   },
   {
     "palavra": "PI",
@@ -16646,7 +16866,8 @@
     "palavra": "PIADA",
     "pista": "História engraçada",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "História curta e engraçada que faz todo mundo rir"
   },
   {
     "palavra": "PIANO",
@@ -16677,7 +16898,8 @@
     "palavra": "PICO",
     "pista": "Topo da montanha",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ponto mais alto da montanha, onde chega o alpinista"
   },
   {
     "palavra": "PICOLE",
@@ -16866,7 +17088,8 @@
     "palavra": "PIRATA",
     "pista": "Navega e rouba",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Navega pelos mares para roubar tesouros, com tapa-olho"
   },
   {
     "palavra": "PIRULITO",
@@ -16984,7 +17207,8 @@
     "palavra": "PLATEIA",
     "pista": "Público do teatro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Público sentado que assiste e aplaude no teatro"
   },
   {
     "palavra": "PLEBEU",
@@ -17711,7 +17935,8 @@
     "palavra": "PUXAR",
     "pista": "Trazer para si",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Trazer para si, como a corda no cabo de guerra"
   },
   {
     "palavra": "QUADRO",
@@ -18001,7 +18226,8 @@
     "palavra": "RAPAZ",
     "pista": "Moço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Moço jovem, homem novo, como um estudante"
   },
   {
     "palavra": "RAPIDO",
@@ -18066,7 +18292,8 @@
     "palavra": "RAZOES",
     "pista": "Motivos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Motivos que explicam por que algo aconteceu"
   },
   {
     "palavra": "RE",
@@ -18098,7 +18325,8 @@
     "palavra": "RECADO",
     "pista": "Mensagem curta",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mensagem curta deixada para alguém, como num bilhete"
   },
   {
     "palavra": "RECEBER",
@@ -18147,7 +18375,8 @@
     "palavra": "REDE",
     "pista": "Onde se balança",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Onde se deita para balançar na varanda à tarde"
   },
   {
     "palavra": "REDIL",
@@ -18282,7 +18511,8 @@
     "palavra": "REINO",
     "pista": "Terra do rei",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Terra governada por um rei, como nos contos de fada"
   },
   {
     "palavra": "RELAMPAGO",
@@ -18343,7 +18573,8 @@
     "palavra": "REMADOR",
     "pista": "Move o barco",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Atleta do caiaque que faz o barco andar com força nos braços"
   },
   {
     "palavra": "REMEDIO",
@@ -18355,13 +18586,15 @@
     "palavra": "REMO",
     "pista": "Pá do barco",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pá de madeira usada para mover o barco na água"
   },
   {
     "palavra": "RENA",
     "pista": "Puxa o trenó",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Animal com chifres que puxa o trenó do Papai Noel"
   },
   {
     "palavra": "RENDA",
@@ -18379,13 +18612,15 @@
     "palavra": "REPARAR",
     "pista": "Consertar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Consertar algo quebrado, como uma torneira pingando"
   },
   {
     "palavra": "REPARO",
     "pista": "Conserto",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Conserto feito no carro, na casa ou num aparelho"
   },
   {
     "palavra": "REPETIR",
@@ -18541,7 +18776,8 @@
     "palavra": "RICO",
     "pista": "Cheio de dinheiro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quem tem muito dinheiro e bens"
   },
   {
     "palavra": "RICOS",
@@ -18579,7 +18815,8 @@
     "palavra": "RIMA",
     "pista": "Som igual no verso",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Som igual no fim dos versos, como amor e flor"
   },
   {
     "palavra": "RIO",
@@ -18611,7 +18848,8 @@
     "palavra": "RISCO",
     "pista": "Perigo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Perigo de algo dar errado"
   },
   {
     "palavra": "RISO",
@@ -18692,7 +18930,8 @@
     "palavra": "RODO",
     "pista": "Puxa água do chão",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Usado para puxar a água do chão na faxina"
   },
   {
     "palavra": "RODOVIA",
@@ -18776,7 +19015,8 @@
     "palavra": "ROSCA",
     "pista": "Pão em argola",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pão doce em formato de argola, bom com café"
   },
   {
     "palavra": "ROSEIRA",
@@ -18795,7 +19035,8 @@
     "palavra": "ROSTO",
     "pista": "Cara",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cara, parte da frente da cabeça com olhos, nariz e boca"
   },
   {
     "palavra": "ROTEIRO",
@@ -18992,7 +19233,8 @@
     "palavra": "SACADA",
     "pista": "Varanda",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Varanda de apartamento de onde se vê a rua"
   },
   {
     "palavra": "SACADAS",
@@ -19010,13 +19252,15 @@
     "palavra": "SACO",
     "pista": "Embalagem de pano",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Embalagem de pano ou plástico, como a do arroz de 5 kg"
   },
   {
     "palavra": "SACOLA",
     "pista": "Leva compras",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Bolsa com alças para levar as compras do mercado"
   },
   {
     "palavra": "SAFRA",
@@ -19052,7 +19296,8 @@
     "palavra": "SAGUI",
     "pista": "Macaco mini",
     "nivel": "facil",
-    "tipo": "animais"
+    "tipo": "animais",
+    "dica": "Macaquinho pequeno de tufos brancos nas orelhas"
   },
   {
     "palavra": "SAGUIS",
@@ -19071,7 +19316,8 @@
     "palavra": "SAIA",
     "pista": "Peça feminina",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Peça de roupa feminina que vai da cintura para baixo"
   },
   {
     "palavra": "SAIBRO",
@@ -19159,7 +19405,8 @@
     "palavra": "SALGADO",
     "pista": "Com sal",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Sabor da coxinha e do pastel, o oposto de doce"
   },
   {
     "palavra": "SALGADOS",
@@ -19171,7 +19418,8 @@
     "palavra": "SALINA",
     "pista": "Terreno de sal",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Área rasa onde a água do mar evapora ao sol, como em Mossoró"
   },
   {
     "palavra": "SALMAO",
@@ -19297,7 +19545,8 @@
     "palavra": "SAPATOS",
     "pista": "Calçam os pés",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Calçados fechados, usados com meia em festas e no trabalho"
   },
   {
     "palavra": "SAPO",
@@ -19456,7 +19705,8 @@
     "palavra": "SEGURAR",
     "pista": "Manter firme",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Manter firme na mão, como o corrimão da escada"
   },
   {
     "palavra": "SEGURO",
@@ -19468,7 +19718,8 @@
     "palavra": "SEI",
     "pista": "Eu conheço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Eu conheço: \"Eu ___ a resposta da prova\""
   },
   {
     "palavra": "SEIVA",
@@ -19614,7 +19865,8 @@
     "palavra": "SERES",
     "pista": "Criaturas",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Criaturas vivas, como pessoas, bichos e plantas"
   },
   {
     "palavra": "SERIE",
@@ -19829,7 +20081,8 @@
     "palavra": "SOB",
     "pista": "Debaixo de",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Preposição que quer dizer debaixo de: \"O gato dorme ___ a mesa\""
   },
   {
     "palavra": "SOBRA",
@@ -19893,7 +20146,8 @@
     "palavra": "SOFRER",
     "pista": "Padecer",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Padecer, sentir dor ou tristeza"
   },
   {
     "palavra": "SOL",
@@ -19906,7 +20160,8 @@
     "palavra": "SOLAR",
     "pista": "Do sol",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Relativo à estrela do dia, como as placas de energia do telhado"
   },
   {
     "palavra": "SOLDA",
@@ -19938,7 +20193,8 @@
     "palavra": "SOLOS",
     "pista": "Terras",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Terras onde se planta, como a terra roxa"
   },
   {
     "palavra": "SOLSTICIO",
@@ -19962,7 +20218,8 @@
     "palavra": "SOM",
     "pista": "Ouvido percebe",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "O que o ouvido percebe, como música ou barulho"
   },
   {
     "palavra": "SOMAR",
@@ -19975,13 +20232,15 @@
     "palavra": "SOMBRA",
     "pista": "Refúgio do sol",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Refúgio do sol embaixo de uma árvore"
   },
   {
     "palavra": "SOMBRIO",
     "pista": "Escuro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Escuro e triste, como um castelo abandonado numa noite fria"
   },
   {
     "palavra": "SONECA",
@@ -20038,7 +20297,8 @@
     "palavra": "SOPRO",
     "pista": "Vento da boca",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Vento que sai da boca para apagar as velas do bolo"
   },
   {
     "palavra": "SORRISO",
@@ -20051,7 +20311,8 @@
     "palavra": "SORTE",
     "pista": "Boa fortuna",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Boa fortuna, como achar um trevo de quatro folhas"
   },
   {
     "palavra": "SORVER",
@@ -20239,13 +20500,15 @@
     "palavra": "TABACO",
     "pista": "Folha do cigarro",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Folha seca usada para fazer cigarro e charuto"
   },
   {
     "palavra": "TABELA",
     "pista": "Quadro de dados",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Quadro de dados em linhas e colunas, como a do campeonato"
   },
   {
     "palavra": "TABUA",
@@ -20402,7 +20665,8 @@
     "palavra": "TARDE",
     "pista": "Depois do almoço",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Período do dia depois do almoço e antes da noite"
   },
   {
     "palavra": "TARDIO",
@@ -20414,7 +20678,8 @@
     "palavra": "TAREFA",
     "pista": "Dever",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Dever a cumprir, como a lição de casa"
   },
   {
     "palavra": "TARTARUGA",
@@ -20426,7 +20691,8 @@
     "palavra": "TATO",
     "pista": "Sentido do toque",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Sentido do toque, que sente se algo é áspero ou macio"
   },
   {
     "palavra": "TATU",
@@ -20637,7 +20903,8 @@
     "palavra": "TER",
     "pista": "Possuir",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Verbo de possuir, como em: quero ___ um cachorro"
   },
   {
     "palavra": "TERCEIRO",
@@ -20686,7 +20953,8 @@
     "palavra": "TERRAS",
     "pista": "Solos",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Solos e propriedades rurais, como as de uma grande fazenda"
   },
   {
     "palavra": "TERRENO",
@@ -20788,7 +21056,8 @@
     "palavra": "TIGELA",
     "pista": "Bacia pequena",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Vasilha funda para servir sopa ou açaí"
   },
   {
     "palavra": "TIGELAS",
@@ -20873,7 +21142,8 @@
     "palavra": "TINTO",
     "pista": "Tipo de vinho",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Tipo de vinho de cor escura, o oposto do branco"
   },
   {
     "palavra": "TIO",
@@ -20916,7 +21186,8 @@
     "palavra": "TIRO",
     "pista": "Disparo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Disparo de arma, ou o estampido que dá a largada da corrida"
   },
   {
     "palavra": "TIROS",
@@ -20928,7 +21199,8 @@
     "palavra": "TITULO",
     "pista": "Nome de uma obra",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Nome de um livro, filme ou música"
   },
   {
     "palavra": "TIZIU",
@@ -20952,7 +21224,8 @@
     "palavra": "TOBOGA",
     "pista": "Desce no parque",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Escorregador gigante de parque aquático"
   },
   {
     "palavra": "TOCA",
@@ -21013,7 +21286,8 @@
     "palavra": "TOLO",
     "pista": "Pouco esperto",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Pouco esperto, bobo, que cai em qualquer conversa"
   },
   {
     "palavra": "TOM",
@@ -21026,7 +21300,8 @@
     "palavra": "TOMADA",
     "pista": "Liga o aparelho",
     "nivel": "facil",
-    "tipo": "casa"
+    "tipo": "casa",
+    "dica": "Lugar na parede onde se liga o aparelho"
   },
   {
     "palavra": "TOMADAS",
@@ -21064,7 +21339,8 @@
     "palavra": "TOPO",
     "pista": "Cume",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Ponto mais alto de um morro ou montanha"
   },
   {
     "palavra": "TORCIDA",
@@ -21150,7 +21426,8 @@
     "palavra": "TOTAL",
     "pista": "Soma de tudo",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Soma de tudo, o valor final da conta"
   },
   {
     "palavra": "TOUCA",
@@ -21335,7 +21612,8 @@
     "palavra": "TRIGO",
     "pista": "Cereal do pão",
     "nivel": "facil",
-    "tipo": "comida"
+    "tipo": "comida",
+    "dica": "Cereal cuja farinha vira pão, bolo e macarrão"
   },
   {
     "palavra": "TRILHA",
@@ -21347,7 +21625,8 @@
     "palavra": "TRILHAS",
     "pista": "Caminhos na mata",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Caminhos estreitos na mata para fazer caminhada"
   },
   {
     "palavra": "TRILHO",
@@ -21513,7 +21792,8 @@
     "palavra": "TUBO",
     "pista": "Cano",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cano por onde passa água ou gás"
   },
   {
     "palavra": "TUBULACAO",
@@ -21593,7 +21873,8 @@
     "palavra": "UAU",
     "pista": "Que legal!",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Interjeição de espanto: \"___, que festa linda!\""
   },
   {
     "palavra": "UFA",
@@ -21748,7 +22029,8 @@
     "palavra": "URNA",
     "pista": "Guarda votos",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Caixa ou aparelho onde se guardam os votos da eleição"
   },
   {
     "palavra": "URSA",
@@ -22020,7 +22302,8 @@
     "palavra": "VARIAR",
     "pista": "Mudar",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Mudar de vez em quando, sair da rotina"
   },
   {
     "palavra": "VARZEA",
@@ -22157,7 +22440,8 @@
     "palavra": "VELHO",
     "pista": "De muita idade",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "De muita idade, como um avô de noventa anos"
   },
   {
     "palavra": "VELHOS",
@@ -22432,7 +22716,8 @@
     "palavra": "VIDEIRA",
     "pista": "Planta da uva",
     "nivel": "facil",
-    "tipo": "natureza"
+    "tipo": "natureza",
+    "dica": "Planta trepadeira da uva, cultivada na serra gaúcha"
   },
   {
     "palavra": "VIDRACA",
@@ -22529,7 +22814,8 @@
     "palavra": "VIOLAO",
     "pista": "Tem seis cordas",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Instrumento de seis cordas, comum na roda de samba"
   },
   {
     "palavra": "VIOLETA",
@@ -22647,7 +22933,8 @@
     "palavra": "VIVA",
     "pista": "Grito de alegria",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Grito de alegria: \"___ os noivos!\""
   },
   {
     "palavra": "VIVER",
@@ -22843,7 +23130,8 @@
     "palavra": "XIS",
     "pista": "Letra X",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Nome da letra X, também o sanduíche famoso no Sul"
   },
   {
     "palavra": "ZANGADO",
@@ -22903,13 +23191,15 @@
     "palavra": "ZELO",
     "pista": "Cuidado",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cuidado e carinho com algo ou alguém"
   },
   {
     "palavra": "ZELOSO",
     "pista": "Cuidadoso",
     "nivel": "facil",
-    "tipo": "geral"
+    "tipo": "geral",
+    "dica": "Cuidadoso com suas coisas e com os outros"
   },
   {
     "palavra": "ZEN",

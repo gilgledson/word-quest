@@ -1,4 +1,9 @@
-import { casualPuzzles, casualThemes, levels } from "../data/catalog";
+import {
+  casualPuzzles,
+  casualThemes,
+  levels,
+  levelVariants,
+} from "../data/catalog";
 import {
   PuzzleEngine,
   economy,
@@ -102,6 +107,28 @@ export const wonByForfeitOf = (
 export const onlinePuzzles = () => [...levels, ...casualPuzzles];
 export const onlinePuzzle = (id: string | undefined) =>
   onlinePuzzles().find((p) => p.id === id);
+/**
+ * Tamanhos de tabuleiro que quem cria a partida escolhe (colunas×linhas), do mais rápido ao mais
+ * longo. As grades vêm da Aventura (e variantes) desse tamanho. Os temas do Casual só têm grades
+ * 8×10, que não é mais oferecido: com um tema, a partida nesses tamanhos é Surpresa.
+ */
+export const BOARD_SIZES = [
+  { id: "6x6", cols: 6, rows: 6, nome: "Rápido", tempo: "~1 min" },
+  { id: "6x7", cols: 6, rows: 7, nome: "Leve", tempo: "~1,5 min" },
+  { id: "7x7", cols: 7, rows: 7, nome: "Médio", tempo: "~2 min" },
+  { id: "8x8", cols: 8, rows: 8, nome: "Longo", tempo: "~3 min" },
+] as const;
+export type BoardSize = (typeof BOARD_SIZES)[number]["id"];
+export const DEFAULT_BOARD: BoardSize = "7x7";
+export const boardSize = (id: string | undefined) =>
+  BOARD_SIZES.find((s) => s.id === id);
+export const sizeOf = (p: Pick<Puzzle, "cols" | "rows">) =>
+  BOARD_SIZES.find((s) => s.cols === p.cols && s.rows === p.rows)?.id;
+/** Grades de um tamanho para o duelo: as da Aventura com as variantes e, no 8×10, as do Casual. */
+export const boardPuzzles = (size: BoardSize) =>
+  [...levels, ...levelVariants, ...casualPuzzles].filter(
+    (p) => sizeOf(p) === size,
+  );
 /** A grade de uma sala: a que veio nela, ou (salas antigas) a do catálogo pelo id. */
 export const roomPuzzle = (
   room: Pick<OnlineRoom, "puzzleId" | "grid"> | null | undefined,
@@ -112,13 +139,27 @@ export const onlineThemes = () => [
   { id: SURPRISE_THEME, nome: "Surpresa", puzzles: onlinePuzzles() },
   ...casualThemes,
 ];
-/** Sorteia a grade da partida dentro do tema escolhido por quem cria a sala. */
+/** Grades de um tema; "Surpresa" num tamanho escolhido vale todas as grades desse tamanho. */
+const themePool = (theme: string, size?: BoardSize) => {
+  if (size && theme === SURPRISE_THEME) return boardPuzzles(size);
+  const themes = onlineThemes();
+  const all = (themes.find((t) => t.id === theme) ?? themes[0]).puzzles;
+  return size ? all.filter((p) => sizeOf(p) === size) : all;
+};
+/** Tamanhos que o tema oferece (os temas do Casual só têm o clássico 8×10). */
+export const themeSizes = (theme: string) =>
+  BOARD_SIZES.filter((s) => themePool(theme, s.id).length > 0).map((s) => s.id);
+/**
+ * Sorteia a grade da partida dentro do tema e do tamanho escolhidos por quem cria a sala. Sem grade
+ * do tamanho naquele tema, vale qualquer grade do tema.
+ */
 export const pickOnlinePuzzle = (
   theme: string,
   rand: () => number = Math.random,
+  size?: BoardSize,
 ) => {
-  const themes = onlineThemes();
-  const pool = (themes.find((t) => t.id === theme) ?? themes[0]).puzzles;
+  const sized = themePool(theme, size);
+  const pool = sized.length ? sized : themePool(theme);
   return pool[Math.floor(rand() * pool.length)];
 };
 /** Tema de uma grade (as da Aventura não têm tema). A sala não guarda o tema: ele sai da grade. */
