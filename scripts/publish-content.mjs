@@ -12,6 +12,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { execFileSync } from "node:child_process";
+import { keepLiveApp } from "./lib/live-app.mjs";
 
 const root = path.resolve(
   path.dirname(
@@ -110,6 +111,17 @@ fs.writeFileSync(
 if (!flag("deploy")) {
   console.log("Sem --deploy: nada foi publicado.");
   process.exit(0);
+}
+// O deploy do Hosting troca o site inteiro: leva junto a versão do app que está no ar (arquivos e
+// `latest.json`), senão a atualização ao vivo volta para a cópia antiga de content/hosting/app.
+try {
+  await keepLiveApp({
+    host: HOST.replace(/\/$/, ""),
+    appDir: path.join(root, "content", "hosting", "app"),
+    writeLatest: true,
+  });
+} catch (e) {
+  fail(`Sem a versão do app em vigor; nada foi publicado (${e.message}).`);
 }
 const firebase = (...cmd) =>
   execFileSync("npx", ["firebase-tools", ...cmd, "--project", PROJECT], {
