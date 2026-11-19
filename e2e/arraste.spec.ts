@@ -3,7 +3,7 @@ import { dismissTour } from "./tour";
 
 const open = async (page: Page) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
 };
 const tile = (page: Page) =>

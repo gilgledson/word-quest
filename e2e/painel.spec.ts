@@ -3,7 +3,7 @@ import { dismissTour } from "./tour";
 
 const open = async (page: Page) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
 };
 const box = async (page: Page, selector: string) =>
@@ -109,7 +109,7 @@ test("na vez do rival os controles ficam apagados e dá para escolher a próxima
   page,
 }) => {
   await page.goto("/play/vila-1?vs=dificil");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
   await page.getByRole("button", { name: "Passar a vez" }).click();
   const trocar = page.getByRole("button", { name: "Trocar", exact: true });

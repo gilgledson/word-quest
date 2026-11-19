@@ -6,7 +6,7 @@ const URL = "/play/vila-1?vs=medio";
 /** Abre a fase 1, joga uma peça (grava a sessão) e põe o curinga no banco, pelo IndexedDB. */
 async function withJoker(page: Page) {
   await page.goto(URL);
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
   await page
     .getByRole("button", { name: /^Inserir letra/ })
@@ -35,7 +35,7 @@ async function withJoker(page: Page) {
       }),
   );
   await page.reload();
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
 }
 const joker = (page: Page) =>
   page.getByRole("button", { name: "Inserir curinga" });
@@ -82,7 +82,7 @@ test("arrastar o curinga para uma casa e depois para outra, sem revelar a letra"
     await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 12 });
     await page.mouse.up();
   };
-  const first = page.locator('.cell.letter[aria-label$="vazia"]').nth(20);
+  const first = page.locator('.cell.letter[aria-label$="vazia"]').nth(10);
   const firstKey = await first.getAttribute("data-cell");
   await drag(joker(page), first);
   const placed = page.locator(`[data-cell="${firstKey}"]`);
@@ -90,7 +90,7 @@ test("arrastar o curinga para uma casa e depois para outra, sem revelar a letra"
   await expect(placed).toHaveClass(/pending/);
   await expect(placed).toHaveText("★");
   await expect(joker(page)).toHaveCount(0);
-  const second = page.locator('.cell.letter[aria-label$="vazia"]').nth(30);
+  const second = page.locator('.cell.letter[aria-label$="vazia"]').nth(18);
   const secondKey = await second.getAttribute("data-cell");
   await drag(placed, second);
   const moved = page.locator(`[data-cell="${secondKey}"]`);

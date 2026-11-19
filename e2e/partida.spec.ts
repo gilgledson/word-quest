@@ -15,10 +15,14 @@ const tile = (page: Page, letter: string) =>
 const clue = (page: Page, text: string) =>
   page.locator(`[aria-label^="Pista: ${text},"]`);
 
-/** Primeira palavra cuja inicial está no banco; devolve as letras que dá para encaixar em ordem. */
+/**
+ * Primeira palavra de 3+ letras cuja inicial está no banco; devolve as letras que dá para encaixar em
+ * ordem. (As grades curtas têm palavras de 2 letras, e um teste usa a terceira casa da palavra.)
+ */
 async function pickWord(page: Page) {
   for (const word of level.words) {
     const letters = [...strip(word.answer)];
+    if (letters.length < 3) continue;
     if ((await tile(page, letters[0]).count()) > 0) return { word, letters };
   }
   throw new Error("Nenhuma palavra começa com uma letra do banco");
@@ -38,7 +42,7 @@ const box = async (l: Locator) => (await l.boundingBox())!;
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
 });
 
@@ -97,7 +101,7 @@ test("joga um turno: coloca letras, confirma, o oponente responde e o progresso 
   const locked = await page.locator(".board .cell.correct").count();
   expect(locked).toBeGreaterThanOrEqual(placed);
   await page.reload();
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await expect(score(page, "player")).toHaveText(String(mine));
   await expect(page.locator(".board .cell.correct")).toHaveCount(locked);
 });

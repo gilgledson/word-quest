@@ -31,7 +31,7 @@ test("sem violações na partida, com peça pendente e no diálogo de troca", as
   page,
 }) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   // Com o tour de apresentação aberto e depois de dispensado.
   expect(await violacoes(page)).toEqual([]);
   await dismissTour(page);
