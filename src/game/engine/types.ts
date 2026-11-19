@@ -42,8 +42,11 @@ export const economy = {
   hint: 20,
   /** Moedas ao fim do duelo: vencer e empatar pagam; perder tira (o saldo não fica negativo). */
   duel: { win: 50, draw: 25, loss: -10 },
-  /** Estrelas ganhas ao vencer, conforme a dificuldade do oponente. */
-  duelStars: { facil: 1, medio: 2, dificil: 3 },
+  /**
+   * Estrelas ao vencer, pela parte dos pontos do duelo que foi do jogador: vencer dá 1; com pelo
+   * menos `starShare[0]` dos pontos, 2; com `starShare[1]`, 3.
+   */
+  starShare: [0.6, 0.75] as const,
   letterPoint: 1,
   /** Pontos perdidos por cada letra confirmada no lugar errado (o placar não passa de 0). */
   wrongLetter: 1,
@@ -71,6 +74,17 @@ export const economy = {
    */
   campaignRounds: { 2: 8, 3: 10, 4: 12 } as Record<number, number>,
 };
+/** Estrelas de uma vitória (0 se não venceu), pela parte dos pontos que o jogador fez. */
+export function duelStars(scores: Record<Owner, number>) {
+  const { p, ai } = scores;
+  if (p <= ai) return 0;
+  const share = p / (p + ai);
+  return share >= economy.starShare[1]
+    ? 3
+    : share >= economy.starShare[0]
+      ? 2
+      : 1;
+}
 /** Custo total de trocar `count` peças de uma vez. */
 export const swapPrice = (count: number) =>
   economy.swap.slice(0, count).reduce((sum, price) => sum + price, 0);

@@ -8,7 +8,7 @@ import {
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Layout } from "../../components/Layout";
-import { economy } from "../../game/crossword-engine";
+import { duelStars, economy } from "../../game/crossword-engine";
 import { initialPlayer } from "../../services/repository";
 import { usePlayer } from "../../stores/player";
 import {
@@ -104,10 +104,12 @@ describe("Moedas da recompensa", () => {
 
 describe("Conclusão da fase", () => {
   it("vitória: selo, estrelas em sequência, onda no tabuleiro e botão utilizável desde o início", () => {
-    finish();
+    const sc = finish();
     expect(screen.getByText("Fase concluída!")).toBeInTheDocument();
+    // Estrelas pela parte dos pontos do jogador, não pela dificuldade do rival.
+    const scores = usePlayer.getState().player.sessions[sc.key].scores;
     expect(
-      screen.getByLabelText(`${economy.duelStars.medio} estrelas`),
+      screen.getByLabelText(`${duelStars(scores)} estrelas`),
     ).toBeInTheDocument();
     expect(screen.getByTestId("fx-wave")).toBeInTheDocument();
     // Os efeitos ainda estão rodando, mas a tela de resultado já responde.

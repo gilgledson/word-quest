@@ -10,7 +10,7 @@ import { track } from "../../services/telemetry";
 import { Link } from "react-router-dom";
 import { ShareResultButton } from "../../components/ShareResultButton";
 import { motion } from "motion/react";
-import { economy, type BotLevel } from "../../game/crossword-engine";
+import { duelStars, economy } from "../../game/crossword-engine";
 import {
   VictoryBadge,
   VictoryStars,
@@ -22,7 +22,6 @@ interface Props {
   casual: boolean;
   rivalName: string;
   scores: { p: number; ai: number };
-  level: BotLevel;
   /** Preferência "Animações" do perfil (entrada do painel). */
   animated: boolean;
   /** Animações ligadas e sem "reduzir movimento". */
@@ -46,7 +45,6 @@ export function VictoryPanel({
   casual,
   rivalName,
   scores,
-  level,
   animated,
   fxEnabled,
   nextTo,
@@ -97,7 +95,7 @@ export function VictoryPanel({
           </span>
         )}
         {campaignWin && (
-          <VictoryStars count={economy.duelStars[level]} enabled={fxEnabled} />
+          <VictoryStars count={duelStars(scores)} enabled={fxEnabled} />
         )}
       </p>
       {daily && result !== "win" && (

@@ -16,6 +16,7 @@ import {
 import {
   PuzzleEngine,
   PuzzleValidator,
+  duelStars,
   easyDuel,
   economy,
   normalize,
@@ -1149,7 +1150,6 @@ export function Duel({
           casual={casual}
           rivalName={rival.name}
           scores={session.scores}
-          level={versus.level}
           animated={player.animations}
           fxEnabled={prefs.enabled}
           nextTo={nextTo}
@@ -1373,7 +1373,7 @@ export function Duel({
           }
           stars={
             !daily && !casual && winner === "win"
-              ? economy.duelStars[versus.level]
+              ? duelStars(session.scores)
               : 0
           }
           nextTo={nextTo}

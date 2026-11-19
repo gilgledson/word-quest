@@ -10,7 +10,12 @@ import { afterEach, it, expect, vi } from "vitest";
 import { Layout } from "../components/Layout";
 import { PuzzlePage } from "../features/PuzzlePage";
 import { levels } from "../data/catalog";
-import { PuzzleEngine, economy, positions } from "../game/crossword-engine";
+import {
+  PuzzleEngine,
+  duelStars,
+  economy,
+  positions,
+} from "../game/crossword-engine";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 vi.mock("../services/repository", async (importOriginal) => {
@@ -531,9 +536,9 @@ it("versus com zero moedas: partida inteira, pontuação, recompensa única e pe
   const result = player().duels["vs:vila-1:dificil"];
   expect(["win", "draw", "loss"]).toContain(result);
   expect(player().coins).toBe(economy.duel[result]);
-  // Vencer o duelo conclui a fase (estrelas pela dificuldade); empate ou derrota não.
+  // Vencer o duelo conclui a fase (estrelas pela parte dos pontos do jogador); empate ou derrota não.
   expect(player().stars["vila-1"]).toBe(
-    result === "win" ? economy.duelStars.dificil : undefined,
+    result === "win" ? duelStars(done.scores) : undefined,
   );
   expect(done.scores.p + done.scores.ai).toBeGreaterThan(0);
   // Recarregar não paga de novo nem muda o resultado.

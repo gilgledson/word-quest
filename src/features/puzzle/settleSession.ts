@@ -1,4 +1,5 @@
 import {
+  duelStars,
   economy,
   positions,
   type PuzzleEngine,
@@ -56,10 +57,7 @@ export function settleSession(
     if (result === "win" && !daily && !casual)
       stars = {
         ...stars,
-        [puzzleId]: Math.max(
-          stars[puzzleId] ?? 0,
-          economy.duelStars[settled.versus.level],
-        ),
+        [puzzleId]: Math.max(stars[puzzleId] ?? 0, duelStars(settled.scores)),
       };
     // Partidas começadas antes deste contador não têm `misses` e não contam como limpas.
     if (result === "win" && settled.misses === 0) cleanWins++;
