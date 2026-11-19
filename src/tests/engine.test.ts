@@ -5,8 +5,7 @@ const grids = [...levels, ...levelVariants];
 import {
   CLUE_MAX_CHARS,
   CLUE_MAX_WORD,
-  GRID_COLS,
-  GRID_ROWS,
+  gridSpec,
   PuzzleEngine,
   PuzzleValidator,
   economy,
@@ -130,13 +129,14 @@ function solveForFree(engine: PuzzleEngine, start: Session) {
 }
 
 describe("Catálogo", () => {
-  it.each(grids)("$id é válido, 8×10 e denso", (p) => {
+  it.each(grids)("$id é válido, num tamanho aceito e denso", (p) => {
     expect(PuzzleValidator.validateCatalog(p)).toEqual([]);
-    expect(p.rows).toBe(GRID_ROWS);
-    expect(p.cols).toBe(GRID_COLS);
-    expect(p.words.length).toBeGreaterThanOrEqual(20);
+    // 8×10 (padrão) ou 6×6 (fases curtas da Vila), cada um com seu mínimo de palavras.
+    const spec = gridSpec(p)!;
+    expect(spec).toBeDefined();
+    expect(p.words.length).toBeGreaterThanOrEqual(spec.minWords);
     const cells = new PuzzleEngine(p).matrix();
-    expect(cells).toHaveLength(GRID_ROWS * GRID_COLS);
+    expect(cells).toHaveLength(p.rows * p.cols);
     expect(
       cells.filter((c) => c.kind === "blocked").length,
     ).toBeLessThanOrEqual(5);
@@ -192,7 +192,9 @@ describe("Catálogo", () => {
   });
   it("rejeita tamanho fora do padrão e grade pouco densa", () => {
     expect(PuzzleValidator.validateCatalog(small)).toEqual(
-      expect.arrayContaining(["Grade deve ter 8×10"]),
+      expect.arrayContaining([
+        expect.stringMatching(/^Grade deve ter 8×10 ou 6×6/),
+      ]),
     );
     const sparse = structuredClone(levels[0]);
     sparse.words = sparse.words.slice(0, 5);

@@ -39,7 +39,12 @@ import {
   ROOM_EXPIRED,
   wonByForfeitOf,
   BET_OPTIONS,
+  BOARD_SIZES,
+  DEFAULT_BOARD,
   betPayout,
+  sizeOf,
+  themeSizes,
+  type BoardSize,
   NO_RULES,
   TURN_OPTIONS,
   turnLabel,
@@ -75,6 +80,8 @@ import {
   PLAYER_AVATARS,
 } from "../game/avatars";
 import { CoinIcon } from "../components/CoinIcon";
+import { BoardSizePicker } from "./BoardSizePicker";
+import { Choices } from "./Choices";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
 /** Quanto o amigo espera alguém sem conexão antes de poder encerrar (e ficar com a vitória). */
@@ -298,57 +305,28 @@ type Loaded =
   | { kind: "error"; text: string }
   | { kind: "ready"; backend: OnlineBackend; uid: string };
 
-/** Grupo de opções em pílulas (tempo por jogada, aposta). */
-function Choices<T extends number>({
-  title,
-  options,
-  value,
-  label,
-  disabled,
-  onChange,
-}: {
-  title: string;
-  options: T[];
-  value: T;
-  label: (v: T) => string;
-  disabled?: (v: T) => boolean;
-  onChange: (v: T) => void;
-}) {
-  const id = `escolha-${title.toLowerCase().replace(/\W+/g, "-")}`;
-  return (
-    <>
-      <h2 id={id}>{title}</h2>
-      <div className="online-choices" role="radiogroup" aria-labelledby={id}>
-        {options.map((o) => (
-          <button
-            key={o}
-            type="button"
-            role="radio"
-            aria-checked={value === o}
-            className={value === o ? "selected" : ""}
-            disabled={disabled?.(o)}
-            onClick={() => onChange(o)}
-          >
-            {label(o)}
-          </button>
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** Regras da sala em uma linha: tema, tempo por jogada e aposta. */
+/** Regras da sala em uma linha: tema, tabuleiro, tempo por jogada e aposta. */
 function RulesSummary({
   room,
 }: {
-  room: Pick<OnlineRoom, "puzzleId" | "rules">;
+  room: Pick<OnlineRoom, "puzzleId" | "rules" | "grid">;
 }) {
   const rules = room.rules ?? NO_RULES;
+  const grid = roomPuzzle(room);
+  const size = BOARD_SIZES.find((s) => grid && s.id === sizeOf(grid));
   return (
     <ul className="online-rules" aria-label="Regras da partida">
       <li>
         Tema: <b>{themeOfPuzzle(room.puzzleId)?.nome ?? "Surpresa"}</b>
       </li>
+      {size && (
+        <li>
+          Tabuleiro:{" "}
+          <b>
+            {size.cols}×{size.rows} · {size.nome}
+          </b>
+        </li>
+      )}
       <li>
         <Timer size={16} aria-hidden="true" /> Jogada:{" "}
         <b>{turnLabel(rules.turnSeconds)}</b>
@@ -404,13 +382,26 @@ function RulesPreview({
   );
 }
 
-/** Configuração da partida (quem cria): tempo por jogada e aposta, depois cria a sala. */
+/** Configuração da partida (quem cria): tamanho do tabuleiro, tempo por jogada e aposta, depois cria a sala. */
 export function OnlineSetup() {
   const player = usePlayer((s) => s.player);
   const update = usePlayer((s) => s.update);
   const navigate = useNavigate();
   const [search] = useSearchParams();
-  const theme = search.get("tema") ?? SURPRISE_THEME;
+  const chosenTheme = search.get("tema") ?? SURPRISE_THEME;
+  // Tamanho: começa no médio quando o tema tem (os temas do Casual só têm o 8×10). Qualquer tamanho
+  // pode ser escolhido; se o tema não tiver aquele, a partida vira Surpresa (com aviso).
+  const [board, setBoard] = useState<BoardSize>(() => {
+    const sizes = themeSizes(chosenTheme);
+    return sizes.includes(DEFAULT_BOARD)
+      ? DEFAULT_BOARD
+      : (sizes.at(-1) ?? DEFAULT_BOARD);
+  });
+  const themeFits = useMemo(
+    () => themeSizes(chosenTheme).includes(board),
+    [chosenTheme, board],
+  );
+  const theme = themeFits ? chosenTheme : SURPRISE_THEME;
   const themeName =
     onlineThemes().find((t) => t.id === theme)?.nome ?? "Surpresa";
   const [turnSeconds, setTurnSeconds] = useState(0);
@@ -423,7 +414,7 @@ export function OnlineSetup() {
     try {
       const backend = await onlineBackend();
       const uid = await backend.uid();
-      const puzzle = pickOnlinePuzzle(theme);
+      const puzzle = pickOnlinePuzzle(theme, Math.random, board);
       // O código é sorteado; se já existir uma sala com ele, sorteia outro.
       for (let attempt = 0; attempt < 5; attempt++) {
         const fresh = newCode();
@@ -446,7 +437,8 @@ export function OnlineSetup() {
         });
         track("online_room_created", {
           theme: themeOfPuzzle(puzzle.id)?.id ?? "aventura",
-          theme_choice: theme,
+          theme_choice: chosenTheme,
+          board: sizeOf(puzzle) ?? board,
           turn_seconds: turnSeconds,
           bet,
         });
@@ -484,6 +476,7 @@ export function OnlineSetup() {
         <p className="online-setup-theme">
           Tema: <b>{themeName}</b> · <Link to="/online">trocar</Link>
         </p>
+        <BoardSizePicker value={board} onChange={setBoard} />
         <Choices
           title="Tempo por jogada"
           options={TURN_OPTIONS}

@@ -30,6 +30,7 @@ import {
 } from "./features/pages";
 import { Credits } from "./features/Credits";
 import { Shop } from "./features/Shop";
+import { CasualSetup } from "./features/CasualSetup";
 // A partida (motor, animações, confete) só é baixada ao abrir uma fase.
 // O duelo ao vivo (salas e servidor) só é baixado por quem abre o modo online.
 const OnlineLobby = lazy(() =>
@@ -181,6 +182,7 @@ function App() {
                   <Route path="map" element={<Campaign />} />
                   <Route path="map/:world" element={<WorldMap />} />
                   <Route path="casual" element={<Casual />} />
+                  <Route path="casual/nova" element={<CasualSetup />} />
                   <Route path="daily" element={<Daily />} />
                   <Route path="profile" element={<Profile />} />
                   <Route path="credits" element={<Credits />} />

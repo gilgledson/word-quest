@@ -5,7 +5,7 @@
 // preserva as demais (as palavras delas ficam fora do sorteio, para não repetir entre fases).
 import fs from "node:fs";
 import path from "node:path";
-import { ROWS, COLS, makeMold, solve, rng } from "./lib/arrowword.mjs";
+import { ROWS, COLS, setSize, makeMold, solve, rng } from "./lib/arrowword.mjs";
 import { validateClues } from "./check-clues.mjs";
 
 const args = Object.fromEntries(
@@ -24,6 +24,25 @@ const seed = Number(args.seed ?? 1);
 const molds = Number(args.molds ?? 4000);
 const maxNodes = Number(args.nodes ?? 3000);
 const pool = Number(args.pool ?? 10);
+// --rows/--cols: grade menor que a 8×10 (Vila 6×6, Floresta 7×7, Deserto 7×8, Reino 8×8). O molde
+// acompanha o tamanho: palavras de até uma linha/coluna, poucos blocos e o número de palavras
+// proporcional à área (6×6 ≈ 7–14, 8×8 ≈ 13–26).
+if (args.rows || args.cols)
+  setSize(Number(args.rows ?? ROWS), Number(args.cols ?? COLS));
+const area = ROWS * COLS;
+const sizeMold =
+  area < 80
+    ? {
+        minSlots: Number(args.minslots ?? Math.round(area * 0.2)),
+        maxSlots: Math.round(area * 0.4),
+        maxH: COLS - 1,
+        maxV: ROWS - 1,
+        maxBlocks: Number(args.blocks ?? (area <= 36 ? 2 : 3)),
+        maxTwo: area <= 36 ? 2 : 3,
+        minAvg: area <= 36 ? 3 : 3.3,
+        maxLong: 0,
+      }
+    : {};
 const here = path.dirname(
   new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
 );
@@ -123,6 +142,7 @@ for (const n of only) {
     }),
     mold: {
       ...base.mold,
+      ...sizeMold,
       ...(args.two !== undefined && { maxTwo: Number(args.two) }),
       ...(args.three !== undefined && { maxThree: Number(args.three) }),
       ...(args.minavg !== undefined && { minAvg: Number(args.minavg) }),
@@ -137,7 +157,7 @@ for (const n of only) {
         ? allowed(e.word, n)
         : args.reuse ||
           !used.has(e.word) ||
-          (args.reuseShort && e.word.length <= 3)),
+          (args["reuse-short"] && e.word.length <= 3)),
   );
   const byLen = {};
   for (const e of entries) (byLen[e.word.length] ??= []).push(e.word);
@@ -259,6 +279,7 @@ for (const n of only) {
     words: mold.slots.map((s, i) => ({
       id: res.words[i].toLowerCase(),
       clue: all.get(res.words[i]).clue,
+      ...(all.get(res.words[i]).dica && { dica: all.get(res.words[i]).dica }),
       answer: res.words[i],
       direction: s.dir === "h" ? "horizontal" : "vertical",
       startRow: s.row,

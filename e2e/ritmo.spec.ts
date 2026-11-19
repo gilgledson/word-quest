@@ -12,7 +12,7 @@ const openSettings = async (page: Page) => {
 };
 const startDuel = async (page: Page) => {
   await page.goto("/play/vila-1?vs=dificil");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
 };
 
@@ -33,7 +33,7 @@ test("o relógio é opcional: vem desligado e a preferência é gravada", async 
   await timerToggle(page).uncheck();
   await waitSaved(page, "turnTimer", false);
   await page.goto("/play/vila-1?vs=dificil");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await expect(page.getByRole("timer")).toHaveCount(0);
 });
 

@@ -2,6 +2,7 @@ import type { Catalog } from "../data/catalog";
 import {
   GRID_COLS,
   GRID_ROWS,
+  gridSpec,
   PuzzleValidator,
   type Puzzle,
 } from "../game/crossword-engine";
@@ -40,13 +41,18 @@ const text = (v: unknown) => typeof v === "string" && v.trim() !== "";
 function gridErrors(p: Puzzle, casual: boolean): string[] {
   if (!isRecord(p) || !Array.isArray(p.words) || !text(p.id))
     return ["grade malformada"];
-  if (p.rows !== GRID_ROWS || p.cols !== GRID_COLS)
-    return [`${p.id}: tamanho fora do padrão`];
+  // Casual: sempre 8×10. Fases: um dos tamanhos aceitos, cada um com seu mínimo de palavras.
+  const spec = casual
+    ? p.rows === GRID_ROWS && p.cols === GRID_COLS
+      ? { minWords: 0 }
+      : undefined
+    : gridSpec(p);
+  if (!spec) return [`${p.id}: tamanho fora do padrão`];
   try {
     const errors = casual
       ? PuzzleValidator.validateCasual(p)
       : PuzzleValidator.validateCatalog(p);
-    if (!casual && p.words.length < 20) errors.push("poucas palavras");
+    if (p.words.length < spec.minWords) errors.push("poucas palavras");
     return errors.map((e) => `${p.id}: ${e}`);
   } catch {
     return [`${p.id}: grade malformada`];

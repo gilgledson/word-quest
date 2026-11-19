@@ -9,13 +9,36 @@ export interface PuzzleWord {
   clueCol: number;
   arrow: "right" | "down";
   icon?: string;
+  /**
+   * Pista completa, mostrada no painel da palavra selecionada (até `DICA_MAX_CHARS`). A `clue` é o
+   * rótulo curto que cabe na casa da grade; sem `dica`, o painel repete a `clue`.
+   */
+  dica?: string;
 }
 export const GRID_COLS = 8;
 export const GRID_ROWS = 10;
+/**
+ * Tamanhos de grade aceitos nas fases da Aventura (colunas×linhas) e o mínimo de palavras de cada um.
+ * A grade cresce um passo a cada mundo, até 8×8: Vila 6×6, Floresta 6×7, Deserto 7×7, Reino 7×8 e
+ * Ilhas 8×8. A 8×10 (padrão) fica para os temas do Casual e o "Clássico" do duelo. Grade menor =
+ * casas maiores e partidas mais curtas. `gridSpec` acha o tamanho.
+ */
+export const LEVEL_GRIDS = [
+  { cols: GRID_COLS, rows: GRID_ROWS, minWords: 20 },
+  { cols: 6, rows: 6, minWords: 8 },
+  { cols: 6, rows: 7, minWords: 9 },
+  { cols: 7, rows: 7, minWords: 10 },
+  { cols: 7, rows: 8, minWords: 12 },
+  { cols: 8, rows: 8, minWords: 14 },
+] as const;
+export const gridSpec = (p: { rows: number; cols: number }) =>
+  LEVEL_GRIDS.find((g) => g.rows === p.rows && g.cols === p.cols);
 /** Limites de legibilidade do texto de uma pista numa célula (metade de uma célula dupla = 2 linhas). */
 export const CLUE_MAX_CHARS = 18;
 export const CLUE_MAX_WORD = 9;
 export const CLUE_MAX_BLOCKS = 5;
+/** Pista completa (painel): cabe em duas linhas do painel num celular estreito. */
+export const DICA_MAX_CHARS = 70;
 /** Grades do casual são abertas (só palavras do tema): pelo menos tantas casas de resposta. */
 export const CASUAL_MIN_LETTERS = 40;
 export type Owner = "p" | "ai";

@@ -493,6 +493,133 @@ a.campaign-start {
 .online-choices button:disabled {
   opacity: 0.4;
 }
+/* Tamanho do tabuleiro (duelo ao vivo): quatro cartões com miniatura, tamanho, ritmo e duração
+   (docs/referencias/duelo-tamanho-chatgpt.png e icones-tabuleiro-chatgpt.png). */
+.board-sizes {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.board-sizes button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  min-width: 0;
+  padding: 8px 3px 7px;
+  border: 3px solid #efe6c8;
+  border-radius: 16px;
+  background: #fffdf6;
+  color: #123c86;
+  box-shadow: 0 3px 0 #e2d6ad;
+}
+.board-sizes button b {
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+.board-sizes .board-size-name {
+  padding: 1px 6px;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #fbe9b8;
+  color: #6b4a00;
+  font-size: 11px;
+  font-weight: 800;
+}
+.board-sizes button small {
+  font-size: 12px;
+  font-weight: 800;
+}
+.board-sizes button.selected {
+  border-color: #f0a81e;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  color: #fff;
+  box-shadow: 0 3px 0 #123c86;
+}
+.board-sizes button.selected .board-size-name {
+  background: #ffd25e;
+  color: #4a3100;
+}
+.board-sizes button:disabled {
+  opacity: 0.4;
+}
+/* Ícone de cada tamanho: mesma altura de imagem (os quatro na mesma escala, alinhados pela base). */
+.board-size-icon {
+  display: block;
+  height: 74px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 1px #0000001f);
+}
+/* Adversário (configuração do Casual): fileira rolável de rivais, com o nível de cada um. */
+.rival-picks {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  padding: 2px 2px 6px;
+  margin: 0 -2px;
+  scrollbar-width: none;
+}
+.rival-picks::-webkit-scrollbar {
+  display: none;
+}
+.rival-picks button {
+  flex: 0 0 74px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 7px 3px 6px;
+  scroll-snap-align: start;
+  border: 3px solid #efe6c8;
+  border-radius: 16px;
+  background: #fffdf6;
+  color: #123c86;
+  box-shadow: 0 3px 0 #e2d6ad;
+}
+.rival-picks button b {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 900;
+}
+.rival-picks button.selected {
+  border-color: #f0a81e;
+  background: linear-gradient(#2f8cf5, #1c5fc4);
+  color: #fff;
+  box-shadow: 0 3px 0 #123c86;
+}
+.rival-pick-face {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(#ffe28a, #f0a81e);
+  color: #7a4d00;
+}
+.rival-pick-level {
+  padding: 0 4px;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #fbe9b8;
+  color: #6b4a00;
+  font-size: 10px;
+  font-weight: 800;
+}
+.rival-pick-level.facil {
+  background: #d9f3dd;
+  color: #1f6b3a;
+}
+.rival-pick-level.dificil {
+  background: #fde0dc;
+  color: #a2321f;
+}
 .online-setup-theme {
   margin: 0;
   text-align: center;
@@ -526,4 +653,56 @@ a.campaign-start {
 .online-preview {
   display: grid;
   gap: 10px;
+}
+
+/* Configuração de partida (Casual e duelo) em celulares baixos: tudo cabe sem rolar. Avatares,
+   ícones e cartões menores e menos espaço entre as seções. */
+@media (max-height: 880px) and (orientation: portrait) {
+  .online-setup {
+    gap: 7px;
+    padding: 10px 12px 8px;
+  }
+  .online-setup .online-versus .opponent-avatar,
+  .online-setup .online-versus em {
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+  .online-setup .online-versus i {
+    font-size: 22px;
+  }
+  .board-sizes button {
+    gap: 1px;
+    padding: 5px 2px 4px;
+  }
+  .board-size-icon {
+    height: 54px;
+  }
+  .board-sizes button b {
+    font-size: 16px;
+  }
+  .rival-picks button {
+    flex-basis: 66px;
+    gap: 2px;
+    padding: 5px 3px 4px;
+  }
+  .rival-picks .opponent-avatar,
+  .rival-pick-face {
+    width: 40px;
+    height: 40px;
+  }
+  .online-setup .online-choices button {
+    min-height: 38px;
+  }
+}
+@media (max-height: 700px) and (orientation: portrait) {
+  .online-setup {
+    gap: 5px;
+  }
+  .board-size-icon {
+    height: 44px;
+  }
+  .board-sizes button small {
+    display: none;
+  }
 }

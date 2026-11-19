@@ -205,6 +205,18 @@
   font-size: 19px;
   margin: 4px 0;
 }
+/* Pista completa no painel: duas linhas fixas (a altura não pula ao trocar de palavra). */
+.app-playing .selected-word.has-dica h2 {
+  font-size: 16px;
+  line-height: 1.2;
+  min-height: 2.4em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-wrap: balance;
+}
 .app-playing .selected-word p {
   font-size: 11px;
   line-height: 1.25;
@@ -327,6 +339,9 @@
   .app-playing .selected-word h2 {
     font-size: 23px;
   }
+  .app-playing .selected-word.has-dica h2 {
+    font-size: 19px;
+  }
   .app-playing .selected-word p {
     font-size: 13px;
   }
@@ -368,6 +383,9 @@
   .app-playing .selected-word h2 {
     font-size: 17px;
     margin: 3px 0;
+  }
+  .app-playing .selected-word.has-dica h2 {
+    font-size: 14px;
   }
   .app-playing .selected-word p {
     font-size: 10px;

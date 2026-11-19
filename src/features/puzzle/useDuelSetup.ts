@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import {
   levelGrid,
-  casualPuzzles,
+  casualGrid,
   casualThemes,
   dailyPuzzle,
   mapOf,
@@ -29,7 +29,7 @@ export function useDuelSetup() {
   const puzzle = daily
     ? dailyPuzzle(date)
     : casual
-      ? casualPuzzles.find((p) => p.id === id)
+      ? casualGrid(id)
       : levelGrid(id, player.variants?.[id ?? ""]);
   const backTo = daily
     ? "/daily"

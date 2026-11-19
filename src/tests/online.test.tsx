@@ -5,6 +5,7 @@ import {
   render,
   screen,
   waitFor,
+  within,
 } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -17,7 +18,11 @@ import {
 import {
   onlinePuzzles,
   SURPRISE_THEME,
+  boardPuzzles,
+  DEFAULT_BOARD,
   pickOnlinePuzzle,
+  themeSizes,
+  BOARD_SIZES,
   themeOfPuzzle,
   cleanCode,
   inviteText,
@@ -54,7 +59,8 @@ vi.mock("../services/repository", async (importOriginal) => {
   };
 });
 
-const puzzle = onlinePuzzles()[0];
+// A grade que a sala sorteia com Math.random = 0 no tamanho padrão da configuração (7×7).
+const puzzle = boardPuzzles(DEFAULT_BOARD)[0];
 const engine = new PuzzleEngine(puzzle);
 
 /** Coloca uma letra certa do banco numa casa e confirma: a vez de um jogador, como a tela faz. */
@@ -285,7 +291,7 @@ describe("telas do duelo ao vivo", () => {
     return [...mem.rooms.keys()][0];
   }
 
-  it("quem cria escolhe o tema: a grade sorteada é dele e a sala de espera diz qual é", async () => {
+  it("quem cria escolhe o tema no lobby; sem grade do tema no tamanho, a sala sai Surpresa", async () => {
     open();
     // Surpresa vem marcada; os quatro temas do Casual completam as opções.
     expect(screen.getAllByRole("radio")).toHaveLength(5);
@@ -293,9 +299,13 @@ describe("telas do duelo ao vivo", () => {
     fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
     expect(screen.getByRole("radio", { name: "Natureza" })).toBeChecked();
     await configureAndCreate();
+    // Os temas só têm grades 8×10, que não é oferecido: vale uma grade da Aventura do tamanho.
     const room = [...mem.rooms.values()][0];
-    expect(room.puzzleId).toMatch(/^casual-natureza-/);
-    expect(screen.getByText("Natureza")).toBeInTheDocument();
+    expect(room.puzzleId).not.toMatch(/^casual-/);
+    expect([room.grid!.cols, room.grid!.rows]).toEqual([7, 7]);
+    expect(screen.getByLabelText("Regras da partida")).toHaveTextContent(
+      "Tema: Surpresa",
+    );
   });
   it("a sala leva a grade: o convidado joga a mesma, mesmo sem ela no catálogo dele", async () => {
     const code = await createRoom();
@@ -316,6 +326,68 @@ describe("telas do duelo ao vivo", () => {
     // Tema desconhecido (versão antiga do app): cai no sorteio geral.
     expect(pickOnlinePuzzle("nao-existe", () => 0)).toBe(onlinePuzzles()[0]);
     expect(themeOfPuzzle(onlinePuzzles()[0].id)).toBeUndefined();
+  });
+  it("tamanho do tabuleiro: cada um tem grades só dele; o sorteio respeita o escolhido", () => {
+    for (const s of BOARD_SIZES) {
+      const pool = boardPuzzles(s.id);
+      expect(pool.length, s.id).toBeGreaterThan(0);
+      for (const p of pool) expect([p.cols, p.rows]).toEqual([s.cols, s.rows]);
+      for (let i = 0; i < 10; i++) {
+        const p = pickOnlinePuzzle(SURPRISE_THEME, Math.random, s.id);
+        expect([p.cols, p.rows]).toEqual([s.cols, s.rows]);
+      }
+    }
+    // Os temas do Casual só têm o clássico; pedir outro tamanho num tema cai na grade do tema.
+    expect(themeSizes("comida")).toEqual([]);
+    expect(themeSizes(SURPRISE_THEME)).toEqual(BOARD_SIZES.map((s) => s.id));
+    expect(
+      themeOfPuzzle(pickOnlinePuzzle("comida", Math.random, "6x6").id)?.id,
+    ).toBe("comida");
+  });
+  it("na configuração, quem cria escolhe o tamanho (médio marcado) e a sala sai com ele", async () => {
+    open();
+    fireEvent.click(screen.getByRole("button", { name: /Configurar partida/ }));
+    await screen.findByRole("heading", { name: "Configurar partida" });
+    const group = screen.getByRole("radiogroup", {
+      name: "Tamanho do tabuleiro",
+    });
+    expect(within(group).getAllByRole("radio")).toHaveLength(4);
+    expect(
+      within(group).getByRole("radio", { name: /^7×7, Médio/ }),
+    ).toBeChecked();
+    fireEvent.click(within(group).getByRole("radio", { name: /^6×6, Rápido/ }));
+    expect(
+      within(group).getByRole("radio", { name: /^6×6, Rápido/ }),
+    ).toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: /Criar partida/ }));
+    await screen.findByRole("heading", { name: "Chame seu amigo" });
+    const room = [...mem.rooms.values()][0];
+    expect([room.grid!.cols, room.grid!.rows]).toEqual([6, 6]);
+    // A sala de espera mostra o tabuleiro escolhido nas regras.
+    expect(screen.getByLabelText("Regras da partida")).toHaveTextContent(
+      "Tabuleiro: 6×6 · Rápido",
+    );
+  });
+  it("com um tema do Casual (só 8×10), a partida é Surpresa no tamanho escolhido", async () => {
+    open();
+    fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
+    fireEvent.click(screen.getByRole("button", { name: /Configurar partida/ }));
+    await screen.findByRole("heading", { name: "Configurar partida" });
+    const group = screen.getByRole("radiogroup", {
+      name: "Tamanho do tabuleiro",
+    });
+    // Quatro tamanhos, do rápido ao longo; o médio vem marcado.
+    expect(within(group).getAllByRole("radio")).toHaveLength(4);
+    expect(
+      within(group).getByRole("radio", { name: /^7×7, Médio/ }),
+    ).toBeChecked();
+    expect(within(group).queryByRole("radio", { name: /^8×10/ })).toBeNull();
+    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Surpresa");
+    fireEvent.click(within(group).getByRole("radio", { name: /^6×7, Leve/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Criar partida/ }));
+    await screen.findByRole("heading", { name: "Chame seu amigo" });
+    const room = [...mem.rooms.values()][0];
+    expect([room.grid!.cols, room.grid!.rows]).toEqual([6, 7]);
   });
   it("criar uma partida mostra o código e espera o amigo", async () => {
     const code = await createRoom();

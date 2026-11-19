@@ -255,7 +255,8 @@ describe("Curinga: na tela", () => {
   it("arrastar o curinga para uma casa qualquer o deixa pendente nela", () => {
     open();
     inject();
-    const cell = "3,6";
+    // Uma casa de resposta longe da palavra que abre selecionada (a última palavra da grade).
+    const cell = positions(level.words[level.words.length - 1])[1].key;
     const [r, c] = cell.split(",").map(Number);
     const target = document.querySelector(
       `[aria-label="Linha ${r + 1}, coluna ${c + 1}: vazia"]`,

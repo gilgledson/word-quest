@@ -7,7 +7,7 @@ const dialog = (page: Page) =>
 const guide = (page: Page) => page.getByRole("region", { name: "Tutorial" });
 const open = async (page: Page) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await expect(guide(page)).toBeVisible();
 };
 const center = async (l: Locator) => {
@@ -121,7 +121,7 @@ test("‘Dispensar’ desliga as dicas seguintes e a escolha é lembrada", async
   await expect(dialog(page)).toHaveCount(0);
   await waitSaved(page, "tourDone", true);
   await page.reload();
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await page.waitForTimeout(1500);
   await expect(dialog(page)).toHaveCount(0);
 });
@@ -130,7 +130,7 @@ test("a apresentação do curinga aparece uma vez e depois não volta", async ({
   page,
 }) => {
   await page.goto("/play/vila-1");
-  await expect(page.locator(".board .cell")).toHaveCount(80);
+  await expect(page.locator(".board .cell")).toHaveCount(36);
   await dismissTour(page);
   await page
     .getByRole("button", { name: /^Inserir letra/ })

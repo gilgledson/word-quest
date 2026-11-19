@@ -84,7 +84,9 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
       vi.advanceTimersByTime(4600);
     });
     expect(note).toHaveClass("message-hidden");
-    expect(progress()).toHaveTextContent("1/7 · restam 6 · +7 ao completar");
+    expect(progress()).toHaveTextContent(
+      `1/${N} · restam ${N - 1} · +${N} ao completar`,
+    );
   });
   it("depois de um aviso de resultado, uma jogada de rotina traz o progresso de volta na hora", () => {
     vi.useFakeTimers();
@@ -94,7 +96,9 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
     );
-    expect(progress()).toHaveTextContent("2/7 · restam 5 · +7 ao completar");
+    expect(progress()).toHaveTextContent(
+      `2/${N} · restam ${N - 2} · +${N} ao completar`,
+    );
   });
   it("com todas as casas cheias e ainda não confirmadas, pede a confirmação", () => {
     vi.useFakeTimers();

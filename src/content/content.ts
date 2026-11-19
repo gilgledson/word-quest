@@ -34,8 +34,15 @@ function apply(content: GameContent) {
   active = content;
 }
 
+/**
+ * Build de teste com `VITE_ONLY_BUNDLED_CONTENT=1`: joga só com o conteúdo que veio no app, sem o
+ * guardado nem o do servidor (para testar fases novas antes de publicá-las).
+ */
+const ONLY_BUNDLED = import.meta.env.VITE_ONLY_BUNDLED_CONTENT === "1";
+
 /** Abertura do app: usa o conteúdo guardado, se houver um válido e mais novo que o do app. */
 export async function startContent() {
+  if (ONLY_BUNDLED) return;
   try {
     const cached = (await contentStore.load()) as GameContent | undefined;
     if (
@@ -98,6 +105,7 @@ export type RefreshResult = "current" | "stored" | "invalid" | "offline";
  * imagens que o jogador vai ver logo, da versão nova ou, sem novidade, da que está em uso.
  */
 export async function refreshContent(player: Player): Promise<RefreshResult> {
+  if (ONLY_BUNDLED) return "current";
   let latest: unknown;
   try {
     latest = await getJson(`${CONTENT_URL}/version.json`);
