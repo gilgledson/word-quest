@@ -33,9 +33,11 @@ export const stampOf = (version: string) => version.split(".").pop() ?? "";
  * o que está em uso: o app da loja traz o próprio código (o "builtin", com a data do build), e um
  * pacote ao vivo publicado antes dele não pode substituí-lo.
  */
+/** Pacote ao vivo ("5.3.20261117-1200"); qualquer outra coisa é o código que veio no app da loja. */
+const LIVE_VERSION = /^[\w.]+\.\d{8}-\d{4}$/;
 export function applies(
   release: LiveRelease | null,
-  current: { version: string; native: string; builtStamp: string },
+  current: { id?: string; version: string; native: string; builtStamp: string },
 ) {
   if (
     !release ||
@@ -45,10 +47,11 @@ export function applies(
     !release.natives.includes(current.native)
   )
     return false;
-  const inUse =
-    current.version === "builtin"
-      ? current.builtStamp
-      : stampOf(current.version);
+  // O código que veio na loja aparece como id "builtin", mas com a versão da loja ("5.3") e não
+  // "builtin": comparar a data com "3" fazia nenhum pacote parecer mais novo.
+  const builtin =
+    current.id === "builtin" || !LIVE_VERSION.test(current.version);
+  const inUse = builtin ? current.builtStamp : stampOf(current.version);
   return stampOf(release.version) > inUse;
 }
 
@@ -77,6 +80,7 @@ export async function checkLiveUpdate(
     const { bundle, native } = await CapacitorUpdater.current();
     if (
       !applies(release, {
+        id: bundle.id,
         version: bundle.version,
         native,
         builtStamp: __BUILD_STAMP__,
