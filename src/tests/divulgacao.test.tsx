@@ -19,7 +19,11 @@ import {
 import { PuzzleEngine, positions } from "../game/crossword-engine";
 import { opponentFor } from "../game/opponents";
 import { initialPlayer, type Player } from "../services/repository";
-import { REVIEW_GAP_DAYS, shouldAskReview } from "../services/review";
+import {
+  openStoreRating,
+  REVIEW_GAP_DAYS,
+  shouldAskReview,
+} from "../services/review";
 import { usePlayer } from "../stores/player";
 
 afterEach(() => {
@@ -300,6 +304,15 @@ describe("Pedido de avaliação na loja", () => {
     expect(shouldAskReview(player([recent]), 8, now)).toBe(false);
     expect(shouldAskReview(player([old]), 8, now)).toBe(true);
     expect(shouldAskReview(player([old, old, old]), 8, now)).toBe(false);
+  });
+  it("o botão Avaliar o jogo abre a página do WordQuest na Play Store, sem recompensa", () => {
+    const open = vi.fn();
+    const coins = usePlayer.getState().player.coins;
+    openStoreRating(open);
+    expect(open).toHaveBeenCalledWith(
+      "market://details?id=br.com.wordquest.game",
+    );
+    expect(usePlayer.getState().player.coins).toBe(coins);
   });
 });
 

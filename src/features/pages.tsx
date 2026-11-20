@@ -27,6 +27,7 @@ import {
   Swords,
   Play,
   Star,
+  ThumbsUp,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
 import { wordsFoundCount } from "../game/chest";
@@ -77,6 +78,7 @@ import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
+import { canRateInStore, openStoreRating } from "../services/review";
 export function Home() {
   const p = usePlayer((s) => s.player);
   const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
@@ -859,6 +861,14 @@ function ProfileSettings() {
           <Sparkles size={18} />{" "}
           {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo"}
         </button>
+        {canRateInStore() && (
+          <button
+            className="test-sound rate-game"
+            onClick={() => openStoreRating()}
+          >
+            <ThumbsUp size={18} /> Avaliar o jogo
+          </button>
+        )}
       </div>
       <Link className="text-link credits-link" to="/credits">
         Créditos e licenças

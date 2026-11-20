@@ -294,6 +294,10 @@
   padding: 0 6px;
   font-size: 13px;
 }
+/* "Avaliar o jogo" (só no app) ocupa a linha inteira embaixo dos outros dois. */
+.settings-actions .rate-game {
+  grid-column: 1 / -1;
+}
 .profile-panel .credits-link {
   display: flex;
   min-height: 40px;
