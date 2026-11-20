@@ -534,7 +534,9 @@ export function Duel({
     inTutorial && !player.tourDone && !complete
       ? !seen.includes("inicio") && !guidedWord
         ? "inicio"
-        : botTurn && !seen.includes("duelo")
+        : // A dica do rival aparece na vez dele e fica até o "Entendi", mesmo que ele jogue rápido
+          // (se sumisse com a vez dele, o jogador não chegava a fechá-la e ela não era marcada).
+          (botTurn || session.versus.rngCount > 0) && !seen.includes("duelo")
           ? "duelo"
           : mine && seen.includes("duelo") && !seen.includes("trocar")
             ? "trocar"
