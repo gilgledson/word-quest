@@ -10,5 +10,20 @@
   },
   "casa": {
     "nome": "Casa e objetos"
+  },
+  "animes": {
+    "nome": "Animes"
+  },
+  "esportes": {
+    "nome": "Esportes"
+  },
+  "profissoes": {
+    "nome": "Profissões"
+  },
+  "corpo": {
+    "nome": "Corpo humano"
+  },
+  "escola": {
+    "nome": "Escola e brincadeiras"
   }
 }

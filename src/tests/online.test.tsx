@@ -294,8 +294,8 @@ describe("telas do duelo ao vivo", () => {
 
   it("quem cria escolhe o tema no lobby e a sala sai com uma grade do tema no tamanho escolhido", async () => {
     open();
-    // Surpresa vem marcada; os quatro temas do Casual completam as opções.
-    expect(screen.getAllByRole("radio")).toHaveLength(5);
+    // Surpresa vem marcada; os nove temas do Casual completam as opções.
+    expect(screen.getAllByRole("radio")).toHaveLength(10);
     expect(screen.getByRole("radio", { name: "Surpresa" })).toBeChecked();
     fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
     expect(screen.getByRole("radio", { name: "Natureza" })).toBeChecked();
