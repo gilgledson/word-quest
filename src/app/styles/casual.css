@@ -78,6 +78,26 @@ a.campaign-start {
   --theme: #5b47b8;
   --theme-soft: #e2dcfa;
 }
+.theme-card[data-theme="animes"] {
+  --theme: #d23a7a;
+  --theme-soft: #ffd9ea;
+}
+.theme-card[data-theme="esportes"] {
+  --theme: #1f6fe0;
+  --theme-soft: #dcebff;
+}
+.theme-card[data-theme="profissoes"] {
+  --theme: #8a5a12;
+  --theme-soft: #f6e4c4;
+}
+.theme-card[data-theme="corpo"] {
+  --theme: #c2304f;
+  --theme-soft: #ffdbe2;
+}
+.theme-card[data-theme="escola"] {
+  --theme: #0f8a8a;
+  --theme-soft: #cdf1ef;
+}
 .theme-icon {
   position: relative;
   display: grid;

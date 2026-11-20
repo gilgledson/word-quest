@@ -61,14 +61,14 @@ function published(version = 3): GameContent {
       casual: [
         ...base.catalog.casual,
         {
-          id: "escola",
-          nome: "Escola",
-          art: `${HOST}/art/temas/escola-v1.webp`,
+          id: "viagem",
+          nome: "Viagem",
+          art: `${HOST}/art/temas/viagem-v1.webp`,
           color: "#0a7d8c",
           colorSoft: "#d3f1f4",
           puzzles: base.catalog.casual[0].puzzles.slice(0, 2).map((p, i) => ({
             ...structuredClone(p),
-            id: `casual-escola-${i + 1}`,
+            id: `casual-viagem-${i + 1}`,
           })),
         },
       ],
@@ -186,7 +186,7 @@ describe("Conteúdo baixado na abertura", () => {
     expect(levels).toHaveLength(30);
     expect(maps.at(-1)).toMatchObject({ id: "vulcao", path: "/map/vulcao" });
     expect(mapOf("vulcao").nome).toBe("Vulcão das Rimas");
-    expect(casualThemes.at(-1)?.id).toBe("escola");
+    expect(casualThemes.at(-1)?.id).toBe("viagem");
     expect(OPPONENTS.some((o) => o.id === "brasa")).toBe(true);
     expect(
       opponentFor({ puzzleId: "vulcao-30", number: 30, mode: "campaign" }).id,
@@ -257,7 +257,7 @@ describe("Imagens do conteúdo", () => {
     const all = contentImages(c);
     expect(all).toContain(`${HOST}/art/rivais/brasa-v1-sad.webp`);
     const beginner = upcomingImages(c, structuredClone(initialPlayer));
-    expect(beginner).toContain(`${HOST}/art/temas/escola-v1.webp`);
+    expect(beginner).toContain(`${HOST}/art/temas/viagem-v1.webp`);
     expect(beginner).not.toContain(`${HOST}/art/mapas/vulcao-v1.jpg`);
     const stars = Object.fromEntries(
       c.catalog.levels.slice(0, 21).map((l) => [l.id, 1]),
@@ -291,9 +291,9 @@ describe("Imagens do conteúdo", () => {
       </MemoryRouter>,
     );
     const card = container.querySelector(
-      '[data-theme="escola"]',
+      '[data-theme="viagem"]',
     ) as HTMLElement;
-    expect(card).toHaveTextContent("Escola");
+    expect(card).toHaveTextContent("Viagem");
     expect(card.style.getPropertyValue("--theme")).toBe("#0a7d8c");
     await waitFor(() =>
       expect(card.querySelector("img")?.getAttribute("src")).toMatch(/^blob:/),

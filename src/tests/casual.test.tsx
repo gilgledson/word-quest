@@ -39,12 +39,17 @@ function open(path = "/casual") {
 }
 
 describe("Modo casual", () => {
-  it("tem os quatro temas, cada um com várias grades válidas", () => {
+  it("tem os nove temas, cada um com várias grades válidas", () => {
     expect(casualThemes.map((t) => t.id)).toEqual([
       "animais",
       "comida",
       "natureza",
       "casa",
+      "animes",
+      "esportes",
+      "profissoes",
+      "corpo",
+      "escola",
     ]);
     for (const t of casualThemes) {
       expect(t.puzzles.length).toBeGreaterThanOrEqual(5);
@@ -91,7 +96,7 @@ describe("Modo casual", () => {
     open();
     expect(
       screen.getAllByRole("button", { name: /^Jogar tema / }),
-    ).toHaveLength(4);
+    ).toHaveLength(9);
     fireEvent.click(screen.getByRole("button", { name: "Jogar tema Animais" }));
     expect(screen.getByTestId("where").textContent).toBe(
       "/casual/nova?tema=animais",

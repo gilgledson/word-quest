@@ -28,6 +28,9 @@ import {
   Play,
   Star,
   ThumbsUp,
+  BriefcaseBusiness,
+  HeartPulse,
+  Backpack,
 } from "lucide-react";
 import { Scenery } from "../components/Scenery";
 import { wordsFoundCount } from "../game/chest";
@@ -382,6 +385,11 @@ const THEME_ICONS: Record<string, typeof Shapes> = {
   comida: Utensils,
   natureza: Trees,
   casa: Armchair,
+  animes: Swords,
+  esportes: Trophy,
+  profissoes: BriefcaseBusiness,
+  corpo: HeartPulse,
+  escola: Backpack,
 };
 /** Modo casual: escolha um tema e jogue um duelo numa grade com palavras dele. */
 export function Casual() {

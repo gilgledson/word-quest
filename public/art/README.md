@@ -37,3 +37,5 @@ O mapa mostra a imagem uma vez, cobrindo a tela (cover, centralizada). O caminho
 `moldura-vencedor.webp`: moldura do avatar de quem venceu no cartão de resultado (aro dourado com louros, coroa com pedra vermelha, raios e estrelinhas; centro e fundo transparentes). Gerada no ChatGPT (`docs/referencias/moldura-vencedor-chatgpt.png`) e reduzida para 360 px com `cwebp`; no app ela tem 168% do tamanho do avatar, com o furo central rente à borda dele.
 
 `opponents/{cientista,pirata,astronauta,coelhinha,latina,skatista,detetive,cavaleiro,latino}-<humor>.webp`: avatares do jogador (`src/game/avatars.ts`), seis humores cada (neutral, happy, sad, angry, surprised, thinking). Gerados no ChatGPT numa folha 3×2 por personagem, no estilo dos avatares existentes (`docs/referencias/avatares/<id>-chatgpt.png`), e cortados em 256 px com `cwebp -q 82`.
+
+`temas/{animes,esportes,profissoes,corpo,escola}.webp`: arte dos temas novos do Casual e do duelo, geradas no ChatGPT no estilo das quatro primeiras (`docs/referencias/temas/<id>-chatgpt.png`), 512×512, `cwebp -q 82`. A de Animes não usa personagens nem elementos de obras existentes.
