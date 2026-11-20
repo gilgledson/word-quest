@@ -91,9 +91,7 @@ it("perder e tentar de novo abre outra grade da mesma fase", async () => {
     </MemoryRouter>,
   );
   await act(async () => {
-    fireEvent.click(
-      await screen.findByRole("button", { name: "Tentar de novo" }),
-    );
+    fireEvent.click(await screen.findByRole("button", { name: /^Revanche/ }));
   });
   const { player } = usePlayer.getState();
   expect(player.variants).toEqual({ [level.id]: 1 });

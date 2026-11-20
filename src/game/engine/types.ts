@@ -10,8 +10,8 @@ export interface PuzzleWord {
   arrow: "right" | "down";
   icon?: string;
   /**
-   * Pista completa, mostrada no painel da palavra selecionada (até `DICA_MAX_CHARS`). A `clue` é o
-   * rótulo curto que cabe na casa da grade; sem `dica`, o painel repete a `clue`.
+   * Pista completa (até `DICA_MAX_CHARS`), guardada no catálogo e nas fases. Hoje o jogo mostra só a
+   * `clue` (na casa da grade e no painel); a completa fica pronta para um uso futuro (ex.: ajuda).
    */
   dica?: string;
 }
@@ -97,6 +97,16 @@ export const economy = {
    */
   campaignRounds: { 2: 8, 3: 10, 4: 12 } as Record<number, number>,
 };
+/**
+ * Moedas do fim do duelo pelo resultado. No duelo ao vivo a derrota não tira moedas: lá quem perde
+ * só perde o que apostou (a aposta é acertada à parte, em `betPayout`).
+ */
+export function duelCoins(
+  result: "win" | "draw" | "loss",
+  online = false,
+): number {
+  return online && result === "loss" ? 0 : economy.duel[result];
+}
 /** Estrelas de uma vitória (0 se não venceu), pela parte dos pontos que o jogador fez. */
 export function duelStars(scores: Record<Owner, number>) {
   const { p, ai } = scores;

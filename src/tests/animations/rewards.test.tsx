@@ -78,7 +78,7 @@ describe("Moedas da recompensa", () => {
     expect(screen.queryByTestId("fx-coin-amount")).toBeNull();
     expect(screen.queryAllByTestId("fx-coin")).toHaveLength(0);
     expect(screen.queryByTestId("fx-wave")).toBeNull();
-    expect(screen.queryByText("Fase concluída!")).toBeNull();
+    expect(screen.queryByText("Você venceu!")).toBeNull();
     expect(screen.getByText("Sabi venceu")).toBeInTheDocument();
   });
   it("movimento reduzido: sem moedas voando, só o +N discreto", () => {
@@ -98,14 +98,14 @@ describe("Moedas da recompensa", () => {
     expect(screen.queryAllByTestId("fx-coin")).toHaveLength(0);
     expect(screen.queryByTestId("fx-wave")).toBeNull();
     // O resultado e o botão de continuar funcionam normalmente.
-    expect(screen.getByText("Você venceu o duelo!")).toBeInTheDocument();
+    expect(screen.getByText("Você venceu!")).toBeInTheDocument();
   });
 });
 
 describe("Conclusão da fase", () => {
-  it("vitória: selo, estrelas em sequência, onda no tabuleiro e botão utilizável desde o início", () => {
+  it("vitória: título, estrelas em sequência, onda no tabuleiro e botão utilizável desde o início", () => {
     const sc = finish();
-    expect(screen.getByText("Fase concluída!")).toBeInTheDocument();
+    expect(screen.getByText("Você venceu!")).toBeInTheDocument();
     // Estrelas pela parte dos pontos do jogador, não pela dificuldade do rival.
     const scores = usePlayer.getState().player.sessions[sc.key].scores;
     expect(
@@ -113,10 +113,10 @@ describe("Conclusão da fase", () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId("fx-wave")).toBeInTheDocument();
     // Os efeitos ainda estão rodando, mas a tela de resultado já responde.
-    const again = screen.getByRole("button", { name: "Jogar novamente" });
+    const again = screen.getByRole("button", { name: /^Revanche/ });
     expect(again).toBeEnabled();
     fireEvent.click(again);
-    expect(screen.queryByText("Você venceu o duelo!")).toBeNull();
+    expect(screen.queryByText("Você venceu!")).toBeNull();
   });
   it("a onda some sozinha depois de ~1,3 s", () => {
     finish();

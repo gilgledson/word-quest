@@ -49,7 +49,8 @@ test("ao zerar o relógio a vez passa sozinha e o rival joga", async ({
   await expect(page.getByText("vez do rival ▶")).toHaveCount(0);
   await page.clock.fastForward(26_000);
   await expect(page.getByText("vez do rival ▶")).toBeVisible();
-  await expect(page.getByRole("timer")).toHaveCount(0);
+  // Na vez do rival o relógio continua no lugar do VS: os dois jogadores veem o tempo da vez.
+  await expect(page.getByRole("timer")).toBeVisible();
   // O rival termina a jogada e a vez volta, com o relógio reiniciado.
   await page.clock.fastForward(6_000);
   await expect(page.getByText("vez do rival ▶")).toHaveCount(0);

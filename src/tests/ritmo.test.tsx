@@ -78,7 +78,7 @@ it("o relógio do turno é opcional: desligado por padrão, não aparece", () =>
   expect(screen.queryByRole("timer")).toBeNull();
 });
 
-it("com o relógio ligado a barra aparece e, ao zerar, a vez passa", () => {
+it("com o relógio ligado ele aparece no lugar do VS e, ao zerar, a vez passa", () => {
   vi.useFakeTimers();
   open({ turnTimer: true });
   expect(screen.getByRole("timer")).toBeInTheDocument();
@@ -90,7 +90,9 @@ it("com o relógio ligado a barra aparece e, ao zerar, a vez passa", () => {
     vi.advanceTimersByTime(1_500);
   });
   expect(session().versus?.turn).toBe("ai");
-  expect(screen.queryByRole("timer")).toBeNull();
+  // Na vez do rival o relógio continua no placar (recomeçado): os dois veem o tempo da vez.
+  expect(screen.getByRole("timer")).toBeInTheDocument();
+  expect(document.querySelector(".vs-badge")).toBeNull();
 });
 
 it("o relógio não atrapalha o tutorial da fase 1", () => {

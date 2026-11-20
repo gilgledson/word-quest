@@ -1,4 +1,5 @@
 import {
+  duelCoins,
   duelStars,
   economy,
   positions,
@@ -17,6 +18,8 @@ interface Context {
   sessionKey: string;
   daily: boolean;
   casual: boolean;
+  /** Duelo ao vivo: a derrota não tira moedas (ver `duelCoins`). */
+  online?: boolean;
   date: string;
 }
 /**
@@ -27,7 +30,7 @@ export function settleSession(
   p: Player,
   next: Session,
   cost: number,
-  { engine, puzzleId, sessionKey, daily, casual, date }: Context,
+  { engine, puzzleId, sessionKey, daily, casual, online, date }: Context,
 ): Player {
   const settled = { ...next };
   if (p.coins < cost) return p;
@@ -50,7 +53,7 @@ export function settleSession(
         days = [...days, date];
       }
     } else if (!(sessionKey in duels)) {
-      coins = Math.max(0, coins + economy.duel[result]);
+      coins = Math.max(0, coins + duelCoins(result, online));
       duels = { ...duels, [sessionKey]: result };
     }
     // Vencer o oponente conclui a fase e libera a próxima (o modo casual não tem progresso).
