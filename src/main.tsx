@@ -60,6 +60,7 @@ import "./app/styles.css";
 import "./animations/animations.css";
 // Depois das animações: refina a janela de resultado definida lá.
 import "./app/styles/result.css";
+import "./app/styles/result-sheet.css";
 import "./animations/mood.css";
 import { unlockAudio } from "./services/sound";
 import { keepScreenOn } from "./services/wakeLock";

@@ -11,9 +11,9 @@ import { usePlayer } from "../stores/player";
 afterEach(cleanup);
 
 describe("Avatares do jogador", () => {
-  it("são cinco, com os seis humores cada um", () => {
-    expect(PLAYER_AVATARS).toHaveLength(5);
-    expect(new Set(PLAYER_AVATARS.map((a) => a.id)).size).toBe(5);
+  it("são catorze, com os seis humores cada um", () => {
+    expect(PLAYER_AVATARS).toHaveLength(14);
+    expect(new Set(PLAYER_AVATARS.map((a) => a.id)).size).toBe(14);
     for (const a of PLAYER_AVATARS)
       for (const mood of MOODS)
         expect(fs.existsSync(`public${opponentFace(a.id, mood)}`)).toBe(true);

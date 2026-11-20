@@ -5,7 +5,7 @@ import { Layout } from "../components/Layout";
 import { levels } from "../data/catalog";
 import { Profile } from "../features/pages";
 import { settleSession } from "../features/puzzle/settleSession";
-import { ResultPopup } from "../features/ResultPopup";
+import { ResultSheet } from "../features/puzzle/ResultSheet";
 import {
   ACHIEVEMENTS,
   achievementStatus,
@@ -215,8 +215,16 @@ describe("telas", () => {
   it("o resultado anuncia a conquista que a partida completou", () => {
     render(
       <MemoryRouter>
-        <ResultPopup
+        <ResultSheet
           result="win"
+          playerName="Você"
+          playerFace={{ id: "jogador" }}
+          daily={false}
+          casual={false}
+          online={false}
+          backTo="/map"
+          onNext={() => {}}
+          onReplay={() => {}}
           rival={OPPONENTS[0]}
           mood="sad"
           moodKey={0}
@@ -225,7 +233,6 @@ describe("telas", () => {
           stars={1}
           achievements={["O primeiro passo"]}
           enabled={false}
-          onClose={() => {}}
         />
       </MemoryRouter>,
     );

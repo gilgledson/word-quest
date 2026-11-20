@@ -79,7 +79,7 @@ describe("primeiro duelo na tela", () => {
       scores: { p: 20, ai: 4 },
     };
     open({ tutorialDone: true, sessions: { [key]: won } });
-    expect(screen.getByText("Você venceu o duelo!")).toBeInTheDocument();
+    expect(screen.getByText("Você venceu!")).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "Desafiar um amigo online" }),
     ).toHaveAttribute("href", "/online");
@@ -89,7 +89,7 @@ describe("primeiro duelo na tela", () => {
       invitedFriends: ["amigo"],
       sessions: { [key]: won },
     });
-    expect(screen.getByText("Você venceu o duelo!")).toBeInTheDocument();
+    expect(screen.getByText("Você venceu!")).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Desafiar um amigo online" }),
     ).toBeNull();

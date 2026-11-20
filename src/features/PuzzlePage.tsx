@@ -16,6 +16,7 @@ import {
 import {
   PuzzleEngine,
   PuzzleValidator,
+  duelCoins,
   duelStars,
   easyDuel,
   economy,
@@ -31,6 +32,7 @@ import { itemCount, spendItem, VOWELS } from "../game/shop";
 import { ItemsDialog } from "./puzzle/ItemsDialog";
 import { requestReview, shouldAskReview } from "../services/review";
 import {
+  bestWord,
   boardShareText,
   currentStreak,
   dailyShareText,
@@ -38,7 +40,6 @@ import {
 import { playSfx, type EffectName } from "../services/sound";
 import { celebrate } from "../services/confetti";
 import { buzz } from "../services/haptics";
-import { ResultPopup } from "./ResultPopup";
 import { VersusPanel } from "../components/VersusPanel";
 import { useOpponentMood } from "../animations/hooks/useOpponentMood";
 import { avatarOf } from "../game/avatars";
@@ -61,9 +62,8 @@ import { SwapDialog } from "./puzzle/SwapDialog";
 import { TurnControls } from "./puzzle/TurnControls";
 import { JokerTour, TipTour, type TipId } from "./puzzle/GameTour";
 import { confirmMessage } from "./puzzle/messages";
-import { summarize } from "./puzzle/summary";
 import { TutorialTip } from "./puzzle/TutorialTip";
-import { VictoryPanel } from "./puzzle/VictoryPanel";
+import { ResultSheet } from "./puzzle/ResultSheet";
 import { TutorialCoach } from "./puzzle/TutorialCoach";
 import { guided, guideUsable, tutorialPick } from "./puzzle/tutorialPick";
 import { settleSession } from "./puzzle/settleSession";
@@ -470,12 +470,14 @@ export function Duel({
   ]);
   // No duelo ao vivo vale o tempo da sala; nas outras partidas, a opção do jogador.
   const turnSeconds = online ? (online.turnSeconds ?? 0) : TURN_SECONDS;
-  const timerActive =
+  // O relógio aparece nas duas vezes (no lugar do VS); só a vez de quem joga aqui passa sozinha.
+  const clockOn =
     (online ? turnSeconds > 0 : player.turnTimer) &&
     !inTutorial &&
     !!engine &&
-    session?.versus.turn === "p" &&
+    !!session &&
     !engine.complete(session);
+  const timerActive = clockOn && session?.versus.turn === "p";
   useEffect(() => {
     if (!timerActive) return;
     const t = window.setTimeout(() => expireTurn.current(), turnSeconds * 1000);
@@ -547,6 +549,29 @@ export function Duel({
   const swapResult = swapping?.length
     ? engine.swap(session, swapping, word)
     : undefined;
+  /** Revanche: na campanha troca de grade (quem perdeu não joga de novo as mesmas palavras). */
+  const replay = () => {
+    // Na campanha a revanche troca de grade: quem perdeu não joga de novo as mesmas palavras.
+    const count = variantCount(puzzle.id);
+    const rotate = !daily && !casual && !online && count > 1;
+    const variant = ((player.variants?.[puzzle.id] ?? 0) + 1) % count;
+    const grid = rotate ? levelGrid(puzzle.id, variant) : undefined;
+    const fresh = (grid ? new PuzzleEngine(grid) : engine).start(
+      `${sessionKey}:${Date.now()}`,
+      botLevel,
+    );
+    update((p) => ({
+      ...p,
+      variants: grid ? { ...p.variants, [puzzle.id]: variant } : p.variants,
+      sessions: { ...p.sessions, [sessionKey]: fresh },
+    }));
+    setSelected("");
+    setMessage(
+      grid
+        ? "Grade nova: toque em uma pista para começar."
+        : "Toque em uma pista para começar de novo.",
+    );
+  };
   const commit = (
     next: Session,
     cost = 0,
@@ -559,6 +584,7 @@ export function Duel({
         sessionKey,
         daily,
         casual,
+        online: !!online,
         date,
       }),
     );
@@ -998,20 +1024,12 @@ export function Duel({
           (t) => !t.joker && t.letter === engine.rack.solution[current.key],
         )
       : undefined;
-  // Vitória na campanha: progresso do mundo, rival seguinte e, se for o caso, mundo novo.
+  // Vitória na campanha: rival seguinte e, se for o caso, mundo novo.
   const campaignWin = !daily && !casual && winner === "win";
   const world = mapOf(puzzle.world);
   const worldList = worldLevels(world.id);
   const worldDone = worldList.filter((l) => player.stars[l.id]).length;
   const nextWorld = maps[maps.indexOf(world) + 1];
-  const progress = campaignWin
-    ? {
-        world: world.nome,
-        done: worldDone,
-        total: worldList.length,
-        stars: worldList.reduce((n, l) => n + (player.stars[l.id] ?? 0), 0),
-      }
-    : undefined;
   const unlocked =
     campaignWin && nextWorld && worldDone === worldList.length
       ? nextWorld.nome
@@ -1120,6 +1138,14 @@ export function Duel({
           turn={versus.turn}
           finished={complete}
           animate={prefs.enabled}
+          clock={
+            clockOn
+              ? {
+                  seconds: turnSeconds,
+                  key: `${sessionKey}:${session.versus.turn}:${session.versus.rngCount}`,
+                }
+              : undefined
+          }
         />
       </section>
       <div className="board-card" ref={cardRef}>
@@ -1146,54 +1172,11 @@ export function Duel({
         />
       </div>
       {complete ? (
-        <VictoryPanel
-          result={winner}
-          daily={daily}
-          casual={casual}
-          rivalName={rival.name}
-          scores={session.scores}
-          animated={player.animations}
-          fxEnabled={prefs.enabled}
-          nextTo={nextTo}
-          backTo={backTo}
-          online={!!online}
-          onNext={() => setSelected("")}
-          shareResult={shareResult}
-          invite={inviteOnline}
-          onReplay={() => {
-            // Na campanha a revanche troca de grade: quem perdeu não joga de novo as mesmas palavras.
-            const count = variantCount(puzzle.id);
-            const rotate = !daily && !casual && !online && count > 1;
-            const variant = ((player.variants?.[puzzle.id] ?? 0) + 1) % count;
-            const grid = rotate ? levelGrid(puzzle.id, variant) : undefined;
-            const fresh = (grid ? new PuzzleEngine(grid) : engine).start(
-              `${sessionKey}:${Date.now()}`,
-              botLevel,
-            );
-            update((p) => ({
-              ...p,
-              variants: grid
-                ? { ...p.variants, [puzzle.id]: variant }
-                : p.variants,
-              sessions: { ...p.sessions, [sessionKey]: fresh },
-            }));
-            setSelected("");
-            setMessage(
-              grid
-                ? "Grade nova: toque em uma pista para começar."
-                : "Toque em uma pista para começar de novo.",
-            );
-          }}
-        />
+        // O resultado fica no bottom sheet (ResultSheet, no fim da tela); aqui só a faixa recolhida.
+        <div className="result-sheet-space" aria-hidden="true" />
       ) : (
         <>
-          <section
-            className={
-              puzzle.words.some((w) => w.dica)
-                ? "selected-word has-dica"
-                : "selected-word"
-            }
-          >
+          <section className="selected-word">
             {mine && lastBot && (
               <button
                 type="button"
@@ -1221,8 +1204,7 @@ export function Duel({
                 ? online
                   ? (online.notice ?? `${rival.name} está jogando…`)
                   : `${rival.name} pensando…`
-                : // A pista completa (quando a palavra tem) vai no painel; a casa da grade mostra o rótulo curto.
-                  (word?.dica ?? word?.clue ?? "Escolha por onde começar")}
+                : (word?.clue ?? "Escolha por onde começar")}
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
             <div className="message-slot">
@@ -1267,18 +1249,6 @@ export function Duel({
                 />
               )}
             </div>
-            {timerActive && (
-              <div
-                className="turn-timer"
-                role="timer"
-                aria-label={`Relógio do turno: ${turnSeconds} segundos`}
-              >
-                <i
-                  key={session.versus.rngCount}
-                  style={{ animationDuration: `${turnSeconds}s` }}
-                />
-              </div>
-            )}
           </section>
           <TurnControls
             rack={rack}
@@ -1366,9 +1336,12 @@ export function Duel({
           </div>,
           document.body,
         )}
-      {complete && resultOpen && (
-        <ResultPopup
+      {complete && (
+        <ResultSheet
+          key={sessionKey}
           result={winner}
+          playerName={player.name.trim() || "Você"}
+          playerFace={avatarOf(player.avatar)}
           rival={rival}
           mood={reaction.mood}
           moodKey={reaction.key}
@@ -1378,13 +1351,14 @@ export function Duel({
               ? winner === "win"
                 ? economy.daily
                 : 0
-              : economy.duel[winner]
+              : duelCoins(winner, !!online)
           }
           stars={
             !daily && !casual && winner === "win"
               ? duelStars(session.scores)
               : 0
           }
+          best={bestWord(puzzle, session)}
           nextTo={nextTo}
           nextRival={
             nextTo
@@ -1394,16 +1368,21 @@ export function Duel({
           nextRivalId={
             nextTo ? OPPONENT_BY_LEVEL[puzzle.number + 1] : undefined
           }
-          progress={progress}
           unlocked={unlocked}
           achievements={achievementStatus(player)
             .filter((a) => a.done && !achBase.ids.includes(a.id))
             .map((a) => a.title)}
-          summary={summarize(session)}
-          enabled={prefs.enabled}
+          daily={daily}
+          casual={casual}
+          online={!!online}
+          backTo={backTo}
           shareResult={shareResult}
           invite={inviteOnline}
-          onClose={() => {
+          enabled={prefs.enabled}
+          onNext={() => setSelected("")}
+          onReplay={replay}
+          onCollapse={() => {
+            if (!resultOpen) return;
             setResultOpen(false);
             // Vitória na Aventura: bom momento para pedir a nota na loja (com limites, ver review.ts).
             const wins = levels.filter((l) => player.stars[l.id]).length;

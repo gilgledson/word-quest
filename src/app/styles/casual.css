@@ -706,3 +706,16 @@ a.campaign-start {
     display: none;
   }
 }
+
+/* "Quem vai jogar?" (duelo ao vivo): os catorze avatares em duas linhas de sete, só os rostos (o nome
+   fica no aria-label), para nome e botão caberem sem rolar. */
+.online-profile .avatar-picker {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.online-profile .avatar-picker button {
+  padding: 3px 0;
+}
+.online-profile .avatar-picker small {
+  display: none;
+}

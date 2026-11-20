@@ -48,7 +48,7 @@ describe("Pista completa (dica)", () => {
       PuzzleValidator.validate(withDica(`Começa como ${answer.toLowerCase()}`)),
     ).toContain("Pista completa com a resposta");
   });
-  it("o painel mostra a dica da palavra selecionada; a casa da grade, o rótulo curto", () => {
+  it("o painel mostra a pista curta, a mesma da casa da grade (a completa não aparece no jogo)", () => {
     usePlayer.setState({
       player: { ...structuredClone(initialPlayer), tutorialDone: true },
       ready: true,
@@ -60,12 +60,11 @@ describe("Pista completa (dica)", () => {
         </Routes>
       </MemoryRouter>,
     );
-    const panel = document.querySelector(".selected-word")!;
-    expect(panel).toHaveClass("has-dica");
-    const heading = panel.querySelector("h2")!;
-    const word = level.words.find((w) => heading.textContent === w.dica);
+    const heading = document.querySelector(".selected-word h2")!;
+    const word = level.words.find((w) => heading.textContent === w.clue);
     expect(word).toBeDefined();
-    // O rótulo curto continua na casa de pista da grade.
+    expect(heading).not.toHaveTextContent(word!.dica!);
+    // A mesma pista curta está na casa de pista da grade.
     expect(
       screen.getAllByText(word!.clue, { selector: ".board *" }).length,
     ).toBeGreaterThan(0);

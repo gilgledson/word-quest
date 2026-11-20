@@ -1,0 +1,477 @@
+/* Fim da partida em bottom sheet (src/features/puzzle/ResultSheet.tsx), no layout de
+   docs/referencias/fim-partida-chatgpt.png: cartão creme flutuante com borda dourada grossa, faixa
+   do título com louros no topo, os dois jogadores grandes, moedas, melhor palavra e botões. A grade
+   fica esmaecida atrás. Recolhido, vira uma faixa com o resultado e o placar. */
+.result-sheet-space {
+  min-height: 64px;
+}
+.result-sheet-scrim {
+  position: fixed;
+  inset: 0;
+  /* Acima da camada de efeitos (40): os contornos das palavras não passam por cima do cartão. */
+  z-index: 44;
+  background: #1d2a3a73;
+}
+.result-sheet {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom) + 8px);
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  width: min(calc(100% - 20px), 470px);
+  max-height: calc(100dvh - env(safe-area-inset-top) - 70px);
+  translate: -50% 0;
+  padding: 0 16px 16px;
+  border: 5px solid #f2b52a;
+  border-radius: 30px;
+  background: linear-gradient(#fffbf1, #fff2d6);
+  box-shadow:
+    0 0 0 3px #c98a12,
+    0 4px 0 3px #a8700a,
+    0 18px 40px #1d2a3a66;
+  touch-action: none;
+  color: #1d2a4a;
+}
+.result-sheet.closed {
+  padding-bottom: 6px;
+}
+.result-sheet-handle {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  width: 100%;
+  padding: 7px 0 2px;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+.result-sheet-grip {
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background: #e2c37a;
+}
+.result-sheet-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 2px 4px 0;
+  color: #6b5a2a;
+}
+.result-sheet-bar b {
+  color: #3b2600;
+  font-size: 18px;
+  font-weight: 900;
+}
+.result-sheet-bar span {
+  color: #1d2a4a;
+  font-size: 17px;
+  font-weight: 900;
+}
+.result-sheet-body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  /* Folga para sombras e anel de foco dos botões não serem cortados pela área com rolagem. */
+  margin: 0 -8px;
+  padding: 0 8px 6px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+}
+.result-sheet-body .share-note {
+  display: none;
+}
+/* Faixa do título: arte da faixa (vitória com coroa; derrota e empate só a fita) e o texto por cima,
+   centralizado na parte reta da fita. */
+.result-ribbon {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  margin: 0;
+  padding: 4.8% 17% 0;
+  aspect-ratio: 640 / 251;
+  background: url("/art/resultado/faixa-vitoria.webp") center / contain
+    no-repeat;
+  color: #5a2a00;
+  font-size: 30px;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #fff3b0;
+}
+.result-ribbon span {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.result-ribbon.loss,
+.result-ribbon.draw {
+  padding: 0 17% 7%;
+  aspect-ratio: 640 / 175;
+  color: #fff;
+  text-shadow:
+    0 2px 0 #2b4a7a,
+    0 0 6px #2b4a7a99;
+}
+.result-ribbon.loss {
+  background-image: url("/art/resultado/faixa-derrota.webp");
+}
+.result-ribbon.draw {
+  background-image: url("/art/resultado/faixa-empate.webp");
+  text-shadow:
+    0 2px 0 #7a3b14,
+    0 0 6px #7a3b1499;
+}
+.result-duelists {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+}
+.result-duelists > span {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.result-duelists > span > b {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 19px;
+  font-weight: 900;
+}
+.result-duelists > i {
+  color: #2b3550;
+  font-size: 30px;
+  font-style: normal;
+  font-weight: 900;
+}
+.result-face {
+  position: relative;
+  display: grid;
+  place-items: center;
+  /* Espaço para a moldura do vencedor (coroa em cima, louros embaixo) não cobrir faixa e nome. */
+  /* Quadrado do tamanho do avatar (antes a caixa ficava mais larga que alta e o fundo virava oval). */
+  width: calc(var(--face) + 8px);
+  height: calc(var(--face) + 8px);
+  margin: 16px 0 18px;
+  padding: 4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 5px #2f8cf5;
+}
+.result-face.rival {
+  box-shadow: 0 0 0 5px #7c3fd6;
+}
+.result-face .opponent-avatar,
+.result-face .opponent-portrait {
+  width: var(--face) !important;
+  height: var(--face) !important;
+  border-radius: 50%;
+}
+.result-duelists {
+  --face: 84px;
+}
+/* O humor anima e volta ao lugar: a animação de "triste" terminava encolhida e 3px abaixo, e o rosto
+   saía do centro do anel. */
+.result-face .opponent-portrait {
+  margin: 0;
+}
+.result-duelists .result-face .opponent-portrait.animated .portrait-face {
+  animation-fill-mode: none;
+}
+/* Vencedor: a moldura dourada (public/art/resultado/moldura-vencedor.webp) por cima do avatar, sem o
+   fundo branco. O furo da moldura tem 55% da largura dela e o centro em (49,2%, 51,1%); com 174% do
+   avatar, o aro cobre a borda dele e o rosto fica no meio do furo. */
+.result-duelists > span.winner .result-face {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+.result-duelists > span.winner .result-face > :first-child {
+  overflow: hidden;
+}
+.result-duelists > span.winner .result-face img:not(.result-winner-frame) {
+  object-fit: cover;
+  transform: scale(1.08);
+}
+.result-winner-frame {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--face) * 1.74);
+  max-width: none;
+  height: auto;
+  translate: -49.2% -51.1%;
+  pointer-events: none;
+}
+.result-duelists .pts {
+  min-width: 100px;
+  padding: 2px 18px 3px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 900;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: inset 0 -3px 0 #0003;
+}
+.result-duelists .pts small {
+  font-size: 15px;
+}
+.result-duelists .pts.player {
+  background: linear-gradient(#3a97ff, #1c5fc4);
+}
+.result-duelists .pts.rival {
+  background: linear-gradient(#9a61ef, #6a2fc4);
+}
+.result-sheet-rewards {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.result-sheet-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 6px 28px 6px 10px;
+  border-radius: 999px;
+  border: 3px solid #f0d27a;
+  background: linear-gradient(#fff8d8, #ffeaa8);
+  color: #6b4a00;
+  font-size: 22px;
+  font-weight: 900;
+}
+.result-sheet-coins.lost {
+  border-color: #f3b5ad;
+  background: linear-gradient(#ffe9e5, #fbd2cb);
+  color: #a2321f;
+}
+.result-sheet-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin: 0;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 3px solid #f0dc9c;
+  background: #fff8e2;
+  color: #2f5a1a;
+  font-size: 15px;
+  font-weight: 800;
+  text-align: center;
+}
+.result-sheet-note b {
+  color: #1f7a33;
+}
+.result-sheet-note.invite {
+  color: #1c4f9c;
+}
+.result-sheet-hint {
+  margin: 0;
+  color: #45525c;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+.result-best {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  width: 100%;
+  padding-top: 8px;
+  border-top: 2px solid #f0dfae;
+}
+.result-best > span:first-child {
+  font-size: 19px;
+  font-weight: 900;
+}
+.result-best-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+.result-best-tiles i {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 46px;
+  border-radius: 9px;
+  border: 3px solid #7fb0f0;
+  background: linear-gradient(#f3f8ff, #dceaff);
+  box-shadow: 0 4px 0 #7fb0f0;
+  color: #1c4f9c;
+  font-size: 28px;
+  font-style: normal;
+  font-weight: 900;
+}
+.result-sheet-actions {
+  display: grid;
+  gap: 10px;
+  width: 100%;
+  margin-top: 2px;
+}
+.result-sheet-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 16px;
+  border-radius: 18px;
+  font-size: 24px;
+  font-weight: 900;
+  white-space: nowrap;
+  text-shadow: 0 2px 0 #0003;
+}
+.result-sheet-go .opponent-avatar {
+  width: 32px !important;
+  height: 32px !important;
+}
+/* O cartão recebe o foco ao abrir (para o leitor de tela), sem contorno. */
+.result-sheet:focus {
+  outline: none;
+}
+.result-sheet-go small {
+  font-size: 15px;
+  opacity: 0.9;
+}
+.result-sheet-row {
+  display: flex;
+  gap: 10px;
+}
+.result-sheet-row > * {
+  flex: 1 1 0;
+}
+.result-sheet-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 0 10px;
+  border: 3px solid #a87d3a;
+  border-radius: 18px;
+  background: #fffdf6;
+  color: #3b2600;
+  font-size: 19px;
+  font-weight: 900;
+  white-space: nowrap;
+}
+.result-sheet-ghost.share {
+  border-color: #2f8cf5;
+  color: #1c5fc4;
+}
+.result-sheet-row > .result-sheet-ghost.share.icon {
+  flex: 0 0 52px;
+  padding: 0;
+}
+
+/* Celulares comuns: tudo um pouco menor para o cartão caber sem rolar. */
+@media (max-height: 860px) {
+  .result-sheet-body {
+    gap: 8px;
+  }
+  .result-ribbon {
+    font-size: 26px;
+  }
+  .result-face {
+    margin: 12px 0 14px;
+  }
+  .result-duelists {
+    --face: 66px;
+  }
+  .result-duelists .pts {
+    font-size: 22px;
+    min-width: 88px;
+  }
+  .result-sheet-coins {
+    font-size: 19px;
+    padding: 4px 22px 4px 8px;
+  }
+  .result-best-tiles i {
+    width: 38px;
+    height: 40px;
+    font-size: 24px;
+  }
+  .result-sheet-go {
+    min-height: 50px;
+    font-size: 22px;
+  }
+  .result-sheet-ghost {
+    min-height: 46px;
+    font-size: 17px;
+  }
+}
+/* Celulares baixos (≈ 640 de altura). */
+@media (max-height: 700px) {
+  .result-sheet {
+    padding: 0 12px 12px;
+  }
+  .result-sheet-body {
+    gap: 6px;
+  }
+  .result-ribbon {
+    width: 74%;
+    font-size: 20px;
+  }
+  .result-ribbon.loss,
+  .result-ribbon.draw {
+    width: 86%;
+  }
+  .result-sheet-coins {
+    font-size: 16px;
+    padding: 3px 16px 3px 6px;
+  }
+  .result-sheet-rewards .victory-stars {
+    font-size: 0.8em;
+  }
+  .result-face {
+    margin: 8px 0 10px;
+  }
+  .result-duelists {
+    --face: 50px;
+  }
+  .result-duelists > span > b {
+    font-size: 16px;
+  }
+  .result-duelists .pts {
+    font-size: 19px;
+    min-width: 76px;
+  }
+  .result-best > span:first-child {
+    font-size: 16px;
+  }
+  .result-best-tiles i {
+    width: 32px;
+    height: 34px;
+    font-size: 20px;
+  }
+  .result-sheet-go {
+    min-height: 46px;
+    font-size: 20px;
+  }
+  .result-sheet-ghost {
+    min-height: 42px;
+    font-size: 16px;
+  }
+}

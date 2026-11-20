@@ -2,7 +2,7 @@ import { render, screen, cleanup } from "@testing-library/react";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { afterEach, describe, it, expect } from "vitest";
 import { Campaign, Casual, Daily, Profile } from "../features/pages";
-import { ResultPopup } from "../features/ResultPopup";
+import { ResultSheet } from "../features/puzzle/ResultSheet";
 import { levels, today } from "../data/catalog";
 import { OPPONENTS } from "../game/opponents";
 import { initialPlayer } from "../services/repository";
@@ -100,7 +100,7 @@ describe("páginas secundárias", () => {
   });
 });
 
-describe("janela de vitória", () => {
+describe("cartão de vitória", () => {
   const base = {
     result: "win" as const,
     rival: OPPONENTS[0],
@@ -110,24 +110,25 @@ describe("janela de vitória", () => {
     coins: 50,
     stars: 2,
     enabled: false,
-    onClose: () => {},
+    playerName: "Você",
+    playerFace: { id: "jogador" },
+    daily: false,
+    casual: false,
+    online: false,
+    backTo: "/map",
+    onNext: () => {},
+    onReplay: () => {},
   };
-  it("mostra o progresso do mundo, o próximo rival e o mundo desbloqueado", () => {
+  it("mostra o próximo rival e o mundo desbloqueado", () => {
     render(
       <MemoryRouter>
-        <ResultPopup
+        <ResultSheet
           {...base}
           nextTo="/play/vila-2"
           nextRival="Sabi"
-          progress={{ world: "Vila das Palavras", done: 5, total: 5, stars: 9 }}
           unlocked="Floresta dos Enigmas"
         />
       </MemoryRouter>,
-    );
-    expect(screen.getByText(/Vila das Palavras · 5\/5/)).toBeInTheDocument();
-    expect(screen.getByRole("progressbar")).toHaveAttribute(
-      "aria-valuenow",
-      "5",
     );
     expect(screen.getByRole("status")).toHaveTextContent(
       "Floresta dos Enigmas",
@@ -137,13 +138,12 @@ describe("janela de vitória", () => {
       screen.getByRole("link", { name: /Próxima fase · vs Sabi/ }),
     ).toBeInTheDocument();
   });
-  it("sem os dados novos, a janela continua igual", () => {
+  it("sem os dados novos, o cartão continua igual", () => {
     render(
       <MemoryRouter>
-        <ResultPopup {...base} />
+        <ResultSheet {...base} />
       </MemoryRouter>,
     );
-    expect(screen.queryByRole("progressbar")).toBeNull();
     expect(screen.queryByText(/vs /)).toBeNull();
   });
 });

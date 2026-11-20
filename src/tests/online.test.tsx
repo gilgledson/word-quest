@@ -11,6 +11,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   PuzzleEngine,
+  duelCoins,
   economy,
   positions,
   type Session,
@@ -603,6 +604,40 @@ describe("telas do duelo ao vivo", () => {
     const rules = screen.getByRole("list", { name: "Regras da partida" });
     expect(rules).toHaveTextContent("Jogada: 1 min");
     expect(rules).toHaveTextContent("Aposta: 25 moedas");
+  });
+  it("perder um duelo ao vivo sem aposta não tira moedas (só a aposta conta)", async () => {
+    expect(duelCoins("loss", true)).toBe(0);
+    expect(duelCoins("loss")).toBe(economy.duel.loss);
+    expect(duelCoins("win", true)).toBe(economy.duel.win);
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    const before = usePlayer.getState().player.coins;
+    // A grade termina cheia, com o amigo na frente (o estado da sala é do ponto de vista do anfitrião).
+    const room = mem.rooms.get(code)!;
+    const solution = engine.rack.solution;
+    const keys = Object.keys(solution);
+    await act(async () => {
+      await mem.as("guest").play({
+        ...room,
+        rev: room.rev + 1,
+        status: "finished",
+        state: {
+          ...room.state,
+          letters: { ...solution },
+          locked: keys,
+          owners: Object.fromEntries(keys.map((k) => [k, "ai" as const])),
+          scores: { p: 3, ai: 30 },
+        },
+      });
+    });
+    await screen.findByText("Bia venceu");
+    // Só entra o bônus de convite (amigo novo); sem o −10 da derrota.
+    expect(usePlayer.getState().player.coins).toBe(before + economy.invite);
+    // A tela de resultado não promete desconto.
+    expect(screen.queryByText(/-10/)).toBeNull();
   });
   it("aposta: cada um reserva ao começar e quem vence leva as duas", async () => {
     const code = await createRoom(() =>

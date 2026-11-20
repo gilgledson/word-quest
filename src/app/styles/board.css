@@ -854,44 +854,114 @@
     transform: none;
   }
 }
-/* Relógio opcional do turno: barra fina que encolhe sem re-renderizar a grade. */
-.app-playing .selected-word {
+/* Relógio da vez no lugar do selo VS (docs/referencias/relogio-vs-chatgpt.png): cronômetro dourado
+   com anel que esvazia (CSS, sem re-renderizar a grade) e os segundos no meio. Nos últimos 5 s fica
+   vermelho e balança de leve. */
+.vs-clock {
   position: relative;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-top: 3px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 40%, #fffdf3 0 55%, #fbe7b0 100%);
+  border: 2px solid #b87d0b;
+  box-shadow:
+    0 0 0 2px #ffd65a,
+    0 2px 0 2px #b87d0b;
 }
-.turn-timer {
+/* Botão do cronômetro, em cima. */
+.vs-clock::before {
+  content: "";
   position: absolute;
-  left: 14px;
-  right: 22px;
-  top: 7px;
+  top: -7px;
+  left: 50%;
+  width: 9px;
   height: 5px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(18, 79, 181, 0.14);
+  translate: -50% 0;
+  border-radius: 2px 2px 1px 1px;
+  background: linear-gradient(#ffe27a, #d99a10);
+  border: 1.5px solid #b87d0b;
 }
-.turn-timer i {
-  display: block;
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: #1678ee;
-  transform-origin: left center;
-  animation: turn-timer-shrink linear forwards;
+.vs-clock svg {
+  position: absolute;
+  inset: 1px;
+  width: calc(100% - 2px);
+  height: calc(100% - 2px);
+  rotate: -90deg;
 }
-@keyframes turn-timer-shrink {
-  0% {
-    transform: scaleX(1);
-    background: #1678ee;
+.vs-clock circle {
+  fill: none;
+  stroke-width: 3.4;
+}
+.vs-clock-track {
+  stroke: #f1dfaa;
+}
+.vs-clock-ring {
+  stroke: #e2a516;
+  stroke-linecap: round;
+  stroke-dasharray: 100 100;
+  stroke-dashoffset: 0;
+  animation: vs-clock-empty linear forwards;
+}
+.vs-clock b {
+  position: relative;
+  color: #3b2a00;
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+.vs-clock.low {
+  border-color: #b2271a;
+  box-shadow:
+    0 0 0 2px #ff9a8a,
+    0 2px 0 2px #b2271a;
+  animation: vs-clock-shake 0.5s ease-in-out infinite;
+}
+.vs-clock.low .vs-clock-ring {
+  stroke: #e0402e;
+}
+.vs-clock.low b {
+  color: #b2271a;
+}
+.vs-clock.still,
+.vs-clock.still .vs-clock-ring {
+  animation-name: none;
+}
+.vs-clock.still .vs-clock-ring {
+  stroke-dashoffset: 0;
+}
+/* No placar da partida, o selo fica pequeno e a pílula "sua vez" encosta embaixo: o relógio sobe. */
+.app-playing .vs-clock {
+  width: 30px;
+  height: 30px;
+  margin: -14px 0 0;
+}
+.app-playing .vs-clock b {
+  font-size: 12px;
+}
+@keyframes vs-clock-empty {
+  to {
+    stroke-dashoffset: 100;
   }
-  70% {
-    transform: scaleX(0.3);
-    background: #1678ee;
-  }
-  80% {
-    background: #e08a00;
-  }
+}
+@keyframes vs-clock-shake {
+  0%,
   100% {
-    transform: scaleX(0);
-    background: #c93a2a;
+    rotate: 0deg;
+  }
+  25% {
+    rotate: -6deg;
+  }
+  75% {
+    rotate: 6deg;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vs-clock.low {
+    animation: none;
   }
 }
 
