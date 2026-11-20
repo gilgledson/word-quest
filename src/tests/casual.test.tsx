@@ -125,21 +125,19 @@ describe("Modo casual", () => {
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: /Começar partida/ }));
     const where = screen.getByTestId("where").textContent!;
-    // Os temas só têm grades 8×10: no 7×7 a partida é livre, numa grade da Aventura desse tamanho.
-    expect(where).toMatch(/^\/play\/casual-livre-deserto-\d+-\d+\?vs=sabi$/);
-    expect(screen.getByText(/CASUAL · 7×7/)).toBeInTheDocument();
+    // O tema tem grades em todos os tamanhos: no 7×7 a partida é uma grade do tema desse tamanho.
+    expect(where).toMatch(/^\/play\/casual-[a-z]+-7x7-\d+\?vs=sabi$/);
     expect(screen.getAllByText("Sabi").length).toBeGreaterThan(0);
   });
-  it("outro tamanho joga uma grade da Aventura como partida livre, sem estrelas", () => {
+  it("cada tamanho joga uma grade do tema escolhido, sem estrelas", () => {
     open("/casual/nova?tema=natureza");
     fireEvent.click(screen.getByRole("radio", { name: /^6×6, Rápido/ }));
-    // O tema só tem grades 8×10: a linha do tema já mostra que a partida é Surpresa.
-    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Surpresa");
+    // O tema tem grades 6×6: a partida continua no tema.
+    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Natureza");
     fireEvent.click(screen.getByRole("button", { name: /Começar partida/ }));
     const where = screen.getByTestId("where").textContent!;
-    expect(where).toMatch(/^\/play\/casual-livre-vila-\d+-\d+\?vs=[a-z]+$/);
-    expect(screen.getByText(/CASUAL · 6×6/)).toBeInTheDocument();
-    expect(screen.getByText("Partida livre")).toBeInTheDocument();
+    expect(where).toMatch(/^\/play\/casual-natureza-6x6-\d+\?vs=[a-z]+$/);
+    expect(screen.getByText(/CASUAL · NATUREZA/)).toBeInTheDocument();
     expect(document.querySelectorAll(".board .cell")).toHaveLength(36);
     expect(usePlayer.getState().player.stars).toEqual({});
   });

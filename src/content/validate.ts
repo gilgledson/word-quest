@@ -1,7 +1,5 @@
 import type { Catalog } from "../data/catalog";
 import {
-  GRID_COLS,
-  GRID_ROWS,
   gridSpec,
   PuzzleValidator,
   type Puzzle,
@@ -41,12 +39,9 @@ const text = (v: unknown) => typeof v === "string" && v.trim() !== "";
 function gridErrors(p: Puzzle, casual: boolean): string[] {
   if (!isRecord(p) || !Array.isArray(p.words) || !text(p.id))
     return ["grade malformada"];
-  // Casual: sempre 8×10. Fases: um dos tamanhos aceitos, cada um com seu mínimo de palavras.
-  const spec = casual
-    ? p.rows === GRID_ROWS && p.cols === GRID_COLS
-      ? { minWords: 0 }
-      : undefined
-    : gridSpec(p);
+  // Os mesmos tamanhos das fases; as fases têm um mínimo de palavras por tamanho, o casual (grade
+  // aberta, só palavras do tema) não.
+  const spec = casual ? gridSpec(p) && { minWords: 0 } : gridSpec(p);
   if (!spec) return [`${p.id}: tamanho fora do padrão`];
   try {
     const errors = casual

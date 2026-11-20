@@ -1,11 +1,9 @@
 import {
-  CASUAL_MIN_LETTERS,
+  CASUAL_MIN_FILL,
   CLUE_MAX_CHARS,
   CLUE_MAX_WORD,
   CLUE_MAX_BLOCKS,
   DICA_MAX_CHARS,
-  GRID_COLS,
-  GRID_ROWS,
   LEVEL_GRIDS,
   gridSpec,
   type Puzzle,
@@ -96,13 +94,16 @@ export class PuzzleValidator {
     return errors;
   }
   /**
-   * Grades do modo casual: mesmas regras das fases, menos a densidade. Como só entram palavras do tema, a
-   * grade é mais aberta (as casas que sobram são blocos), mas precisa ter casas de resposta suficientes.
+   * Grades do modo casual: mesmas regras das fases (inclusive os tamanhos de `LEVEL_GRIDS`), menos a
+   * densidade. Como só entram palavras do tema, a grade é mais aberta (as casas que sobram são blocos),
+   * mas precisa ter casas de resposta suficientes.
    */
   static validateCasual(p: Puzzle) {
     const errors = this.validate(p);
-    if (p.rows !== GRID_ROWS || p.cols !== GRID_COLS)
-      errors.push(`Grade deve ter ${GRID_COLS}×${GRID_ROWS}`);
+    if (!gridSpec(p))
+      errors.push(
+        `Grade deve ter ${LEVEL_GRIDS.map((g) => `${g.cols}×${g.rows}`).join(" ou ")}`,
+      );
     const letters = new Set<string>();
     for (const w of p.words) {
       for (const c of positions(w)) letters.add(c.key);
@@ -111,7 +112,8 @@ export class PuzzleValidator {
       if (w.clue.split(" ").some((t) => t.length > CLUE_MAX_WORD))
         errors.push("Palavra longa na pista");
     }
-    if (letters.size < CASUAL_MIN_LETTERS) errors.push("Grade pouco cheia");
+    if (letters.size < Math.ceil(p.rows * p.cols * CASUAL_MIN_FILL))
+      errors.push("Grade pouco cheia");
     return errors;
   }
   static correct(w: PuzzleWord, s: Session) {

@@ -292,7 +292,7 @@ describe("telas do duelo ao vivo", () => {
     return [...mem.rooms.keys()][0];
   }
 
-  it("quem cria escolhe o tema no lobby; sem grade do tema no tamanho, a sala sai Surpresa", async () => {
+  it("quem cria escolhe o tema no lobby e a sala sai com uma grade do tema no tamanho escolhido", async () => {
     open();
     // Surpresa vem marcada; os quatro temas do Casual completam as opções.
     expect(screen.getAllByRole("radio")).toHaveLength(5);
@@ -300,12 +300,12 @@ describe("telas do duelo ao vivo", () => {
     fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
     expect(screen.getByRole("radio", { name: "Natureza" })).toBeChecked();
     await configureAndCreate();
-    // Os temas só têm grades 8×10, que não é oferecido: vale uma grade da Aventura do tamanho.
+    // O tema tem grades em todos os tamanhos do duelo: a sala sai com uma do tema, no 7×7.
     const room = [...mem.rooms.values()][0];
-    expect(room.puzzleId).not.toMatch(/^casual-/);
+    expect(room.puzzleId).toMatch(/^casual-natureza-7x7-\d+$/);
     expect([room.grid!.cols, room.grid!.rows]).toEqual([7, 7]);
     expect(screen.getByLabelText("Regras da partida")).toHaveTextContent(
-      "Tema: Surpresa",
+      "Tema: Natureza",
     );
   });
   it("a sala leva a grade: o convidado joga a mesma, mesmo sem ela no catálogo dele", async () => {
@@ -338,8 +338,8 @@ describe("telas do duelo ao vivo", () => {
         expect([p.cols, p.rows]).toEqual([s.cols, s.rows]);
       }
     }
-    // Os temas do Casual só têm o clássico; pedir outro tamanho num tema cai na grade do tema.
-    expect(themeSizes("comida")).toEqual([]);
+    // Os temas do Casual têm grades em todos os tamanhos do duelo.
+    expect(themeSizes("comida")).toEqual(BOARD_SIZES.map((s) => s.id));
     expect(themeSizes(SURPRISE_THEME)).toEqual(BOARD_SIZES.map((s) => s.id));
     expect(
       themeOfPuzzle(pickOnlinePuzzle("comida", Math.random, "6x6").id)?.id,
@@ -369,7 +369,7 @@ describe("telas do duelo ao vivo", () => {
       "Tabuleiro: 6×6 · Rápido",
     );
   });
-  it("com um tema do Casual (só 8×10), a partida é Surpresa no tamanho escolhido", async () => {
+  it("com um tema do Casual, a partida fica no tema no tamanho escolhido", async () => {
     open();
     fireEvent.click(screen.getByRole("radio", { name: "Natureza" }));
     fireEvent.click(screen.getByRole("button", { name: /Configurar partida/ }));
@@ -383,12 +383,13 @@ describe("telas do duelo ao vivo", () => {
       within(group).getByRole("radio", { name: /^7×7, Médio/ }),
     ).toBeChecked();
     expect(within(group).queryByRole("radio", { name: /^8×10/ })).toBeNull();
-    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Surpresa");
+    expect(screen.getByText(/Tema:/)).toHaveTextContent("Tema: Natureza");
     fireEvent.click(within(group).getByRole("radio", { name: /^6×7, Leve/ }));
     fireEvent.click(screen.getByRole("button", { name: /Criar partida/ }));
     await screen.findByRole("heading", { name: "Chame seu amigo" });
     const room = [...mem.rooms.values()][0];
     expect([room.grid!.cols, room.grid!.rows]).toEqual([6, 7]);
+    expect(room.puzzleId).toMatch(/^casual-natureza-6x7-\d+$/);
   });
   it("criar uma partida mostra o código e espera o amigo", async () => {
     const code = await createRoom();

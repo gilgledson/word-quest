@@ -39,8 +39,11 @@ export const CLUE_MAX_WORD = 9;
 export const CLUE_MAX_BLOCKS = 5;
 /** Pista completa (painel): cabe em duas linhas do painel num celular estreito. */
 export const DICA_MAX_CHARS = 70;
-/** Grades do casual são abertas (só palavras do tema): pelo menos tantas casas de resposta. */
-export const CASUAL_MIN_LETTERS = 40;
+/**
+ * Grades do casual são abertas (só palavras do tema): pelo menos esta parte das casas tem resposta
+ * (no 8×10, 40 casas; no 6×6, 18).
+ */
+export const CASUAL_MIN_FILL = 0.5;
 export type Owner = "p" | "ai";
 export type BotLevel = "facil" | "medio" | "dificil";
 /** Jeito de jogar do oponente: o cuidadoso acerta mais e joga menos letras; o agressivo arrisca. */

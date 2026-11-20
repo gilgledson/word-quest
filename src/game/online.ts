@@ -109,8 +109,8 @@ export const onlinePuzzle = (id: string | undefined) =>
   onlinePuzzles().find((p) => p.id === id);
 /**
  * Tamanhos de tabuleiro que quem cria a partida escolhe (colunas×linhas), do mais rápido ao mais
- * longo. As grades vêm da Aventura (e variantes) desse tamanho. Os temas do Casual só têm grades
- * 8×10, que não é mais oferecido: com um tema, a partida nesses tamanhos é Surpresa.
+ * longo. As grades vêm da Aventura (e variantes) e dos temas do Casual, que têm grades em todos os
+ * tamanhos (scripts/generate-casual-tema.mjs --rows/--cols).
  */
 export const BOARD_SIZES = [
   { id: "6x6", cols: 6, rows: 6, nome: "Rápido", tempo: "~1 min" },
@@ -146,7 +146,7 @@ const themePool = (theme: string, size?: BoardSize) => {
   const all = (themes.find((t) => t.id === theme) ?? themes[0]).puzzles;
   return size ? all.filter((p) => sizeOf(p) === size) : all;
 };
-/** Tamanhos que o tema oferece (os temas do Casual só têm o clássico 8×10). */
+/** Tamanhos que o tema oferece (os temas do Casual têm grades em todos). */
 export const themeSizes = (theme: string) =>
   BOARD_SIZES.filter((s) => themePool(theme, s.id).length > 0).map((s) => s.id);
 /**
