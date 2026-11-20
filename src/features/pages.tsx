@@ -75,6 +75,7 @@ import { Deck } from "../components/Deck";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
+import { DuelCard } from "./DuelCard";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
 export function Home() {
@@ -145,6 +146,7 @@ export function Home() {
           <HomeChest words={words} />
         </div>
       </section>
+      {onlineAvailable() && <DuelCard avatar={p.avatar} />}
       <Link
         className="shop-card"
         to="/loja"

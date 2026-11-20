@@ -91,3 +91,31 @@ it("o botão principal diz o que o toque faz: jogar, continuar ou retomar", () =
     "/loja",
   );
 });
+it("o card 'Desafie seu amigo' leva ao duelo ao vivo, com o avatar do jogador contra o de um amigo", async () => {
+  const { memoryBackend, setOnlineBackend } =
+    await import("../services/online");
+  const { friendAvatarFor } = await import("../features/DuelCard");
+  setOnlineBackend(memoryBackend().as("eu"));
+  usePlayer.setState({
+    player: { ...structuredClone(initialPlayer), avatar: "latina" },
+    ready: true,
+  });
+  const { container } = render(
+    <MemoryRouter>
+      <Home />
+    </MemoryRouter>,
+  );
+  expect(
+    screen.getByRole("link", { name: /Desafie seu amigo/ }),
+  ).toHaveAttribute("href", "/online");
+  const faces = [...container.querySelectorAll(".duel-face")].map((i) =>
+    i.getAttribute("src"),
+  );
+  // O amigo nunca tem o mesmo rosto do jogador.
+  expect(faces).toEqual([
+    "/art/opponents/latina-happy.webp",
+    "/art/opponents/garoto-happy.webp",
+  ]);
+  expect(friendAvatarFor("jogador")).toBe("latina");
+  setOnlineBackend(undefined);
+});
