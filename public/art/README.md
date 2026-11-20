@@ -25,3 +25,11 @@ O mapa mostra a imagem uma vez, cobrindo a tela (cover, centralizada). O caminho
 ## tabuleiros/ (ícones dos tamanhos do duelo ao vivo)
 
 `6x6.webp`, `6x7.webp`, `7x7.webp` e `8x8.webp`: ícones dos cartões "Tamanho do tabuleiro" na tela Configurar partida. Gerados no ChatGPT numa folha única com fundo transparente (`docs/referencias/icones-tabuleiro-chatgpt.png`), a partir da referência da tela (`docs/referencias/duelo-tamanho-chatgpt.png`): tabuleiro 3D com moldura dourada, casas brancas e de pista verdes, e um selo do ritmo (raio, pena, relógio, ampulheta). O `6x7` veio depois, sozinho (`docs/referencias/icone-6x7-chatgpt.png`), reduzido para a mesma escala de casa dos outros. Recortados com `cwebp` na mesma altura (150 px) e alinhados pela base, para manter a escala entre eles.
+
+## resultado/ (faixas do título no fim da partida)
+
+`faixa-vitoria.webp` (dourada, com coroa e estrelas), `faixa-derrota.webp` (azul-prateada) e `faixa-empate.webp` (bronze): fundo da faixa do título no cartão de resultado (`src/features/puzzle/ResultSheet.tsx`). Geradas no ChatGPT numa folha única, sem texto e com fundo transparente (`docs/referencias/faixas-titulo-chatgpt.png`), a partir da referência da tela (`docs/referencias/fim-partida-chatgpt.png`); o texto ("Você venceu!", "Empate!", "Fulano venceu") é do app. Recortadas com `cwebp` em 640 px de largura; a de vitória inclui a coroa (mais alta).
+
+`moldura-vencedor.webp`: moldura do avatar de quem venceu no cartão de resultado (aro dourado com louros, coroa com pedra vermelha, raios e estrelinhas; centro e fundo transparentes). Gerada no ChatGPT (`docs/referencias/moldura-vencedor-chatgpt.png`) e reduzida para 360 px com `cwebp`; no app ela tem 168% do tamanho do avatar, com o furo central rente à borda dele.
+
+`opponents/{cientista,pirata,astronauta,coelhinha,latina,skatista,detetive,cavaleiro,latino}-<humor>.webp`: avatares do jogador (`src/game/avatars.ts`), seis humores cada (neutral, happy, sad, angry, surprised, thinking). Gerados no ChatGPT numa folha 3×2 por personagem, no estilo dos avatares existentes (`docs/referencias/avatares/<id>-chatgpt.png`), e cortados em 256 px com `cwebp -q 82`.

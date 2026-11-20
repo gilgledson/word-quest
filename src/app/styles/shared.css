@@ -576,6 +576,7 @@ footer {
   height: 100%;
   border-radius: 50%;
 }
+/* Catorze avatares: três linhas de cinco, com o nome cabendo embaixo. */
 .avatar-picker {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -601,10 +602,16 @@ footer {
   background: #e8f4ff;
 }
 .avatar-picker .opponent-avatar {
+  width: min(48px, 100%);
+  height: auto;
+  aspect-ratio: 1;
   margin: 0;
   border-radius: 50%;
 }
 .avatar-picker small {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: 9px;
   letter-spacing: -0.2px;
   white-space: nowrap;

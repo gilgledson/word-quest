@@ -13,6 +13,16 @@ export const PLAYER_AVATARS: PlayerAvatar[] = [
   { id: "garoto", name: "Caçador" },
   { id: "gatinho", name: "Gatinho" },
   { id: "panda", name: "Panda" },
+  // Gerados no ChatGPT (docs/referencias/avatares), femininos e masculinos alternados.
+  { id: "cientista", name: "Cientista" },
+  { id: "skatista", name: "Skatista" },
+  { id: "pirata", name: "Pirata" },
+  { id: "detetive", name: "Detetive" },
+  { id: "astronauta", name: "Astronauta" },
+  { id: "cavaleiro", name: "Cavaleiro" },
+  { id: "coelhinha", name: "Coelhinha" },
+  { id: "latino", name: "Latino" },
+  { id: "latina", name: "Latina" },
 ];
 
 export const DEFAULT_AVATAR = PLAYER_AVATARS[0].id;
