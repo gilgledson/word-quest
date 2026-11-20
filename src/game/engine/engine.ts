@@ -171,6 +171,17 @@ export class PuzzleEngine {
     const total = done.reduce((n, w) => n + positions(w).length, 0);
     return (total - covered) * economy.letterPoint;
   }
+  /**
+   * Quanto fechar a palavra rende agora: 1 por letra, mais o extra das casas 2×/3× letra ainda
+   * livres (o "+N ao completar" do painel).
+   */
+  wordValue(s: Session, word: PuzzleWord) {
+    const cells = positions(word);
+    const open = cells
+      .filter((c) => !s.locked.includes(c.key))
+      .map((c) => c.key);
+    return (cells.length + this.rack.boostOf(open)) * economy.letterPoint;
+  }
   /** Palavras totalmente confirmadas. */
   solved(s: Session) {
     return this.puzzle.words.filter((w) =>
@@ -199,8 +210,10 @@ export class PuzzleEngine {
     const r = this.rack.playCells(s, cells, who, limit);
     if (!r) return undefined;
     const done = this.solved(r.session).filter((w) => !before.has(w.id));
-    const bonus = this.completionBonus(s, r.session, done, r.gained);
-    r.session.scores[who] += bonus;
+    const completion = this.completionBonus(s, r.session, done, r.gained);
+    r.session.scores[who] += completion;
+    // Pontos além de 1 por letra: o resto das palavras fechadas e as casas 2×/3× letra.
+    const bonus = completion + r.boost;
     return {
       session: this.firstDuelHand(
         this.rack.ensurePlayable(this.rack.topUpBot(r.session)),
@@ -218,8 +231,15 @@ export class PuzzleEngine {
     const result = this.rack.confirm(s, who);
     delete result.session.swapped;
     const done = this.solved(result.session).filter((w) => !before.has(w.id));
-    const bonus = this.completionBonus(s, result.session, done, result.gained);
-    result.session.scores[who] += bonus;
+    const completion = this.completionBonus(
+      s,
+      result.session,
+      done,
+      result.gained,
+    );
+    result.session.scores[who] += completion;
+    // Pontos além de 1 por letra: o resto das palavras fechadas e as casas 2×/3× letra.
+    const bonus = completion + result.boost;
     return {
       // Ao concluir o turno o jogador recebe peças até voltar a cinco.
       session:

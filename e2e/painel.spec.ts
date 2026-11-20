@@ -46,16 +46,20 @@ test("o painel da palavra mostra o progresso e o bônus", async ({ page }) => {
   await open(page);
   // O tamanho da palavra vem da grade (muda quando a fase é regerada).
   const progress = page.getByTestId("word-progress");
+  // O valor de fechar é 1 por letra, mais o extra das casas 2×/3× da palavra.
   await expect(progress).toHaveText(
-    /^0\/(\d) · restam \1 · \+\1 ao completar$/,
+    /^0\/(\d) · restam \1 · \+\d+ ao completar$/,
   );
-  const n = Number((await progress.innerText()).match(/\/(\d)/)![1]);
+  const text = await progress.innerText();
+  const n = Number(text.match(/\/(\d)/)![1]);
+  const value = Number(text.match(/\+(\d+) ao/)![1]);
+  expect(value).toBeGreaterThanOrEqual(n);
   await page
     .getByRole("button", { name: /^Inserir letra/ })
     .first()
     .click();
   await expect(progress).toHaveText(
-    `1/${n} · restam ${n - 1} · +${n} ao completar`,
+    `1/${n} · restam ${n - 1} · +${value} ao completar`,
   );
 });
 

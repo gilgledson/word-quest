@@ -53,18 +53,23 @@ function open(coins = 100, locked = 0) {
 const progress = () => screen.queryByTestId("word-progress");
 /** Tamanho da primeira palavra da fase 1 (a selecionada ao abrir): muda quando a fase é regerada. */
 const N = levels[0].words[0].answer.length;
+/** Valor de fechar a palavra: 1 por letra, com as casas 2× letra e 2× palavra dela (todas livres). */
+const V = (() => {
+  const engine = new PuzzleEngine(levels[0]);
+  return engine.wordValue(engine.start("v", "medio"), levels[0].words[0]);
+})();
 
 describe("Painel da palavra: progresso e valor de fechar", () => {
   it("mostra letras preenchidas, quantas faltam e o que fechar vale", () => {
     open();
     expect(progress()).toHaveTextContent(
-      `0/${N} · restam ${N} · +${N} ao completar`,
+      `0/${N} · restam ${N} · +${V} ao completar`,
     );
     fireEvent.click(
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
     );
     expect(progress()).toHaveTextContent(
-      `1/${N} · restam ${N - 1} · +${N} ao completar`,
+      `1/${N} · restam ${N - 1} · +${V} ao completar`,
     );
   });
   it("a frase fixa de rotina deixa de aparecer, mas segue para o leitor de tela", () => {
@@ -85,7 +90,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
     });
     expect(note).toHaveClass("message-hidden");
     expect(progress()).toHaveTextContent(
-      `1/${N} · restam ${N - 1} · +${N} ao completar`,
+      `1/${N} · restam ${N - 1} · +${V} ao completar`,
     );
   });
   it("depois de um aviso de resultado, uma jogada de rotina traz o progresso de volta na hora", () => {
@@ -97,7 +102,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
       screen.getAllByRole("button", { name: /^Inserir letra/ })[0],
     );
     expect(progress()).toHaveTextContent(
-      `2/${N} · restam ${N - 2} · +${N} ao completar`,
+      `2/${N} · restam ${N - 2} · +${V} ao completar`,
     );
   });
   it("com todas as casas cheias e ainda não confirmadas, pede a confirmação", () => {
@@ -107,7 +112,7 @@ describe("Painel da palavra: progresso e valor de fechar", () => {
       vi.advanceTimersByTime(5000);
     });
     expect(progress()).toHaveTextContent(
-      `${N - 1}/${N} · resta 1 · +${N} ao completar`,
+      `${N - 1}/${N} · resta 1 · +${V} ao completar`,
     );
   });
   it("palavra fechada mostra 'Palavra completa'", () => {

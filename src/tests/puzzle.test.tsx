@@ -536,7 +536,8 @@ it("versus com zero moedas: partida inteira, pontuação, recompensa única e pe
   expect(done.claimed).toBe(true);
   const result = player().duels["vs:vila-1:dificil"];
   expect(["win", "draw", "loss"]).toContain(result);
-  expect(player().coins).toBe(economy.duel[result]);
+  // Começou com 0 moedas: a derrota não deixa o saldo negativo.
+  expect(player().coins).toBe(Math.max(0, economy.duel[result]));
   // Vencer o duelo conclui a fase (estrelas pela parte dos pontos do jogador); empate ou derrota não.
   expect(player().stars["vila-1"]).toBe(
     result === "win" ? duelStars(done.scores) : undefined,
@@ -545,7 +546,8 @@ it("versus com zero moedas: partida inteira, pontuação, recompensa única e pe
   // Recarregar não paga de novo nem muda o resultado.
   cleanup();
   mount("/play/vila-1?vs=dificil");
-  expect(player().coins).toBe(economy.duel[result]);
+  // Começou com 0 moedas: a derrota não deixa o saldo negativo.
+  expect(player().coins).toBe(Math.max(0, economy.duel[result]));
 }, 120_000);
 
 it("deita só o tabuleiro: transposto, leitura normal e o resto da tela igual", () => {
@@ -612,7 +614,8 @@ it("mostra '+N' animado sobre as casas que pontuaram e o brilho nelas, e some de
   fireEvent.click(confirmButton());
   const floats = [...document.querySelectorAll(".score-float")];
   expect(floats.length).toBeGreaterThan(0);
-  expect(floats[0]).toHaveTextContent(`+${placed}`);
+  // O "+N" é o total da jogada (as casas 2×/3× somam o extra).
+  expect(floats[0]).toHaveTextContent(`+${session().scores.p}`);
   expect(floats[0]).toHaveClass("p");
   expect(document.querySelectorAll(".cell.flash")).toHaveLength(placed);
   expect(screen.getByLabelText("Placar")).toHaveTextContent(

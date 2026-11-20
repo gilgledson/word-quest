@@ -128,6 +128,15 @@ function solveForFree(engine: PuzzleEngine, start: Session) {
   return engine.confirm(s, "p").session;
 }
 
+/**
+ * Motor sem as casas 2×/3× letra: para os testes da regra de palavra completa contarem 1 ponto por
+ * letra (os multiplicadores têm testes próprios em "Casas especiais").
+ */
+const plain = (engine: PuzzleEngine) => {
+  Object.assign(engine.rack, { bonus: {} });
+  return engine;
+};
+
 describe("Catálogo", () => {
   it.each(grids)("$id é válido, num tamanho aceito e denso", (p) => {
     expect(PuzzleValidator.validateCatalog(p)).toEqual([]);
@@ -400,7 +409,7 @@ describe("Confirmação ✓, pontos e ajudas", () => {
     return { s: next, used };
   };
   it("letras ficam pendentes até ✓; só as corretas travam e pontuam", () => {
-    const engine = new PuzzleEngine(small);
+    const engine = plain(new PuzzleEngine(small));
     const start = withLetters(engine, engine.start("t", "medio"), "casa");
     const { used } = start;
     let s = start.s;
@@ -427,7 +436,7 @@ describe("Confirmação ✓, pontos e ajudas", () => {
     expect(r.session).toEqual(s);
   });
   it("palavra completada no ✓ vale a palavra inteira; as casas de cruzamento entram em cada palavra", () => {
-    const engine = new PuzzleEngine(small);
+    const engine = plain(new PuzzleEngine(small));
     const start = withLetters(engine, engine.start("t", "medio"), "casa");
     let s = start.s;
     positions(small.words[0]).forEach((c, i) => {
@@ -732,7 +741,7 @@ describe("Bônus de palavras completadas com uma letra", () => {
   it.each(levels)(
     "$id: duas palavras fechadas com uma letra cada, no mesmo ✓, rendem bônus as duas",
     (p) => {
-      const engine = new PuzzleEngine(p);
+      const engine = plain(new PuzzleEngine(p));
       // Duas palavras sem casas em comum.
       const cells = (id: string) =>
         positions(p.words.find((w) => w.id === id)!).map((c) => c.key);
@@ -761,7 +770,7 @@ describe("Bônus de palavras completadas com uma letra", () => {
   it.each(levels)(
     "$id: duas palavras fechadas com uma letra cada em ✓ seguidos valem a palavra inteira nos dois turnos",
     (p) => {
-      const engine = new PuzzleEngine(p);
+      const engine = plain(new PuzzleEngine(p));
       const cells = (id: string) =>
         positions(p.words.find((w) => w.id === id)!).map((c) => c.key);
       let pair: [string, string] | undefined;
@@ -794,7 +803,7 @@ describe("Bônus de palavras completadas com uma letra", () => {
     },
   );
   it("uma letra que fecha duas palavras de uma vez (cruzamento) vale as duas palavras inteiras", () => {
-    const engine = new PuzzleEngine(small);
+    const engine = plain(new PuzzleEngine(small));
     // A (1,2) é o primeiro A de ARTE e o segundo de CASA: fechar tudo menos esse cruzamento.
     const base = engine.start("cruz", "medio");
     const s0 = JSON.parse(JSON.stringify(base)) as Session;

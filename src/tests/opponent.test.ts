@@ -258,8 +258,12 @@ describe("Partidas completas contra os três níveis", () => {
           (n, w) => n + positions(w).length,
           0,
         );
+        // Casas especiais: +1 por casa 2× e +2 pela 3× letra.
+        const special = engine.rack.boostOf(Object.keys(engine.rack.bonus));
         expect(bonus).toBeGreaterThanOrEqual(0);
-        expect(bonus).toBeLessThanOrEqual(wordTotal * economy.letterPoint);
+        expect(bonus).toBeLessThanOrEqual(
+          (wordTotal + special) * economy.letterPoint,
+        );
       }
     },
   );
