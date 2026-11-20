@@ -104,6 +104,7 @@ export function Home() {
           <Sparkles aria-hidden="true" />
         </h1>
       </section>
+      {onlineAvailable() && <DuelCard avatar={p.avatar} />}
       <section className="adventure-card">
         <Link
           className="adventure-link"
@@ -146,7 +147,6 @@ export function Home() {
           <HomeChest words={words} />
         </div>
       </section>
-      {onlineAvailable() && <DuelCard avatar={p.avatar} />}
       <Link
         className="shop-card"
         to="/loja"
