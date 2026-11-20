@@ -389,7 +389,7 @@ export function OnlineSetup() {
   const navigate = useNavigate();
   const [search] = useSearchParams();
   const chosenTheme = search.get("tema") ?? SURPRISE_THEME;
-  // Tamanho: começa no médio quando o tema tem (os temas do Casual só têm o 8×10). Qualquer tamanho
+  // Tamanho: começa no médio quando o tema tem (os temas do Casual têm todos). Qualquer tamanho
   // pode ser escolhido; se o tema não tiver aquele, a partida vira Surpresa (com aviso).
   const [board, setBoard] = useState<BoardSize>(() => {
     const sizes = themeSizes(chosenTheme);

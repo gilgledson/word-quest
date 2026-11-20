@@ -23,7 +23,7 @@ const SURPRISE_RIVAL = "sorteio";
  * Configuração da partida casual contra um rival do jogo: tamanho do tabuleiro e adversário (a tela
  * do duelo ao vivo, sem aposta nem tempo por jogada). Se o tema tiver grades do tamanho, a partida
  * é do tema; senão, uma grade da Aventura daquele tamanho, jogada como partida livre (sem progresso
- * de fase). Os temas de hoje só têm grades 8×10, então as partidas são livres ("Surpresa").
+ * de fase). Os temas têm grades em todos os tamanhos (6×6 a 8×8), então a partida fica no tema.
  */
 export function CasualSetup() {
   const player = usePlayer((s) => s.player);
@@ -95,7 +95,7 @@ export function CasualSetup() {
           </span>
         </div>
         <p className="online-setup-theme">
-          {/* Os temas só têm grades 8×10: nos tamanhos oferecidos a partida é Surpresa. */}
+          {/* Sem grade do tema no tamanho (conteúdo antigo), a partida é Surpresa. */}
           Tema: <b>{themed.length ? theme.nome : "Surpresa"}</b> ·{" "}
           <Link to="/casual">trocar</Link>
         </p>

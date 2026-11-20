@@ -1,6 +1,9 @@
 // Gera as grades do modo casual com 100% de palavras do tema (tipo) escolhido.
 // Uso: node scripts/generate-casual-tema.mjs [--themes animais,comida] [--count 6] [--tries 400]
-//        [--min-words 14] [--seed 1] [--out src/data/casual.json] [--dry]
+//        [--min-words 14] [--rows 7 --cols 7] [--seed 1] [--out src/data/casual.json] [--dry]
+//
+// Com --rows/--cols, gera grades daquele tamanho (as do duelo e do Casual: 6×6, 6×7, 7×7, 8×8) e as
+// grava ao lado das que o tema já tem, trocando só as do mesmo tamanho (ids casual-<tema>-<C>x<L>-<n>).
 //
 // Em vez de preencher uma grade densa com vocabulário geral (o que obriga a usar palavras de fora do
 // tema), monta a grade colocando só palavras do tema, uma a uma, sempre cruzando letras já postas: cada
@@ -9,7 +12,8 @@
 // aberta que a das fases (ver `casualLayoutErrors` em src/game/engine/validator.ts).
 import fs from "node:fs";
 import path from "node:path";
-import { ROWS, COLS, rng } from "./lib/arrowword.mjs";
+import * as grid from "./lib/arrowword.mjs";
+import { rng, setSize } from "./lib/arrowword.mjs";
 import { validateClues } from "./check-clues.mjs";
 
 const args = Object.fromEntries(
@@ -32,6 +36,11 @@ const count = Number(args.count ?? 6);
 const tries = Number(args.tries ?? 400);
 const minWords = Number(args["min-words"] ?? 14);
 const seed = Number(args.seed ?? 1);
+const sized = args.rows && args.cols;
+if (sized) setSize(Number(args.rows), Number(args.cols));
+// Lidos depois de setSize (o módulo exporta o tamanho atual).
+const ROWS = grid.ROWS;
+const COLS = grid.COLS;
 const themes = JSON.parse(
   fs.readFileSync(path.join(here, "data", "themes.json"), "utf8"),
 );
@@ -285,8 +294,9 @@ for (const id of wanted) {
     console.error(`  só ${chosen.length} grades; aumente --tries`);
     continue;
   }
+  const tag = sized ? `${COLS}x${ROWS}-` : "";
   const puzzles = chosen.map((s, i) => ({
-    id: `casual-${id}-${i + 1}`,
+    id: `casual-${id}-${tag}${i + 1}`,
     number: i + 1,
     world: id,
     difficulty: "casual",
@@ -304,8 +314,19 @@ for (const id of wanted) {
       arrow: x.arrow,
     })),
   }));
-  const entry = { id, nome: theme.nome, puzzles };
   const pos = result.themes.findIndex((t) => t.id === id);
+  // Com tamanho, as grades de outros tamanhos do tema ficam; só as deste são trocadas.
+  const kept =
+    pos < 0
+      ? []
+      : result.themes[pos].puzzles.filter(
+          (p) => !(p.rows === ROWS && p.cols === COLS),
+        );
+  const entry = {
+    id,
+    nome: theme.nome,
+    puzzles: sized ? [...kept, ...puzzles] : puzzles,
+  };
   if (pos < 0) result.themes.push(entry);
   else result.themes[pos] = entry;
 }
