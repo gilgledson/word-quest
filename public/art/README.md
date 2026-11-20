@@ -38,4 +38,8 @@ O mapa mostra a imagem uma vez, cobrindo a tela (cover, centralizada). O caminho
 
 `opponents/{cientista,pirata,astronauta,coelhinha,latina,skatista,detetive,cavaleiro,latino}-<humor>.webp`: avatares do jogador (`src/game/avatars.ts`), seis humores cada (neutral, happy, sad, angry, surprised, thinking). Gerados no ChatGPT numa folha 3×2 por personagem, no estilo dos avatares existentes (`docs/referencias/avatares/<id>-chatgpt.png`), e cortados em 256 px com `cwebp -q 82`.
 
+`duelo/vs.webp`: escudo dourado "VS" com espadas cruzadas do card "Desafie seu amigo" da tela inicial (`src/features/DuelCard.tsx`). Gerado no ChatGPT com fundo transparente a partir do mockup `docs/referencias/home-desafie-amigo-chatgpt.png`, cortado no contorno e reduzido a 320 px (`cwebp -q 85 -alpha_q 100`).
+
+`mundos/{vila,floresta,deserto,reino,ilhas}.webp`: cena de cada mundo no card da tela inicial (`src/features/WorldCard.tsx`); a da Vila é outra composição, para não repetir o fundo (`village-approved-v1.webp`). Geradas no ChatGPT no estilo e enquadramento da Vila (`docs/referencias/mundos/<id>-chatgpt.png`), 720 px de largura, `cwebp -q 80`.
+
 `temas/{animes,esportes,profissoes,corpo,escola}.webp`: arte dos temas novos do Casual e do duelo, geradas no ChatGPT no estilo das quatro primeiras (`docs/referencias/temas/<id>-chatgpt.png`), 512×512, `cwebp -q 82`. A de Animes não usa personagens nem elementos de obras existentes.

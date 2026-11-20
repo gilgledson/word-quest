@@ -6,7 +6,6 @@ import {
   Sparkles,
   LockKeyhole,
   Flag,
-  Compass,
   Volume2,
   Activity,
   Timer,
@@ -32,8 +31,6 @@ import {
   HeartPulse,
   Backpack,
 } from "lucide-react";
-import { Scenery } from "../components/Scenery";
-import { wordsFoundCount } from "../game/chest";
 import {
   achievementStatus,
   claimAchievement,
@@ -41,7 +38,6 @@ import {
   type AchievementStatus,
 } from "../game/achievements";
 import { CoinIcon } from "../components/CoinIcon";
-import { ChestHint, HomeChest } from "./HomeChest";
 import road from "../data/map-road.json";
 import { usePlayer } from "../stores/player";
 import {
@@ -79,106 +75,25 @@ import { Deck } from "../components/Deck";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
+import { DuelCard } from "./DuelCard";
+import { WorldCard } from "./WorldCard";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
 import { canRateInStore, openStoreRating } from "../services/review";
 export function Home() {
-  const p = usePlayer((s) => s.player);
-  const next = levels.find((l) => !p.stars[l.id]) ?? levels[0];
-  const wins = Object.keys(p.stars).length;
-  const words = wordsFoundCount(p.wordsFound);
-  const world = mapOf(next.world);
-  // Partida da próxima fase já começada (há letras confirmadas) e ainda sem resultado.
-  const started = Object.entries(p.sessions).some(
-    ([key, s]) =>
-      key.startsWith(`vs:${next.id}:`) && !s.claimed && s.locked?.length > 0,
+  const wins = usePlayer(
+    (s) => levels.filter((l) => s.player.stars[l.id]).length,
   );
-  // O botão diz o que o toque faz: quem nunca jogou não tem o que "continuar".
-  const action = started
-    ? "Retomar partida"
-    : wins === 0
-      ? "Jogar primeira fase"
-      : "Continuar aventura";
+  const avatar = usePlayer((s) => s.player.avatar);
   return (
     <>
-      <section className="welcome">
-        <h1>
-          <Sparkles aria-hidden="true" />
-          {wins ? "Sua aventura continua!" : "Sua aventura começa!"}
-          <Sparkles aria-hidden="true" />
-        </h1>
-      </section>
-      <section className="adventure-card">
-        <Link
-          className="adventure-link"
-          to={world.path}
-          aria-label={`Ver o mapa: ${world.nome}`}
-        >
-          <div className="world-preview" aria-hidden="true">
-            <Scenery />
-          </div>
-          <div className="scene-label">
-            <span className="pill">
-              MUNDO {String(maps.indexOf(world) + 1).padStart(2, "0")}
-            </span>
-            <h2>{world.nome}</h2>
-            <p>Grandes jornadas começam com pequenas descobertas.</p>
-          </div>
-        </Link>
-        <div className="adventure-action">
-          <div>
-            <ChestHint words={words} />
-            <strong>
-              Fase {next.number} <span>· {next.difficulty}</span>
-            </strong>
-          </div>
-        </div>
-        <div className="journey">
-          <div
-            className="journey-progress"
-            role="progressbar"
-            aria-label="Fases concluídas"
-            aria-valuenow={wins}
-            aria-valuemin={0}
-            aria-valuemax={levels.length}
-          >
-            <span style={{ width: `${(wins / levels.length) * 100}%` }} />
-            <strong>
-              {wins} de {levels.length} fases
-            </strong>
-          </div>
-          <HomeChest words={words} />
-        </div>
-      </section>
-      <Link
-        className="shop-card"
-        to="/loja"
-        aria-label="Loja de itens: Curinga e Kit de vogais"
-      >
-        <span className="shop-card-art" aria-hidden="true">
-          <img src="/art/loja/moedas.webp" alt="" draggable={false} />
-          <img src="/art/loja/vogais.webp" alt="" draggable={false} />
-          <img src="/art/loja/curinga.webp" alt="" draggable={false} />
-        </span>
-        <span className="shop-card-text">
-          <strong>Loja de itens</strong>
-          <small>Curinga e Kit de vogais</small>
-          <span className="shop-card-cta">
-            Ver loja <ArrowRight size={16} aria-hidden="true" />
-          </span>
-        </span>
-      </Link>
-      <Link className="button primary continue-button" to={`/play/${next.id}`}>
-        {action} <ArrowRight size={24} />
-      </Link>
+      {/* O título fica só para leitores de tela: a arte do mundo já abre a tela. */}
+      <h1 className="sr-only">
+        {wins ? "Sua aventura continua!" : "Sua aventura começa!"}
+      </h1>
+      {onlineAvailable() && <DuelCard avatar={avatar} />}
+      <WorldCard />
       <DailyRewardFlow />
-      <div className="gentle-note">
-        <Compass size={23} />
-        <div>
-          <strong>O caminho é seu. O ritmo também.</strong>
-          <p>Sem cronômetro. Sem pressa. Só mais uma descoberta.</p>
-        </div>
-      </div>
     </>
   );
 }
