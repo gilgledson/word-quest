@@ -233,10 +233,16 @@ export function Duel({
     return () => window.clearTimeout(t);
   }, [botPing]);
   const cardRef = useRef<HTMLDivElement>(null);
-  const { floats, flash, popScore, popPenalty } = useScoreFloats(
-    cardRef,
-    player.animations,
-  );
+  const {
+    floats,
+    bursts,
+    trails,
+    flash,
+    glow,
+    popScore,
+    popPenalty,
+    popMultipliers,
+  } = useScoreFloats(cardRef, player.animations);
   const tileFlights = useTileFlights(player.animations);
   const rectOf = (selector: string) =>
     document.querySelector(selector)?.getBoundingClientRect();
@@ -588,6 +594,14 @@ export function Duel({
         date,
       }),
     );
+  /** Casas das palavras que a jogada fechou (para o "+N" da palavra inteira). */
+  const closedCells = (before: Session, after: Session) => {
+    const had = new Set(engine.solved(before).map((w) => w.id));
+    return engine
+      .solved(after)
+      .filter((w) => !had.has(w.id))
+      .flatMap((w) => positions(w).map((c) => c.key));
+  };
   /** Mostra a jogada do rival (letra a letra, com som e pontos) e grava o resultado. */
   const showRivalMove = (turn: {
     session: Session;
@@ -609,9 +623,13 @@ export function Duel({
         total,
         passed: turn.passed,
       });
-      if (turn.gained) popScore(fresh, turn.gained, turn.bonus, "ai");
+      const closed = closedCells(session, turn.session);
       if (turn.gained) {
-        if (turn.bonus) sfx("word", turn.gained);
+        popScore(fresh, turn.gained, turn.bonus, "ai", closed);
+        popMultipliers(fresh, engine.rack.bonus);
+      }
+      if (turn.gained) {
+        if (closed.length) sfx("word", turn.gained);
         else if (!animated) sfx("botMove", turn.gained);
       } else sfx("botPass");
       const rounds = roundOf(turn.session);
@@ -851,16 +869,15 @@ export function Duel({
       tileFlights.launch(tile.id, tile.letter, from, () =>
         rectOf(`[data-tile="${tile.id}"]`),
       );
-    if (r.gained)
-      popScore(
-        r.session.locked.filter((k) => !session.locked.includes(k)),
-        r.gained,
-        r.bonus,
-        "p",
-      );
+    const closed = closedCells(session, r.session);
+    const fresh = r.session.locked.filter((k) => !session.locked.includes(k));
+    if (r.gained) {
+      popScore(fresh, r.gained, r.bonus, "p", closed);
+      popMultipliers(fresh, engine.rack.bonus);
+    }
     popPenalty(r.wrongCells, r.penalty);
     if (r.passed) sfx("pass");
-    else if (r.gained) sfx(r.bonus ? "word" : "correct", r.gained);
+    else if (r.gained) sfx(closed.length ? "word" : "correct", r.gained);
     else sfx("wrong");
     if (r.passed) setMessage("Você passou a vez.");
     else {
@@ -1138,6 +1155,7 @@ export function Duel({
           turn={versus.turn}
           finished={complete}
           animate={prefs.enabled}
+          glow={glow}
           clock={
             clockOn
               ? {
@@ -1149,7 +1167,7 @@ export function Duel({
         />
       </section>
       <div className="board-card" ref={cardRef}>
-        <ScoreFloats floats={floats} />
+        <ScoreFloats floats={floats} bursts={bursts} trails={trails} />
         <Board
           puzzle={puzzle}
           engine={engine}
@@ -1231,7 +1249,8 @@ export function Duel({
                       {filled === active.length
                         ? " · confirme com ✓"
                         : ` · ${active.length - filled === 1 ? "resta 1" : `restam ${active.length - filled}`}`}
-                      {` · +${active.length} ao completar`}
+                      {/* Valor da palavra, com as casas 2× letra e 2× palavra. */}
+                      {` · +${engine.wordValue(session, word)} ao completar`}
                     </>
                   )}
                 </p>

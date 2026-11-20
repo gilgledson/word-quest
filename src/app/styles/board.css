@@ -515,21 +515,125 @@
   -webkit-text-stroke-color: #7a1212;
   text-shadow: 0 2px 0 #7a1212;
 }
-.score-float.bonus {
-  font-size: 18px;
-  color: #b9ffb0;
-  -webkit-text-stroke-color: #14612a;
-  text-shadow: 0 2px 0 #14612a;
+/* Palavra fechada (docs/referencias/pontos-palavra-chatgpt.png): selo no meio da grade com a faixa
+   dourada (a do rival é a azul), o total grande, raios girando e confetes. Não bloqueia toques. */
+.word-burst {
+  position: absolute;
+  z-index: 31;
+  width: 0;
+  height: 0;
+  pointer-events: none;
 }
+.word-burst-rays {
+  position: absolute;
+  left: -110px;
+  top: -110px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, #fff6c2cc 0 22%, #fff6c200 62%),
+    repeating-conic-gradient(#ffe27a99 0 9deg, #ffe27a00 9deg 22deg);
+  mask: radial-gradient(circle, #000 35%, #0000 70%);
+}
+.word-burst.ai .word-burst-rays {
+  background:
+    radial-gradient(circle, #f1e3ffcc 0 22%, #f1e3ff00 62%),
+    repeating-conic-gradient(#c9a2ff99 0 9deg, #c9a2ff00 9deg 22deg);
+}
+/* "+N" grande em cima e a fita "PALAVRA COMPLETA!" embaixo (docs/referencias/fita-pontos-chatgpt.png). */
+.word-burst-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  justify-items: center;
+  width: 210px;
+  translate: -50% -50%;
+}
+/* "+N" montado com os algarismos 3D (public/art/resultado/numeros), um pouco sobrepostos. */
+.word-burst-number {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  filter: drop-shadow(0 0 10px #fff3b0);
+}
+.word-burst-number img {
+  height: 76px;
+  width: auto;
+  margin: 0 -3px;
+}
+.word-burst-number img:first-child {
+  height: 60px;
+  align-self: center;
+  margin-right: 0;
+}
+.word-burst-card > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: -6px;
+  filter: drop-shadow(0 5px 6px #1d2a3a55);
+}
+/* Partículas do PixiJS (src/animations/particles.ts): tela inteira, transparente, sem toques. */
+.fx-particles {
+  position: fixed;
+  inset: 0;
+  z-index: 61;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: none;
+}
+/* Estrelas que voam da palavra até o placar quando não há WebGL (na tela inteira, acima de tudo). */
+.score-trail {
+  position: fixed;
+  z-index: 60;
+  margin: -11px 0 0 -11px;
+  color: #ffd23c;
+  filter: drop-shadow(0 0 4px #fff3b0) drop-shadow(0 2px 0 #b07400);
+  pointer-events: none;
+}
+.score-trail.ai {
+  color: #c9a2ff;
+  filter: drop-shadow(0 0 4px #f1e3ff) drop-shadow(0 2px 0 #4b1670);
+}
+/* O placar brilha quando as estrelas chegam. */
+.duelist-score.glow {
+  animation: score-glow 0.7s ease-out;
+}
+@keyframes score-glow {
+  0% {
+    box-shadow: 0 0 0 0 #ffe27a;
+    transform: scale(1);
+  }
+  30% {
+    box-shadow:
+      0 0 0 4px #ffe27a,
+      0 0 18px 6px #ffd23c;
+    transform: scale(1.25);
+  }
+  100% {
+    box-shadow: 0 0 0 0 #ffe27a00;
+    transform: scale(1);
+  }
+}
+/* Casas que pontuaram acendem em dourado, uma depois da outra (a palavra "percorre" o brilho). */
 .app-playing .letter.flash {
-  animation: cell-flash 0.9s ease-out;
+  animation: cell-flash 0.9s ease-out both;
+  animation-delay: calc(var(--flash-i, 0) * 70ms);
 }
 @keyframes cell-flash {
   0% {
+    box-shadow: none;
+    transform: scale(1);
+  }
+  25% {
+    background: #fff1b0;
     box-shadow:
       inset 0 0 0 3px #ffd23c,
-      0 0 12px 3px #ffd23c;
-    transform: scale(1.12);
+      0 0 16px 5px #ffd23c;
+    transform: scale(1.16);
     z-index: 3;
   }
   100% {
@@ -1567,4 +1671,35 @@
   .coach-ring.pulse {
     animation: none;
   }
+}
+
+/* Casas 2× e 3× letra (src/game/engine/grid.ts `multipliers`): "2×" azul-marinho ou "3×" vinho,
+   grandes no meio da casa vazia; com letra (pendente ou confirmada), pequeno no canto de cima. */
+.mult-tag {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #1c3f9c;
+  font-size: 0.8em;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+.mult-3 .mult-tag {
+  color: #8e1a4f;
+}
+.letter.mult.filled .mult-tag {
+  inset: 3px 5px auto auto;
+  display: block;
+  font-size: 0.38em;
+}
+/* "×2"/"×3" saltando da casa especial quando ela pontua. */
+.score-float.mult {
+  font-size: 26px;
+  color: #b6ffcf;
+  -webkit-text-stroke-color: #0f5a2e;
+  text-shadow: 0 2px 0 #0f5a2e;
 }

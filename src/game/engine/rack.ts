@@ -8,7 +8,7 @@ import {
   type Session,
   type Tile,
 } from "./types";
-import { positions } from "./grid";
+import { multipliers, positions, type Multiplier } from "./grid";
 import { hash, random } from "./random";
 export const JOKER_ID = "joker";
 export const JOKER_LETTER = "?";
@@ -35,9 +35,16 @@ const copy = (s: Session): Session => ({
  */
 export class RackManager {
   readonly solution: Record<string, string> = {};
+  /** Casas 2× e 3× letra da fase (ver `multipliers`). */
+  readonly bonus: Record<string, Multiplier>;
   constructor(private puzzle: Puzzle) {
     for (const w of puzzle.words)
       for (const c of positions(w)) this.solution[c.key] = c.letter;
+    this.bonus = multipliers(puzzle);
+  }
+  /** Pontos a mais das casas especiais entre as recém-travadas (2× rende +1, 3× rende +2). */
+  boostOf(cells: string[]) {
+    return cells.reduce((n, k) => n + ((this.bonus[k] ?? 1) - 1), 0);
   }
   create(
     seed: string,
@@ -344,8 +351,9 @@ export class RackManager {
     return s;
   }
   /**
-   * Confirma as peças pendentes: as corretas travam (dono `who`, +1 ponto cada); as erradas
-   * voltam ao banco e custam 1 ponto cada (o placar não fica abaixo de 0).
+   * Confirma as peças pendentes: as corretas travam (dono `who`, +1 ponto cada, vezes o
+   * multiplicador da casa: `boost` são os pontos a mais); as erradas voltam ao banco e custam 1
+   * ponto cada (o placar não fica abaixo de 0).
    */
   confirm(input: Session, who: Owner) {
     const pending = input.history.filter(
@@ -355,6 +363,7 @@ export class RackManager {
     let gained = 0;
     let returned = 0;
     const wrongCells: string[] = [];
+    const fresh: string[] = [];
     for (const k of pending) {
       // O curinga só vira a letra da casa ao confirmar, e sempre acerta.
       const tile = this.tileAt(s, k);
@@ -365,6 +374,7 @@ export class RackManager {
       if (s.letters[k] === this.solution[k]) {
         s.locked.push(k);
         s.owners[k] = who;
+        fresh.push(k);
         gained++;
       } else {
         this.unplace(s, k);
@@ -376,14 +386,14 @@ export class RackManager {
     if (who === "p" && s.misses !== undefined) s.misses += returned;
     // Cada letra confirmada no lugar errado custa pontos, mas o placar nunca fica negativo.
     const before = s.scores[who];
-    s.scores[who] = Math.max(
-      0,
-      before + gained * economy.letterPoint - returned * economy.wrongLetter,
-    );
-    const penalty = before + gained * economy.letterPoint - s.scores[who];
+    const boost = this.boostOf(fresh) * economy.letterPoint;
+    const won = gained * economy.letterPoint + boost;
+    s.scores[who] = Math.max(0, before + won - returned * economy.wrongLetter);
+    const penalty = before + won - s.scores[who];
     return {
       session: s,
       gained,
+      boost,
       returned,
       penalty,
       wrongCells,
@@ -395,6 +405,7 @@ export class RackManager {
     if (input.history.length) return undefined;
     const s = copy(input);
     let gained = 0;
+    const fresh: string[] = [];
     for (const k of cells) {
       if (gained >= limit) break;
       if (s.locked.includes(k) || !(k in this.solution)) continue;
@@ -403,10 +414,12 @@ export class RackManager {
         if (who === "ai") continue;
         return undefined;
       }
+      fresh.push(k);
       gained++;
     }
-    s.scores[who] += gained * economy.letterPoint;
-    return { session: s, gained };
+    const boost = this.boostOf(fresh) * economy.letterPoint;
+    s.scores[who] += gained * economy.letterPoint + boost;
+    return { session: s, gained, boost };
   }
   /** O oponente tem alguma peça que serve a uma casa ainda vazia? */
   botHasMove(s: Session) {

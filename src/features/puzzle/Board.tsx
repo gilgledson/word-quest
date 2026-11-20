@@ -137,7 +137,10 @@ export function Board({
           const isActive = active.some((p) => p.key === ck);
           const locked = session.locked.includes(ck);
           const owner = session.owners[ck];
+          // Casa 2×/3× letra: grande no meio da casa vazia; com letra (pendente ou travada), no canto.
+          const mult = engine.rack.bonus[ck];
           const botLetter = session.letters[ck] ? undefined : botReveal?.[ck];
+          const filled = !!(session.letters[ck] ?? botLetter);
           return (
             <button
               {...(mine && pending(ck)
@@ -146,12 +149,13 @@ export function Board({
                     hiddenJoker(ck) ? "★" : session.letters[ck],
                   )
                 : {})}
-              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${lastBotCells?.includes(ck) ? `last-bot ${lastBotPing ? "ping" : ""}` : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${hiddenJoker(ck) ? "joker-hidden" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
+              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${lastBotCells?.includes(ck) ? `last-bot ${lastBotPing ? "ping" : ""}` : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${hiddenJoker(ck) ? "joker-hidden" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${mult ? `mult mult-${mult}${filled ? " filled" : ""}` : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
               data-cell={ck}
               style={
                 {
                   ...place(r, c),
                   "--i": active.findIndex((a) => a.key === ck),
+                  "--flash-i": Math.max(0, flash.indexOf(ck)),
                 } as CSSProperties
               }
               data-words={belongs.map((w) => w.id).join(" ")}
@@ -169,6 +173,11 @@ export function Board({
             >
               {hiddenJoker(ck) ? "★" : (session.letters[ck] ?? botLetter)}
               {locked && <i />}
+              {mult && (
+                <em className="mult-tag" aria-hidden="true">
+                  {mult}×
+                </em>
+              )}
             </button>
           );
         })}

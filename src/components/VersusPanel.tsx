@@ -25,6 +25,7 @@ export function VersusPanel({
   finished,
   animate,
   clock,
+  glow,
 }: {
   player: Side;
   rival: Side;
@@ -33,6 +34,8 @@ export function VersusPanel({
   animate: boolean;
   /** Relógio da vez: duração em segundos e uma chave que muda a cada vez (recomeça a contagem). */
   clock?: { seconds: number; key: string | number };
+  /** Placar que brilha quando as estrelas de uma palavra fechada chegam (a chave repete o brilho). */
+  glow?: { owner: "p" | "ai"; key: number };
 }) {
   const side = (s: Side, who: "p" | "ai") => (
     <div
@@ -50,7 +53,11 @@ export function VersusPanel({
       </span>
       <span className="duelist-info">
         <span className="duelist-name">{s.name}</span>
-        <span className="duelist-score" aria-label={`${s.score} pontos`}>
+        <span
+          key={glow?.owner === who ? glow.key : undefined}
+          className={`duelist-score ${glow?.owner === who ? "glow" : ""}`}
+          aria-label={`${s.score} pontos`}
+        >
           <motion.strong
             key={s.score}
             initial={animate ? { scale: 1.6 } : false}
