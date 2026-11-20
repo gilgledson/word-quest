@@ -37,3 +37,7 @@ O mapa mostra a imagem uma vez, cobrindo a tela (cover, centralizada). O caminho
 `moldura-vencedor.webp`: moldura do avatar de quem venceu no cartão de resultado (aro dourado com louros, coroa com pedra vermelha, raios e estrelinhas; centro e fundo transparentes). Gerada no ChatGPT (`docs/referencias/moldura-vencedor-chatgpt.png`) e reduzida para 360 px com `cwebp`; no app ela tem 168% do tamanho do avatar, com o furo central rente à borda dele.
 
 `opponents/{cientista,pirata,astronauta,coelhinha,latina,skatista,detetive,cavaleiro,latino}-<humor>.webp`: avatares do jogador (`src/game/avatars.ts`), seis humores cada (neutral, happy, sad, angry, surprised, thinking). Gerados no ChatGPT numa folha 3×2 por personagem, no estilo dos avatares existentes (`docs/referencias/avatares/<id>-chatgpt.png`), e cortados em 256 px com `cwebp -q 82`.
+
+`duelo/vs.webp`: escudo dourado "VS" com espadas cruzadas do card "Desafie seu amigo" da tela inicial (`src/features/DuelCard.tsx`). Gerado no ChatGPT com fundo transparente a partir do mockup `docs/referencias/home-desafie-amigo-chatgpt.png`, cortado no contorno e reduzido a 320 px (`cwebp -q 85 -alpha_q 100`).
+
+`mundos/{vila,floresta,deserto,reino,ilhas}.webp`: cena de cada mundo no card da tela inicial (`src/features/WorldCard.tsx`); a da Vila é outra composição, para não repetir o fundo (`village-approved-v1.webp`). Geradas no ChatGPT no estilo e enquadramento da Vila (`docs/referencias/mundos/<id>-chatgpt.png`), 720 px de largura, `cwebp -q 80`.

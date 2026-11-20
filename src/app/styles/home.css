@@ -33,7 +33,8 @@
 .app-home > main {
   min-height: 0;
   display: grid;
-  grid-template-rows: minmax(60px, 1fr) auto auto auto;
+  grid-template-rows: auto auto;
+  align-content: start;
   gap: clamp(10px, 1.6dvh, 18px);
 }
 .app-home .welcome {
@@ -263,7 +264,6 @@
     padding-bottom: max(6px, env(safe-area-inset-bottom));
   }
   .app-home > main {
-    grid-template-rows: minmax(40px, 1fr) auto auto auto;
     gap: 8px;
   }
   .app-home .shop-card {
@@ -514,5 +514,482 @@
     min-height: 30px;
     padding: 3px 6px;
     font-size: 12px;
+  }
+}
+
+/* ===== Tela inicial redesenhada (docs/referencias/home-redesign-chatgpt.webp) =====
+   Card do mundo atual (arte, nome, trilha das fases com o baú, total da Aventura e o botão de
+   continuar) e, embaixo, o card compacto "Desafie seu amigo". */
+.app-home > main {
+  padding-top: clamp(4px, 1.5dvh, 16px);
+}
+.world-card {
+  display: grid;
+  overflow: hidden;
+  border: 3px solid #f3d27a;
+  border-radius: 26px;
+  background: #fffaf0;
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 8px 20px #2a1d0533;
+}
+.world-card-art {
+  display: block;
+  height: clamp(96px, 22dvh, 210px);
+  overflow: hidden;
+  /* Céu e grama enquanto a arte do mundo carrega. */
+  background: linear-gradient(#9fd4ff, #cdeaa8);
+}
+.world-card-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+}
+.world-card-body {
+  display: grid;
+  justify-items: center;
+  gap: clamp(2px, 0.8dvh, 8px);
+  padding: clamp(8px, 1.6dvh, 14px) clamp(12px, 4vw, 20px)
+    clamp(10px, 2dvh, 18px);
+  color: #15365e;
+  text-align: center;
+}
+/* Selo "MUNDO 01" com um traço dourado de cada lado. */
+.world-card-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  justify-content: center;
+  color: #5b3d00;
+  font-size: clamp(12px, 3.4vw, 15px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+.world-card-pill::before,
+.world-card-pill::after {
+  content: "";
+  flex: 1;
+  max-width: 90px;
+  height: 2px;
+  border-radius: 2px;
+  background: #e6c46a;
+}
+.world-card h2 {
+  margin: 0;
+  font-size: clamp(24px, 7.4vw, 36px);
+  font-weight: 900;
+  line-height: 1.05;
+}
+.world-card-step {
+  margin: 0;
+  color: #4d5c6e;
+  font-size: clamp(14px, 4vw, 19px);
+  font-weight: 800;
+}
+/* Trilha das fases do mundo: círculos ligados por um traço, o baú no fim. */
+.world-trail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: clamp(2px, 0.8dvh, 8px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+.world-step,
+.world-trail-chest {
+  position: relative;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+}
+/* O traço entre um círculo e o anterior. */
+.world-step + .world-step,
+.world-step + .world-trail-chest {
+  margin-left: clamp(10px, 3.4vw, 18px);
+}
+.world-step + .world-step::before,
+.world-step + .world-trail-chest::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  width: clamp(10px, 3.4vw, 18px);
+  height: 5px;
+  margin-top: -2.5px;
+  background: #b9d3ea;
+}
+.world-step.done + .world-step::before,
+.world-step.done + .world-trail-chest::before {
+  background: linear-gradient(90deg, #f6c94a, #b9d3ea);
+}
+.world-step {
+  width: clamp(34px, 10.6vw, 48px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  font-size: clamp(16px, 5vw, 22px);
+  font-weight: 900;
+}
+.world-step.done {
+  border: 3px solid #d99a10;
+  background: radial-gradient(circle at 35% 30%, #fff1a8, #f5bf2a 60%, #e09d0c);
+  box-shadow: 0 3px 0 #b97e05;
+  color: #5b3d00;
+}
+.world-step.done svg {
+  width: 55%;
+  height: 55%;
+}
+.world-step.current {
+  border: 3px solid #fff;
+  background: radial-gradient(circle at 35% 30%, #6fb6ff, #1f6fe5 65%, #1553c4);
+  box-shadow:
+    0 0 0 3px #4aa3ff66,
+    0 0 14px #3d9bff99;
+  color: #fff;
+}
+.world-step.pending {
+  border: 3px solid #d5dde7;
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e5ebf2);
+  color: #7b8796;
+}
+/* O baú das palavras (src/features/HomeChest.tsx) fecha a trilha. */
+.world-trail-chest .journey-chest {
+  position: relative;
+  inset: auto;
+  width: clamp(40px, 12vw, 54px);
+  height: clamp(44px, 13vw, 58px);
+  background-color: transparent;
+  background-image: url("/art/game-icons-v1.webp");
+  background-size: 400% 100%;
+  background-position: 100% 50%;
+  background-repeat: no-repeat;
+}
+.world-card-total {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 10px;
+  margin: 0;
+  color: #4d5c6e;
+  font-size: clamp(12px, 3.4vw, 14px);
+  font-weight: 800;
+}
+.world-card-total .chest-hint {
+  font-size: inherit;
+}
+.app-home .world-card .continue-button {
+  grid-area: auto;
+  align-self: auto;
+  width: 100%;
+  margin: clamp(4px, 1dvh, 10px) 0 0;
+}
+
+/* Card "Desafie seu amigo": os dois avatares com o escudo VS à esquerda, título, subtítulo e o
+   botão "Convidar" à direita. */
+.app-home .duel-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(8px, 3vw, 14px);
+  padding: clamp(8px, 1.4dvh, 12px) clamp(10px, 3.4vw, 16px);
+  border: 3px solid #f3d27a;
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 22% 50%, #fff6d4 0 30%, transparent 62%), #fffaf0;
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 6px 16px #2a1d0526;
+  color: #15365e;
+  text-decoration: none;
+}
+.duel-card-faces {
+  display: flex;
+  align-items: center;
+  padding-right: clamp(8px, 3vw, 14px);
+  border-right: 2px solid #f0e2bc;
+}
+.duel-face {
+  position: relative;
+  width: clamp(50px, 15vw, 76px);
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #3f8cff;
+  background: radial-gradient(circle at 50% 35%, #8fd0ff, #2f74e0);
+  box-shadow: 0 3px 6px #15365e33;
+}
+.duel-face.friend {
+  border-color: #ff6d8e;
+  background: radial-gradient(circle at 50% 35%, #ffd0dc, #f0708f);
+}
+/* O escudo fica entre os dois rostos, por cima deles. */
+.duel-vs {
+  position: relative;
+  z-index: 1;
+  width: clamp(44px, 14vw, 62px);
+  margin: 0 clamp(-20px, -5vw, -14px);
+  filter: drop-shadow(0 3px 4px #3b260055);
+}
+.duel-card-text {
+  display: grid;
+  justify-items: start;
+  gap: 2px;
+  min-width: 0;
+}
+.duel-card-text strong {
+  font-size: clamp(17px, 4.8vw, 24px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+.duel-card-text small {
+  color: #4d5c6e;
+  font-size: clamp(12px, 3.4vw, 15px);
+  font-weight: 800;
+}
+.duel-card-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 4px;
+  padding: 6px 12px;
+  border: 2px solid #c98a00;
+  border-radius: 999px;
+  background: linear-gradient(#ffe48a, #f4b81c);
+  box-shadow: 0 3px 0 #a86f00;
+  color: #3b2600;
+  font-size: clamp(15px, 4.4vw, 20px);
+  font-weight: 900;
+}
+.duel-card-cta svg {
+  width: 1em;
+  height: 1em;
+}
+.app-home .duel-card:active .duel-card-cta {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #a86f00;
+}
+
+/* Telas baixas (360×640): arte do mundo mais baixa e espaços menores para tudo caber. */
+@media (max-height: 700px) {
+  .world-card-art {
+    height: clamp(64px, 13dvh, 110px);
+  }
+  .world-card-body {
+    gap: 2px;
+    padding: 6px 12px 10px;
+  }
+  .world-card h2 {
+    font-size: 24px;
+  }
+  .world-step {
+    width: 34px;
+    font-size: 16px;
+  }
+  .app-home .world-card .continue-button {
+    min-height: 46px;
+    margin-top: 4px;
+  }
+  .duel-face {
+    width: 48px;
+  }
+  .duel-vs {
+    width: 40px;
+  }
+}
+/* Tela deitada a partir de 600 px (tablet ou computador): os cards seguem um abaixo do outro, e o
+   do mundo põe a arte ao lado do texto para caber sem rolar. */
+@media (orientation: landscape) and (min-width: 600px) {
+  .world-card {
+    grid-template-columns: 30% minmax(0, 1fr);
+  }
+  .world-card-body {
+    min-width: 0;
+    align-content: center;
+    gap: 4px;
+  }
+  /* Tamanhos fixos: as medidas em vw crescem demais nas telas largas e não caberiam ao lado da arte. */
+  .world-card h2 {
+    font-size: 26px;
+  }
+  .world-card-step {
+    font-size: 15px;
+  }
+  .world-step {
+    width: 36px;
+    font-size: 17px;
+  }
+  .world-step + .world-step,
+  .world-step + .world-trail-chest {
+    margin-left: 10px;
+  }
+  .world-step + .world-step::before,
+  .world-step + .world-trail-chest::before {
+    width: 10px;
+  }
+  .world-trail-chest .journey-chest {
+    width: 40px;
+    height: 44px;
+  }
+  .world-card-total {
+    font-size: 12px;
+  }
+  .app-home .world-card .continue-button {
+    min-height: 48px;
+    font-size: 19px;
+  }
+  /* A arte acompanha a altura do texto (não a define). */
+  .world-card-art {
+    position: relative;
+    height: auto;
+  }
+  .world-card-art img {
+    position: absolute;
+    inset: 0;
+  }
+}
+/* Celular deitado (tela baixa): não cabe um card abaixo do outro, então o de duelo fica à esquerda
+   e o do mundo à direita, tudo menor para caber entre o topo e o menu. */
+@media (max-height: 500px) and (min-width: 600px) {
+  .app-home > main {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+    grid-template-rows: auto;
+    align-items: start;
+    padding-top: 0;
+  }
+  .app-home .duel-card {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .duel-card-faces {
+    padding: 0 0 8px;
+    border: 0;
+    border-bottom: 2px solid #f0e2bc;
+  }
+  .duel-card-text {
+    justify-items: center;
+  }
+  .world-card {
+    grid-template-columns: 30% minmax(0, 1fr);
+  }
+  .world-step + .world-step,
+  .world-step + .world-trail-chest {
+    margin-left: 10px;
+  }
+  .world-step + .world-step::before,
+  .world-step + .world-trail-chest::before {
+    width: 10px;
+  }
+  .world-card-total {
+    flex-wrap: nowrap;
+    font-size: 11px;
+  }
+  .world-card-body {
+    gap: 2px;
+    padding: 4px 12px 6px;
+  }
+  .world-card-pill {
+    font-size: 11px;
+  }
+  .world-card h2 {
+    font-size: 20px;
+  }
+  .world-card-step {
+    display: none;
+  }
+  .world-trail {
+    margin: 0;
+  }
+  .world-trail-chest .journey-chest {
+    width: 34px;
+    height: 38px;
+  }
+  .world-step {
+    width: 30px;
+    font-size: 15px;
+  }
+  .app-home .world-card .continue-button {
+    min-height: 40px;
+    padding-block: 4px;
+    font-size: 17px;
+  }
+}
+/* Os cards nunca são espremidos abaixo do conteúdo (o overflow: hidden deixaria a grade cortá-los);
+   se em alguma tela não couber, a área dos cards rola em vez de cortar o botão. */
+.world-card,
+.app-home .duel-card {
+  min-height: min-content;
+}
+.app-home > main {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.world-card-pill b {
+  padding: 3px 16px;
+  border: 2px solid #e9c25c;
+  border-radius: 999px;
+  background: linear-gradient(#fff0b8, #f9d677);
+}
+/* Véu azul sobre a paisagem do fundo: os cards creme saltam à frente e a arte do mundo no card não
+   disputa com o fundo. Só na tela inicial (partida e páginas internas usam a paisagem como antes). */
+.app-home .home-landscape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(#1b4fa8a6, #1a4296b3);
+}
+
+/* Barra de abas (docs/referencias/home-redesign-chatgpt.webp): creme sólido com borda dourada como
+   os cards; a aba ativa fica azul com um traço embaixo, sem o fundo de pílula. Vale em todas as
+   telas que mostram a barra (seletor mais forte que o .app-home > .bottom-nav de antes). */
+.app > nav.bottom-nav {
+  border: 2px solid #f3d27a;
+  background: #fffaf0;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 6px 18px #1b3a5c40;
+}
+.app > nav.bottom-nav a {
+  position: relative;
+  padding-bottom: 10px;
+  color: #3b4a5c;
+}
+.app > nav.bottom-nav a.active {
+  background: none;
+  box-shadow: none;
+  color: #1553c4;
+}
+.app > nav.bottom-nav a.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: min(56%, 64px);
+  height: 4px;
+  border-radius: 4px;
+  background: #1553c4;
+  transform: translateX(-50%);
+}
+.app > nav.bottom-nav a:not(.active):active {
+  background: #f6ecd2;
+}
+/* Telas muito baixas (320×568): o traço da aba ativa encosta mais, para a barra não roubar altura. */
+@media (max-height: 600px) {
+  .app > nav.bottom-nav a {
+    padding-bottom: 5px;
+  }
+  .app > nav.bottom-nav a.active::after {
+    bottom: 1px;
+    height: 3px;
   }
 }
