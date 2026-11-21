@@ -571,6 +571,36 @@ describe("telas do duelo ao vivo", () => {
     ).toBeInTheDocument();
     expect(usePlayer.getState().player.activeOnline).toBe(code);
   });
+  it("amigo sem conexão aparece só no rosto dele (sem faixa empurrando a tela); depois de 2 minutos o rosto encerra a partida", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    // A amiga não está na sala: rosto em cinza com o selo, e nenhuma faixa no topo.
+    const rival = screen.getByTestId("duelist-rival");
+    expect(rival).toHaveClass("offline");
+    expect(
+      screen.getByRole("img", { name: "Bia está sem conexão" }),
+    ).toBeInTheDocument();
+    expect(document.querySelector(".online-banner")).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: /encerrar a partida/ }),
+    ).toBeNull();
+    // Passados 2 minutos, o rosto vira botão; confirmar encerra e dá a vitória.
+    act(() => void vi.advanceTimersByTime(RIVAL_OFFLINE_MS + 100));
+    const claim = await screen.findByRole("button", {
+      name: "Bia está sem conexão: encerrar a partida e ficar com a vitória",
+    });
+    const ask = vi.spyOn(window, "confirm").mockReturnValue(true);
+    await act(async () => {
+      fireEvent.click(claim);
+    });
+    expect(ask).toHaveBeenCalledOnce();
+    expect(await screen.findByText(/Bia saiu da partida/)).toBeInTheDocument();
+    vi.useRealTimers();
+  });
   it("o amigo só pode encerrar depois de 2 minutos; quem ficou fora vê quem encerrou", async () => {
     expect(RIVAL_OFFLINE_MS).toBe(120_000);
     const code = await createRoom();
