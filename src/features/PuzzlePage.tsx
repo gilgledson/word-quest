@@ -32,6 +32,12 @@ import { itemCount, spendItem, VOWELS } from "../game/shop";
 import { ItemsDialog } from "./puzzle/ItemsDialog";
 import { requestReview, shouldAskReview } from "../services/review";
 import {
+  duelMode,
+  reached,
+  withMilestone,
+  type Milestone,
+} from "../game/funnel";
+import {
   bestWord,
   boardShareText,
   currentStreak,
@@ -157,6 +163,16 @@ export function Duel({
     session,
     guidedWord,
   } = setup;
+  const mode = duelMode({ online: !!online, daily, casual });
+  /** Marco do funil da primeira experiência: medido uma vez só por jogador (ver game/funnel). */
+  const reach = (
+    m: Milestone,
+    params: Record<string, string | number | boolean> = {},
+  ) => {
+    if (reached(usePlayer.getState().player, m)) return;
+    track(m, params);
+    update((p) => withMilestone(p, m));
+  };
   // Quem joga esta partida: o amigo (ao vivo) ou o personagem gravado na sessão.
   const rival = online?.rival ?? opponentOfSession(session?.versus);
   // No tutorial da fase 1 a partida começa na palavra guiada (o banco tem as letras dela). Numa
@@ -322,6 +338,51 @@ export function Duel({
     // Uma vez por partida aberta (a revanche começa outra com outra semente).
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sessionKey, session?.versus?.seed]);
+  // Início de duelo em qualquer modo (a Aventura também tem o level_start acima). Fase bloqueada
+  // não conta: o jogador nem jogou.
+  const locked =
+    !daily &&
+    !casual &&
+    !online &&
+    !!puzzle &&
+    puzzle.number > 1 &&
+    !player.stars[levels[puzzle.number - 2]?.id];
+  useEffect(() => {
+    if (!session || !puzzle || finished || locked) return;
+    if (session.versus.rngCount !== 0 || session.history.length) return;
+    track("duel_start", {
+      mode,
+      size: `${puzzle.cols}x${puzzle.rows}`,
+      bot_level: session.versus.level,
+      opponent: session.versus.opponent ?? "",
+      first: !reached(usePlayer.getState().player, "first_duel_end"),
+    });
+    // Uma vez por partida aberta (a revanche começa outra com outra semente).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionKey, session?.versus?.seed]);
+  // Saiu do primeiro duelo sem terminar: onde parou (uma vez só por jogador).
+  const firstQuit = useRef<Record<string, string | number> | null>(null);
+  firstQuit.current =
+    session && puzzle && !finished && !locked
+      ? {
+          mode,
+          round: session.versus.rngCount,
+          letters: session.locked.filter((k) => session.owners[k] === "p")
+            .length,
+          score_player: session.scores.p,
+          score_rival: session.scores.ai,
+          duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
+        }
+      : null;
+  useEffect(
+    () => () => {
+      const info = firstQuit.current;
+      const p = usePlayer.getState().player;
+      if (info && !reached(p, "first_duel_end")) reach("first_duel_quit", info);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [sessionKey],
+  );
   const quit = useRef<Record<string, string | number> | null>(null);
   quit.current =
     campaign && session && puzzle && !finished
@@ -349,6 +410,13 @@ export function Duel({
       sfx(p > ai ? "win" : p === ai ? "draw" : "lose");
       if (p > ai) void celebrate(player.animations);
       setResultOpen(true);
+      reach("first_duel_end", {
+        result: p > ai ? "win" : p === ai ? "draw" : "loss",
+        mode,
+        score_player: p,
+        score_rival: ai,
+        duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
+      });
       track("duel_end", {
         result: p > ai ? "win" : p === ai ? "draw" : "loss",
         mode: online
@@ -626,6 +694,11 @@ export function Duel({
         passed: turn.passed,
       });
       const closed = closedCells(session, turn.session);
+      reach("first_rival_turn", {
+        mode,
+        passed: turn.passed,
+        letters: fresh.length,
+      });
       if (turn.gained) {
         popScore(fresh, turn.gained, turn.bonus, "ai", closed);
         popMultipliers(fresh, engine.rack.bonus);
@@ -873,6 +946,19 @@ export function Duel({
       );
     const closed = closedCells(session, r.session);
     const fresh = r.session.locked.filter((k) => !session.locked.includes(k));
+    if (!r.passed)
+      reach("first_move", {
+        mode,
+        correct: fresh.length,
+        wrong: r.wrongCells.length,
+        tutorial: inTutorial,
+      });
+    if (closed.length)
+      reach("first_word", {
+        mode,
+        letters: closed.length,
+        tutorial: inTutorial,
+      });
     if (r.gained) {
       popScore(fresh, r.gained, r.bonus, "p", closed);
       popMultipliers(fresh, engine.rack.bonus);
