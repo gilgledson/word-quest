@@ -836,21 +836,6 @@ export function OnlineMatch() {
           </span>
         </div>
       )}
-      {room.status === "playing" && !rivalOnline && (
-        <div className="online-banner" role="status">
-          <span>{rivalProfile(rival).name} está sem conexão.</span>
-          {rivalGone && (
-            <button
-              type="button"
-              onClick={() =>
-                rival && void backend.abandon(code, rival.uid, uid)
-              }
-            >
-              Encerrar e ficar com a vitória
-            </button>
-          )}
-        </div>
-      )}
       <Duel
         setup={{
           daily: false,
@@ -878,7 +863,23 @@ export function OnlineMatch() {
               : undefined,
           notice:
             room.status === "playing" && !rivalOnline
-              ? `${rivalProfile(rival).name} está sem conexão…`
+              ? rivalGone
+                ? `${rivalProfile(rival).name} está sem conexão. Toque no rosto para encerrar e vencer.`
+                : `${rivalProfile(rival).name} está sem conexão…`
+              : undefined,
+          // O amigo sem conexão aparece só no rosto dele, no placar (a faixa no topo empurrava o
+          // banco e os botões para fora da tela).
+          rivalOffline: room.status === "playing" && !rivalOnline,
+          onClaimWin:
+            room.status === "playing" && !rivalOnline && rivalGone && rival
+              ? () => {
+                  if (
+                    window.confirm(
+                      `${rivalProfile(rival).name} está sem conexão há mais de ${RIVAL_OFFLINE_MS / 60_000} minutos. Encerrar a partida e ficar com a vitória?`,
+                    )
+                  )
+                    void backend.abandon(code, rival.uid, uid);
+                }
               : undefined,
         }}
       />

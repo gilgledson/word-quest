@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
+import { WifiOff } from "lucide-react";
 import { OpponentPortrait } from "./OpponentPortrait";
 import type { Mood, OpponentProfile } from "../game/opponents";
 
@@ -9,6 +10,10 @@ interface Side {
   score: number;
   mood: Mood;
   moodKey: number;
+  /** Sem conexão (duelo ao vivo): o rosto fica em cinza com o selo de wi-fi cortado. */
+  offline?: boolean;
+  /** Tocar no rosto encerra a partida (o amigo sumiu há tempo demais); sem isso, não é botão. */
+  onClaim?: () => void;
 }
 
 /**
@@ -16,7 +21,8 @@ interface Side {
  * para o jogador, roxo para o oponente), o placar em faixas com escudo, o selo VS no centro e uma
  * seta mostrando de quem é a vez. O anel de quem joga pulsa. Os rostos reagem com as expressões.
  * Com tempo por jogada (`clock`), o VS dá lugar a um cronômetro com os segundos que restam
- * (docs/referencias/relogio-vs-chatgpt.png).
+ * (docs/referencias/relogio-vs-chatgpt.png). No duelo ao vivo, o amigo sem conexão aparece com o
+ * rosto em cinza e o selo de wi-fi cortado (docs/referencias/aviso-offline-chatgpt.png).
  */
 export function VersusPanel({
   player,
@@ -37,20 +43,45 @@ export function VersusPanel({
   /** Placar que brilha quando as estrelas de uma palavra fechada chegam (a chave repete o brilho). */
   glow?: { owner: "p" | "ai"; key: number };
 }) {
+  const portrait = (s: Side) => (
+    <>
+      <OpponentPortrait
+        opponent={s.face}
+        mood={s.mood}
+        moodKey={s.moodKey}
+        size={38}
+        animate={animate}
+      />
+      {s.offline && (
+        <span className="offline-badge" aria-hidden="true">
+          <WifiOff strokeWidth={3} />
+        </span>
+      )}
+    </>
+  );
   const side = (s: Side, who: "p" | "ai") => (
     <div
-      className={`duelist ${who === "p" ? "player" : "rival"} ${!finished && turn === who ? "turn" : ""}`}
+      className={`duelist ${who === "p" ? "player" : "rival"} ${!finished && turn === who ? "turn" : ""} ${s.offline ? "offline" : ""}`}
       data-testid={who === "p" ? "duelist-player" : "duelist-rival"}
     >
-      <span className="duelist-frame">
-        <OpponentPortrait
-          opponent={s.face}
-          mood={s.mood}
-          moodKey={s.moodKey}
-          size={38}
-          animate={animate}
-        />
-      </span>
+      {s.onClaim ? (
+        <button
+          type="button"
+          className="duelist-frame claim"
+          aria-label={`${s.name} está sem conexão: encerrar a partida e ficar com a vitória`}
+          onClick={s.onClaim}
+        >
+          {portrait(s)}
+        </button>
+      ) : (
+        <span
+          className="duelist-frame"
+          aria-label={s.offline ? `${s.name} está sem conexão` : undefined}
+          role={s.offline ? "img" : undefined}
+        >
+          {portrait(s)}
+        </span>
+      )}
       <span className="duelist-info">
         <span className="duelist-name">{s.name}</span>
         <span

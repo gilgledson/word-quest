@@ -160,15 +160,25 @@ export function firebaseBackend(): OnlineBackend {
     },
     presence(code, who, onOnline) {
       const mine = ref(db, `rooms/${code}/online/${who}`);
-      void onDisconnect(mine)
-        .remove()
-        .then(() => set(mine, true))
-        .catch(() => {});
+      // A cada (re)conexão: o servidor apaga a presença se a conexão cair e ela é gravada de novo.
+      // Sem isso, depois de uma queda (app em segundo plano, troca de Wi-Fi para dados) o servidor
+      // apagava a presença e ela não voltava: o amigo seguia "sem conexão" mesmo jogando.
+      const stopConnected = onValue(ref(db, ".info/connected"), (snap) => {
+        if (snap.val() !== true) return;
+        void onDisconnect(mine)
+          .remove()
+          .then(() => set(mine, true))
+          .catch(() => {});
+      });
       const stop = onValue(ref(db, `rooms/${code}/online`), (snap) =>
         onOnline(Object.keys((snap.val() as Record<string, true>) ?? {})),
       );
       return () => {
+        stopConnected();
         stop();
+        void onDisconnect(mine)
+          .cancel()
+          .catch(() => {});
         void remove(mine).catch(() => {});
       };
     },

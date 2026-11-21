@@ -129,6 +129,10 @@ export interface OnlineDuel {
   onTurn: (next: Session) => void;
   /** Aviso fixo sobre a conexão do amigo, quando há. */
   notice?: string;
+  /** O amigo está sem conexão: o rosto dele no placar fica em cinza com o selo de wi-fi cortado. */
+  rivalOffline?: boolean;
+  /** Depois de um tempo sem conexão do amigo: tocar no rosto dele encerra e dá a vitória. */
+  onClaimWin?: () => void;
   /** Pergunta antes de sair pela seta de voltar (partida em andamento). */
   leaveWarning?: string;
   /** Tempo máximo de cada jogada escolhido na sala (0 ou ausente = sem limite). */
@@ -1239,6 +1243,8 @@ export function Duel({
             score: session.scores.ai,
             mood: reaction.mood,
             moodKey: reaction.key,
+            offline: !!online?.rivalOffline && !complete,
+            onClaim: complete ? undefined : online?.onClaimWin,
           }}
           turn={versus.turn}
           finished={complete}
