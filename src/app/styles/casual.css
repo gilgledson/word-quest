@@ -336,6 +336,19 @@ a.campaign-start {
   font-weight: 700;
   color: #a8263a;
 }
+/* reCAPTCHA (versão web): o selo flutuante cobria a barra de baixo; o aviso vai no texto. */
+.grecaptcha-badge {
+  visibility: hidden;
+}
+.recaptcha-notice {
+  margin: 0;
+  text-align: center;
+  font-size: 11px;
+  color: #45525c;
+}
+.recaptcha-notice a {
+  color: inherit;
+}
 /* Sala de espera e avisos da partida: um cartão sobre a paisagem, para o texto ler bem. */
 .online-state {
   display: grid;

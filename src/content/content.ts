@@ -1,5 +1,6 @@
 import { bundledCatalog, setCatalog } from "../data/catalog";
 import { bundledCast, MOODS, setCast } from "../game/opponents";
+import { currentMode } from "../services/appCheckMode";
 import { firebaseConfig } from "../services/firebaseConfig";
 import { contentStore, type Player } from "../services/repository";
 import { reportError, track } from "../services/telemetry";
@@ -93,8 +94,29 @@ export function upcomingImages(content: GameContent, player: Player) {
   ].filter((u) => u.startsWith("https://"));
 }
 
+/**
+ * Cabeçalho do App Check para o banco aceitar o pedido quando o bloqueio estiver ligado. Sem
+ * verificação neste lugar (localhost, testes), o SDK do Firebase nem é baixado.
+ */
+async function appCheckHeaders(): Promise<Record<string, string>> {
+  if (currentMode() === "off") return {};
+  try {
+    const [{ firebaseApp }, { appCheckToken }] = await Promise.all([
+      import("../services/firebaseApp"),
+      import("../services/appCheck"),
+    ]);
+    const token = await appCheckToken(firebaseApp());
+    return token ? { "X-Firebase-AppCheck": token } : {};
+  } catch {
+    return {};
+  }
+}
+
 async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url, { cache: "no-store" });
+  const res = await fetch(url, {
+    cache: "no-store",
+    headers: await appCheckHeaders(),
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }

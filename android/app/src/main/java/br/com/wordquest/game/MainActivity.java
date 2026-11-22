@@ -12,6 +12,7 @@ public class MainActivity extends BridgeActivity {
     registerPlugin(TelemetryPlugin.class);
     registerPlugin(ReviewPlugin.class);
     registerPlugin(LinksPlugin.class);
+    registerPlugin(AppCheckPlugin.class);
     super.onCreate(savedInstanceState);
     // Tela de ponta a ponta também nos Android anteriores ao 15 (no 15+ já é obrigatório). Fica depois
     // do super: antes dele a janela nasce com o tema de abertura (barra de título e fundo da splash).

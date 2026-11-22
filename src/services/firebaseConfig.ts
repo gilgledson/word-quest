@@ -12,5 +12,10 @@ export const firebaseConfig = {
   // Analytics da versão web (jogar.wordquest.com.br): mesma propriedade do app Android.
   measurementId: "G-ZYZ48LXV3C",
   appId: "1:896431008098:web:6258966b3e71359a8d243b",
+  /**
+   * Chave do site do reCAPTCHA Enterprise (App Check da versão web). Também é pública. Vazia: a
+   * versão web segue sem App Check (ver `src/services/appCheck.ts`).
+   */
+  recaptchaSiteKey: "",
 };
 export const onlineConfigured = firebaseConfig.apiKey !== "";

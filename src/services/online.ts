@@ -60,6 +60,27 @@ export const setOnlineBackend = (fake: OnlineBackend | undefined) => {
   backend = fake ? Promise.resolve(fake) : undefined;
 };
 
+/**
+ * O servidor recusou este aparelho porque a verificação do App Check falhou (ou o app é de uma
+ * versão sem ela). Só aparece com o bloqueio ligado no console.
+ */
+export class UnverifiedError extends Error {
+  constructor(readonly native: boolean) {
+    super("app-check");
+  }
+}
+
+const UNAVAILABLE =
+  "Não foi possível falar com o servidor. Confira a internet e tente de novo.";
+/** O que dizer ao jogador quando o duelo ao vivo falha. */
+export function onlineErrorText(error: unknown) {
+  if (error instanceof UnverifiedError)
+    return error.native
+      ? "Atualize o WordQuest na Play Store para jogar o duelo ao vivo."
+      : "Não conseguimos verificar este navegador. Tente de novo ou jogue pelo app.";
+  return UNAVAILABLE;
+}
+
 /** Servidor em memória: dois "aparelhos" na mesma página. Usado nos testes. */
 export function memoryBackend() {
   const rooms = new Map<string, OnlineRoom>();
