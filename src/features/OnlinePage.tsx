@@ -65,6 +65,7 @@ import {
 import {
   onlineAvailable,
   onlineBackend,
+  onlineErrorText,
   type OnlineBackend,
 } from "../services/online";
 import { usePlayer } from "../stores/player";
@@ -80,14 +81,14 @@ import {
   PLAYER_AVATARS,
 } from "../game/avatars";
 import { CoinIcon } from "../components/CoinIcon";
+import { RecaptchaNotice } from "../components/RecaptchaNotice";
 import { BoardSizePicker } from "./BoardSizePicker";
 import { Choices } from "./Choices";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
 /** Quanto o amigo espera alguém sem conexão antes de poder encerrar (e ficar com a vitória). */
 export const RIVAL_OFFLINE_MS = 120_000;
-const UNAVAILABLE =
-  "Não foi possível falar com o servidor. Confira a internet e tente de novo.";
+const UNAVAILABLE = onlineErrorText(undefined);
 
 const seatOf = (uid: string, name: string, avatar: string): OnlineSeat => ({
   uid,
@@ -122,8 +123,8 @@ export function OnlineLobby() {
     try {
       const backend = await onlineBackend();
       await action(backend, await backend.uid());
-    } catch {
-      setError(UNAVAILABLE);
+    } catch (e) {
+      setError(onlineErrorText(e));
     } finally {
       setBusy(false);
     }
@@ -295,6 +296,7 @@ export function OnlineLobby() {
         <p className="online-error" role="alert">
           {error}
         </p>
+        <RecaptchaNotice />
       </section>
     </>
   );
@@ -446,8 +448,8 @@ export function OnlineSetup() {
         return;
       }
       setError(UNAVAILABLE);
-    } catch {
-      setError(UNAVAILABLE);
+    } catch (e) {
+      setError(onlineErrorText(e));
     } finally {
       setBusy(false);
     }
@@ -510,6 +512,7 @@ export function OnlineSetup() {
             {error}
           </p>
         )}
+        <RecaptchaNotice />
       </section>
     </>
   );
@@ -562,8 +565,8 @@ export function OnlineMatch() {
           stopRoom();
           stopPresence();
         };
-      } catch {
-        if (alive) setConn({ kind: "error", text: UNAVAILABLE });
+      } catch (e) {
+        if (alive) setConn({ kind: "error", text: onlineErrorText(e) });
       }
     })();
     return () => {

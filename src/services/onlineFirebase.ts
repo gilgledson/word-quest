@@ -3,7 +3,10 @@
  * `rooms/<código>`; o estado da partida vai como texto (JSON), porque o banco descarta listas
  * e objetos vazios e a partida depende deles.
  */
+import { Capacitor } from "@capacitor/core";
+import { appCheckWorks } from "./appCheck";
 import { firebaseApp } from "./firebaseApp";
+import type { FirebaseApp } from "firebase/app";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import {
   get,
@@ -22,7 +25,7 @@ import {
   type OnlineRoom,
   type OnlineSeat,
 } from "../game/online";
-import type { JoinResult, OnlineBackend } from "./online";
+import { UnverifiedError, type JoinResult, type OnlineBackend } from "./online";
 
 interface StoredRoom extends Omit<OnlineRoom, "state" | "grid"> {
   state: string;
@@ -58,8 +61,30 @@ const unpack = (stored: StoredRoom | null): OnlineRoom | null => {
   };
 };
 
+/**
+ * Recusa por falta de App Check (bloqueio ligado no console) vira `UnverifiedError`, para o jogador
+ * ler o motivo. O login recusa com um código próprio; o banco só diz "permission denied", então
+ * confere se a verificação deste aparelho está falhando.
+ */
+async function explain(app: FirebaseApp, error: unknown): Promise<unknown> {
+  const text = String(
+    (error as { code?: string })?.code ?? (error as Error)?.message ?? error,
+  ).toLowerCase();
+  const native = Capacitor.isNativePlatform();
+  if (text.includes("app-check")) return new UnverifiedError(native);
+  if (text.includes("permission") && !(await appCheckWorks(app)))
+    return new UnverifiedError(native);
+  return error;
+}
+
 export function firebaseBackend(): OnlineBackend {
   const app = firebaseApp();
+  const explained =
+    <A extends unknown[], R>(fn: (...args: A) => Promise<R>) =>
+    (...args: A) =>
+      fn(...args).catch(async (e) => {
+        throw await explain(app, e);
+      });
   const auth = getAuth(app);
   const db = getDatabase(app);
   const room = (code: string) => ref(db, `rooms/${code}`);
@@ -69,7 +94,7 @@ export function firebaseBackend(): OnlineBackend {
       me = undefined;
       throw e;
     });
-  return {
+  const backend: OnlineBackend = {
     uid,
     async create(data) {
       await uid();
@@ -182,5 +207,12 @@ export function firebaseBackend(): OnlineBackend {
         void remove(mine).catch(() => {});
       };
     },
+  };
+  return {
+    ...backend,
+    uid: explained(backend.uid),
+    create: explained(backend.create),
+    peek: explained(backend.peek),
+    join: explained(backend.join),
   };
 }

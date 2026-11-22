@@ -12,6 +12,8 @@ scripts/data/dictionary.txt
 
 # Build do APK (Capacitor)
 release/
+# Código só da versão da loja (App Check com Play Integrity): não é saída de build.
+!android/app/src/release/
 android/.gradle/
 android/local.properties
 android/app/build/
