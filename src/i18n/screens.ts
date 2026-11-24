@@ -406,7 +406,7 @@ export const profileT = texts({
       `${done} of ${total} levels · ${stars} ${plural(stars, "star", "stars")} · ${coins} ${plural(coins, "coin", "coins")}`,
     tabs: {
       resumo: "Overview",
-      conquistas: "Achievements",
+      conquistas: "Awards",
       rivais: "Rivals",
       ajustes: "Settings",
     },
