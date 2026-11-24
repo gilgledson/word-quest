@@ -64,6 +64,16 @@ public class TelemetryPlugin extends Plugin {
     call.resolve();
   }
 
+  /** Propriedade de usuário (ex.: lang = pt/en), para segmentar os relatórios por público. */
+  @PluginMethod
+  public void setUserProperty(PluginCall call) {
+    String name = call.getString("name");
+    String value = call.getString("value");
+    if (name != null && ready())
+      FirebaseAnalytics.getInstance(getContext()).setUserProperty(name, value);
+    call.resolve();
+  }
+
   /** Anotação de contexto (tela atual, por exemplo) que acompanha o próximo relatório de falha. */
   @PluginMethod
   public void setContext(PluginCall call) {

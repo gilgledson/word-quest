@@ -73,6 +73,7 @@ import { PlayGamesSync } from "./features/PlayGamesCard";
 import {
   installErrorReporting,
   trackAppReady,
+  trackLanguage,
   trackScreen,
 } from "./services/telemetry";
 // O primeiro toque em qualquer lugar libera o áudio (política de autoplay do navegador e do WebView).
@@ -209,6 +210,7 @@ function App() {
 // O idioma da sessão vale desde a primeira tela (e o `<html lang>` acompanha).
 setLang(lang());
 installErrorReporting();
+trackLanguage();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <ErrorBoundary>

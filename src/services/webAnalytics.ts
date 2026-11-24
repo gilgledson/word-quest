@@ -7,6 +7,7 @@ import {
   initializeAnalytics,
   isSupported,
   logEvent,
+  setUserProperties,
   type Analytics,
 } from "firebase/analytics";
 import { firebaseApp } from "./firebaseApp";
@@ -23,6 +24,10 @@ export async function startWebAnalytics() {
       allow_ad_personalization_signals: false,
     },
   });
-  return (name: string, params: Params) =>
+  const log = (name: string, params: Params) =>
     logEvent(analytics, name, params as Record<string, unknown>);
+  /** Propriedade de usuário (ex.: `lang`), para segmentar os relatórios por público. */
+  log.setUser = (props: Record<string, string>) =>
+    setUserProperties(analytics, props);
+  return log;
 }
