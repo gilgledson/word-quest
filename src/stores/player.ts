@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { initialPlayer, repository, type Player } from "../services/repository";
 import { defaultOpponent, opponentById } from "../game/opponents";
 import { levels } from "../data/catalog";
+import { gameText } from "../i18n/game";
 interface Store {
   player: Player;
   ready: boolean;
@@ -46,8 +47,7 @@ export const usePlayer = create<Store>((set) => ({
     } catch {
       set({
         ready: true,
-        error:
-          "Leitura do progresso indisponível. Verifique o armazenamento do navegador.",
+        error: gameText.loadError,
       });
     }
   },
@@ -58,8 +58,7 @@ export const usePlayer = create<Store>((set) => ({
         .then(() => repository.save(player))
         .catch(() => {
           set({
-            error:
-              "Não foi possível salvar. Mantenha esta página aberta e verifique o armazenamento.",
+            error: gameText.saveError,
           });
         });
       return { player };

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Capacitor } from "@capacitor/core";
 import { Download, Share, X } from "lucide-react";
 import { track } from "../services/telemetry";
+import { webBarT as t } from "../i18n/screens";
 
 const DISMISS_KEY = "wq-webbar-dismissed";
 const PLAY_URL =
@@ -53,7 +54,7 @@ export function WebAppBar({ visible }: { visible: boolean }) {
     }
   };
   return (
-    <aside className="web-app-bar" aria-label="WordQuest no celular">
+    <aside className="web-app-bar" aria-label={t.label}>
       {kind === "android" ? (
         <a
           className="web-app-bar-main"
@@ -62,28 +63,23 @@ export function WebAppBar({ visible }: { visible: boolean }) {
         >
           <Download size={20} aria-hidden="true" />
           <span>
-            <b>Baixe o app grátis</b>
-            <small>
-              Seu progresso salvo e convites que abrem direto no jogo.
-            </small>
+            <b>{t.androidTitle}</b>
+            <small>{t.androidText}</small>
           </span>
         </a>
       ) : (
         <p className="web-app-bar-main">
           <Share size={20} aria-hidden="true" />
           <span>
-            <b>Guarde o jogo na Tela de Início</b>
-            <small>
-              Toque em Compartilhar e depois em “Adicionar à Tela de Início”
-              para não perder seu progresso.
-            </small>
+            <b>{t.iosTitle}</b>
+            <small>{t.iosText}</small>
           </span>
         </p>
       )}
       <button
         type="button"
         className="web-app-bar-close"
-        aria-label="Fechar aviso"
+        aria-label={t.close}
         onClick={close}
       >
         <X size={18} />

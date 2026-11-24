@@ -1,4 +1,5 @@
 import { BOARD_SIZES, type BoardSize } from "../game/online";
+import { onlineText as T } from "../i18n/online";
 
 /**
  * Escolha do tamanho do tabuleiro do duelo: ícone, tamanho, ritmo e duração de cada um. Os ícones
@@ -13,7 +14,7 @@ export function BoardSizePicker({
 }) {
   return (
     <>
-      <h2 id="escolha-tamanho">Tamanho do tabuleiro</h2>
+      <h2 id="escolha-tamanho">{T.boardSizeTitle}</h2>
       <div
         className="board-sizes"
         role="radiogroup"
@@ -27,7 +28,7 @@ export function BoardSizePicker({
               type="button"
               role="radio"
               aria-checked={value === s.id}
-              aria-label={`${label}, ${s.nome}, ${s.tempo.replace("~", "cerca de ")}`}
+              aria-label={T.sizeAria(label, s.nome, s.tempo)}
               className={value === s.id ? "selected" : ""}
               onClick={() => onChange(s.id)}
             >

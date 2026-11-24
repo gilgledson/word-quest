@@ -58,6 +58,7 @@ import {
   startOnline,
   toShared,
   themeOfPuzzle,
+  roomLang,
   toView,
   type OnlineRoom,
   type OnlineSeat,
@@ -84,15 +85,16 @@ import { CoinIcon } from "../components/CoinIcon";
 import { RecaptchaNotice } from "../components/RecaptchaNotice";
 import { BoardSizePicker } from "./BoardSizePicker";
 import { Choices } from "./Choices";
+import { onlineText as T } from "../i18n/online";
+import { lang } from "../i18n";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
 /** Quanto o amigo espera alguém sem conexão antes de poder encerrar (e ficar com a vitória). */
 export const RIVAL_OFFLINE_MS = 120_000;
-const UNAVAILABLE = onlineErrorText(undefined);
 
 const seatOf = (uid: string, name: string, avatar: string): OnlineSeat => ({
   uid,
-  name: name.trim() || "Jogador",
+  name: name.trim() || T.defaultPlayer,
   avatar,
 });
 
@@ -109,10 +111,10 @@ export function OnlineLobby() {
   if (!onlineAvailable())
     return (
       <div className="page-heading">
-        <span className="eyebrow">DUELO AO VIVO</span>
-        <h1>Jogar com um amigo</h1>
-        <p>O duelo ao vivo ainda não está disponível nesta versão.</p>
-        <Link to="/casual">Voltar</Link>
+        <span className="eyebrow">{T.eyebrow}</span>
+        <h1>{T.playWithFriend}</h1>
+        <p>{T.notAvailable}</p>
+        <Link to="/casual">{T.back}</Link>
       </div>
     );
   const run = async (
@@ -139,10 +141,10 @@ export function OnlineLobby() {
         } else
           setError(
             result.reason === "missing"
-              ? "Não achei nenhuma partida com esse código."
+              ? T.missing
               : result.reason === "full"
-                ? "Essa partida já tem dois jogadores."
-                : "Essa partida já terminou.",
+                ? T.full
+                : T.over,
           );
       });
   // Sala com tempo ou aposta: o convidado vê as regras antes de entrar.
@@ -151,7 +153,12 @@ export function OnlineLobby() {
       const room = await backend.peek(code);
       const member = room && (room.host.uid === uid || room.guest?.uid === uid);
       const rules = room?.rules ?? NO_RULES;
-      if (room && !member && (rules.bet || rules.turnSeconds)) {
+      // Também quando a sala é em outro idioma: as pistas vêm no idioma de quem criou.
+      if (
+        room &&
+        !member &&
+        (rules.bet || rules.turnSeconds || roomLang(room) !== lang())
+      ) {
         setPreview(room);
         return;
       }
@@ -161,14 +168,14 @@ export function OnlineLobby() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">DUELO AO VIVO</span>
-        <h1>Jogar com um amigo</h1>
+        <span className="eyebrow">{T.eyebrow}</span>
+        <h1>{T.playWithFriend}</h1>
       </div>
       <div className="profile-tabs online-tabs" role="tablist">
         {(
           [
-            ["criar", "Criar partida"],
-            ["entrar", "Entrar com código"],
+            ["criar", T.createMatch],
+            ["entrar", T.joinWithCode],
           ] as const
         ).map(([id, label]) => (
           <button
@@ -191,11 +198,11 @@ export function OnlineLobby() {
         className="online-card"
         role="tabpanel"
         id="online-panel"
-        aria-label={mode === "criar" ? "Criar partida" : "Entrar com código"}
+        aria-label={mode === "criar" ? T.createMatch : T.joinWithCode}
       >
         {mode === "criar" ? (
           <>
-            <h2 id="online-theme-title">Escolha o tema</h2>
+            <h2 id="online-theme-title">{T.chooseTheme}</h2>
             <div
               className="online-themes"
               role="radiogroup"
@@ -235,7 +242,7 @@ export function OnlineLobby() {
                 navigate(`/online/nova?tema=${encodeURIComponent(theme)}`)
               }
             >
-              Configurar partida <ArrowRight size={20} aria-hidden="true" />
+              {T.setupMatch} <ArrowRight size={20} aria-hidden="true" />
             </button>
           </>
         ) : preview ? (
@@ -257,7 +264,7 @@ export function OnlineLobby() {
               <MailOpen size={44} />
             </span>
             <label className="online-code-field">
-              Código da partida
+              {T.matchCode}
               <span className="online-code-boxes">
                 <input
                   value={code}
@@ -281,15 +288,13 @@ export function OnlineLobby() {
                 ))}
               </span>
             </label>
-            <p className="online-hint">
-              Digite o código enviado pelo seu amigo.
-            </p>
+            <p className="online-hint">{T.codeHint}</p>
             <button
               type="submit"
               className="button primary"
               disabled={busy || code.length !== CODE_LENGTH}
             >
-              <Users size={20} aria-hidden="true" /> Entrar
+              <Users size={20} aria-hidden="true" /> {T.join}
             </button>
           </form>
         )}
@@ -311,31 +316,37 @@ type Loaded =
 function RulesSummary({
   room,
 }: {
-  room: Pick<OnlineRoom, "puzzleId" | "rules" | "grid">;
+  room: Pick<OnlineRoom, "puzzleId" | "rules" | "grid" | "lang">;
 }) {
   const rules = room.rules ?? NO_RULES;
+  const clues = roomLang(room);
   const grid = roomPuzzle(room);
   const size = BOARD_SIZES.find((s) => grid && s.id === sizeOf(grid));
   return (
-    <ul className="online-rules" aria-label="Regras da partida">
+    <ul className="online-rules" aria-label={T.rulesAria}>
       <li>
-        Tema: <b>{themeOfPuzzle(room.puzzleId)?.nome ?? "Surpresa"}</b>
+        {T.themeLabel} <b>{themeOfPuzzle(room.puzzleId)?.nome ?? T.surprise}</b>
       </li>
       {size && (
         <li>
-          Tabuleiro:{" "}
+          {T.boardLabel}{" "}
           <b>
             {size.cols}×{size.rows} · {size.nome}
           </b>
         </li>
       )}
+      {clues !== lang() && (
+        <li>
+          {T.langLabel} <b>{T.langName[clues]}</b>
+        </li>
+      )}
       <li>
-        <Timer size={16} aria-hidden="true" /> Jogada:{" "}
+        <Timer size={16} aria-hidden="true" /> {T.turnLabel}{" "}
         <b>{turnLabel(rules.turnSeconds)}</b>
       </li>
       <li>
-        <CoinIcon size={16} /> Aposta:{" "}
-        <b>{rules.bet ? `${rules.bet} moedas` : "sem aposta"}</b>
+        <CoinIcon size={16} /> {T.betLabel}{" "}
+        <b>{rules.bet ? T.betCoins(rules.bet) : T.noBet}</b>
       </li>
     </ul>
   );
@@ -359,13 +370,14 @@ function RulesPreview({
   const short = coins < bet;
   return (
     <div className="online-preview">
-      <h2>Partida de {room.host.name}</h2>
+      <h2>{T.matchOf(room.host.name)}</h2>
       <RulesSummary room={room} />
+      {roomLang(room) !== lang() && (
+        <p className="online-hint">{T.otherLang(T.langName[roomLang(room)])}</p>
+      )}
       {bet > 0 && (
         <p className="online-hint">
-          {short
-            ? `Você tem ${coins} moedas: não dá para apostar ${bet}.`
-            : `Quem vencer leva ${2 * bet} moedas. Você tem ${coins}.`}
+          {short ? T.cantBet(coins, bet) : T.winnerTakes(2 * bet, coins)}
         </p>
       )}
       <button
@@ -375,10 +387,10 @@ function RulesPreview({
         onClick={onJoin}
       >
         <Swords size={20} aria-hidden="true" />{" "}
-        {bet ? `Entrar e apostar ${bet}` : "Entrar na partida"}
+        {bet ? T.joinAndBet(bet) : T.joinMatch}
       </button>
       <button type="button" className="button online-ghost" onClick={onBack}>
-        <ArrowLeft size={18} aria-hidden="true" /> Voltar
+        <ArrowLeft size={18} aria-hidden="true" /> {T.back}
       </button>
     </div>
   );
@@ -405,7 +417,7 @@ export function OnlineSetup() {
   );
   const theme = themeFits ? chosenTheme : SURPRISE_THEME;
   const themeName =
-    onlineThemes().find((t) => t.id === theme)?.nome ?? "Surpresa";
+    onlineThemes().find((t) => t.id === theme)?.nome ?? T.surprise;
   const [turnSeconds, setTurnSeconds] = useState(0);
   const [bet, setBet] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -424,6 +436,7 @@ export function OnlineSetup() {
           code: fresh,
           puzzleId: puzzle.id,
           grid: puzzle,
+          lang: lang(),
           host: seatOf(uid, player.name, player.avatar),
           status: "waiting",
           rev: 0,
@@ -447,7 +460,7 @@ export function OnlineSetup() {
         navigate(`/online/${fresh}`, { replace: true });
         return;
       }
-      setError(UNAVAILABLE);
+      setError(onlineErrorText(undefined));
     } catch (e) {
       setError(onlineErrorText(e));
     } finally {
@@ -457,47 +470,45 @@ export function OnlineSetup() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">DUELO AO VIVO</span>
-        <h1>Configurar partida</h1>
+        <span className="eyebrow">{T.eyebrow}</span>
+        <h1>{T.setupMatch}</h1>
       </div>
-      <section
-        className="online-card online-setup"
-        aria-label="Configurar partida"
-      >
+      <section className="online-card online-setup" aria-label={T.setupMatch}>
         <div className="online-versus" aria-hidden="true">
           <span>
             <OpponentAvatar opponent={avatarOf(player.avatar)} size={60} />
-            <b>{player.name.trim() || "Você"}</b>
+            <b>{player.name.trim() || T.you}</b>
           </span>
           <i>VS</i>
           <span>
             <em>?</em>
-            <b>Seu amigo</b>
+            <b>{T.yourFriend}</b>
           </span>
         </div>
         <p className="online-setup-theme">
-          Tema: <b>{themeName}</b> · <Link to="/online">trocar</Link>
+          {T.themeLabel} <b>{themeName}</b> ·{" "}
+          <Link to="/online">{T.change}</Link>
         </p>
         <BoardSizePicker value={board} onChange={setBoard} />
         <Choices
-          title="Tempo por jogada"
+          title={T.turnTime}
           options={TURN_OPTIONS}
           value={turnSeconds}
-          label={(v) => (v ? turnLabel(v) : "Livre")}
+          label={(v) => (v ? turnLabel(v) : T.free)}
           onChange={setTurnSeconds}
         />
         <Choices
-          title="Aposta"
+          title={T.bet}
           options={BET_OPTIONS}
           value={bet}
-          label={(v) => (v ? String(v) : "Sem")}
+          label={(v) => (v ? String(v) : T.none)}
           disabled={(v) => v > player.coins}
           onChange={setBet}
         />
         <p className="online-hint" role="status">
           {bet
-            ? `Cada um aposta ${bet}: quem vencer leva ${2 * bet} moedas. Você tem ${player.coins}.`
-            : `Partida sem aposta. Você tem ${player.coins} moedas.`}
+            ? T.eachBets(bet, 2 * bet, player.coins)
+            : T.noBetMatch(player.coins)}
         </p>
         <button
           type="button"
@@ -505,7 +516,7 @@ export function OnlineSetup() {
           disabled={busy || bet > player.coins}
           onClick={() => void create()}
         >
-          <Swords size={20} aria-hidden="true" /> Criar partida
+          <Swords size={20} aria-hidden="true" /> {T.createMatch}
         </button>
         {error && (
           <p className="online-error" role="alert">
@@ -547,10 +558,10 @@ export function OnlineMatch() {
             kind: "error",
             text:
               joined.reason === "missing"
-                ? "Não achei nenhuma partida com esse código."
+                ? T.missing
                 : joined.reason === "full"
-                  ? "Essa partida já tem dois jogadores."
-                  : "Essa partida já terminou.",
+                  ? T.full
+                  : T.over,
           });
           return;
         }
@@ -716,40 +727,33 @@ export function OnlineMatch() {
     back = true,
   ) => (
     <div className="page-heading online-state">
-      <span className="eyebrow">DUELO AO VIVO</span>
+      <span className="eyebrow">{T.eyebrow}</span>
       <h1>{title}</h1>
       <p>{text}</p>
       {extra}
       {back && (
         <Link className="button online-ghost" to="/online">
-          <ArrowLeft size={18} aria-hidden="true" /> Voltar
+          <ArrowLeft size={18} aria-hidden="true" /> {T.back}
         </Link>
       )}
     </div>
   );
-  if (conn.kind === "error") return heading("Não deu para entrar", conn.text);
+  if (conn.kind === "error") return heading(T.cantJoin, conn.text);
   if (conn.kind === "loading" || room === undefined)
-    return heading("Entrando na partida…", "Só um instante.");
-  if (room === null)
-    return heading(
-      "Partida não encontrada",
-      "Essa partida não existe mais. Crie outra e mande o código novo.",
-    );
+    return heading(T.joining, T.oneMoment);
+  if (room === null) return heading(T.notFound, T.notFoundText);
   if (!role || !uid || !backend || !puzzle || !engine || !view)
-    return heading(
-      "Não deu para entrar",
-      "Essa partida já tem dois jogadores.",
-    );
+    return heading(T.cantJoin, T.full);
 
   const invitesLeft = economy.inviteMax - (player.invitedFriends ?? []).length;
   if (room.status === "waiting") {
     const note = (ok: boolean, text: string) =>
-      setCopied(ok ? text : "Não deu para copiar. Anote o código acima.");
+      setCopied(ok ? text : T.copyFailed);
     return heading(
-      "Chame seu amigo",
-      "Mande este código. A partida começa assim que ele entrar.",
+      T.callFriend,
+      T.sendCode,
       <>
-        <output className="online-code" aria-label={`Código ${code}`}>
+        <output className="online-code" aria-label={T.codeAria(code)}>
           {code}
         </output>
         <RulesSummary room={room} />
@@ -758,25 +762,24 @@ export function OnlineMatch() {
           className="button primary"
           onClick={() =>
             void shareText(inviteText(code)).then(
-              (r) => r === "copied" && note(true, "Convite copiado!"),
+              (r) => r === "copied" && note(true, T.inviteCopied),
             )
           }
         >
-          <Share2 size={20} aria-hidden="true" /> Compartilhar convite
+          <Share2 size={20} aria-hidden="true" /> {T.shareInvite}
         </button>
         <button
           type="button"
           className="button online-ghost"
           onClick={() =>
-            void copyText(code).then((ok) => note(ok, "Código copiado!"))
+            void copyText(code).then((ok) => note(ok, T.codeCopied))
           }
         >
-          <Copy size={18} aria-hidden="true" /> Copiar código
+          <Copy size={18} aria-hidden="true" /> {T.copyCode}
         </button>
         {invitesLeft > 0 && (
           <p className="online-invite-bonus">
-            <CoinIcon size={18} /> Ganhe {economy.invite} moedas quando um amigo
-            novo jogar com você (faltam {invitesLeft}).
+            <CoinIcon size={18} /> {T.inviteBonus(economy.invite, invitesLeft)}
           </p>
         )}
         <p className="online-status" role="status">
@@ -784,14 +787,14 @@ export function OnlineMatch() {
         </p>
         <div className="online-actions">
           <Link className="button online-ghost" to="/online">
-            <ArrowLeft size={18} aria-hidden="true" /> Voltar
+            <ArrowLeft size={18} aria-hidden="true" /> {T.back}
           </Link>
           <button
             type="button"
             className="button online-danger"
             onClick={() => void backend.abandon(code, uid)}
           >
-            <X size={18} aria-hidden="true" /> Cancelar
+            <X size={18} aria-hidden="true" /> {T.cancel}
           </button>
         </div>
       </>,
@@ -802,25 +805,33 @@ export function OnlineMatch() {
   if (room.status === "abandoned")
     return wonByForfeit
       ? heading(
-          "Vitória!",
-          `${rivalProfile(rival).name} saiu da partida. Você ganhou ${economy.duel.win} moedas.`,
+          T.victory,
+          T.rivalLeft(rivalProfile(rival).name, economy.duel.win),
         )
       : heading(
-          "Partida encerrada",
+          T.matchEnded,
           room.endedBy === ROOM_EXPIRED
-            ? "A partida ficou parada por mais de um dia e foi encerrada. Ninguém ganhou nem perdeu."
+            ? T.expired
             : room.endedBy && room.endedBy !== uid
-              ? `${rivalProfile(rival).name} encerrou a partida porque você ficou fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos.`
-              : "Você saiu desta partida.",
+              ? T.rivalEnded(
+                  rivalProfile(rival).name,
+                  RIVAL_OFFLINE_MS / 60_000,
+                )
+              : T.youLeft,
         );
 
   return (
     <>
+      {roomLang(room) !== lang() && (
+        <div className="online-banner" role="note">
+          <span>{T.otherLang(T.langName[roomLang(room)])}</span>
+        </div>
+      )}
       {inviteEarned > 0 && (
         <div className="online-banner invite" role="status">
           <span>
-            <CoinIcon size={18} /> Convite recompensado: +{inviteEarned} moedas
-            por jogar com {rivalProfile(rival).name}!
+            <CoinIcon size={18} />{" "}
+            {T.inviteRewarded(inviteEarned, rivalProfile(rival).name)}
           </span>
         </div>
       )}
@@ -832,10 +843,10 @@ export function OnlineMatch() {
           <span>
             <CoinIcon size={18} />{" "}
             {betResult > 0
-              ? `Aposta ganha: +${betResult} moedas!`
+              ? T.betWon(betResult)
               : betResult === 0
-                ? "Empate: sua aposta voltou."
-                : `Aposta perdida: ${betResult} moedas.`}
+                ? T.betDraw
+                : T.betLost(betResult)}
           </span>
         </div>
       )}
@@ -862,13 +873,17 @@ export function OnlineMatch() {
           turnSeconds: room.rules?.turnSeconds,
           leaveWarning:
             room.status === "playing"
-              ? `Sair da partida? Para voltar, use "Voltar para a partida" em Jogar com um amigo (código ${code}). Se ficar fora por mais de ${RIVAL_OFFLINE_MS / 60_000} minutos, ${rivalProfile(rival).name} pode encerrar e ficar com a vitória.`
+              ? T.leaveWarning(
+                  code,
+                  RIVAL_OFFLINE_MS / 60_000,
+                  rivalProfile(rival).name,
+                )
               : undefined,
           notice:
             room.status === "playing" && !rivalOnline
               ? rivalGone
-                ? `${rivalProfile(rival).name} está sem conexão. Toque no rosto para encerrar e vencer.`
-                : `${rivalProfile(rival).name} está sem conexão…`
+                ? T.rivalOfflineTap(rivalProfile(rival).name)
+                : T.rivalOffline(rivalProfile(rival).name)
               : undefined,
           // O amigo sem conexão aparece só no rosto dele, no placar (a faixa no topo empurrava o
           // banco e os botões para fora da tela).
@@ -878,7 +893,10 @@ export function OnlineMatch() {
               ? () => {
                   if (
                     window.confirm(
-                      `${rivalProfile(rival).name} está sem conexão há mais de ${RIVAL_OFFLINE_MS / 60_000} minutos. Encerrar a partida e ficar com a vitória?`,
+                      T.claimWin(
+                        rivalProfile(rival).name,
+                        RIVAL_OFFLINE_MS / 60_000,
+                      ),
                     )
                   )
                     void backend.abandon(code, rival.uid, uid);
@@ -920,19 +938,17 @@ export function OnlineProfileGate({
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">DUELO AO VIVO</span>
-        <h1>Quem vai jogar?</h1>
+        <span className="eyebrow">{T.eyebrow}</span>
+        <h1>{T.whoPlays}</h1>
       </div>
       <form
         className="online-card online-profile"
-        aria-label="Seu nome e avatar"
+        aria-label={T.profileAria}
         onSubmit={save}
       >
-        <p className="online-hint">
-          Seu amigo vai ver este nome e este avatar na partida.
-        </p>
-        <span className="profile-dialog-label">Escolha seu avatar</span>
-        <ul className="avatar-picker" aria-label="Avatares">
+        <p className="online-hint">{T.profileHint}</p>
+        <span className="profile-dialog-label">{T.chooseAvatar}</span>
+        <ul className="avatar-picker" aria-label={T.avatars}>
           {PLAYER_AVATARS.map((a) => (
             <li key={a.id}>
               <button
@@ -949,18 +965,18 @@ export function OnlineProfileGate({
           ))}
         </ul>
         <label className="profile-dialog-name">
-          Seu nome
+          {T.yourName}
           <input
             value={name}
             maxLength={NAME_MAX}
-            placeholder="Como seu amigo te chama"
+            placeholder={T.namePlaceholder}
             autoComplete="nickname"
             enterKeyHint="go"
             onChange={(e) => setName(e.target.value)}
           />
         </label>
         <button type="submit" className="button primary" disabled={!valid}>
-          {joining ? "Entrar no duelo" : "Continuar"}{" "}
+          {joining ? T.joinDuel : T.continue}{" "}
           <ArrowRight size={20} aria-hidden="true" />
         </button>
       </form>

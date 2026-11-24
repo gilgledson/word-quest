@@ -1,4 +1,5 @@
 import type { Player } from "../services/repository";
+import { gameText } from "../i18n/game";
 
 /** Itens da loja: comprados com moedas, guardados no inventário e usados na vez do jogador. */
 export type ItemId = "curinga" | "vogal";
@@ -16,18 +17,29 @@ export interface ShopItem {
 export const SHOP_ITEMS: ShopItem[] = [
   {
     id: "curinga",
-    nome: "Curinga",
-    texto: "Entra no seu banco e vira a letra de qualquer casa: sempre acerta.",
-    resumo: "Vira a letra de qualquer casa e sempre acerta.",
+    get nome() {
+      return gameText.shop.curinga.nome;
+    },
+    get texto() {
+      return gameText.shop.curinga.texto;
+    },
+    get resumo() {
+      return gameText.shop.curinga.resumo;
+    },
     preco: 60,
     usos: 1,
   },
   {
     id: "vogal",
-    nome: "Kit de vogais",
-    texto:
-      "5 usos. Em cada um, você escolhe uma vogal que a grade ainda precisa e ela vem para o seu banco.",
-    resumo: "Escolha uma vogal que a grade ainda precisa.",
+    get nome() {
+      return gameText.shop.vogal.nome;
+    },
+    get texto() {
+      return gameText.shop.vogal.texto;
+    },
+    get resumo() {
+      return gameText.shop.vogal.resumo;
+    },
     preco: 40,
     usos: 5,
   },

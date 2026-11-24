@@ -4,7 +4,7 @@
 //
 // Uso:
 //   node scripts/catalogo.mjs --migrar            junta clues*.txt antigos + temas no catalogo.json (uma vez)
-//   node scripts/catalogo.mjs --add arquivo.txt   acrescenta linhas PALAVRA|Pista[|nivel[|tipo]] (valida antes)
+//   node scripts/catalogo.mjs --add arquivo.txt   acrescenta linhas PALAVRA|Pista[|nivel[|tipo[|dica]]] (valida antes)
 //                             [--nivel medio] [--tipo animais] [--troca]
 //   node scripts/catalogo.mjs --resumo            conta por nível e tipo
 import fs from "node:fs";
@@ -104,8 +104,11 @@ if (flag("migrar")) {
     .split("\n")
     .filter((l) => l.includes("|"))
     .map((l) => {
-      const [palavra, pista, nivel, tipo] = l.split("|").map((s) => s.trim());
+      const [palavra, pista, nivel, tipo, dica] = l
+        .split("|")
+        .map((s) => s.trim());
       return {
+        ...(dica && { dica }),
         palavra,
         pista,
         nivel: NIVEIS.includes(nivel)

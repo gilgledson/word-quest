@@ -5,6 +5,9 @@
     "content": {
       ".read": true
     },
+    "content-en": {
+      ".read": true
+    },
     "rooms": {
       "$code": {
         ".read": "auth != null",

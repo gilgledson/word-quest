@@ -3,6 +3,7 @@ import casualRaw from "./casual.json";
 import variantsRaw from "./level-variants.json";
 import worldsRaw from "./worlds.json";
 import type { Puzzle, PuzzleWord } from "../game/crossword-engine";
+import { lang } from "../i18n";
 
 /**
  * Catálogo de fases, mundos e temas. Começa com o conteúdo que vem dentro do app e pode ser
@@ -126,9 +127,13 @@ export function casualGrid(id: string | undefined): Puzzle | undefined {
   return grid && { ...grid, id };
 }
 
+/**
+ * Data do dia (AAAA-MM-DD). Em português vale o horário de Brasília para todos; em inglês, o fuso do
+ * aparelho (o público novo não está no Brasil).
+ */
 export const today = () =>
   new Intl.DateTimeFormat("en-CA", {
-    timeZone: "America/Sao_Paulo",
+    timeZone: lang() === "pt" ? "America/Sao_Paulo" : undefined,
     year: "numeric",
     month: "2-digit",
     day: "2-digit",

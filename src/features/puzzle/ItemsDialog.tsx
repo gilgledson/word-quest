@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Lock, X } from "lucide-react";
 import { SHOP_ITEMS, VOWELS, type ItemId } from "../../game/shop";
+import { MT } from "../../i18n/match";
 
 interface Props {
   /** Usos de cada item no inventário. */
@@ -17,7 +18,7 @@ interface Props {
   onVowel: (letter: string) => void;
   onCancel: () => void;
 }
-const uses = (n: number) => `${n} ${n === 1 ? "uso" : "usos"}`;
+const uses = (n: number) => MT.uses(n);
 /**
  * "Seus itens": folha que sobe de baixo na vez do jogador, com a grade e o banco ainda à vista.
  * Curinga (vai para o banco) e vogais (só as que a grade ainda precisa ficam azuis).
@@ -46,15 +47,15 @@ export function ItemsDialog({
         className="items-sheet"
         role="dialog"
         aria-modal="true"
-        aria-label="Usar item"
+        aria-label={MT.useItem}
         initial={animated ? { y: "100%" } : false}
         animate={{ y: 0 }}
         transition={{ type: "spring", damping: 26, stiffness: 320 }}
       >
         <span className="items-handle" aria-hidden="true" />
         <div className="items-head">
-          <h2>Seus itens</h2>
-          <button type="button" aria-label="Fechar" onClick={onCancel}>
+          <h2>{MT.yourItems}</h2>
+          <button type="button" aria-label={MT.close} onClick={onCancel}>
             <X />
           </button>
         </div>
@@ -69,11 +70,11 @@ export function ItemsDialog({
           <button
             type="button"
             className="button primary"
-            aria-label="Usar curinga"
+            aria-label={MT.useJoker}
             disabled={!counts.curinga || !canJoker}
             onClick={onJoker}
           >
-            Usar
+            {MT.use}
           </button>
         </section>
         <section className="items-row vowels" aria-label={kit.nome}>
@@ -92,7 +93,7 @@ export function ItemsDialog({
                   key={v}
                   type="button"
                   className={ok ? "" : "locked"}
-                  aria-label={`Pegar a vogal ${v}`}
+                  aria-label={MT.takeVowel(v)}
                   disabled={!ok}
                   onClick={() => onVowel(v)}
                 >
@@ -104,14 +105,14 @@ export function ItemsDialog({
           </div>
           <small className="items-legend">
             {counts.vogal > 0 && !vowels.length
-              ? "A grade não precisa de mais vogais."
-              : "Azul: disponível · Cinza: indisponível"}
+              ? MT.noVowelsNeeded
+              : MT.vowelLegend}
           </small>
         </section>
         {shopLink && (
           <Link className="items-shop" to="/loja">
             <img src="/art/loja/mochila.webp" alt="" aria-hidden="true" />
-            Ir para a Loja
+            {MT.goShop}
             <ChevronRight aria-hidden="true" />
           </Link>
         )}

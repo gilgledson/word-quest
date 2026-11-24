@@ -4,6 +4,7 @@ import { chestPrize, chestsReady, wordsToNextChest } from "../game/chest";
 import { usePlayer } from "../stores/player";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
+import { homeT as t } from "../i18n/screens";
 
 /** Texto curto sobre o próximo baú (vira o aviso "Baú pronto!" quando há um para abrir). */
 export function ChestHint({ words }: { words: number }) {
@@ -14,9 +15,9 @@ export function ChestHint({ words }: { words: number }) {
     <span className={`chest-hint ${ready ? "ready" : ""}`}>
       {ready
         ? ready > 1
-          ? `${ready} baús prontos!`
-          : "Baú pronto! Toque nele"
-        : `Baú em ${left} ${left === 1 ? "palavra" : "palavras"}`}
+          ? t.chestsReady(ready)
+          : t.chestReady
+        : t.chestIn(left)}
     </span>
   );
 }
@@ -55,11 +56,7 @@ export function HomeChest({ words }: { words: number }) {
         className={`journey-chest game-art art-chest ${ready ? "ready" : ""}`}
         disabled={!ready}
         onClick={open}
-        aria-label={
-          ready
-            ? `Abrir baú: ${chestPrize(opened)} moedas`
-            : "Baú fechado: descubra mais palavras para abrir"
-        }
+        aria-label={ready ? t.openChest(chestPrize(opened)) : t.chestClosed}
       >
         {ready > 1 && <b className="chest-count">{ready}</b>}
       </button>
@@ -73,7 +70,7 @@ export function HomeChest({ words }: { words: number }) {
             className="swap-dialog chest-dialog"
             role="dialog"
             aria-modal="true"
-            aria-label="Baú aberto"
+            aria-label={t.chestOpened}
             onClick={(e) => e.stopPropagation()}
           >
             <ChestReward coins={prize} animated={player.animations} />
@@ -83,7 +80,7 @@ export function HomeChest({ words }: { words: number }) {
               autoFocus
               onClick={() => setPrize(null)}
             >
-              Continuar
+              {t.continue}
             </button>
           </div>
         </div>

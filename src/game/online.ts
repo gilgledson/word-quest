@@ -1,3 +1,4 @@
+import type { Lang } from "../i18n";
 import {
   casualPuzzles,
   casualThemes,
@@ -13,6 +14,7 @@ import {
 import { JOKER_ID } from "./engine/rack";
 import { avatarOf } from "./avatars";
 import type { OpponentProfile } from "./opponents";
+import { onlineText as T } from "../i18n/online";
 
 /**
  * Duelo ao vivo entre dois jogadores. A partida é a mesma do duelo contra o rival do jogo: quem
@@ -33,11 +35,7 @@ export const BET_OPTIONS = [0, 10, 25, 50, 100];
 export const NO_RULES: RoomRules = { turnSeconds: 0, bet: 0 };
 /** "30 s", "1 min", "2 min" ou "Sem limite". */
 export const turnLabel = (seconds: number) =>
-  !seconds
-    ? "Sem limite"
-    : seconds < 60
-      ? `${seconds} s`
-      : `${seconds / 60} min`;
+  !seconds ? T.noLimit : seconds < 60 ? `${seconds} s` : `${seconds / 60} min`;
 /** Moedas que a aposta devolve a quem reservou `bet`: as duas na vitória, a sua no empate. */
 export const betPayout = (bet: number, result: "win" | "draw" | "loss") =>
   result === "win" ? 2 * bet : result === "draw" ? bet : 0;
@@ -55,6 +53,11 @@ export interface OnlineRoom {
    * o catálogo dele (baixado em outra hora, ou de outra versão do app) seja diferente.
    */
   grid?: Puzzle;
+  /**
+   * Idioma da grade (o de quem criou a sala). Os dois jogam a mesma grade, então as pistas ficam nesse
+   * idioma para os dois; salas antigas não têm e são em português.
+   */
+  lang?: Lang;
   host: OnlineSeat;
   guest?: OnlineSeat;
   status: OnlineStatus;
@@ -76,6 +79,11 @@ export interface OnlineRoom {
   /** Último movimento na sala: criação, entrada do amigo, jogada ou encerramento (ms). */
   updatedAt?: number;
 }
+
+/** Idioma das pistas da sala (salas antigas: português). */
+export const roomLang = (
+  room: Pick<OnlineRoom, "lang"> | null | undefined,
+): Lang => room?.lang ?? "pt";
 
 /** Sala parada (ninguém entrou ou ninguém jogou) há mais que isto é encerrada sozinha. */
 export const ROOM_EXPIRE_MS = 24 * 60 * 60 * 1000;
@@ -112,11 +120,23 @@ export const onlinePuzzle = (id: string | undefined) =>
  * longo. As grades vêm da Aventura (e variantes) e dos temas do Casual, que têm grades em todos os
  * tamanhos (scripts/generate-casual-tema.mjs --rows/--cols).
  */
+const board = <I extends string>(id: I, cols: number, rows: number) => ({
+  id,
+  cols,
+  rows,
+  /** Nome e duração no idioma em uso (lidos a cada acesso). */
+  get nome() {
+    return T.sizes[id].nome;
+  },
+  get tempo() {
+    return T.sizes[id].tempo;
+  },
+});
 export const BOARD_SIZES = [
-  { id: "6x6", cols: 6, rows: 6, nome: "Rápido", tempo: "~1 min" },
-  { id: "6x7", cols: 6, rows: 7, nome: "Leve", tempo: "~1,5 min" },
-  { id: "7x7", cols: 7, rows: 7, nome: "Médio", tempo: "~2 min" },
-  { id: "8x8", cols: 8, rows: 8, nome: "Longo", tempo: "~3 min" },
+  board("6x6", 6, 6),
+  board("6x7", 6, 7),
+  board("7x7", 7, 7),
+  board("8x8", 8, 8),
 ] as const;
 export type BoardSize = (typeof BOARD_SIZES)[number]["id"];
 export const DEFAULT_BOARD: BoardSize = "7x7";
@@ -136,7 +156,7 @@ export const roomPuzzle = (
 /** "Surpresa" sorteia entre todas as grades; os demais temas, só entre as do tema. */
 export const SURPRISE_THEME = "surpresa";
 export const onlineThemes = () => [
-  { id: SURPRISE_THEME, nome: "Surpresa", puzzles: onlinePuzzles() },
+  { id: SURPRISE_THEME, nome: T.surprise, puzzles: onlinePuzzles() },
   ...casualThemes,
 ];
 /** Grades de um tema; "Surpresa" num tamanho escolhido vale todas as grades desse tamanho. */
@@ -241,13 +261,13 @@ export const rivalSeat = (room: OnlineRoom, role: OnlineRole) =>
 export function rivalProfile(seat: OnlineSeat | undefined): OpponentProfile {
   return {
     id: avatarOf(seat?.avatar).id,
-    name: seat?.name?.trim() || "Amigo",
+    name: seat?.name?.trim() || T.friendName,
     species: "jogador",
     level: "medio",
     style: "cuidadoso",
-    tagline: "Boa partida!",
-    win: "Essa foi minha!",
-    lose: "Boa! Você mereceu.",
+    tagline: T.rivalTagline,
+    win: T.rivalWin,
+    lose: T.rivalLose,
   };
 }
 
@@ -256,8 +276,7 @@ export function rivalProfile(seat: OnlineSeat | undefined): OpponentProfile {
 export const inviteLink = (code: string) =>
   `https://wordquest.com.br/c/${code}`;
 export const inviteText = (code: string) =>
-  `Te desafio no WordQuest! Toque para entrar no duelo: ${inviteLink(code)}\n` +
-  `Ou abra o jogo, toque em "Jogar com um amigo" e digite o código ${code}.`;
+  T.inviteText(code, inviteLink(code));
 /** Moedas de convite que este amigo rende ao anfitrião: só amigo novo, até o limite. */
 export const inviteReward = (
   invited: string[] | undefined,

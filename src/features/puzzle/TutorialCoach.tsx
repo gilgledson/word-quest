@@ -11,6 +11,7 @@ import { Pointer } from "lucide-react";
 import type { Tile } from "../../game/crossword-engine";
 import type { GuidedState } from "./tutorialPick";
 import { complementRects, padBox, unionBox, type Box } from "./coachGeometry";
+import { coachText as t } from "../../i18n/tutorial";
 
 interface Props {
   guide: GuidedState;
@@ -239,19 +240,19 @@ export function TutorialCoach({
       <div
         className="coach-bubble"
         role="region"
-        aria-label="Tutorial"
+        aria-label={t.region}
         aria-live="polite"
         ref={bubble}
         style={bubbleStyle(geo, anchor, geo?.word, bubbleH)}
       >
         {confirmStep ? (
           <>
-            <b>Palavra completa!</b>
+            <b>{t.complete}</b>
             <p>
-              Toque em ✓ para confirmar
+              {t.tapConfirm}
               {gained ? (
                 <>
-                  : <strong>+{gained} pontos</strong>
+                  : <strong>{t.points(gained)}</strong>
                 </>
               ) : null}
               .
@@ -259,24 +260,25 @@ export function TutorialCoach({
           </>
         ) : (
           <>
-            <b>Monte sua primeira palavra!</b>
+            <b>{t.firstWord}</b>
             <p>
-              Arraste as letras para formar <strong>{word}</strong>.
+              {t.dragBefore}
+              <strong>{word}</strong>
+              {t.dragAfter}
             </p>
             <p className="coach-progress">
               {guide.next && (
                 <span>
-                  Próxima letra: <strong>{guide.next.letter}</strong>
+                  {t.nextLetter}
+                  <strong>{guide.next.letter}</strong>
                 </span>
               )}
-              <span>
-                {guide.filled} de {guide.cells.length} letras
-              </span>
+              <span>{t.progress(guide.filled, guide.cells.length)}</span>
             </p>
           </>
         )}
         <button type="button" className="coach-skip" onClick={onSkip}>
-          Pular
+          {t.skip}
         </button>
       </div>
     </div>,

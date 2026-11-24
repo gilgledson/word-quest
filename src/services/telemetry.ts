@@ -4,6 +4,7 @@
  * (tela aberta, partida iniciada ou terminada), nunca quem é o jogador nem o que ele digitou.
  */
 import { Capacitor, registerPlugin } from "@capacitor/core";
+import { lang } from "../i18n";
 
 type Params = Record<string, string | number | boolean>;
 interface TelemetryPlugin {
@@ -25,8 +26,12 @@ const webLogger = () =>
     .then((m) => m.startWebAnalytics())
     .catch(() => undefined));
 
-/** Registra um evento do jogo. Falha de rede ou de plugin nunca chega ao jogador. */
-export function track(name: string, params: Params = {}) {
+/**
+ * Registra um evento do jogo. Falha de rede ou de plugin nunca chega ao jogador. Todo evento leva o
+ * idioma do jogo (`lang`: pt ou en), para comparar o funil de cada público.
+ */
+export function track(name: string, eventParams: Params = {}) {
+  const params: Params = { ...eventParams, lang: lang() };
   if (native()) {
     void Telemetry.logEvent({ name, params }).catch(() => {});
     return;
@@ -90,6 +95,7 @@ export function reportError(error: unknown) {
 /** Passa a relatar os erros que escapam do React: exceções soltas e promessas rejeitadas. */
 export function installErrorReporting() {
   if (!native()) return;
+  void Telemetry.setContext({ key: "idioma", value: lang() }).catch(() => {});
   window.addEventListener("error", (event) =>
     reportError(event.error ?? event.message),
   );

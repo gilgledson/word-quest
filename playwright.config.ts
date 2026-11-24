@@ -11,6 +11,8 @@ export default defineConfig({
     baseURL: `http://localhost:${PORT}`,
     // Celular pequeno em retrato: o jogo é pensado para 360×800.
     ...devices["Pixel 5"],
+    // O jogo escolhe o idioma pelo aparelho: os testes rodam em português.
+    locale: "pt-BR",
     viewport: { width: 360, height: 800 },
     trace: "retain-on-failure",
   },

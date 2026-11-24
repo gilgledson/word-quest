@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { economy, type Tile } from "../../game/crossword-engine";
 import { useRackSlots } from "../../hooks/useRackSlots";
 import type { useLetterDrag } from "../../hooks/useLetterDrag";
+import { MT } from "../../i18n/match";
 
 interface Props {
   rack: Tile[];
@@ -63,11 +64,11 @@ export function TurnControls({
   );
   const hasPending = pendingCount > 0;
   // O botão diz quantas letras a confirmação vale, em vez de um número solto no canto.
-  const confirmLabel = `Confirmar ${pendingCount} ${pendingCount === 1 ? "letra" : "letras"}`;
+  const confirmLabel = MT.confirmN(pendingCount);
   const byId = new Map(rack.map((t) => [t.id, t]));
   return (
     <>
-      <div className="letter-bank" role="group" aria-label="Letras do banco">
+      <div className="letter-bank" role="group" aria-label={MT.rackLetters}>
         {slots.map((id, slot) => {
           const t = id ? byId.get(id) : undefined;
           if (!t)
@@ -97,9 +98,7 @@ export function TurnControls({
               onClick={(event) => {
                 if (letterDrag.clickAllowed(event.detail === 0)) onInsert(t.id);
               }}
-              aria-label={
-                t.joker ? "Inserir curinga" : `Inserir letra ${t.letter}`
-              }
+              aria-label={t.joker ? MT.insertJoker : MT.insertLetter(t.letter)}
             >
               {t.joker ? "★" : t.letter}
             </motion.button>
@@ -110,23 +109,24 @@ export function TurnControls({
         <button
           disabled={!mine || !rack.length || swapped || toolsLocked}
           onClick={onSwap}
-          aria-label="Trocar"
+          aria-label={MT.swap}
         >
           <Shuffle />
-          Trocar <span>{swapped ? "1 por vez" : `${economy.swap[0]} ◉`}</span>
+          {MT.swap}{" "}
+          <span>{swapped ? MT.onePerTurn : `${economy.swap[0]} ◉`}</span>
         </button>
         {itemsCount > 0 && (
           <button
             disabled={!mine}
             onClick={onItems}
-            aria-label={`Itens (${itemsCount})`}
+            aria-label={MT.itemsN(itemsCount)}
             className="items-button"
           >
             <span className="items-button-art" aria-hidden="true">
               <img src="/art/loja/curinga.webp" alt="" draggable={false} />
               <b>{itemsCount}</b>
             </span>
-            Itens
+            {MT.items}
           </button>
         )}
         <motion.button
@@ -134,11 +134,11 @@ export function TurnControls({
           disabled={!mine || confirmLocked}
           onClick={onConfirm}
           whileTap={fxEnabled ? { scale: 0.94 } : undefined}
-          aria-label={hasPending ? confirmLabel : "Passar a vez"}
+          aria-label={hasPending ? confirmLabel : MT.pass}
         >
           {hasPending ? <Check /> : <SkipForward />}
           <small data-testid="confirm-label">
-            {hasPending ? confirmLabel : "Passar a vez"}
+            {hasPending ? confirmLabel : MT.pass}
           </small>
           {fxEnabled && pulse > 0 && (
             <span key={pulse} className="confirm-pulse" aria-hidden="true" />
@@ -148,10 +148,11 @@ export function TurnControls({
           className={hinting ? "fx-hint-btn" : ""}
           disabled={!mine || toolsLocked}
           onClick={onHint}
-          aria-label="Dica"
+          aria-label={MT.hintButton}
+          data-hint-button=""
         >
           <Lightbulb />
-          Dica <span>{economy.hint} ◉</span>
+          {MT.hintButton} <span>{economy.hint} ◉</span>
         </button>
       </div>
     </>

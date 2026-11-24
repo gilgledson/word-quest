@@ -5,12 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-const dir = path.join(
-  path.dirname(
-    new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
-  ),
-  "data",
-);
+import { scriptData as dir } from "./lib/lang.mjs";
 const strip = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
 export const MAX_CLUE = 18;
 export const MAX_TOKEN = 9;
@@ -36,7 +31,7 @@ export const loadDictionary = () => {
   const dictionaryPath = path.join(dir, "dictionary.txt");
   if (!fs.existsSync(dictionaryPath)) {
     console.error(
-      "Falta scripts/data/dictionary.txt: rode scripts/build-dictionary.mjs (ver scripts/README.md).",
+      `Falta ${dictionaryPath}: rode scripts/build-dictionary.mjs (ver scripts/README.md).`,
     );
     process.exit(1);
   }

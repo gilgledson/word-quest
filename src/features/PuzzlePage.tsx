@@ -76,19 +76,20 @@ import { settleSession } from "./puzzle/settleSession";
 import { track } from "../services/telemetry";
 import { achievedIds, achievementStatus } from "../game/achievements";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
+import { MT } from "../i18n/match";
 /** Duração do relógio opcional do turno do jogador. */
 const TURN_SECONDS = 25;
 /** Até esta fase da campanha, a vitória convida para o duelo online (quem ainda não chamou amigo). */
 const INVITE_UNTIL_LEVEL = 3;
 /** Intervalo entre as letras que o rival coloca na grade. */
 const BOT_LETTER_MS = 260;
-const HINT_MESSAGE = "Arraste as letras até as casas ou toque para preencher.";
+const hintMessage = () => MT.hint;
 /** Avisos de rotina: o painel mostra o progresso da palavra no lugar deles (continuam lidos pelo leitor de tela). */
 const isRoutineHint = (m: string) =>
-  m === HINT_MESSAGE ||
-  m.startsWith("Confirme com ✓") ||
-  m === "Letra devolvida ao banco." ||
-  m.startsWith("Letra trocada.");
+  m === MT.hint ||
+  m.startsWith(MT.confirmPrefix) ||
+  m === MT.letterBack ||
+  m.startsWith(MT.letterSwappedPrefix);
 /** Quanto tempo um aviso de resultado (pontos, erro, rival) fica visível antes de voltar ao progresso. */
 const FEEDBACK_MS = 4500;
 const BOARD_KEY = "wordquest-board";
@@ -109,17 +110,17 @@ interface LastBotMove {
 /** Frase completa da última vez do rival (aviso e leitor de tela). */
 const lastBotText = (name: string, m: LastBotMove) =>
   m.passed
-    ? `${name} passou a vez sem jogar.`
+    ? MT.lastBotPassed(name)
     : m.gained
-      ? `${name} confirmou ${m.gained} letra${m.gained > 1 ? "s" : ""} e fez +${m.total}. As casas marcadas em roxo são dele.`
-      : `${name} tentou uma palavra, errou e não pontuou.`;
+      ? MT.lastBotGained(name, m.gained, m.total)
+      : MT.lastBotMissed(name);
 /** Rótulo curto do chip da última jogada. */
 const lastBotChip = (m: LastBotMove) =>
   m.passed
-    ? "passou"
+    ? MT.chipPassed
     : m.gained
-      ? `${m.gained} letra${m.gained > 1 ? "s" : ""} · +${m.total}`
-      : "errou";
+      ? MT.chipGained(m.gained, m.total)
+      : MT.chipMissed;
 /** Duelo ao vivo: o rival é outro jogador e as jogadas chegam do servidor. */
 export interface OnlineDuel {
   rival: OpponentProfile;
@@ -205,7 +206,7 @@ export function Duel({
   );
   // Casa tocada na grade: a próxima peça entra nela (e não na primeira vazia da palavra).
   const [target, setTarget] = useState<string | null>(firstPick?.cell ?? null);
-  const [message, setMessage] = useState(HINT_MESSAGE);
+  const [message, setMessage] = useState(hintMessage);
   const [feedback, setFeedback] = useState(false);
   // O jogador escolheu uma pista enquanto o rival joga (planejando a próxima jogada).
   const [chosenWhileWaiting, setChosenWhileWaiting] = useState(false);
@@ -474,9 +475,7 @@ export function Duel({
   useEffect(() => {
     if (hasJoker && !hadJoker.current) {
       sfx("hint");
-      setMessage(
-        "Chegou o curinga ★! Coloque-o em qualquer casa: a letra certa só aparece ao confirmar.",
-      );
+      setMessage(MT.jokerArrived);
     }
     hadJoker.current = hasJoker;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -564,8 +563,8 @@ export function Duel({
   if (!puzzle || !engine || !session)
     return (
       <div className="page-heading">
-        <h1>Fase não encontrada</h1>
-        <Link to="/map">Voltar ao mapa</Link>
+        <h1>{MT.levelNotFound}</h1>
+        <Link to="/map">{MT.backToMap}</Link>
       </div>
     );
   if (
@@ -576,9 +575,9 @@ export function Duel({
   )
     return (
       <div className="page-heading">
-        <h1>Um passo de cada vez</h1>
-        <p>Complete a fase anterior para desbloquear este caminho.</p>
-        <Link to={backTo}>Voltar ao mapa</Link>
+        <h1>{MT.lockedTitle}</h1>
+        <p>{MT.lockedText}</p>
+        <Link to={backTo}>{MT.backToMap}</Link>
       </div>
     );
   const versus = session.versus;
@@ -646,11 +645,7 @@ export function Duel({
       sessions: { ...p.sessions, [sessionKey]: fresh },
     }));
     setSelected("");
-    setMessage(
-      grid
-        ? "Grade nova: toque em uma pista para começar."
-        : "Toque em uma pista para começar de novo.",
-    );
+    setMessage(grid ? MT.newGrid : MT.startOver);
   };
   const commit = (
     next: Session,
@@ -719,11 +714,10 @@ export function Duel({
         !engine.complete(turn.session);
       setMessage(
         (turn.passed
-          ? `${rival.name} passou a vez.`
+          ? MT.botPassed(rival.name)
           : turn.gained
-            ? `${rival.name} confirmou ${turn.gained} letra${turn.gained > 1 ? "s" : ""} (+${total}). Sua vez!`
-            : `${rival.name} errou e passou a vez. Sua vez!`) +
-          (last ? " Última rodada!" : ""),
+            ? MT.botGained(rival.name, turn.gained, total)
+            : MT.botMissed(rival.name)) + (last ? MT.lastRound : ""),
       );
     };
     const at = (ms: number, fn: () => void) =>
@@ -775,7 +769,7 @@ export function Duel({
   };
   const afford = (cost: number) => {
     if (player.coins >= cost) return true;
-    setMessage("Moedas insuficientes para esta ação.");
+    setMessage(MT.noCoins);
     sfx("error");
     return false;
   };
@@ -788,7 +782,7 @@ export function Duel({
     const w = puzzle.words.find((w) => w.id === wordId)!;
     // Tutorial: enquanto a palavra guiada não sai, as outras pistas esperam.
     if (coachOn && guide && wordId !== guide.wordId) {
-      setMessage(`Monte ${guideName} primeiro.`);
+      setMessage(MT.buildFirst(guideName));
       return w;
     }
     if (botTurn) setChosenWhileWaiting(true);
@@ -796,8 +790,8 @@ export function Duel({
     setTarget(cell ?? null);
     setMessage(
       engine.solved(session).some((s) => s.id === wordId)
-        ? "Palavra descoberta! Escolha outra pista."
-        : HINT_MESSAGE,
+        ? MT.wordFound
+        : MT.hint,
     );
     return w;
   };
@@ -815,14 +809,14 @@ export function Duel({
         want(cellKey) ??
         guide.cells.find((c) => c.letter === letter && !session.letters[c.key]);
       if (!spot) {
-        setMessage(`Essa letra não entra em ${guideName}.`);
+        setMessage(MT.notInWord(guideName));
         sfx("error");
         return false;
       }
       cellKey = spot.key;
     }
     if (!word) {
-      setMessage("Toque em uma pista para começar.");
+      setMessage(MT.tapClue);
       return false;
     }
     if (!cellKey || complete) return false;
@@ -833,7 +827,7 @@ export function Duel({
       cellKey,
     );
     if (next === session) return false;
-    setMessage("Confirme com ✓ quando terminar a jogada.");
+    setMessage(MT.confirmWhenDone);
     setTarget(null);
     const from = rectOf(`[data-tile="${tileId}"]`);
     commit(next);
@@ -856,18 +850,18 @@ export function Duel({
         ? puzzle.words.filter((w) => target.wordIds.includes(w.id))
         : [];
     if (!cell || !belongs.length || session.locked.includes(cell)) {
-      setMessage("Solte em uma casa que ainda não foi confirmada.");
+      setMessage(MT.dropOpen);
       return false;
     }
     if (coachOn && guide) {
       // Tutorial: só casas da palavra guiada, e só com a letra que cada uma pede.
       const spot = guide.cells.find((c) => c.key === cell);
       if (!spot) {
-        setMessage(`Monte ${guideName} primeiro.`);
+        setMessage(MT.buildFirst(guideName));
         return false;
       }
       if (session.tiles[tileId]?.letter !== spot.letter) {
-        setMessage(`Essa casa pede o ${spot.letter}.`);
+        setMessage(MT.squareNeeds(spot.letter));
         sfx("error");
         return false;
       }
@@ -886,16 +880,12 @@ export function Duel({
       ? engine.relocate(session, w.id, from, cell!)
       : engine.insert(session, w.id, tileId, cell);
     if (next === session) {
-      setMessage("Solte em uma casa que ainda não foi confirmada.");
+      setMessage(MT.dropOpen);
       return false;
     }
     setSelected(w.id);
     setTarget(null);
-    setMessage(
-      pending(cell)
-        ? "Letra trocada. Confirme com ✓ quando terminar a jogada."
-        : "Confirme com ✓ quando terminar a jogada.",
-    );
+    setMessage(pending(cell) ? MT.letterSwapped : MT.confirmWhenDone);
     commit(next);
     sfx(pending(cell) ? "replace" : "place");
     return true;
@@ -912,13 +902,13 @@ export function Duel({
         rectOf(`[data-tile="${tile.id}"]`),
       );
     sfx("remove");
-    setMessage("Letra devolvida ao banco.");
+    setMessage(MT.letterBack);
   };
   const confirm = () => {
     if (!mine || complete) return;
     // Tutorial: o ✓ só vale com a palavra guiada inteira (nunca vira "passar" nem jogada parcial).
     if (coachOn && guide && !guide.complete) {
-      setMessage(`Complete ${guideName} para confirmar.`);
+      setMessage(MT.finishToConfirm(guideName));
       return;
     }
     const r = engine.confirm(session, "p");
@@ -971,7 +961,7 @@ export function Duel({
     if (r.passed) sfx("pass");
     else if (r.gained) sfx(closed.length ? "word" : "correct", r.gained);
     else sfx("wrong");
-    if (r.passed) setMessage("Você passou a vez.");
+    if (r.passed) setMessage(MT.youPassed);
     else {
       setMessage(
         confirmMessage({
@@ -995,30 +985,28 @@ export function Duel({
     const next = mine && !complete ? engine.addJoker(session, word) : undefined;
     setItemsOpen(false);
     if (!next) {
-      setMessage("Não há espaço no banco para o curinga agora.");
+      setMessage(MT.noJokerRoom);
       sfx("error");
       return;
     }
     commit(next, 0, (p) => spendItem(p, "curinga"));
     track("item_used", { item: "curinga" });
     sfx("hint");
-    setMessage(
-      "Curinga ★ no seu banco: coloque em qualquer casa, ele sempre acerta.",
-    );
+    setMessage(MT.jokerAdded);
   };
   const applyVowel = (letter: string) => {
     const next =
       mine && !complete ? engine.takeLetter(session, letter, word) : undefined;
     setItemsOpen(false);
     if (!next) {
-      setMessage(`A grade não precisa de mais ${letter} agora.`);
+      setMessage(MT.vowelNotNeeded(letter));
       sfx("error");
       return;
     }
     commit(next, 0, (p) => spendItem(p, "vogal"));
     track("item_used", { item: "vogal", letter });
     sfx("hint");
-    setMessage(`A vogal ${letter} chegou ao seu banco.`);
+    setMessage(MT.vowelAdded(letter));
   };
   const hint = () => {
     const target = firstOpen();
@@ -1026,7 +1014,7 @@ export function Duel({
       return;
     const next = engine.hint(session, target.id);
     if (!next) {
-      setMessage("Nenhuma das suas letras serve para uma dica agora.");
+      setMessage(MT.noHint);
       sfx("error");
       return;
     }
@@ -1038,14 +1026,12 @@ export function Duel({
     setTarget(null);
     commit(next, economy.hint);
     sfx("hint");
-    setMessage(
-      "Dica colocou uma letra sua. Confirme com ✓ quando terminar a jogada.",
-    );
+    setMessage(MT.hintPlaced);
   };
   const confirmSwap = () => {
     if (!swapping?.length) return;
     if (!swapResult) {
-      setMessage("Não há letras diferentes e úteis para trocar.");
+      setMessage(MT.noSwap);
       return;
     }
     if (!afford(swapCost)) return;
@@ -1068,7 +1054,7 @@ export function Duel({
     commit(swapResult, swapCost);
     sfx("swap");
     setSwapping(null);
-    setMessage("Letras trocadas. Boa sorte!");
+    setMessage(MT.swapped);
   };
   const toggleSwap = (tileId: string) =>
     setSwapping((sel) =>
@@ -1100,8 +1086,8 @@ export function Duel({
           })
         : boardShareText({
             title: casual
-              ? `Casual: ${theme?.nome ?? `tabuleiro ${puzzle.cols}×${puzzle.rows}`}`
-              : `Fase ${puzzle.number} · ${mapOf(puzzle.world).nome}`,
+              ? MT.shareCasual(theme?.nome, puzzle.cols, puzzle.rows)
+              : MT.shareLevel(puzzle.number, mapOf(puzzle.world).nome),
             puzzle,
             session,
             rival: rival.name,
@@ -1110,7 +1096,7 @@ export function Duel({
     if (!mine || complete) return;
     setSwapping(null);
     confirm();
-    setMessage((m) => `Tempo esgotado. ${m}`);
+    setMessage((m) => MT.timeUp(m));
   };
   // Tutorial da fase 1 (só na campanha, para quem ainda não o concluiu).
   const tutorial =
@@ -1161,11 +1147,11 @@ export function Duel({
       data-tutorial={tutorial && !complete ? tutorialStep : undefined}
       data-spotlight={spotlight ? "" : undefined}
     >
-      <section className="puzzle-status" aria-label="Progresso da fase">
+      <section className="puzzle-status" aria-label={MT.levelProgress}>
         <div className="puzzle-top">
           <Link
             className="round-button"
-            aria-label="Voltar"
+            aria-label={MT.back}
             to={backTo}
             onClick={(e) => {
               // Duelo ao vivo em andamento: sair sem querer deixava o amigo encerrar a partida.
@@ -1178,51 +1164,51 @@ export function Duel({
           <div>
             <span className="eyebrow">
               {online ? (
-                "DUELO AO VIVO"
+                MT.liveDuel
               ) : (
                 <>
                   {daily
-                    ? "DESAFIO DO DIA"
+                    ? MT.dailyChallenge
                     : casual
                       ? `CASUAL · ${theme ? theme.nome.toUpperCase() : `${puzzle.cols}×${puzzle.rows}`}`
-                      : "DUELO"}{" "}
+                      : MT.duel}{" "}
                   · {OPPONENT_LEVELS[versus.level].label.toUpperCase()}
                 </>
               )}
             </span>
             <h2>
               {online
-                ? `Contra ${shortName(rival)}`
+                ? MT.against(shortName(rival))
                 : daily
-                  ? "Uma descoberta diária"
+                  ? MT.dailyTitle
                   : casual
                     ? theme
-                      ? `Grade ${puzzle.number}`
-                      : "Partida livre"
-                    : `Fase ${puzzle.number}`}
+                      ? MT.gridN(puzzle.number)
+                      : MT.freePlay
+                    : MT.levelN(puzzle.number)}
             </h2>
           </div>
           {shortDuel ? (
             // Duelo curto: o que importa é quantas rodadas faltam, não a grade inteira.
             <span
               className={`pill words-pill ${shortDuel.round === shortDuel.rounds && !complete ? "last-round" : ""}`}
-              aria-label={`Rodada ${shortDuel.round} de ${shortDuel.rounds}`}
+              aria-label={MT.roundOf(shortDuel.round, shortDuel.rounds)}
             >
               {shortDuel.round}/{shortDuel.rounds}
-              <small aria-hidden="true">rodada</small>
+              <small aria-hidden="true">{MT.round}</small>
             </span>
           ) : (
             <span
               className="pill words-pill"
-              aria-label={`${solved.length} de ${puzzle.words.length} palavras fechadas`}
+              aria-label={MT.wordsClosed(solved.length, puzzle.words.length)}
             >
               {solved.length}/{puzzle.words.length}
-              <small aria-hidden="true">palavras</small>
+              <small aria-hidden="true">{MT.words}</small>
             </span>
           )}
           <button
             className="round-button rotate-board"
-            aria-label="Girar tabuleiro"
+            aria-label={MT.rotateBoard}
             aria-pressed={grid.rotated}
             onClick={turnBoard}
           >
@@ -1232,7 +1218,7 @@ export function Duel({
         <VersusPanel
           player={{
             face: avatarOf(player.avatar),
-            name: player.name || "Você",
+            name: player.name || MT.you,
             score: session.scores.p,
             mood: playerMood.mood,
             moodKey: playerMood.key,
@@ -1293,7 +1279,7 @@ export function Duel({
               <button
                 type="button"
                 className="last-move"
-                aria-label={`Última jogada: ${lastBotText(rival.name, lastBot)}`}
+                aria-label={MT.lastMove(lastBotText(rival.name, lastBot))}
                 onClick={() => {
                   setMessage(lastBotText(rival.name, lastBot));
                   setBotPing(true);
@@ -1305,18 +1291,18 @@ export function Duel({
             <span className="eyebrow">
               {botTurn
                 ? online
-                  ? `VEZ DE ${shortName(rival).toUpperCase()}`
-                  : "VEZ DO OPONENTE"
+                  ? MT.turnOf(shortName(rival).toUpperCase())
+                  : MT.rivalTurn
                 : word
-                  ? `${(word.direction === "horizontal") !== grid.rotated ? "→ HORIZONTAL" : "↓ VERTICAL"} · ${normalize(word.answer).length} LETRAS`
-                  : "TOQUE EM UMA PISTA"}
+                  ? `${(word.direction === "horizontal") !== grid.rotated ? MT.across : MT.down} · ${MT.nLetters(normalize(word.answer).length)}`
+                  : MT.tapAClue}
             </span>
             <h2>
               {botTurn
                 ? online
-                  ? (online.notice ?? `${rival.name} está jogando…`)
-                  : `${rival.name} pensando…`
-                : (word?.clue ?? "Escolha por onde começar")}
+                  ? (online.notice ?? MT.rivalPlaying(rival.name))
+                  : MT.rivalThinking(rival.name)
+                : (word?.clue ?? MT.pickStart)}
               {botTurn && prefs.enabled && <TurnThinkingEffect />}
             </h2>
             <div className="message-slot">
@@ -1329,10 +1315,11 @@ export function Duel({
               {!showMessage && word && (
                 <p className="word-progress" data-testid="word-progress">
                   {wordClosed ? (
-                    "Palavra completa ✓"
+                    MT.wordComplete
                   ) : waitingPreview ? (
                     <>
-                      Sua pista: <b>{word.clue}</b>
+                      {MT.yourClue}
+                      <b>{word.clue}</b>
                       {` · ${filled}/${active.length}`}
                     </>
                   ) : (
@@ -1341,10 +1328,10 @@ export function Duel({
                         {filled}/{active.length}
                       </b>
                       {filled === active.length
-                        ? " · confirme com ✓"
-                        : ` · ${active.length - filled === 1 ? "resta 1" : `restam ${active.length - filled}`}`}
+                        ? MT.confirmWithCheck
+                        : ` · ${MT.left(active.length - filled)}`}
                       {/* Valor da palavra, com as casas 2× letra e 2× palavra. */}
-                      {` · +${engine.wordValue(session, word)} ao completar`}
+                      {MT.onComplete(engine.wordValue(session, word))}
                     </>
                   )}
                 </p>
@@ -1453,7 +1440,7 @@ export function Duel({
         <ResultSheet
           key={sessionKey}
           result={winner}
-          playerName={player.name.trim() || "Você"}
+          playerName={player.name.trim() || MT.you}
           playerFace={avatarOf(player.avatar)}
           rival={rival}
           mood={reaction.mood}

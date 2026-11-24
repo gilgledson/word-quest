@@ -15,6 +15,7 @@ import { OpponentAvatar } from "../components/OpponentAvatar";
 import { usePlayer } from "../stores/player";
 import { track } from "../services/telemetry";
 import { BoardSizePicker } from "./BoardSizePicker";
+import { casualT as t } from "../i18n/screens";
 
 /** Opção "Sorteio" na escolha do adversário. */
 const SURPRISE_RIVAL = "sorteio";
@@ -76,31 +77,28 @@ export function CasualSetup() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">MODO CASUAL</span>
-        <h1>Configurar partida</h1>
+        <span className="eyebrow">{t.eyebrow}</span>
+        <h1>{t.setupTitle}</h1>
       </div>
-      <section
-        className="online-card online-setup"
-        aria-label="Configurar partida"
-      >
+      <section className="online-card online-setup" aria-label={t.setupTitle}>
         <div className="online-versus" aria-hidden="true">
           <span>
             <OpponentAvatar opponent={avatarOf(player.avatar)} size={60} />
-            <b>{player.name.trim() || "Você"}</b>
+            <b>{player.name.trim() || t.you}</b>
           </span>
           <i>VS</i>
           <span>
             {rival ? <OpponentAvatar opponent={rival} size={60} /> : <em>?</em>}
-            <b>{rival?.name ?? "Sorteio"}</b>
+            <b>{rival?.name ?? t.random}</b>
           </span>
         </div>
         <p className="online-setup-theme">
           {/* Sem grade do tema no tamanho (conteúdo antigo), a partida é Surpresa. */}
-          Tema: <b>{themed.length ? theme.nome : "Surpresa"}</b> ·{" "}
-          <Link to="/casual">trocar</Link>
+          {t.theme} <b>{themed.length ? theme.nome : t.surprise}</b> ·{" "}
+          <Link to="/casual">{t.change}</Link>
         </p>
         <BoardSizePicker value={board} onChange={setBoard} />
-        <h2 id="escolha-rival">Adversário</h2>
+        <h2 id="escolha-rival">{t.rival}</h2>
         <div
           className="rival-picks"
           role="radiogroup"
@@ -110,15 +108,15 @@ export function CasualSetup() {
             type="button"
             role="radio"
             aria-checked={!rival}
-            aria-label="Sorteio: um adversário qualquer"
+            aria-label={t.randomLabel}
             className={!rival ? "selected" : ""}
             onClick={() => setRivalId(SURPRISE_RIVAL)}
           >
             <span className="rival-pick-face" aria-hidden="true">
               <Dices size={26} />
             </span>
-            <b>Sorteio</b>
-            <small className="rival-pick-level">Qualquer</small>
+            <b>{t.random}</b>
+            <small className="rival-pick-level">{t.any}</small>
           </button>
           {OPPONENTS.map((o) => (
             <button
@@ -139,12 +137,10 @@ export function CasualSetup() {
           ))}
         </div>
         <p className="online-hint">
-          {rival
-            ? `Partida contra ${rival.name}, sem aposta.`
-            : "O adversário é sorteado ao começar. Sem aposta."}
+          {rival ? t.against(rival.name) : t.randomHint}
         </p>
         <button type="button" className="button primary" onClick={start}>
-          <Swords size={20} aria-hidden="true" /> Começar partida
+          <Swords size={20} aria-hidden="true" /> {t.start}
         </button>
       </section>
     </>

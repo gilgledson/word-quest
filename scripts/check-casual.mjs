@@ -3,15 +3,13 @@
 // Uso: node scripts/check-casual.mjs [--min 0.8]   (sai com erro se alguma grade ficar abaixo do mínimo)
 import fs from "node:fs";
 import path from "node:path";
-import { loadCatalog, dir } from "./check-clues.mjs";
+import { loadCatalog } from "./check-clues.mjs";
+import { appData } from "./lib/lang.mjs";
 
 const args = process.argv.slice(2);
 const min = Number(args[args.indexOf("--min") + 1] || 0);
 const casual = JSON.parse(
-  fs.readFileSync(
-    path.join(dir, "..", "..", "src", "data", "casual.json"),
-    "utf8",
-  ),
+  fs.readFileSync(path.join(appData, "casual.json"), "utf8"),
 );
 const tipo = new Map(loadCatalog().map((e) => [e.palavra, e.tipo]));
 let abaixo = 0;

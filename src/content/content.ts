@@ -4,6 +4,7 @@ import { currentMode } from "../services/appCheckMode";
 import { firebaseConfig } from "../services/firebaseConfig";
 import { contentStore, type Player } from "../services/repository";
 import { reportError, track } from "../services/telemetry";
+import { lang, type Lang } from "../i18n";
 import { prefetchAssets } from "./assets";
 import { CONTENT_SCHEMA, validateContent, type GameContent } from "./validate";
 
@@ -23,11 +24,28 @@ export const BUNDLED_CONTENT: GameContent = {
   catalog: bundledCatalog,
   cast: bundledCast,
 };
+/**
+ * Conteúdo que vem no app para cada idioma. O português é o de sempre (dentro do pacote principal); o
+ * inglês (src/data/en) só é baixado por quem joga em inglês.
+ */
+async function bundledFor(l: Lang): Promise<GameContent> {
+  if (l === "pt") return BUNDLED_CONTENT;
+  const en = await import("../data/en");
+  return { ...BUNDLED_CONTENT, catalog: en.catalog, cast: en.cast };
+}
+/** O conteúdo do app no idioma em uso (o português até `startContent` rodar). */
+let bundled: GameContent = BUNDLED_CONTENT;
 let active: GameContent = BUNDLED_CONTENT;
 /** Versão em uso (0 = a do app). */
 export const contentVersion = () => active.version;
 
-const CONTENT_URL = `${firebaseConfig.databaseURL}/content`;
+/**
+ * Onde o conteúdo de cada idioma é publicado: o português no `content` de sempre (os apps antigos
+ * continuam lendo de lá) e cada idioma novo no seu (`content-en`).
+ */
+export const contentPath = (l: Lang) =>
+  l === "pt" ? "content" : `content-${l}`;
+const contentUrl = () => `${firebaseConfig.databaseURL}/${contentPath(lang())}`;
 
 function apply(content: GameContent) {
   setCatalog(content.catalog);
@@ -43,12 +61,15 @@ const ONLY_BUNDLED = import.meta.env.VITE_ONLY_BUNDLED_CONTENT === "1";
 
 /** Abertura do app: usa o conteúdo guardado, se houver um válido e mais novo que o do app. */
 export async function startContent() {
+  const l = lang();
+  bundled = await bundledFor(l);
+  apply(bundled);
   if (ONLY_BUNDLED) return;
   try {
-    const cached = (await contentStore.load()) as GameContent | undefined;
+    const cached = (await contentStore.load(l)) as GameContent | undefined;
     if (
       cached &&
-      cached.version > BUNDLED_CONTENT.version &&
+      cached.version > bundled.version &&
       validateContent(cached).length === 0
     )
       apply(cached);
@@ -130,11 +151,12 @@ export async function refreshContent(player: Player): Promise<RefreshResult> {
   if (ONLY_BUNDLED) return "current";
   let latest: unknown;
   try {
-    latest = await getJson(`${CONTENT_URL}/version.json`);
+    latest = await getJson(`${contentUrl()}/version.json`);
   } catch {
     return "offline";
   }
-  const cached = (await contentStore.load().catch(() => undefined)) as
+  const l = lang();
+  const cached = (await contentStore.load(l).catch(() => undefined)) as
     GameContent | undefined;
   const have = Math.max(active.version, cached?.version ?? 0);
   if (typeof latest !== "number" || latest <= have) {
@@ -143,7 +165,7 @@ export async function refreshContent(player: Player): Promise<RefreshResult> {
   }
   let content: GameContent;
   try {
-    const textData = await getJson(`${CONTENT_URL}/data.json`);
+    const textData = await getJson(`${contentUrl()}/data.json`);
     content = JSON.parse(String(textData));
   } catch {
     return "offline";
@@ -157,11 +179,22 @@ export async function refreshContent(player: Player): Promise<RefreshResult> {
     );
     return "invalid";
   }
-  await contentStore.save(content);
+  await contentStore.save(content, l);
   track("content_downloaded", { version: content.version });
-  // Imagens que nenhuma das versões cita (a em uso e a nova) não servem mais.
+  // Imagens que nenhuma das versões cita (a em uso, a nova e a guardada do outro idioma) não servem mais.
+  const others = await Promise.all(
+    (["pt", "en"] as const)
+      .filter((o) => o !== l)
+      .map((o) => contentStore.load(o).catch(() => undefined)),
+  );
   void contentStore
-    .pruneAssets(new Set([...contentImages(active), ...contentImages(content)]))
+    .pruneAssets(
+      new Set([
+        ...contentImages(active),
+        ...contentImages(content),
+        ...others.flatMap((o) => (o ? contentImages(o as GameContent) : [])),
+      ]),
+    )
     .catch(() => {});
   void prefetchAssets(upcomingImages(content, player));
   return "stored";
@@ -169,5 +202,6 @@ export async function refreshContent(player: Player): Promise<RefreshResult> {
 
 /** Só para testes: volta ao conteúdo do app. */
 export function resetContent() {
+  bundled = BUNDLED_CONTENT;
   apply(BUNDLED_CONTENT);
 }

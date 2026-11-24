@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Users } from "lucide-react";
 import { avatarOf } from "../game/avatars";
 import { track } from "../services/telemetry";
+import { homeT as t } from "../i18n/screens";
 
 /** Quem aparece como "o amigo" no card: alguém diferente do avatar do jogador. */
 export const friendAvatarFor = (mine: string) =>
@@ -19,7 +20,7 @@ export function DuelCard({ avatar }: { avatar: string }) {
     <Link
       className="duel-card"
       to="/online"
-      aria-label="Desafie seu amigo: duelo online. Convidar"
+      aria-label={t.duelLabel}
       onClick={() => track("home_duel_card")}
     >
       <span className="duel-card-faces" aria-hidden="true">
@@ -43,10 +44,10 @@ export function DuelCard({ avatar }: { avatar: string }) {
         />
       </span>
       <span className="duel-card-text">
-        <strong>Desafie seu amigo</strong>
-        <small>Duelo online</small>
+        <strong>{t.duelTitle}</strong>
+        <small>{t.duelSub}</small>
         <span className="duel-card-cta" aria-hidden="true">
-          <Users size={20} /> Convidar
+          <Users size={20} /> {t.duelInvite}
         </span>
       </span>
     </Link>

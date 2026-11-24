@@ -15,6 +15,7 @@ import path from "node:path";
 import * as grid from "./lib/arrowword.mjs";
 import { rng, setSize } from "./lib/arrowword.mjs";
 import { validateClues } from "./check-clues.mjs";
+import { appData, scriptData } from "./lib/lang.mjs";
 
 const args = Object.fromEntries(
   process.argv.slice(2).reduce((acc, a, i, all) => {
@@ -28,10 +29,7 @@ const args = Object.fromEntries(
     return acc;
   }, []),
 );
-const here = path.dirname(
-  new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
-);
-const out = args.out ?? path.join(here, "..", "src", "data", "casual.json");
+const out = args.out ?? path.join(appData, "casual.json");
 const count = Number(args.count ?? 6);
 const tries = Number(args.tries ?? 400);
 const minWords = Number(args["min-words"] ?? 14);
@@ -42,7 +40,7 @@ if (sized) setSize(Number(args.rows), Number(args.cols));
 const ROWS = grid.ROWS;
 const COLS = grid.COLS;
 const themes = JSON.parse(
-  fs.readFileSync(path.join(here, "data", "themes.json"), "utf8"),
+  fs.readFileSync(path.join(scriptData, "themes.json"), "utf8"),
 );
 const wanted = args.themes
   ? String(args.themes).split(",")
@@ -325,6 +323,9 @@ for (const id of wanted) {
   const entry = {
     id,
     nome: theme.nome,
+    // Arte e cores do tema (temas de outro idioma reaproveitam a arte dos temas do app).
+    ...(theme.art && { art: theme.art }),
+    ...(theme.color && { color: theme.color, colorSoft: theme.colorSoft }),
     puzzles: sized ? [...kept, ...puzzles] : puzzles,
   };
   if (pos < 0) result.themes.push(entry);

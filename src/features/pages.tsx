@@ -30,6 +30,7 @@ import {
   BriefcaseBusiness,
   HeartPulse,
   Backpack,
+  Languages,
 } from "lucide-react";
 import {
   achievementStatus,
@@ -80,6 +81,8 @@ import { WorldCard } from "./WorldCard";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
 import { canRateInStore, openStoreRating } from "../services/review";
+import { changeLang, htmlLang, lang, LANGS, locale, type Lang } from "../i18n";
+import { campaignT, casualT, dailyT, homeT, profileT } from "../i18n/screens";
 export function Home() {
   const wins = usePlayer(
     (s) => levels.filter((l) => s.player.stars[l.id]).length,
@@ -88,9 +91,7 @@ export function Home() {
   return (
     <>
       {/* O título fica só para leitores de tela: a arte do mundo já abre a tela. */}
-      <h1 className="sr-only">
-        {wins ? "Sua aventura continua!" : "Sua aventura começa!"}
-      </h1>
+      <h1 className="sr-only">{wins ? homeT.titleGoing : homeT.titleStart}</h1>
       {onlineAvailable() && <DuelCard avatar={avatar} />}
       <WorldCard />
       <DailyRewardFlow />
@@ -224,18 +225,18 @@ export function Campaign({ world = "vila" }: { world?: string }) {
           <ArrowRight size={18} />
           <span>
             {nextMap.nome}
-            <small>Entrar</small>
+            <small>{campaignT.enter}</small>
           </span>
         </Link>
       ) : (
         <div className="campaign-gate">
           <LockKeyhole size={18} />
           <span>
-            {nextMap ? nextMap.nome : "Novos mundos"}
+            {nextMap ? nextMap.nome : campaignT.newWorlds}
             <small>
               {nextMap
-                ? `Faltam ${remaining} ${remaining === 1 ? "fase" : "fases"} · ★ ${worldStars}/${list.length * 3}`
-                : "Em breve"}
+                ? campaignT.remaining(remaining, worldStars, list.length * 3)
+                : campaignT.soon}
             </small>
           </span>
         </div>
@@ -258,7 +259,12 @@ export function Campaign({ world = "vila" }: { world?: string }) {
             >
               <Link
                 aria-disabled={!unlocked}
-                aria-label={`Fase ${l.number}${boss ? `, chefe ${rival?.name}` : ""}${p.stars[l.id] ? `, ${p.stars[l.id]} estrelas` : unlocked ? ", disponível" : ", bloqueada"}`}
+                aria-label={campaignT.level(
+                  l.number,
+                  boss ? rival?.name : undefined,
+                  p.stars[l.id] ?? 0,
+                  unlocked,
+                )}
                 onClick={(e) => !unlocked && e.preventDefault()}
                 className={`level-node ${state}`}
                 to={`/play/${l.id}`}
@@ -273,11 +279,11 @@ export function Campaign({ world = "vila" }: { world?: string }) {
                   ? "★".repeat(p.stars[l.id])
                   : state === "current"
                     ? boss
-                      ? `Chefe: ${rival?.name}`
-                      : "Você está aqui"
+                      ? campaignT.bossTag(rival?.name)
+                      : campaignT.here
                     : boss
-                      ? "Chefe"
-                      : "Bloqueada"}
+                      ? campaignT.boss
+                      : campaignT.locked}
               </strong>
             </li>
           );
@@ -320,13 +326,13 @@ export function Casual() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">MODO CASUAL</span>
-        <h1>Escolha um tema</h1>
-        <p>Um duelo rápido numa cruzadinha cheia de palavras do tema.</p>
+        <span className="eyebrow">{casualT.eyebrow}</span>
+        <h1>{casualT.title}</h1>
+        <p>{casualT.sub}</p>
       </div>
       <Deck
         className="theme-deck"
-        label="Temas"
+        label={casualT.themes}
         items={casualThemes}
         keyOf={(t) => t.id}
         cardProps={(t) => ({
@@ -351,13 +357,11 @@ export function Casual() {
                 <Icon size={30} />
               </span>
               <strong>{t.nome}</strong>
-              <small>
-                {finished} de {t.puzzles.length} grades vencidas
-              </small>
+              <small>{casualT.won(finished, t.puzzles.length)}</small>
               <span
                 className="theme-progress"
                 role="progressbar"
-                aria-label={`Progresso em ${t.nome}`}
+                aria-label={casualT.progress(t.nome)}
                 aria-valuenow={finished}
                 aria-valuemin={0}
                 aria-valuemax={t.puzzles.length}
@@ -369,10 +373,11 @@ export function Casual() {
               <button
                 type="button"
                 className="button primary theme-play"
-                aria-label={`Jogar tema ${t.nome}`}
+                aria-label={casualT.playTheme(t.nome)}
                 onClick={() => play(t)}
               >
-                Jogar <Play size={18} fill="currentColor" aria-hidden="true" />
+                {casualT.play}{" "}
+                <Play size={18} fill="currentColor" aria-hidden="true" />
               </button>
             </>
           );
@@ -381,7 +386,7 @@ export function Casual() {
       {onlineAvailable() && (
         <Link className="online-entry" to="/online">
           <Swords size={22} aria-hidden="true" />
-          <b>Jogar com um amigo</b>
+          <b>{casualT.playFriend}</b>
         </Link>
       )}
     </>
@@ -401,21 +406,19 @@ export function Daily() {
   return (
     <>
       <div className="page-heading">
-        <span className="eyebrow">UM PEQUENO RITUAL DE DESCOBERTAS</span>
-        <h1>Desafio do Dia</h1>
-        <p>Volte a cada dia para um novo caminho.</p>
+        <span className="eyebrow">{dailyT.eyebrow}</span>
+        <h1>{dailyT.title}</h1>
+        <p>{dailyT.sub}</p>
       </div>
       <p className="streak-pill">
         <Sparkles size={18} aria-hidden="true" />
-        {streak > 1
-          ? `${streak} dias seguidos`
-          : `${p.daily.length} ${p.daily.length === 1 ? "desafio concluído" : "desafios concluídos"}`}
+        {streak > 1 ? dailyT.streak(streak) : dailyT.completed(p.daily.length)}
       </p>
       <section className="calendar-card">
         <div className="calendar-title">
           <CalendarDays />
           <h2>
-            {new Intl.DateTimeFormat("pt-BR", {
+            {new Intl.DateTimeFormat(locale(), {
               month: "long",
               year: "numeric",
             })
@@ -425,12 +428,12 @@ export function Daily() {
           {/* Só a vitória conta no diário (uma vez por dia): o selo diz a condição. */}
           <span className="pill">
             {p.daily.includes(date)
-              ? "Vencido hoje ✓"
-              : `+${economy.daily} ao vencer`}
+              ? dailyT.wonToday
+              : dailyT.prize(economy.daily)}
           </span>
         </div>
         <div className="calendar">
-          {["D", "S", "T", "Q", "Q", "S", "S"].map((d, i) => (
+          {dailyT.weekdays.map((d, i) => (
             <b key={i}>{d}</b>
           ))}
           {Array.from({ length: offset }, (_, i) => (
@@ -445,7 +448,16 @@ export function Daily() {
                 className={`${n === day ? "today" : ""} ${completed ? "done" : ""} ${n > day ? "future" : ""} ${missed ? "missed" : ""}`}
                 key={n}
                 role="img"
-                aria-label={`Dia ${n}: ${completed ? "concluído" : n === day ? "disponível hoje" : n > day ? "ainda indisponível" : "não vencido"}`}
+                aria-label={dailyT.day(
+                  n,
+                  completed
+                    ? dailyT.dayDone
+                    : n === day
+                      ? dailyT.dayToday
+                      : n > day
+                        ? dailyT.dayFuture
+                        : dailyT.dayMissed,
+                )}
               >
                 {completed ? <Check size={20} /> : n}
               </span>
@@ -454,30 +466,28 @@ export function Daily() {
         </div>
         <ul className="calendar-legend" aria-hidden="true">
           <li>
-            <Check size={14} /> vencido
+            <Check size={14} /> {dailyT.legendWon}
           </li>
           <li>
-            <i className="dot today" /> hoje
+            <i className="dot today" /> {dailyT.legendToday}
           </li>
           <li>
-            <i className="dot missed" /> não vencido
+            <i className="dot missed" /> {dailyT.legendMissed}
           </li>
           <li>
-            <i className="dot future" /> em breve
+            <i className="dot future" /> {dailyT.legendSoon}
           </li>
         </ul>
         {shareResult ? (
           <div className="daily-actions">
             <ShareResultButton text={shareResult} className="button primary" />
             <Link className="button result-ghost" to="/play/daily">
-              Revisitar desafio <ArrowRight size={18} />
+              {dailyT.revisit} <ArrowRight size={18} />
             </Link>
           </div>
         ) : (
           <Link className="button primary" to="/play/daily">
-            {p.daily.includes(date)
-              ? "Revisitar desafio"
-              : "Jogar o desafio de hoje"}{" "}
+            {p.daily.includes(date) ? dailyT.revisit : dailyT.playToday}{" "}
             <ArrowRight size={18} />
           </Link>
         )}
@@ -504,11 +514,11 @@ function dailyResultText(p: Player, date: string, streak: number) {
   });
 }
 type ProfileTab = "resumo" | "conquistas" | "rivais" | "ajustes";
-const PROFILE_TABS: [ProfileTab, string][] = [
-  ["resumo", "Resumo"],
-  ["conquistas", "Conquistas"],
-  ["rivais", "Rivais"],
-  ["ajustes", "Ajustes"],
+const PROFILE_TABS: ProfileTab[] = [
+  "resumo",
+  "conquistas",
+  "rivais",
+  "ajustes",
 ];
 /**
  * Perfil: quem é o jogador no topo (avatar, nome e um resumo de uma linha) e o resto em abas, uma
@@ -522,11 +532,11 @@ export function Profile() {
   const stars = Object.values(p.stars).reduce((a, b) => a + b, 0);
   return (
     <>
-      <section className="profile-header" aria-label="Você">
+      <section className="profile-header" aria-label={profileT.you}>
         <button
           type="button"
           className="profile-avatar"
-          aria-label="Editar avatar e nome"
+          aria-label={profileT.editAvatar}
           onClick={() => setEditing(true)}
         >
           <OpponentAvatar opponent={avatarOf(p.avatar)} size={84} />
@@ -535,20 +545,24 @@ export function Profile() {
           </span>
         </button>
         <div className="profile-who">
-          <span className="eyebrow">SEU PERFIL</span>
-          <h1>{p.name.trim() || "Explorador"}</h1>
+          <span className="eyebrow">{profileT.eyebrow}</span>
+          <h1>{p.name.trim() || profileT.defaultName}</h1>
           <p>
-            {Object.keys(p.stars).length} de {levels.length} fases · {stars}{" "}
-            estrelas · {p.coins} moedas
+            {profileT.summary(
+              Object.keys(p.stars).length,
+              levels.length,
+              stars,
+              p.coins,
+            )}
           </p>
         </div>
       </section>
       <div
         className="profile-tabs"
         role="tablist"
-        aria-label="Seções do perfil"
+        aria-label={profileT.tabList}
       >
-        {PROFILE_TABS.map(([id, label]) => (
+        {PROFILE_TABS.map((id) => (
           <button
             key={id}
             type="button"
@@ -559,9 +573,9 @@ export function Profile() {
             className={tab === id ? "selected" : ""}
             onClick={() => setTab(id)}
           >
-            {label}
+            {profileT.tabs[id]}
             {id === "conquistas" && ready > 0 && (
-              <span className="tab-badge" aria-label={`${ready} prontas`}>
+              <span className="tab-badge" aria-label={profileT.ready(ready)}>
                 {ready}
               </span>
             )}
@@ -572,7 +586,7 @@ export function Profile() {
         className="profile-panel"
         role="tabpanel"
         id="profile-panel"
-        aria-label={`Aba ${PROFILE_TABS.find(([id]) => id === tab)?.[1]}`}
+        aria-label={profileT.tabPanel(profileT.tabs[tab])}
       >
         {tab === "resumo" && (
           <>
@@ -601,11 +615,11 @@ function EditProfileDialog({ onClose }: { onClose: () => void }) {
         className="swap-dialog profile-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Editar perfil"
+        aria-label={profileT.editTitle}
       >
-        <h2>Editar perfil</h2>
-        <span className="profile-dialog-label">Seu avatar</span>
-        <ul className="avatar-picker" aria-label="Avatares">
+        <h2>{profileT.editTitle}</h2>
+        <span className="profile-dialog-label">{profileT.yourAvatar}</span>
+        <ul className="avatar-picker" aria-label={profileT.avatars}>
           {PLAYER_AVATARS.map((a) => (
             <li key={a.id}>
               <button
@@ -622,7 +636,7 @@ function EditProfileDialog({ onClose }: { onClose: () => void }) {
           ))}
         </ul>
         <label className="profile-dialog-name">
-          Nome do explorador
+          {profileT.nameLabel}
           <input
             value={p.name}
             maxLength={30}
@@ -631,7 +645,7 @@ function EditProfileDialog({ onClose }: { onClose: () => void }) {
         </label>
         <div className="swap-actions">
           <button className="primary" autoFocus onClick={onClose}>
-            Concluir
+            {profileT.done}
           </button>
         </div>
       </div>
@@ -643,7 +657,7 @@ function ProfileRivals() {
   return (
     <Deck
       className="rival-deck"
-      label="Rivais"
+      label={profileT.rivals}
       items={OPPONENTS}
       keyOf={(o) => o.id}
       cardProps={(o) => ({ className: o.boss ? "rival boss" : "rival" })}
@@ -655,7 +669,7 @@ function ProfileRivals() {
           <strong>{o.name}</strong>
           <small className="rival-level">
             <Star size={14} fill="currentColor" aria-hidden="true" />
-            {o.boss ? "Chefe · " : ""}
+            {o.boss ? profileT.bossPrefix : ""}
             {OPPONENT_LEVELS[o.level].label} · {OPPONENT_STYLES[o.style].label}
           </small>
           <em>“{o.tagline}”</em>
@@ -668,11 +682,12 @@ function ProfileRivals() {
 function ProfileSettings() {
   const { player: p, update } = usePlayer();
   return (
-    <section className="profile-card" aria-label="Ajustes">
+    <section className="profile-card" aria-label={profileT.settings}>
+      <LanguageSetting />
       <label className="toggle">
         <span>
           <Volume2 />
-          Efeitos sonoros
+          {profileT.sound}
         </span>
         <input
           type="checkbox"
@@ -689,7 +704,7 @@ function ProfileSettings() {
       <label className="toggle">
         <span>
           <Music />
-          Música
+          {profileT.music}
         </span>
         <input
           type="checkbox"
@@ -700,7 +715,7 @@ function ProfileSettings() {
       <label className="toggle">
         <span>
           <Vibrate />
-          Vibração
+          {profileT.vibration}
         </span>
         <input
           type="checkbox"
@@ -714,7 +729,7 @@ function ProfileSettings() {
       <label className="toggle">
         <span>
           <Activity />
-          Animações
+          {profileT.animations}
         </span>
         <input
           type="checkbox"
@@ -727,7 +742,7 @@ function ProfileSettings() {
       <label className="toggle">
         <span>
           <Contrast />
-          Alto contraste na grade
+          {profileT.contrast}
         </span>
         <input
           type="checkbox"
@@ -741,7 +756,7 @@ function ProfileSettings() {
         <label className="toggle">
           <span>
             <BellRing />
-            Lembrete diário (18h30)
+            {profileT.reminder}
           </span>
           <input
             type="checkbox"
@@ -758,7 +773,7 @@ function ProfileSettings() {
       <label className="toggle">
         <span>
           <Timer />
-          Relógio do turno (25 s)
+          {profileT.timer}
         </span>
         <input
           type="checkbox"
@@ -774,7 +789,7 @@ function ProfileSettings() {
           disabled={!p.sound}
           onClick={() => playSfx(true, "correct", 3)}
         >
-          <Volume2 size={18} /> Testar som
+          <Volume2 size={18} /> {profileT.testSound}
         </button>
         <button
           className="test-sound"
@@ -782,22 +797,54 @@ function ProfileSettings() {
           onClick={() => update((s) => ({ ...s, tutorialDone: false }))}
         >
           <Sparkles size={18} />{" "}
-          {p.tutorialDone ? "Rever o tutorial" : "Tutorial ativo"}
+          {p.tutorialDone ? profileT.replayTutorial : profileT.tutorialOn}
         </button>
         {canRateInStore() && (
           <button
             className="test-sound rate-game"
             onClick={() => openStoreRating()}
           >
-            <ThumbsUp size={18} /> Avaliar o jogo
+            <ThumbsUp size={18} /> {profileT.rate}
           </button>
         )}
       </div>
       <Link className="text-link credits-link" to="/credits">
-        Créditos e licenças
+        {profileT.credits}
       </Link>
       <AppVersion />
     </section>
+  );
+}
+/** Nome de cada idioma escrito nele mesmo: quem não lê o idioma atual acha o seu. */
+const LANG_NAMES: Record<Lang, string> = { pt: "Português", en: "English" };
+/** Idioma do jogo: trocar grava a escolha e reabre o app na tela inicial. */
+function LanguageSetting() {
+  const current = lang();
+  return (
+    <div
+      className="toggle language-setting"
+      role="group"
+      aria-labelledby="language-setting-label"
+    >
+      <span id="language-setting-label">
+        <Languages />
+        {profileT.language}
+      </span>
+      <div className="online-choices">
+        {LANGS.map((l) => (
+          <button
+            key={l}
+            type="button"
+            lang={htmlLang(l)}
+            aria-pressed={current === l}
+            className={current === l ? "selected" : ""}
+            onClick={() => changeLang(l)}
+          >
+            {LANG_NAMES[l]}
+          </button>
+        ))}
+      </div>
+    </div>
   );
 }
 /** Versão da loja e do pacote em uso (a atualização ao vivo troca só o pacote). */
@@ -824,26 +871,26 @@ function ProfileStats() {
   // Progresso da jornada de um lado, resultado dos confrontos do outro.
   const groups: [string, [string, string][]][] = [
     [
-      "Aventura",
+      profileT.adventure,
       [
-        ["Fases", `${done}/${levels.length}`],
-        ["Estrelas", `${stars}/${levels.length * 3}`],
-        ["Desafios do dia", String(p.daily.length)],
+        [profileT.levels, `${done}/${levels.length}`],
+        [profileT.stars, `${stars}/${levels.length * 3}`],
+        [profileT.dailies, String(p.daily.length)],
       ],
     ],
     [
-      "Duelos",
+      profileT.duels,
       [
-        ["Vitórias", String(wins)],
-        ["Empates", String(draws)],
-        ["Derrotas", String(losses)],
+        [profileT.wins, String(wins)],
+        [profileT.draws, String(draws)],
+        [profileT.losses, String(losses)],
       ],
     ],
   ];
   return (
-    <section className="profile-stats" aria-label="Seu progresso">
+    <section className="profile-stats" aria-label={profileT.progress}>
       <h2>
-        <Trophy size={20} aria-hidden="true" /> Seu progresso
+        <Trophy size={20} aria-hidden="true" /> {profileT.progress}
       </h2>
       {groups.map(([title, items]) => (
         <div className="stats-group" key={title}>
@@ -877,27 +924,27 @@ function Achievements() {
     <>
       <div className="achievements-bar">
         <span>
-          <Award size={18} aria-hidden="true" /> {claimed}/{list.length}{" "}
-          resgatadas
+          <Award size={18} aria-hidden="true" />{" "}
+          {profileT.claimed(claimed, list.length)}
         </span>
         {ready.length > 1 && (
           <button
             type="button"
             className="achievement-claim claim-all"
-            aria-label={`Resgatar tudo: ${readyCoins} moedas de ${ready.length} conquistas`}
+            aria-label={profileT.claimAllLabel(readyCoins, ready.length)}
             onClick={() =>
               update((s) =>
                 ready.reduce((n, a) => claimAchievement(n, a.id), s),
               )
             }
           >
-            Resgatar tudo <CoinIcon size={16} /> +{readyCoins}
+            {profileT.claimAll} <CoinIcon size={16} /> +{readyCoins}
           </button>
         )}
       </div>
       <Deck
         className="medal-deck"
-        label="Conquistas"
+        label={profileT.achievements}
         items={list}
         keyOf={(a) => a.id}
         cardProps={(a) => ({
@@ -920,7 +967,7 @@ function Achievements() {
                 <span
                   className="bar"
                   role="progressbar"
-                  aria-label={`Progresso de ${a.title}`}
+                  aria-label={profileT.achievementProgress(a.title)}
                   aria-valuenow={a.progress}
                   aria-valuemin={0}
                   aria-valuemax={a.goal}
@@ -933,22 +980,22 @@ function Achievements() {
               </span>
             )}
             {a.claimed ? (
-              <span className="achievement-prize">Resgatada ✓</span>
+              <span className="achievement-prize">{profileT.claimedOne}</span>
             ) : a.done ? (
               <button
                 type="button"
                 className="achievement-claim"
-                aria-label={`Resgatar ${a.coins} moedas de ${a.title}`}
+                aria-label={profileT.claimLabel(a.coins, a.title)}
                 onClick={() => update((s) => claimAchievement(s, a.id))}
               >
-                Resgatar <CoinIcon size={16} /> +{a.coins}
+                {profileT.claim} <CoinIcon size={16} /> +{a.coins}
               </button>
             ) : (
               <span
                 className="achievement-prize"
-                aria-label={`Prêmio: ${a.coins} moedas`}
+                aria-label={profileT.prizeLabel(a.coins)}
               >
-                <CoinIcon size={16} /> {a.coins} moedas
+                <CoinIcon size={16} /> {profileT.coins(a.coins)}
               </span>
             )}
           </>

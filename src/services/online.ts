@@ -10,6 +10,7 @@ import {
   type OnlineRoom,
   type OnlineSeat,
 } from "../game/online";
+import { onlineText as T } from "../i18n/online";
 import { onlineConfigured } from "./firebaseConfig";
 
 export type JoinResult =
@@ -70,15 +71,11 @@ export class UnverifiedError extends Error {
   }
 }
 
-const UNAVAILABLE =
-  "Não foi possível falar com o servidor. Confira a internet e tente de novo.";
 /** O que dizer ao jogador quando o duelo ao vivo falha. */
 export function onlineErrorText(error: unknown) {
   if (error instanceof UnverifiedError)
-    return error.native
-      ? "Atualize o WordQuest na Play Store para jogar o duelo ao vivo."
-      : "Não conseguimos verificar este navegador. Tente de novo ou jogue pelo app.";
-  return UNAVAILABLE;
+    return error.native ? T.updateApp : T.unverifiedBrowser;
+  return T.unavailable;
 }
 
 /** Servidor em memória: dois "aparelhos" na mesma página. Usado nos testes. */

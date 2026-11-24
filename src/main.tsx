@@ -50,6 +50,8 @@ const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
 );
 import { usePlayer } from "./stores/player";
+import { lang, setLang } from "./i18n";
+import { shellT } from "./i18n/screens";
 import { refreshContent, startContent } from "./content/content";
 import {
   bundleVersion,
@@ -93,7 +95,7 @@ function ScreenTracker() {
 function GameRoute() {
   const { pathname, search } = useLocation();
   return (
-    <Suspense fallback={<div className="loading">Abrindo a fase…</div>}>
+    <Suspense fallback={<div className="loading">{shellT.openingLevel}</div>}>
       <PuzzlePage key={pathname + search} />
     </Suspense>
   );
@@ -101,7 +103,7 @@ function GameRoute() {
 function OnlineRoute({ match, setup }: { match?: boolean; setup?: boolean }) {
   const { pathname } = useLocation();
   return (
-    <Suspense fallback={<div className="loading">Abrindo o duelo…</div>}>
+    <Suspense fallback={<div className="loading">{shellT.openingDuel}</div>}>
       {setup ? (
         <OnlineSetup />
       ) : match ? (
@@ -161,7 +163,7 @@ function App() {
   const loading = (
     <div className="loading">
       <img className="loading-icon" src="/icon-192.png" alt="" />
-      Preparando sua aventura…
+      {shellT.preparing}
     </div>
   );
   return (
@@ -204,6 +206,8 @@ function App() {
     </>
   );
 }
+// O idioma da sessão vale desde a primeira tela (e o `<html lang>` acompanha).
+setLang(lang());
 installErrorReporting();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>

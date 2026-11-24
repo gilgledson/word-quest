@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { ROWS, COLS, setSize, makeMold, solve, rng } from "./lib/arrowword.mjs";
 import { validateClues } from "./check-clues.mjs";
+import { LANG, appData } from "./lib/lang.mjs";
 
 const args = Object.fromEntries(
   process.argv.slice(2).reduce((acc, a, i, all) => {
@@ -46,7 +47,7 @@ const sizeMold =
 const here = path.dirname(
   new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
 );
-const out = args.out ?? path.join(here, "..", "src", "data", "levels.json");
+const out = args.out ?? path.join(appData, "levels.json");
 
 // Dificuldade da fase = vocabulário e pistas (nível das palavras) e estrutura da grade; nunca o tamanho.
 const PROFILE = {
@@ -66,7 +67,11 @@ const PROFILE = {
   },
 };
 // Cinco fases por mundo, na ordem do mapa.
-const WORLD_IDS = ["vila", "floresta", "deserto", "reino", "ilhas"];
+// Ids dos mundos de cada idioma (os mesmos de worlds.json): o inglês tem os seus.
+const WORLD_IDS =
+  LANG === "en"
+    ? ["village", "forest", "desert", "kingdom", "islands"]
+    : ["vila", "floresta", "deserto", "reino", "ilhas"];
 const worldOf = (n) => WORLD_IDS[Math.min(4, Math.floor((n - 1) / 5))];
 const OBSCURE = new Set("URU GNU IPE OSA OVA FEL AVO UAI HUM EGO".split(" "));
 const { valid } = validateClues();

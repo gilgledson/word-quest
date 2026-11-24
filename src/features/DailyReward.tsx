@@ -17,6 +17,7 @@ import {
   askReminderPermission,
   remindersSupported,
 } from "../services/reminders";
+import { dailyRewardT as t } from "../i18n/screens";
 
 type Stage = "reward" | "reminder" | null;
 
@@ -59,7 +60,7 @@ export function DailyRewardFlow() {
           className="swap-dialog result-dialog daily-dialog"
           role="dialog"
           aria-modal="true"
-          aria-label="Recompensa diária"
+          aria-label={t.title}
           initial={animated ? { opacity: 0, scale: 0.85, y: 16 } : false}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 320, damping: 22 }}
@@ -69,8 +70,8 @@ export function DailyRewardFlow() {
             className="game-art art-calendar daily-art"
             aria-hidden="true"
           />
-          <h2>Recompensa diária</h2>
-          <p className="daily-sub">Volte todo dia e ganhe mais moedas</p>
+          <h2>{t.title}</h2>
+          <p className="daily-sub">{t.sub}</p>
           <ol className="daily-days">
             {LOGIN_REWARDS.map((coins, i) => {
               const day = i + 1;
@@ -85,15 +86,9 @@ export function DailyRewardFlow() {
                 <li
                   key={day}
                   className={`daily-day ${state} ${last ? "big" : ""}`}
-                  aria-label={`Dia ${day}: ${coins} moedas${
-                    state === "got"
-                      ? ", já pego"
-                      : state === "today"
-                        ? ", hoje"
-                        : ""
-                  }`}
+                  aria-label={t.dayLabel(day, coins, state)}
                 >
-                  <span className="daily-day-name">Dia {day}</span>
+                  <span className="daily-day-name">{t.day(day)}</span>
                   {last ? (
                     <span className="game-art art-chest daily-chest" />
                   ) : (
@@ -123,10 +118,10 @@ export function DailyRewardFlow() {
             autoFocus
             onClick={claim}
           >
-            Pegar +{reward.coins} moedas
+            {t.claim(reward.coins)}
           </button>
           <p className="daily-next">
-            Amanhã: +{tomorrowCoins(player.loginReward, date)} moedas
+            {t.tomorrow(tomorrowCoins(player.loginReward, date))}
           </p>
         </motion.div>
       ) : (
@@ -134,7 +129,7 @@ export function DailyRewardFlow() {
           className="swap-dialog result-dialog reminder-dialog"
           role="dialog"
           aria-modal="true"
-          aria-label="Lembrete diário"
+          aria-label={t.reminderLabel}
           initial={animated ? { opacity: 0, scale: 0.85, y: 16 } : false}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 320, damping: 22 }}
@@ -143,25 +138,22 @@ export function DailyRewardFlow() {
           <span className="reminder-bell" aria-hidden="true">
             <BellRing size={40} strokeWidth={2.2} />
           </span>
-          <h2>Quer um lembrete?</h2>
-          <p className="daily-sub">
-            Avisamos uma vez por dia, no fim da tarde, quando o desafio do dia
-            chegar e sua recompensa estiver pronta.
-          </p>
+          <h2>{t.reminderTitle}</h2>
+          <p className="daily-sub">{t.reminderText}</p>
           <button
             type="button"
             className="button primary daily-claim"
             autoFocus
             onClick={() => void answer(true)}
           >
-            Sim, me avise
+            {t.reminderYes}
           </button>
           <button
             type="button"
             className="reminder-later"
             onClick={() => void answer(false)}
           >
-            Agora não
+            {t.reminderNo}
           </button>
         </motion.div>
       )}

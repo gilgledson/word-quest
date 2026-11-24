@@ -7,6 +7,7 @@ import {
   type PuzzleEngine,
   type Session,
 } from "./crossword-engine";
+import { gameText } from "../i18n/game";
 
 /**
  * Oponente programado (bot local, sem IA generativa e sem rede). Decide só pelo que o
@@ -24,10 +25,28 @@ export const OPPONENT_LEVELS: Record<
     noise: number;
   }
 > = {
-  facil: { label: "Fácil", base: 0.35, maxLetters: 2, attempts: 3, noise: 6 },
-  medio: { label: "Médio", base: 0.5, maxLetters: 4, attempts: 6, noise: 3 },
+  facil: {
+    get label() {
+      return gameText.levels.facil;
+    },
+    base: 0.35,
+    maxLetters: 2,
+    attempts: 3,
+    noise: 6,
+  },
+  medio: {
+    get label() {
+      return gameText.levels.medio;
+    },
+    base: 0.5,
+    maxLetters: 4,
+    attempts: 6,
+    noise: 3,
+  },
   dificil: {
-    label: "Difícil",
+    get label() {
+      return gameText.levels.dificil;
+    },
     base: 0.7,
     maxLetters: 5,
     attempts: 12,
@@ -52,7 +71,9 @@ export const OPPONENT_STYLES: Record<
   }
 > = {
   cuidadoso: {
-    label: "Cuidadoso",
+    get label() {
+      return gameText.styles.cuidadoso;
+    },
     base: 0.05,
     maxLetters: -1,
     attempts: 0,
@@ -60,7 +81,9 @@ export const OPPONENT_STYLES: Record<
     length: 1.5,
   },
   agressivo: {
-    label: "Agressivo",
+    get label() {
+      return gameText.styles.agressivo;
+    },
     base: -0.12,
     maxLetters: 1,
     attempts: 1,
