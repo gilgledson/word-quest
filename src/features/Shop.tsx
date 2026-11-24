@@ -5,6 +5,7 @@ import { buyItem, itemCount, SHOP_ITEMS, type ItemId } from "../game/shop";
 import { usePlayer } from "../stores/player";
 import { playSfx } from "../services/sound";
 import { track } from "../services/telemetry";
+import { shopT as t } from "../i18n/screens";
 
 /** Ícones da loja (gerados no ChatGPT a partir do conceito da tela; public/art/loja). */
 export const SHOP_ART: Record<ItemId, string> = {
@@ -32,12 +33,12 @@ export function Shop() {
     update((p) => buyItem(p, id));
     playSfx(player.sound, "buy");
     track("item_bought", { item: id, price: item.preco });
-    setNote(`${item.nome} comprado! Na partida, toque em Itens para usar.`);
+    setNote(t.bought(item.nome));
   };
   return (
     <>
       <div className="page-heading shop-heading">
-        <h1>Loja de itens</h1>
+        <h1>{t.title}</h1>
       </div>
       <p className="shop-balance">
         <img
@@ -48,13 +49,13 @@ export function Shop() {
           draggable={false}
         />
         <span>
-          Seu saldo
+          {t.balance}
           <b>
-            {player.coins} <small>moedas</small>
+            {player.coins} <small>{t.coins}</small>
           </b>
         </span>
       </p>
-      <ul className="shop-list" aria-label="Itens à venda">
+      <ul className="shop-list" aria-label={t.forSale}>
         {SHOP_ITEMS.map((item) => {
           const owned = itemCount(player, item.id);
           return (
@@ -64,23 +65,20 @@ export function Shop() {
                 <h2>{item.nome}</h2>
                 <p>{item.resumo}</p>
                 {item.usos > 1 && (
-                  <span className="shop-badge">
-                    +{item.usos} usos por compra
-                  </span>
+                  <span className="shop-badge">{t.usesPerBuy(item.usos)}</span>
                 )}
                 <small>
-                  <Package size={14} aria-hidden="true" /> Você tem: {owned}{" "}
-                  {owned === 1 ? "uso" : "usos"}
+                  <Package size={14} aria-hidden="true" /> {t.youHave(owned)}
                 </small>
               </div>
               <button
                 type="button"
                 className="button primary shop-buy"
                 disabled={player.coins < item.preco}
-                aria-label={`Comprar ${item.nome} por ${item.preco} moedas`}
+                aria-label={t.buyLabel(item.nome, item.preco)}
                 onClick={() => buy(item.id)}
               >
-                Comprar
+                {t.buy}
                 <span>
                   <CoinIcon size={20} /> {item.preco}
                 </span>
@@ -100,7 +98,9 @@ export function Shop() {
         <span>
           {note || (
             <>
-              Na partida, toque em <b>Itens</b> para usar!
+              {t.tipBefore}
+              <b>{t.tipItems}</b>
+              {t.tipAfter}
             </>
           )}
         </span>

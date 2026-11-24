@@ -30,3 +30,4 @@ content/build/
 .firebase/
 # Pacotes do app publicados ao vivo (scripts/publish-app.mjs): gerados, não versionados
 content/hosting/app/
+scripts/data/en/dictionary.txt

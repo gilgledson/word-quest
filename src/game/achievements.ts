@@ -2,6 +2,7 @@ import { levels } from "../data/catalog";
 import type { Player } from "../services/repository";
 import { wordsFoundCount } from "./chest";
 import { OPPONENT_BY_LEVEL, opponentById } from "./opponents";
+import { gameText } from "../i18n/game";
 
 /**
  * Conquistas: metas lidas do progresso já salvo do jogador. Ao atingir a meta a conquista fica
@@ -77,76 +78,72 @@ const duelWins = (p: Player) =>
 const stars = (p: Player) => Object.values(p.stars).reduce((a, b) => a + b, 0);
 const words = (p: Player) => wordsFoundCount(p.wordsFound);
 
+type Named = keyof typeof gameText.achievements;
+/** Nome e descrição lidos no idioma em uso a cada acesso (enumeráveis: o `...a` os copia). */
+const named = (
+  a: Omit<Achievement, "title" | "text"> & { id: Named },
+): Achievement =>
+  Object.defineProperties(a, {
+    title: { get: () => gameText.achievements[a.id].title, enumerable: true },
+    text: { get: () => gameText.achievements[a.id].text, enumerable: true },
+  }) as Achievement;
+
 export const ACHIEVEMENTS: Achievement[] = [
-  {
+  named({
     id: "primeiro-passo",
-    title: "O primeiro passo",
-    text: "Vença sua primeira fase.",
     coins: 20,
     goal: 1,
     value: (p) => wonLevels(p).length,
-  },
-  {
+  }),
+  named({
     id: "palavras-25",
-    title: "Aprendiz de palavras",
-    text: "Descubra 25 palavras.",
     coins: 30,
     goal: 25,
     value: words,
-  },
-  {
+  }),
+  named({
     id: "palavras-100",
-    title: "Colecionador",
-    text: "Descubra 100 palavras.",
     coins: 60,
     goal: 100,
     value: words,
-  },
-  {
+  }),
+  named({
     id: "palavras-300",
-    title: "Dicionário ambulante",
-    text: "Descubra 300 palavras.",
     coins: 120,
     goal: 300,
     value: words,
-  },
-  {
+  }),
+  named({
     id: "duelos-5",
-    title: "Duelista",
-    text: "Vença 5 duelos.",
     coins: 40,
     goal: 5,
     value: duelWins,
-  },
-  {
+  }),
+  named({
     id: "duelos-20",
-    title: "Campeão dos duelos",
-    text: "Vença 20 duelos.",
     coins: 100,
     goal: 20,
     value: duelWins,
-  },
-  {
+  }),
+  named({
     id: "mao-certeira",
-    title: "Mão certeira",
-    text: "Vença um duelo sem errar nenhuma letra.",
     coins: 40,
     goal: 1,
     value: (p) => p.cleanWins ?? 0,
-  },
-  {
+  }),
+  named({
     id: "chefe",
-    title: "Caça-chefes",
-    text: "Vença o chefe de um mundo.",
     coins: 50,
     goal: 1,
     value: beatenBosses,
-  },
+  }),
   {
     id: "chefes-todos",
-    title: "Lenda dos cinco mundos",
+    get title() {
+      return gameText.allBossesTitle;
+    },
     get text() {
-      return `Vença os ${bosses()} chefes.`;
+      return gameText.allBossesText(bosses());
     },
     coins: 150,
     get goal() {
@@ -154,48 +151,38 @@ export const ACHIEVEMENTS: Achievement[] = [
     },
     value: beatenBosses,
   },
-  {
+  named({
     id: "mundo-completo",
-    title: "Mundo completo",
-    text: "Vença todas as fases de um mundo.",
     coins: 60,
     get goal() {
       return worldSize();
     },
     value: bestWorld,
-  },
-  {
+  }),
+  named({
     id: "rivais-6",
-    title: "Sem medo de ninguém",
-    text: "Vença 6 rivais diferentes na Aventura.",
     coins: 60,
     goal: 6,
     value: (p) => beatenRivals(p).length,
-  },
-  {
+  }),
+  named({
     id: "estrelas-30",
-    title: "Céu estrelado",
-    text: "Junte 30 estrelas.",
     coins: 80,
     goal: 30,
     value: stars,
-  },
-  {
+  }),
+  named({
     id: "diario-1",
-    title: "Ritual do dia",
-    text: "Vença um Desafio do Dia.",
     coins: 20,
     goal: 1,
     value: (p) => p.daily.length,
-  },
-  {
+  }),
+  named({
     id: "diario-7",
-    title: "Semana perfeita",
-    text: "Vença o Desafio do Dia 7 dias seguidos.",
     coins: 100,
     goal: 7,
     value: (p) => bestDailyStreak(p.daily),
-  },
+  }),
 ];
 
 /** Situação de cada conquista para este jogador, na ordem do catálogo. */

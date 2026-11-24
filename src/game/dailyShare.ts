@@ -1,4 +1,5 @@
 import { key, positions, type Puzzle, type Session } from "./crossword-engine";
+import { sharedText as t } from "../i18n/result";
 
 /** Página do jogo na Play Store: vai em todo texto compartilhado. */
 export const STORE_URL =
@@ -6,11 +7,7 @@ export const STORE_URL =
 
 /** Linha do resultado, do ponto de vista de quem compartilha. */
 const headline = (p: number, ai: number, rival: string) =>
-  p > ai
-    ? `⚔️ Vitória sobre ${rival}!`
-    : p === ai
-      ? `🤝 Empate com ${rival}!`
-      : `😤 Derrota para ${rival}`;
+  p > ai ? t.win(rival) : p === ai ? t.draw(rival) : t.loss(rival);
 
 /** Dias seguidos de desafio vencido até `today` (ou até ontem, se hoje ainda não foi vencido). */
 export function currentStreak(days: string[], today: string) {
@@ -52,30 +49,24 @@ export function dailyShareText(opts: {
   const hints = (session.hinted ?? []).filter((k) =>
     session.locked.includes(k),
   ).length;
-  const plural = (n: number, one: string, many: string) =>
-    `${n} ${n === 1 ? one : many}`;
   const habits = [
     ...(session.misses === undefined
       ? []
-      : [
-          session.misses
-            ? `❌ ${plural(session.misses, "erro", "erros")}`
-            : "✅ sem erros",
-        ]),
-    hints ? `💡 ${plural(hints, "dica", "dicas")}` : "💡 sem dicas",
+      : [session.misses ? t.misses(session.misses) : t.noMisses]),
+    hints ? t.hints(hints) : t.noHints,
   ].join(" · ");
   return [
-    `🏆 WordQuest · Desafio de ${day}/${month}`,
+    t.dailyTitle(day, month),
     headline(p, ai, rival),
     "",
     bar,
-    `🟦 minhas letras: ${mine} · 🟥 ${rival}: ${theirs}`,
+    t.myLetters(mine, rival, theirs),
     "",
-    `🎯 Pontuação: ${p} × ${ai}`,
+    t.score(p, ai),
     habits,
-    ...(streak > 1 ? [`🔥 ${streak} dias seguidos`] : []),
+    ...(streak > 1 ? [t.streak(streak)] : []),
     "",
-    "Consegue me vencer?",
+    t.beatMe,
     STORE_URL,
   ].join("\n");
 }
@@ -132,12 +123,12 @@ export function boardShareText(opts: {
     headline(p, ai, rival),
     "",
     board,
-    `Preenchidas: minhas letras · Vazadas: ${rival}`,
+    t.boardLegend(rival),
     "",
-    `🎯 Pontuação: ${p} × ${ai}`,
-    ...(best ? [`🔥 Melhor palavra: ${best}`] : []),
+    t.score(p, ai),
+    ...(best ? [t.best(best)] : []),
     "",
-    "Consegue me vencer?",
+    t.beatMe,
     STORE_URL,
   ].join("\n");
 }

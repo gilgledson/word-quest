@@ -1,4 +1,6 @@
 import { useEffect, useRef, useState } from "react";
+import { shellT } from "../i18n/screens";
+import { logoSrc } from "../i18n";
 
 /** Quanto cada etapa fica na tela (ms). A dos estúdio some antes se o jogador tocar. */
 export const STUDIO_MS = 1500;
@@ -52,13 +54,13 @@ export function StudioSplash({ ready }: { ready: boolean }) {
     <div
       className={`studio-splash ${phase}`}
       role="status"
-      aria-label="Abrindo WordQuest, um jogo da Lunara Games"
+      aria-label={shellT.splash}
       onClick={skip}
     >
       <div className="splash-game" aria-hidden="true">
         <img className="splash-village" src="/art/splash-vila-v2.webp" alt="" />
         <img className="splash-emblem" src="/icon-512.png" alt="" />
-        <img className="splash-logo" src="/art/wordquest-logo-v1.webp" alt="" />
+        <img className="splash-logo" src={logoSrc()} alt="" />
       </div>
       <div
         className={`splash-studio ${phase === "studio" ? "on" : ""}`}

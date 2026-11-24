@@ -11,11 +11,9 @@
 import fs from "node:fs";
 import path from "node:path";
 import { loadCatalog, loadDictionary, validateEntry } from "./check-clues.mjs";
+import { appData, scriptData } from "./lib/lang.mjs";
 
-const here = path.dirname(
-  new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
-);
-const data = path.join(here, "..", "src", "data");
+const data = appData;
 const catalog = loadCatalog();
 const byWord = new Map(catalog.map((e) => [e.palavra, e]));
 const dictionary = loadDictionary();
@@ -43,7 +41,7 @@ if (process.argv.length > 2) {
   // Mantém a ordem e o formato do arquivo (uma chave por linha, como o prettier deixa): o diff mostra só
   // as dicas novas.
   fs.writeFileSync(
-    path.join(here, "data", "catalogo.json"),
+    path.join(scriptData, "catalogo.json"),
     JSON.stringify(catalog, null, 2) + "\n",
   );
   console.log(`${added} dicas gravadas no catálogo`);

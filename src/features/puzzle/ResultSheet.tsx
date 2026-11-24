@@ -10,6 +10,7 @@ import { VictoryStars } from "../../animations/components/VictoryCelebration";
 import { economy } from "../../game/crossword-engine";
 import type { Mood, OpponentProfile } from "../../game/opponents";
 import { track } from "../../services/telemetry";
+import { resultText as t } from "../../i18n/result";
 
 export type DuelResult = "win" | "draw" | "loss";
 
@@ -53,11 +54,8 @@ interface Props {
   onCollapse?: () => void;
 }
 
-const TITLE: Record<DuelResult, (rival: string) => string> = {
-  win: () => "Você venceu!",
-  draw: () => "Empate!",
-  loss: (rival) => `${rival} venceu`,
-};
+const titleOf = (result: DuelResult, rival: string) =>
+  result === "win" ? t.win : result === "draw" ? t.draw : t.loss(rival);
 
 /** Moldura do vencedor (aro dourado com louros, coroa e raios; arte gerada no ChatGPT). */
 function WinnerFrame() {
@@ -115,7 +113,7 @@ export function ResultSheet(props: Props) {
     if (wasOpen.current && !open) onCollapse?.();
     wasOpen.current = open;
   }, [open, onCollapse]);
-  const title = TITLE[result](rival.name);
+  const title = titleOf(result, rival.name);
   const card = useRef<HTMLElement>(null);
   // Ao abrir, o foco vai para o cartão (o leitor de tela anuncia o resultado). No botão, o anel de
   // foco aparecia como uma borda grossa em volta dele no celular.
@@ -127,7 +125,7 @@ export function ResultSheet(props: Props) {
     else if (!open && (info.offset.y < -40 || info.velocity.y < -500))
       setOpen(true);
   };
-  const backLabel = online ? "Voltar" : casual ? "Outro tema" : "Voltar";
+  const backLabel = online ? t.back : casual ? t.otherTheme : t.back;
   // A revanche é o botão grande; com próxima fase, ela desce para a linha de baixo.
   const revanche = online ? (
     <Link
@@ -136,7 +134,7 @@ export function ResultSheet(props: Props) {
       }
       to={backTo}
     >
-      Revanche
+      {t.rematch}
     </Link>
   ) : (
     <button
@@ -145,13 +143,9 @@ export function ResultSheet(props: Props) {
         nextTo ? "button result-sheet-ghost" : "button primary result-sheet-go"
       }
       onClick={onReplay}
-      aria-label={
-        result === "loss"
-          ? "Revanche: tentar de novo"
-          : "Revanche: jogar de novo"
-      }
+      aria-label={result === "loss" ? t.rematchRetry : t.rematchReplay}
     >
-      Revanche
+      {t.rematch}
     </button>
   );
   return (
@@ -169,7 +163,7 @@ export function ResultSheet(props: Props) {
         ref={card}
         tabIndex={-1}
         className={`result-sheet ${result} ${open ? "open" : "closed"}`}
-        aria-label="Resultado da partida"
+        aria-label={t.sheet}
         data-testid="result-sheet"
         initial={enabled ? { y: "110%" } : false}
         animate={{ y: 0 }}
@@ -184,7 +178,7 @@ export function ResultSheet(props: Props) {
           type="button"
           className="result-sheet-handle"
           aria-expanded={open}
-          aria-label={open ? "Ver tabuleiro" : `Ver resultado: ${title}`}
+          aria-label={open ? t.viewBoard : t.viewResult(title)}
           onClick={() => setOpen((v) => !v)}
         >
           <span className="result-sheet-grip" aria-hidden="true" />
@@ -204,7 +198,7 @@ export function ResultSheet(props: Props) {
             <h2 className={`result-ribbon ${result}`}>
               <span>{title}</span>
             </h2>
-            <div className="result-duelists" aria-label="Placar final">
+            <div className="result-duelists" aria-label={t.finalScore}>
               <span className={result === "win" ? "winner" : undefined}>
                 <span className="result-face player">
                   <OpponentAvatar opponent={playerFace} size={84} />
@@ -212,7 +206,7 @@ export function ResultSheet(props: Props) {
                 </span>
                 <b>{playerName}</b>
                 <strong className="pts player">
-                  {scores.p} <small>pts</small>
+                  {scores.p} <small>{t.pts}</small>
                 </strong>
               </span>
               <i aria-hidden="true">×</i>
@@ -229,7 +223,7 @@ export function ResultSheet(props: Props) {
                 </span>
                 <b>{rival.name}</b>
                 <strong className="pts rival">
-                  {scores.ai} <small>pts</small>
+                  {scores.ai} <small>{t.pts}</small>
                 </strong>
               </span>
             </div>
@@ -240,14 +234,15 @@ export function ResultSheet(props: Props) {
                     className={`result-sheet-coins ${coins < 0 ? "lost" : ""}`}
                     aria-label={
                       coins < 0
-                        ? `A derrota custou ${-coins} moedas`
+                        ? t.lossCost(-coins)
                         : daily
-                          ? `Recompensa diária: ${coins} moedas`
-                          : `Recompensa do duelo: ${coins} moedas`
+                          ? t.dailyReward(coins)
+                          : t.duelReward(coins)
                     }
                   >
                     <CoinIcon size={26} />
-                    {coins > 0 ? `+${coins}` : `−${-coins}`} moedas
+                    {coins > 0 ? `+${coins}` : `−${-coins}`}{" "}
+                    {t.coins(Math.abs(coins))}
                   </p>
                 )}
                 {stars > 0 && (
@@ -259,36 +254,39 @@ export function ResultSheet(props: Props) {
               <p className="result-sheet-note" role="status">
                 <Award size={18} aria-hidden="true" />
                 <span className="sr-only">
-                  {achievements.length === 1 ? "Conquista" : "Conquistas"}:{" "}
+                  {t.achievements(achievements.length)}:{" "}
                 </span>
                 <b>{achievements.join(", ")}</b>
-                <span className="sr-only">. Resgate no Perfil.</span>
+                <span className="sr-only">{t.claimInProfile}</span>
               </p>
             )}
             {unlocked && (
               <p className="result-sheet-note" role="status">
-                Novo mundo aberto: <b>{unlocked}</b>!
+                {t.newWorld}
+                <b>{unlocked}</b>
+                {t.newWorldEnd}
               </p>
             )}
             {daily && result !== "win" && (
-              <p className="result-sheet-hint">
-                Vença o oponente para concluir o desafio do dia.
-              </p>
+              <p className="result-sheet-hint">{t.dailyHint}</p>
             )}
             {invite && (
               <Link
                 className="result-sheet-note invite"
                 to="/online"
-                aria-label="Desafiar um amigo online"
+                aria-label={t.inviteLabel}
                 onClick={() => track("online_cta_clicked", { from: "result" })}
               >
                 <Swords size={18} aria-hidden="true" />
-                Desafie um amigo: <b>+{economy.invite} moedas</b>
+                {t.invite}
+                <b>
+                  +{economy.invite} {t.coins(economy.invite)}
+                </b>
               </Link>
             )}
             {best && (
               <div className="result-best">
-                <span>Melhor palavra</span>
+                <span>{t.bestWord}</span>
                 <span className="result-best-tiles" aria-label={best}>
                   {[...best].map((letter, i) => (
                     <i key={i} aria-hidden="true">
@@ -305,15 +303,13 @@ export function ResultSheet(props: Props) {
                   to={nextTo}
                   onClick={onNext}
                   aria-label={
-                    nextRival
-                      ? `Próxima fase · vs ${nextRival}`
-                      : "Próxima fase"
+                    nextRival ? t.nextLevelVs(nextRival) : t.nextLevel
                   }
                 >
                   {nextRivalId && (
                     <OpponentAvatar opponent={{ id: nextRivalId }} size={32} />
                   )}
-                  Próxima fase
+                  {t.nextLevel}
                   <ArrowRight size={22} aria-hidden="true" />
                 </Link>
               ) : (
@@ -324,7 +320,7 @@ export function ResultSheet(props: Props) {
                   // Com "Próxima fase", a linha de baixo já tem dois botões: compartilhar fica só com o ícone.
                   <ShareResultButton
                     text={shareResult}
-                    label={nextTo ? "" : "Compartilhar"}
+                    label={nextTo ? "" : t.share}
                     className={`button result-sheet-ghost share${nextTo ? " icon" : ""}`}
                   />
                 )}

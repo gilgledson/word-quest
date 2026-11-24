@@ -10,6 +10,7 @@
 import { Capacitor } from "@capacitor/core";
 import { CapacitorUpdater } from "@capgo/capacitor-updater";
 import { reportError, track } from "./telemetry";
+import { gameText } from "../i18n/game";
 
 export const LIVE_UPDATE_URL =
   "https://wordquest-online.web.app/app/latest.json";
@@ -106,12 +107,13 @@ export const bundleVersion = () => __BUNDLE_VERSION__;
 
 /** "Versão 5.3 · pacote 5.3.20261117-1200" (no navegador, só o pacote). */
 export async function appVersion() {
-  const pack = bundleVersion() === "builtin" ? "do app" : bundleVersion();
-  if (!Capacitor.isNativePlatform()) return `Versão web · pacote ${pack}`;
+  const pack =
+    bundleVersion() === "builtin" ? gameText.version.builtin : bundleVersion();
+  if (!Capacitor.isNativePlatform()) return gameText.version.web(pack);
   try {
     const { native } = await CapacitorUpdater.current();
-    return `Versão ${native} · pacote ${pack}`;
+    return gameText.version.native(native, pack);
   } catch {
-    return `Pacote ${pack}`;
+    return gameText.version.pack(pack);
   }
 }

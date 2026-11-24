@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { Slide, ToastContainer, toast } from "react-toastify";
 import { Swords } from "lucide-react";
+import { onlineText as T } from "../i18n/online";
 
 const TOAST_ID = "partida-em-andamento";
 
@@ -33,40 +34,35 @@ export function ResumeMatchToast({
     toast(
       <div className="resume-toast">
         <div className="resume-toast-text">
-          <strong>Partida em andamento</strong>
+          <strong>{T.inProgress}</strong>
           <span>
-            Código <b>{code}</b>
+            {T.code} <b>{code}</b>
           </span>
         </div>
         <div className="resume-toast-actions">
           <Link
             to={`/online/${code}`}
-            aria-label={`Voltar para a partida ${code}`}
+            aria-label={T.backToMatch(code)}
             onClick={() => {
               leaving.current = true;
               toast.dismiss(TOAST_ID);
             }}
           >
-            Voltar
+            {T.back}
           </Link>
           {onEnd && (
             <button
               type="button"
               className="resume-toast-end"
-              aria-label={`Encerrar a partida ${code}`}
+              aria-label={T.endMatchAria(code)}
               onClick={() => {
-                if (
-                  !window.confirm(
-                    `Encerrar a partida ${code}? Se ela já começou, conta como derrota para você.`,
-                  )
-                )
-                  return;
+                if (!window.confirm(T.endConfirm(code))) return;
                 leaving.current = true;
                 toast.dismiss(TOAST_ID);
                 onEnd(code);
               }}
             >
-              Encerrar
+              {T.end}
             </button>
           )}
         </div>

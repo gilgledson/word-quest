@@ -505,3 +505,13 @@
   font-size: 11px;
   color: #64786b;
 }
+
+/* Idioma nos Ajustes: as duas opções em pílulas, cada uma escrita no próprio idioma. */
+.language-setting .online-choices {
+  flex: 0 1 auto;
+}
+.language-setting .online-choices button {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+}

@@ -20,7 +20,7 @@ export function HintRevealEffect({ container, cellId, reduced }: Props) {
   useLayoutEffect(() => {
     if (!container) return;
     const cell = measureCells(container, [cellId])?.rect;
-    const button = container.querySelector('[aria-label="Dica"]');
+    const button = container.querySelector("[data-hint-button]");
     if (!cell) return;
     const from = button ? measureElement(container, button) : cell;
     const start = { x: from.x + from.w / 2, y: from.y + from.h / 2 };

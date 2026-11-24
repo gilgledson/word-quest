@@ -1,19 +1,12 @@
+import { useMemo } from "react";
 import {
   Joyride,
   type EventData,
   type Step,
   type TooltipRenderProps,
 } from "react-joyride";
+import { tourText as t } from "../../i18n/tutorial";
 
-const LOCALE = {
-  back: "Voltar",
-  close: "Fechar",
-  last: "Entendi",
-  next: "Próximo",
-  nextWithProgress: "Próximo ({current} de {total})",
-  skip: "Dispensar",
-  open: "Abrir",
-};
 /** Visual do WordQuest: azul do botão ✓, texto escuro e cantos arredondados. */
 const OPTIONS = {
   primaryColor: "#1263cf",
@@ -46,36 +39,33 @@ const STYLES = {
  * (tocar a letra, confirmar) são guiadas pelo `TutorialTip`, passo a passo; aqui ficam só os conceitos.
  */
 export type TipId = "inicio" | "duelo" | "trocar";
-const TIPS: Record<TipId, Step> = {
+/** Lidas a cada abertura, no idioma em uso. */
+const tips = (): Record<TipId, Step> => ({
   inicio: {
     // Aponta a pista escolhida e fica sobre a grade, sem cobrir o banco nem os botões.
     target: ".selected-clue",
-    title: "Comece pela pista",
-    content:
-      "A resposta vai nas casas azuis, no sentido da seta. Toque em outra pista quando quiser trocar.",
+    title: t.inicioTitle,
+    content: t.inicio,
     placement: "bottom",
   },
   duelo: {
     target: ".versus-score",
-    title: "Agora é a vez do rival",
-    content:
-      "Vocês jogam vez a vez. Fechar uma palavra vale a palavra inteira. Quem tiver mais pontos no fim vence!",
+    title: t.dueloTitle,
+    content: t.duelo,
     placement: "bottom",
   },
   trocar: {
     target: ".puzzle-tools",
-    title: "Trocar e Dica",
-    content:
-      "Sem letra útil? Trocar renova as letras do banco por moedas. A Dica coloca uma das suas letras na casa certa; confirme para valer ponto.",
+    title: t.trocarTitle,
+    content: t.trocar,
     placement: "top",
   },
-};
-const JOKER_STEPS: Step[] = [
+});
+const jokerSteps = (): Step[] => [
   {
     target: ".letter-bank button.joker",
-    title: "Chegou o curinga ★",
-    content:
-      "Coloque-o em qualquer casa do tabuleiro. Você pode arrastá-lo para outro lugar; a letra certa só aparece quando confirmar. Você ganha um por partida.",
+    title: t.jokerTitle,
+    content: t.joker,
     placement: "top",
     buttons: ["primary"],
   },
@@ -134,8 +124,8 @@ export function TipTour({
       key={tip ?? "nenhuma"}
       run={!!tip}
       continuous
-      steps={[{ ...TIPS[tip ?? "inicio"], tooltipComponent: TipTooltip }]}
-      locale={LOCALE}
+      steps={[{ ...tips()[tip ?? "inicio"], tooltipComponent: TipTooltip }]}
+      locale={t.locale}
       options={{ ...OPTIONS, buttons: ["skip", "primary"] }}
       styles={STYLES}
       onEvent={(data) => {
@@ -154,12 +144,14 @@ export function JokerTour({
   run: boolean;
   onFinish: () => void;
 }) {
+  // Passos estáveis entre renderizações (o idioma não muda durante a sessão).
+  const steps = useMemo(() => jokerSteps(), []);
   return (
     <Joyride
       run={run}
       continuous
-      steps={JOKER_STEPS}
-      locale={LOCALE}
+      steps={steps}
+      locale={t.locale}
       options={OPTIONS}
       styles={STYLES}
       onEvent={(data) => {

@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { CoinIcon } from "./CoinIcon";
+import { chestText as t } from "../i18n/result";
 
 /** Baú aberto na tela inicial: balança, abre e solta moedas (parado se as animações estiverem desligadas). */
 export function ChestReward({
@@ -44,9 +45,9 @@ export function ChestReward({
             </motion.span>
           ))}
       </div>
-      <span className="chest-title">Baú aberto!</span>
+      <span className="chest-title">{t.opened}</span>
       <b className="chest-prize">
-        <CoinIcon size={18} /> +{coins} moedas
+        <CoinIcon size={18} /> +{coins} {t.coins(coins)}
       </b>
     </div>
   );

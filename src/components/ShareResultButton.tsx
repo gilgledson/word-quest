@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Share2 } from "lucide-react";
 import { shareText } from "../services/share";
 import { track } from "../services/telemetry";
+import { shareUiText as t } from "../i18n/result";
 
 /** Botão "Compartilhar resultado" do desafio do dia (folha do Android, ou copia o texto). */
 export function ShareResultButton({
   text,
   className = "button result-ghost",
-  label = "Compartilhar resultado",
+  label = t.shareResult,
 }: {
   text: string;
   className?: string;
@@ -20,15 +21,11 @@ export function ShareResultButton({
       <button
         type="button"
         className={className}
-        aria-label="Compartilhar resultado"
+        aria-label={t.shareResult}
         onClick={() => {
           track("daily_shared");
-          void shareText(text, "Compartilhar resultado").then((r) =>
-            setNote(
-              r === "copied"
-                ? "Resultado copiado! É só colar na conversa."
-                : "",
-            ),
+          void shareText(text, t.shareResult).then((r) =>
+            setNote(r === "copied" ? t.copied : ""),
           );
         }}
       >

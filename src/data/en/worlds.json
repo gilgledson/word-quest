@@ -1,0 +1,32 @@
+[
+  {
+    "id": "village",
+    "nome": "Letter Village",
+    "art": "/art/map-straight-v1.jpg",
+    "start": "Your journey starts here"
+  },
+  {
+    "id": "forest",
+    "nome": "Riddle Woods",
+    "art": "/art/map-forest-v1.jpg",
+    "start": "Into the woods"
+  },
+  {
+    "id": "desert",
+    "nome": "Mystery Dunes",
+    "art": "/art/map-desert-v1.jpg",
+    "start": "Into the dunes"
+  },
+  {
+    "id": "kingdom",
+    "nome": "Kingdom of Sages",
+    "art": "/art/map-kingdom-v1.jpg",
+    "start": "To the kingdom"
+  },
+  {
+    "id": "islands",
+    "nome": "Islands of Wonder",
+    "art": "/art/map-islands-v1.jpg",
+    "start": "Set sail"
+  }
+]

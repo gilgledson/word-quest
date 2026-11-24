@@ -1,5 +1,4 @@
-const plural = (n: number, one: string, many: string) =>
-  `${n} ${n === 1 ? one : many}`;
+import { MT } from "../../i18n/match";
 
 /**
  * Resumo da jogada do jogador depois de confirmar, em frases curtas (cabe numa linha):
@@ -15,13 +14,9 @@ export function confirmMessage({
   returned: number;
 }) {
   return [
-    won ? `+${plural(won, "ponto", "pontos")}` : "Nenhuma letra certa",
-    penalty ? `−${plural(penalty, "ponto", "pontos")}` : "",
-    returned
-      ? returned === 1
-        ? "1 letra voltou ao banco"
-        : `${returned} letras voltaram ao banco`
-      : "",
+    won ? `+${MT.points(won)}` : MT.noRightLetter,
+    penalty ? `−${MT.points(penalty)}` : "",
+    returned ? MT.returned(returned) : "",
   ]
     .filter(Boolean)
     .join(" · ");

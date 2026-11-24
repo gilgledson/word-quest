@@ -5,6 +5,7 @@ import type { Puzzle } from "../game/crossword-engine";
 import { wordsFoundCount } from "../game/chest";
 import { usePlayer } from "../stores/player";
 import { ChestHint, HomeChest } from "./HomeChest";
+import { homeT as t } from "../i18n/screens";
 
 export type StepState = "done" | "current" | "pending";
 export interface WorldProgress {
@@ -82,18 +83,18 @@ export function WorldCard() {
     );
   // O botão diz o que o toque faz: quem nunca jogou não tem o que "continuar".
   const action = !next
-    ? "Rever o mapa"
+    ? t.reviewMap
     : started
-      ? "Retomar partida"
+      ? t.resumeMatch
       : wins === 0
-        ? "Jogar primeira fase"
-        : "Continuar aventura";
+        ? t.playFirst
+        : t.continueAdventure;
   return (
     <section className="world-card" aria-labelledby="world-card-title">
       <Link
         className="world-card-art"
         to={world.path}
-        aria-label={`Ver o mapa: ${world.nome}`}
+        aria-label={t.seeMap(world.nome)}
       >
         <img
           src={art.src}
@@ -104,29 +105,30 @@ export function WorldCard() {
       </Link>
       <div className="world-card-body">
         <span className="world-card-pill">
-          <b>MUNDO {String(number).padStart(2, "0")}</b>
+          <b>{t.worldPill(String(number).padStart(2, "0"))}</b>
         </span>
         <h2 id="world-card-title">{world.nome}</h2>
         <p className="world-card-step">
           {next
-            ? `Fase ${position + 1} de ${steps.length}`
+            ? t.stepOf(position + 1, steps.length)
             : wins === total
-              ? "Aventura completa!"
-              : "Mundo completo!"}
+              ? t.adventureDone
+              : t.worldDone}
         </p>
-        <ol className="world-trail" aria-label="Fases do mundo">
+        <ol className="world-trail" aria-label={t.trail}>
           {steps.map(({ level, state }, i) => (
             <li
               key={level.id}
               className={`world-step ${state}`}
               aria-current={state === "current" ? "step" : undefined}
-              aria-label={`Fase ${i + 1}: ${
+              aria-label={t.step(
+                i + 1,
                 state === "done"
-                  ? "concluída"
+                  ? t.stepDone
                   : state === "current"
-                    ? "a próxima"
-                    : "ainda não"
-              }`}
+                    ? t.stepCurrent
+                    : t.stepPending,
+              )}
             >
               {state === "done" ? (
                 <Check strokeWidth={4} aria-hidden="true" />
@@ -140,9 +142,7 @@ export function WorldCard() {
           </li>
         </ol>
         <p className="world-card-total">
-          <span>
-            Aventura: {wins}/{total} fases
-          </span>
+          <span>{t.adventureTotal(wins, total)}</span>
           <ChestHint words={words} />
         </p>
         <Link

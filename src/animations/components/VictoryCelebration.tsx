@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { GAME_ANIMATIONS } from "../animation.config";
 import type { Rect } from "../animation.types";
 import { measureElement } from "../utils/animationGeometry";
+import { MT } from "../../i18n/match";
 
 /** Título "Fase concluída!" que entra com um pequeno salto. */
 export function VictoryBadge({ enabled }: { enabled: boolean }) {
@@ -13,7 +14,7 @@ export function VictoryBadge({ enabled }: { enabled: boolean }) {
       animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 380, damping: 18 }}
     >
-      Fase concluída!
+      {MT.levelComplete}
     </motion.strong>
   );
 }
@@ -35,7 +36,7 @@ export function VictoryStars({
   return (
     <span
       className="victory-stars"
-      aria-label={decorative ? undefined : `${count} estrelas`}
+      aria-label={decorative ? undefined : MT.stars(count)}
       aria-hidden={decorative || undefined}
     >
       {Array.from({ length: Math.max(count, total) }, (_, i) => (

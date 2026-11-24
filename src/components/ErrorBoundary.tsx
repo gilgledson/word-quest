@@ -15,6 +15,7 @@ interface State {
  * que o progresso está salvo (ele vive no IndexedDB, não na tela) e deixa tentar de novo.
  */
 import { reportError } from "../services/telemetry";
+import { shellT } from "../i18n/screens";
 
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { failed: false, key: this.props.resetKey };
@@ -35,20 +36,20 @@ export class ErrorBoundary extends Component<Props, State> {
     return (
       <div className="error-screen" role="alert">
         <img className="loading-icon" src="/icon-192.png" alt="" />
-        <h1>Ops, algo deu errado</h1>
-        <p>Seu progresso está salvo neste dispositivo. Tente de novo.</p>
+        <h1>{shellT.errorTitle}</h1>
+        <p>{shellT.errorText}</p>
         <div className="error-actions">
           <button
             className="button primary"
             onClick={() => this.setState({ failed: false })}
           >
-            Tentar de novo
+            {shellT.errorRetry}
           </button>
           <button
             className="text-link"
             onClick={() => window.location.assign("/")}
           >
-            Voltar ao início
+            {shellT.errorHome}
           </button>
         </div>
       </div>

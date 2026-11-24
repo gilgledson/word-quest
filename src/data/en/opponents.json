@@ -1,0 +1,146 @@
+{
+  "opponents": [
+    {
+      "id": "bolota",
+      "name": "Acorn",
+      "species": "squirrel",
+      "level": "facil",
+      "style": "cuidadoso",
+      "tagline": "Slow and steady.",
+      "win": "I gathered more words than you!",
+      "lose": "Nice one! I will save my words for winter..."
+    },
+    {
+      "id": "fagulha",
+      "name": "Sparky",
+      "species": "little dragon",
+      "level": "facil",
+      "style": "agressivo",
+      "tagline": "Full speed ahead!",
+      "win": "I burned through every word!",
+      "lose": "Oops, I fizzled out..."
+    },
+    {
+      "id": "sabi",
+      "name": "Hoot",
+      "species": "owl",
+      "level": "medio",
+      "style": "cuidadoso",
+      "tagline": "Every letter in its place.",
+      "win": "Wisdom wins today.",
+      "lose": "Impressive. I learned something new."
+    },
+    {
+      "id": "raposo",
+      "name": "Rusty",
+      "species": "fox",
+      "level": "medio",
+      "style": "agressivo",
+      "tagline": "No risk, no reward.",
+      "win": "Outfoxed you again!",
+      "lose": "Hmph... I will get you next time."
+    },
+    {
+      "id": "oraculo",
+      "name": "Oracle",
+      "species": "lynx",
+      "level": "dificil",
+      "style": "cuidadoso",
+      "tagline": "I have seen this move before.",
+      "win": "It was written in the stars.",
+      "lose": "That... I did not foresee."
+    },
+    {
+      "id": "draco",
+      "name": "Draco",
+      "species": "dragon",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "No word escapes me.",
+      "win": "Ashes and victory!",
+      "lose": "Respect. Few ever beat me."
+    },
+    {
+      "id": "cuco",
+      "name": "Master Cuckoo",
+      "species": "cuckoo",
+      "level": "medio",
+      "style": "cuidadoso",
+      "tagline": "Everything in good time.",
+      "win": "Cuckoo! Your time is up.",
+      "lose": "My clock just stopped...",
+      "boss": true
+    },
+    {
+      "id": "musgo",
+      "name": "Mossy",
+      "species": "talking tree",
+      "level": "medio",
+      "style": "agressivo",
+      "tagline": "My roots run deep.",
+      "win": "The forest is mine!",
+      "lose": "Even mighty trees fall...",
+      "boss": true
+    },
+    {
+      "id": "zefa",
+      "name": "Sphinx Zara",
+      "species": "sphinx",
+      "level": "dificil",
+      "style": "cuidadoso",
+      "tagline": "Solve me, if you can.",
+      "win": "The riddle was you.",
+      "lose": "You solved it... how rare.",
+      "boss": true
+    },
+    {
+      "id": "lumen",
+      "name": "Queen Lumen",
+      "species": "lioness",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "Bow before the words.",
+      "win": "Long live the queen!",
+      "lose": "The crown is yours, for today.",
+      "boss": true
+    },
+    {
+      "id": "polvo",
+      "name": "Captain Octo",
+      "species": "octopus",
+      "level": "dificil",
+      "style": "agressivo",
+      "tagline": "Eight arms, eight words.",
+      "win": "Arr! The treasure is mine!",
+      "lose": "Sunk by a better sailor...",
+      "boss": true
+    }
+  ],
+  "byLevel": {
+    "1": "bolota",
+    "2": "bolota",
+    "3": "fagulha",
+    "4": "sabi",
+    "5": "cuco",
+    "6": "fagulha",
+    "7": "sabi",
+    "8": "fagulha",
+    "9": "raposo",
+    "10": "musgo",
+    "11": "sabi",
+    "12": "raposo",
+    "13": "sabi",
+    "14": "raposo",
+    "15": "zefa",
+    "16": "raposo",
+    "17": "oraculo",
+    "18": "draco",
+    "19": "oraculo",
+    "20": "lumen",
+    "21": "draco",
+    "22": "oraculo",
+    "23": "draco",
+    "24": "oraculo",
+    "25": "polvo"
+  }
+}

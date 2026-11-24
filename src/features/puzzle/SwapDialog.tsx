@@ -1,5 +1,6 @@
 import { motion } from "motion/react";
 import { economy, swapPrice, type Tile } from "../../game/crossword-engine";
+import { MT } from "../../i18n/match";
 
 interface Props {
   rack: Tile[];
@@ -37,25 +38,26 @@ export function SwapDialog({
         className="swap-dialog"
         role="dialog"
         aria-modal="true"
-        aria-label="Trocar letras"
+        aria-label={MT.swapTitle}
         initial={animated ? { opacity: 0, scale: 0.94, y: 8 } : false}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.18 }}
       >
-        <h2>Trocar letras</h2>
+        <h2>{MT.swapTitle}</h2>
         <p>
-          Até {economy.swapMax} peças:{" "}
-          {economy.swap
-            .map((_, i) => `${i + 1} por ${swapPrice(i + 1)}`)
-            .join(" · ")}{" "}
-          moedas. Você recebe letras novas e continua na sua vez.
+          {MT.swapRules(
+            economy.swapMax,
+            economy.swap
+              .map((_, i) => MT.swapPrice(i + 1, swapPrice(i + 1)))
+              .join(" · "),
+          )}
         </p>
         <div className="swap-tiles">
           {rack.map((t) => (
             <button
               key={t.id}
               aria-pressed={selected.includes(t.id)}
-              aria-label={`Trocar letra ${t.letter}`}
+              aria-label={MT.swapLetter(t.letter)}
               onClick={() => onToggle(t.id)}
             >
               {t.letter}
@@ -63,31 +65,27 @@ export function SwapDialog({
           ))}
         </div>
         <p className="swap-count" aria-live="polite">
-          {selected.length}/{economy.swapMax} selecionadas
+          {MT.selected(selected.length, economy.swapMax)}
         </p>
         <p className="swap-cost" aria-live="polite">
-          Custo: {cost} moedas
+          {MT.cost(cost)}
           <span className={coins < cost ? "short" : ""}>
-            {coins < cost
-              ? `Saldo insuficiente (você tem ${coins})`
-              : `Saldo depois: ${coins - cost}`}
+            {coins < cost ? MT.short(coins) : MT.after(coins - cost)}
           </span>
         </p>
         <div className="swap-actions">
-          <button onClick={onCancel}>Cancelar</button>
+          <button onClick={onCancel}>{MT.cancel}</button>
           <button
             className="primary"
             disabled={!selected.length || !canSwap}
             onClick={onConfirm}
           >
-            {selected.length
-              ? `Trocar por ${cost} moedas`
-              : "Escolha as letras"}
+            {selected.length ? MT.swapFor(cost) : MT.pickLetters}
           </button>
         </div>
         {!!selected.length && !canSwap && (
           <p role="status" className="swap-note">
-            Não há letras diferentes e úteis para esta troca.
+            {MT.swapNone}
           </p>
         )}
       </motion.div>

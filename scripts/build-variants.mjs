@@ -5,11 +5,9 @@
 // A fase 1 (tutorial) fica de fora: as instruções apontam para palavras dela.
 import fs from "node:fs";
 import path from "node:path";
+import { appData } from "./lib/lang.mjs";
 
-const here = path.dirname(
-  new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1"),
-);
-const data = path.join(here, "..", "src", "data");
+const data = appData;
 const levels = JSON.parse(
   fs.readFileSync(path.join(data, "levels.json"), "utf8"),
 );

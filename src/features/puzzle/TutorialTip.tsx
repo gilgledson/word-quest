@@ -1,11 +1,6 @@
 import { useEffect, useState } from "react";
+import { tipText as t } from "../../i18n/tutorial";
 
-const STEPS: Record<number, string> = {
-  1: "Toque numa letra do banco para jogar",
-  2: "Toque em Confirmar: certa +1, errada −1",
-  3: "Vez do rival: as letras roxas são dele",
-  4: "Sua vez de novo: mais pontos vence",
-};
 const LAST = 4;
 interface Props {
   /** Passo da jogada: 1 escolher a letra, 2 confirmar, 3 vez do rival. */
@@ -39,12 +34,10 @@ export function TutorialTip({ step, letter, botTurn, onDone, onSkip }: Props) {
         {shown}/{LAST}
       </b>
       <span>
-        {shown === 1 && letter
-          ? `Toque no ${letter} que brilha para jogar`
-          : STEPS[shown]}
+        {shown === 1 && letter ? t.tapLetter(letter) : t.steps[shown]}
       </span>
       <button type="button" onClick={back ? onDone : (onSkip ?? onDone)}>
-        {back ? "Entendi" : "Pular"}
+        {back ? t.gotIt : t.skip}
       </button>
     </div>
   );

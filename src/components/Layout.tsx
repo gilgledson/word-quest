@@ -23,6 +23,8 @@ import { motion } from "motion/react";
 import { usePlayer } from "../stores/player";
 import { CoinIcon } from "./CoinIcon";
 import { claimableCount } from "../game/achievements";
+import { shellT as t } from "../i18n/screens";
+import { logoSrc } from "../i18n";
 export function Wallet() {
   const p = usePlayer((s) => s.player);
   return (
@@ -37,7 +39,7 @@ export function Wallet() {
         <Link
           className="wallet-shop"
           to="/loja"
-          aria-label={`${p.coins} moedas: abrir a loja`}
+          aria-label={t.walletShop(p.coins)}
         >
           <Plus aria-hidden="true" />
         </Link>
@@ -52,7 +54,7 @@ export function MusicButton() {
   return (
     <button
       className="music-button"
-      aria-label={music ? "Desligar música" : "Ligar música"}
+      aria-label={music ? t.musicOff : t.musicOn}
       aria-pressed={music}
       onClick={() => update((p) => ({ ...p, music: !p.music }))}
     >
@@ -90,18 +92,14 @@ export function Layout() {
           <span className="game-art art-book" aria-hidden="true" />
           <img
             className="brand-wordmark"
-            src="/art/wordquest-logo-v1.webp"
-            alt="WordQuest — A Jornada das Palavras"
+            src={logoSrc()}
+            alt={t.logoAlt}
             width="210"
             height="70"
           />
         </Link>
         {map && (
-          <Link
-            className="map-back"
-            to="/"
-            aria-label="Voltar ao menu principal"
-          >
+          <Link className="map-back" to="/" aria-label={t.backToMenu}>
             <ArrowLeft />
           </Link>
         )}
@@ -111,7 +109,7 @@ export function Layout() {
           <Link
             className="settings-button"
             to="/profile"
-            aria-label="Configurações"
+            aria-label={t.settings}
           >
             <Settings />
           </Link>
@@ -142,30 +140,27 @@ export function Layout() {
       {!playing && !map && (
         <>
           <footer>
-            <span>Uma palavra. Um novo caminho.</span>
-            <span>Feito para explorar, no seu ritmo.</span>
+            <span>{t.footer1}</span>
+            <span>{t.footer2}</span>
           </footer>
-          <nav className="bottom-nav" aria-label="Navegação principal">
+          <nav className="bottom-nav" aria-label={t.mainNav}>
             <NavLink to="/" end>
               <Compass />
-              Aventura
+              {t.navAdventure}
             </NavLink>
             <NavLink to="/casual">
               <Shapes />
-              Casual
+              {t.navCasual}
             </NavLink>
             <NavLink to="/daily">
               <CalendarDays />
-              Diário
+              {t.navDaily}
             </NavLink>
             <NavLink to="/profile">
               <UserRound />
-              Perfil
+              {t.navProfile}
               {toClaim > 0 && (
-                <span
-                  className="nav-badge"
-                  aria-label={`${toClaim} ${toClaim === 1 ? "conquista" : "conquistas"} para resgatar`}
-                >
+                <span className="nav-badge" aria-label={t.toClaim(toClaim)}>
                   {toClaim}
                 </span>
               )}

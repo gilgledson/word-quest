@@ -1,5 +1,6 @@
 import { useRef, useState, type PointerEvent, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { MT } from "../i18n/match";
 
 /** Distância (px) que o dedo precisa arrastar para o card sair e dar lugar ao seguinte. */
 const SWIPE = 64;
@@ -107,7 +108,7 @@ export function Deck<T>({
         <div className="deck-nav">
           <button
             type="button"
-            aria-label={`Anterior em ${label}`}
+            aria-label={MT.previousIn(label)}
             onClick={() => go(-1)}
           >
             <ChevronLeft aria-hidden="true" />
@@ -118,11 +119,11 @@ export function Deck<T>({
             ))}
           </span>
           <span className="sr-only" aria-live="polite">
-            {at + 1} de {n}
+            {MT.nOfM(at + 1, n)}
           </span>
           <button
             type="button"
-            aria-label={`Próximo em ${label}`}
+            aria-label={MT.nextIn(label)}
             onClick={() => go(1)}
           >
             <ChevronRight aria-hidden="true" />

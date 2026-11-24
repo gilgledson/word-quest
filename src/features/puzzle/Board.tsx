@@ -8,6 +8,7 @@ import type {
   Session,
   positions,
 } from "../../game/crossword-engine";
+import { MT } from "../../i18n/match";
 
 interface Props {
   puzzle: Puzzle;
@@ -81,7 +82,7 @@ export function Board({
       key={w.id}
       className={`clue-half ${selected === w.id ? "selected-clue" : ""}`}
       onClick={() => onChoose(w.id)}
-      aria-label={`Pista: ${w.clue}, ${arrowTo(w.arrow) === "right" ? "horizontal" : "vertical"}`}
+      aria-label={MT.clueLabel(w.clue, arrowTo(w.arrow) === "right")}
     >
       {w.icon && (
         <span className={`game-art art-${w.icon}`} aria-hidden="true" />
@@ -160,7 +161,13 @@ export function Board({
               }
               data-words={belongs.map((w) => w.id).join(" ")}
               key={ck}
-              aria-label={`Linha ${r + 1}, coluna ${c + 1}: ${hiddenJoker(ck) ? "curinga" : (session.letters[ck] ?? botLetter ?? "vazia")}`}
+              aria-label={MT.cellLabel(
+                r + 1,
+                c + 1,
+                hiddenJoker(ck)
+                  ? MT.jokerCell
+                  : (session.letters[ck] ?? botLetter ?? MT.empty),
+              )}
               onClick={(event) => {
                 if (!letterDrag.clickAllowed(event.detail === 0)) return;
                 if (mine && pending(ck)) onUnplace(ck);

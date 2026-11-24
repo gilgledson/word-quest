@@ -48,3 +48,6 @@ vi.mock("react-joyride", () => ({
     return null;
   },
 }));
+// Os testes rodam em português (o jsdom diz "en-US"); os de inglês trocam com `setLang("en")`.
+import { setLang } from "../i18n";
+setLang("pt");

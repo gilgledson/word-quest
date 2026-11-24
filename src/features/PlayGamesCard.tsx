@@ -21,6 +21,7 @@ import {
   parseCloud,
 } from "../game/cloudSave";
 import { levels } from "../data/catalog";
+import { playGamesT as t } from "../i18n/screens";
 
 /** Situação do Play Games nesta sessão (configurado? jogador conectado?). */
 export const usePlayGamesStatus = create<
@@ -90,7 +91,7 @@ export function PlayGamesSync() {
     if (text === inCloud) return;
     const timer = setTimeout(() => {
       const won = levels.filter((l) => player.stars[l.id]).length;
-      void writeCloudSave(text, `${won} de ${levels.length} fases`).then(
+      void writeCloudSave(text, t.saveDescription(won, levels.length)).then(
         (ok) => {
           if (ok) setInCloud(text);
         },
@@ -117,7 +118,8 @@ export function PlayGamesSync() {
     <div className="play-games-toast" role="status">
       <Gamepad2 size={18} aria-hidden="true" />
       <span>
-        Conectado ao Google Play Games{name ? <b> como {name}</b> : null}
+        {t.toast}
+        {name ? <b>{t.toastAs(name)}</b> : null}
       </span>
     </div>
   );
@@ -149,10 +151,11 @@ export function PlayGamesCard() {
           <div className="play-games-account">
             {photo && <img src={photo} alt="" width={44} height={44} />}
             <p>
-              Conectado{name ? " como " : ""}
+              {t.connected}
+              {name ? t.as : ""}
               {name && <b>{name}</b>}.
               <br />
-              Seu progresso fica guardado na sua conta Google.
+              {t.savedInAccount}
             </p>
           </div>
           <div className="play-games-actions">
@@ -161,7 +164,7 @@ export function PlayGamesCard() {
               disabled={!status.signedIn}
               onClick={() => void openPlayAchievements()}
             >
-              <Medal size={18} aria-hidden="true" /> Conquistas
+              <Medal size={18} aria-hidden="true" /> {t.achievements}
             </button>
             {hasLeaderboard() && (
               <button
@@ -169,21 +172,17 @@ export function PlayGamesCard() {
                 disabled={!status.signedIn}
                 onClick={() => void openPlayLeaderboard()}
               >
-                <Trophy size={18} aria-hidden="true" /> Placar
+                <Trophy size={18} aria-hidden="true" /> {t.leaderboard}
               </button>
             )}
           </div>
         </>
       ) : (
         <>
-          <p>
-            {cached
-              ? `Você saiu da conta ${cached.name}. Entre de novo para guardar seu progresso na sua conta.`
-              : "Entre com o Google Play Games para guardar seu progresso na sua conta e aparecer no placar."}
-          </p>
+          <p>{cached ? t.signedOut(cached.name) : t.signInText}</p>
           <div className="play-games-actions">
             <button type="button" onClick={() => void signIn()}>
-              Entrar
+              {t.signIn}
             </button>
           </div>
         </>

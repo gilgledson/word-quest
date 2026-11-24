@@ -1,4 +1,5 @@
 import type { Session } from "../../game/crossword-engine";
+import { MT } from "../../i18n/match";
 
 export interface MatchSummary {
   result: "win" | "draw" | "loss";
@@ -39,27 +40,27 @@ export function medalsFor(s: MatchSummary): Medal[] {
   if (s.helped === 0)
     medals.push({
       id: "sem-ajuda",
-      label: "Sem ajuda",
-      hint: "Venceu sem usar a Dica",
+      label: MT.medalNoHelp,
+      hint: MT.medalNoHelpHint,
     });
   if (margin >= 10)
     medals.push({
       id: "folgada",
-      label: "Vitória folgada",
-      hint: `${margin} pontos de vantagem`,
+      label: MT.medalBig,
+      hint: MT.medalBigHint(margin),
     });
   else if (margin <= 3)
     medals.push({
       id: "apertada",
-      label: "No sufoco",
-      hint: "Venceu por poucos pontos",
+      label: MT.medalClose,
+      hint: MT.medalCloseHint,
     });
   const total = s.letters.p + s.letters.ai;
   if (total > 0 && s.letters.p / total >= 0.6)
     medals.push({
       id: "dono",
-      label: "Dono da grade",
-      hint: "Confirmou a maior parte das letras",
+      label: MT.medalOwner,
+      hint: MT.medalOwnerHint,
     });
   return medals;
 }

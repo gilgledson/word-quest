@@ -162,3 +162,36 @@ grava o conteúdo em `content/` no Realtime Database.
 No aparelho (`src/content`): na abertura vale o último conteúdo baixado que passar na validação;
 depois o app confere se há versão nova, baixa, valida e guarda para a próxima abertura, adiantando
 as imagens do mundo seguinte. Sem internet, segue com o que tem; o conteúdo do app é o mínimo.
+
+## Conteúdo em inglês (`--lang en`)
+
+O inglês tem conteúdo próprio (não é tradução do português): catálogo, temas, fases, variantes,
+mundos e rivais. Todos os scripts acima aceitam `--lang en` (ou `WQ_LANG=en`): leem de
+`scripts/data/en/` (`catalogo.json`, `themes.json`, `dictionary.txt`) e gravam em `src/data/en/`
+(`levels.json`, `level-variants.json`, `casual.json`; `worlds.json` e `opponents.json` são escritos à
+mão). O app só carrega `src/data/en` quando o jogo está em inglês.
+
+- **Dicionário:** ENABLE (Enhanced North American Benchmark Lexicon, domínio público). Também não é
+  versionado: baixe `enable1.txt` de <https://raw.githubusercontent.com/dolph/dictionary/master/enable1.txt>
+  (fora do projeto) e rode `node scripts/build-dictionary-en.mjs <enable1.txt>`.
+- **Mundos:** `village`, `forest`, `desert`, `kingdom`, `islands` (ids próprios: o progresso de cada
+  idioma fica separado). A arte dos mapas, dos temas e dos rivais é a mesma do português.
+
+```sh
+node scripts/check-clues.mjs --lang en
+node scripts/catalogo.mjs --lang en --add novas.txt     # linhas WORD|clue|nivel|tipo|dica
+# Aventura: um mundo por vez, como no português (ver a tabela no começo)
+node scripts/generate-levels.mjs --lang en --only 1,2,3,4,5 --rows 6 --cols 6 --reuse-short
+node scripts/generate-levels.mjs --lang en --only 24,25 --rows 8 --cols 8 --reuse --molds 30000
+# Variantes: copie src/data/en/levels.json, regenere com outro --seed (--out na cópia) e junte
+WQ_LANG=en node scripts/build-variants.mjs seed2.json seed3.json
+# Casual: o 8×10 primeiro (regrava tudo), depois os outros tamanhos
+node scripts/generate-casual-tema.mjs --lang en --count 6 --min-words 10 --tries 2500
+node scripts/generate-casual-tema.mjs --lang en --rows 6 --cols 6 --count 8 --min-words 6 --tries 1500
+node scripts/check-casual.mjs --lang en --min 1
+node scripts/publish-content.mjs --lang en            # confere; com --deploy publica em /content-en
+```
+
+O conteúdo publicado do inglês fica em `content-en/` no Realtime Database (o português segue em
+`content/`, que os apps antigos leem). `src/tests/i18n-conteudo.test.tsx` valida o conteúdo em inglês
+e joga cada grade até o fim.

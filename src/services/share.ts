@@ -4,6 +4,7 @@
  */
 import { Capacitor } from "@capacitor/core";
 import { Share } from "@capacitor/share";
+import { shareUiText } from "../i18n/result";
 
 export type ShareResult = "shared" | "copied" | "failed";
 
@@ -17,7 +18,7 @@ export async function copyText(text: string): Promise<boolean> {
 }
 export async function shareText(
   text: string,
-  title = "Enviar convite",
+  title = shareUiText.sendInvite,
 ): Promise<ShareResult> {
   try {
     if (Capacitor.isNativePlatform()) {

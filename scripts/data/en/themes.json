@@ -1,0 +1,10 @@
+{
+  "animals": { "nome": "Animals", "art": "/art/temas/animais.webp" },
+  "food": { "nome": "Food", "art": "/art/temas/comida.webp" },
+  "nature": { "nome": "Nature", "art": "/art/temas/natureza.webp" },
+  "home": { "nome": "Home & objects", "art": "/art/temas/casa.webp" },
+  "sports": { "nome": "Sports", "art": "/art/temas/esportes.webp" },
+  "jobs": { "nome": "Jobs", "art": "/art/temas/profissoes.webp" },
+  "body": { "nome": "Body", "art": "/art/temas/corpo.webp" },
+  "school": { "nome": "School & play", "art": "/art/temas/escola.webp" }
+}

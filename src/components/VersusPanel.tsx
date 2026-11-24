@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { WifiOff } from "lucide-react";
 import { OpponentPortrait } from "./OpponentPortrait";
 import type { Mood, OpponentProfile } from "../game/opponents";
+import { MT } from "../i18n/match";
 
 interface Side {
   face: Pick<OpponentProfile, "id">;
@@ -68,7 +69,7 @@ export function VersusPanel({
         <button
           type="button"
           className="duelist-frame claim"
-          aria-label={`${s.name} está sem conexão: encerrar a partida e ficar com a vitória`}
+          aria-label={MT.offlineClaim(s.name)}
           onClick={s.onClaim}
         >
           {portrait(s)}
@@ -76,7 +77,7 @@ export function VersusPanel({
       ) : (
         <span
           className="duelist-frame"
-          aria-label={s.offline ? `${s.name} está sem conexão` : undefined}
+          aria-label={s.offline ? MT.offline(s.name) : undefined}
           role={s.offline ? "img" : undefined}
         >
           {portrait(s)}
@@ -87,7 +88,7 @@ export function VersusPanel({
         <span
           key={glow?.owner === who ? glow.key : undefined}
           className={`duelist-score ${glow?.owner === who ? "glow" : ""}`}
-          aria-label={`${s.score} pontos`}
+          aria-label={MT.scorePoints(s.score)}
         >
           <motion.strong
             key={s.score}
@@ -96,13 +97,13 @@ export function VersusPanel({
           >
             {s.score}
           </motion.strong>
-          <small aria-hidden="true">pts</small>
+          <small aria-hidden="true">{MT.pts}</small>
         </span>
       </span>
     </div>
   );
   return (
-    <div className="versus-score" aria-label="Placar">
+    <div className="versus-score" aria-label={MT.scoreboard}>
       {side(player, "p")}
       <div className="versus-center">
         {clock ? (
@@ -120,7 +121,7 @@ export function VersusPanel({
           className={`turn-arrow ${finished ? "done" : turn}`}
           role="status"
         >
-          {finished ? "FIM" : turn === "p" ? "◀ sua vez" : "vez do rival ▶"}
+          {finished ? MT.end : turn === "p" ? MT.yourTurn : MT.rivalTurnArrow}
         </span>
       </div>
       {side(rival, "ai")}
@@ -159,7 +160,7 @@ function TurnClock({
     <span
       className={`vs-clock${left <= LOW_SECONDS ? " low" : ""}${animate ? "" : " still"}`}
       role="timer"
-      aria-label={`Relógio do turno: ${seconds} segundos`}
+      aria-label={MT.turnClock(seconds)}
     >
       <svg viewBox="0 0 36 36" aria-hidden="true">
         <circle className="vs-clock-track" cx="18" cy="18" r="15.5" />

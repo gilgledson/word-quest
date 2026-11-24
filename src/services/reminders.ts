@@ -17,6 +17,7 @@ import {
   type LoginRewardState,
 } from "../game/loginReward";
 import { track } from "./telemetry";
+import { reminderText } from "../i18n/game";
 
 /** Ids fixos: cancelar e reagendar não acumula notificações velhas. */
 const IDS = [7101, 7102, 7103, 7104, 7105, 7106, 7107];
@@ -66,13 +67,13 @@ export function reminderPlan(
     const streak = i === 0 ? p.streak : 0;
     const body =
       day === LOGIN_REWARDS.length
-        ? `Hoje é o Dia 7: um baú com ${coins} moedas está te esperando!`
+        ? reminderText.day7(coins)
         : streak >= 2
-          ? `Não perca sua sequência de ${streak} dias. Recompensa do dia: +${coins} moedas.`
-          : `Uma cruzadinha nova te espera. Recompensa do dia: +${coins} moedas.`;
+          ? reminderText.streak(streak, coins)
+          : reminderText.plain(coins);
     plan.push({
       id: IDS[i],
-      title: "Seu desafio do dia chegou!",
+      title: reminderText.title,
       body,
       schedule: { at: when, allowWhileIdle: true },
       extra: { route: "/" },

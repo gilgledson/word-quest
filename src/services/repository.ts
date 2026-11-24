@@ -1,6 +1,6 @@
 import Dexie, { type Table } from "dexie";
 import type { BotLevel, Session } from "../game/crossword-engine";
-import { DEFAULT_NAME } from "../game/avatars";
+import { defaultName } from "../game/avatars";
 export interface Player {
   name: string;
   /** Id de `PLAYER_AVATARS`. */
@@ -89,7 +89,10 @@ export interface GameRecord {
 }
 export const HISTORY_MAX = 10;
 export const initialPlayer: Player = {
-  name: DEFAULT_NAME,
+  /** Nome padrão no idioma do jogo (lido ao criar o jogador). */
+  get name() {
+    return defaultName();
+  },
   avatar: "jogador",
   coins: 100,
   stars: {},
@@ -121,7 +124,8 @@ export interface PlayerRepository {
 }
 /** Conteúdo baixado (fases, rivais, mundos), guardado inteiro para valer nas próximas aberturas. */
 export interface StoredContent {
-  id: "content";
+  /** "content" (português) ou "content-<idioma>". */
+  id: string;
   data: unknown;
 }
 /** Imagem baixada do servidor de conteúdo; a chave é o endereço (cada versão tem o seu). */
@@ -142,12 +146,15 @@ class Database extends Dexie {
 }
 const db = new Database();
 /** Cache do conteúdo baixado e das imagens dele (src/content). */
+/** Chave do conteúdo guardado de cada idioma (o português fica na de sempre). */
+const contentKey = (lang: string) =>
+  lang === "pt" ? "content" : `content-${lang}`;
 export const contentStore = {
-  async load() {
-    return (await db.content.get("content"))?.data;
+  async load(lang = "pt") {
+    return (await db.content.get(contentKey(lang)))?.data;
   },
-  async save(data: unknown) {
-    await db.content.put({ id: "content", data });
+  async save(data: unknown, lang = "pt") {
+    await db.content.put({ id: contentKey(lang), data });
   },
   async asset(url: string) {
     return (await db.assets.get(url))?.blob;
