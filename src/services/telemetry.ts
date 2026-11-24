@@ -4,13 +4,15 @@
  * (tela aberta, partida iniciada ou terminada), nunca quem é o jogador nem o que ele digitou.
  */
 import { Capacitor, registerPlugin } from "@capacitor/core";
-import { lang } from "../i18n";
+import { consumeLangChange, deviceLanguage, lang, langOrigin } from "../i18n";
 
 type Params = Record<string, string | number | boolean>;
 interface TelemetryPlugin {
   logEvent(options: { name: string; params?: Params }): Promise<void>;
   recordError(options: { message: string; stack?: string }): Promise<void>;
   setContext(options: { key: string; value: string }): Promise<void>;
+  /** Só nas versões da loja a partir da 5.8; nas anteriores a chamada falha e é ignorada. */
+  setUserProperty(options: { name: string; value: string }): Promise<void>;
 }
 const Telemetry = registerPlugin<TelemetryPlugin>("Telemetry");
 const native = () => Capacitor.isNativePlatform();
@@ -19,7 +21,9 @@ const publishedWeb = () =>
   !native() &&
   typeof location !== "undefined" &&
   /(^|\.)wordquest\.com\.br$/.test(location.hostname);
-type Logger = (name: string, params: Params) => void;
+type Logger = ((name: string, params: Params) => void) & {
+  setUser?: (props: Record<string, string>) => void;
+};
 let web: Promise<Logger | undefined> | undefined;
 const webLogger = () =>
   (web ??= import("./webAnalytics")
@@ -44,6 +48,36 @@ export function track(name: string, eventParams: Params = {}) {
         /* Medição é opcional. */
       }
     });
+}
+
+/** Propriedade de usuário no Analytics (ex.: `lang`), para filtrar públicos em qualquer relatório. */
+export function setUserProperty(name: string, value: string) {
+  if (native()) {
+    void Telemetry.setUserProperty({ name, value }).catch(() => {});
+    return;
+  }
+  if (publishedWeb())
+    void webLogger().then((log) => {
+      try {
+        log?.setUser?.({ [name]: value });
+      } catch {
+        /* Medição é opcional. */
+      }
+    });
+}
+
+/**
+ * Idioma na abertura do app: vira propriedade de usuário e gera um evento quando muda.
+ * - `language_changed` (from, to): o jogador trocou nas Configurações (medido na abertura seguinte);
+ * - `language_detected` (device_lang): primeira abertura com idioma, escolhido pelo aparelho.
+ */
+export function trackLanguage() {
+  const l = lang();
+  setUserProperty("lang", l);
+  const from = consumeLangChange();
+  if (from) track("language_changed", { from, to: l });
+  else if (langOrigin() === "device")
+    track("language_detected", { device_lang: deviceLanguage() });
 }
 
 /** Nome da tela a partir da rota, sem o que identifica a partida (código da sala, número da grade). */

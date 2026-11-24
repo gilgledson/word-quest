@@ -33,10 +33,27 @@ function stored(): Lang | undefined {
 }
 
 let current: Lang | undefined;
+/** De onde veio o idioma desta abertura: gravado antes (escolha ou abertura anterior) ou do aparelho. */
+let origin: "saved" | "device" | undefined;
 /** Idioma em uso. */
 export function lang(): Lang {
-  return (current ??= stored() ?? deviceLang());
+  if (current) return current;
+  const saved = stored();
+  origin = saved ? "saved" : "device";
+  return (current = saved ?? deviceLang());
 }
+/** `device` só na primeira abertura com idioma (o app ainda não tinha gravado nenhum). */
+export const langOrigin = () => (lang(), origin);
+/** Idioma principal do aparelho ("en", "es", "pt"…), sem região: diz quem cai no inglês. */
+export function deviceLanguage() {
+  const tag =
+    typeof navigator === "undefined"
+      ? ""
+      : (navigator.languages?.[0] ?? navigator.language ?? "");
+  return tag.split("-")[0].toLowerCase() || "unknown";
+}
+/** Troca feita nas Configurações: o idioma anterior fica guardado até a próxima abertura medir. */
+const CHANGED_KEY = "wordquest.langFrom";
 /** Locale para `Intl` (datas, números, ordenação). */
 export const locale = () => (lang() === "en" ? "en-US" : "pt-BR");
 
@@ -71,8 +88,27 @@ const TITLES: Record<Lang, string> = {
 /** Troca o idioma pelo app: grava e reabre na tela inicial, já com o conteúdo do idioma novo. */
 export function changeLang(l: Lang) {
   if (l === lang()) return;
+  try {
+    localStorage.setItem(CHANGED_KEY, lang());
+  } catch {
+    /* Sem armazenamento: a troca não é medida. */
+  }
   setLang(l);
   location.assign("/");
+}
+
+/**
+ * Idioma de antes da troca feita nas Configurações (o app recarrega ao trocar, então a medição é
+ * feita na abertura seguinte). Devolve uma vez só.
+ */
+export function consumeLangChange(): Lang | undefined {
+  try {
+    const from = localStorage.getItem(CHANGED_KEY);
+    localStorage.removeItem(CHANGED_KEY);
+    return isLang(from) && from !== lang() ? from : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**
