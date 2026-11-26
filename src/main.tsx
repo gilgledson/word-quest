@@ -46,6 +46,11 @@ const OnlineSetup = lazy(() =>
     default: m.OnlineSetupRoute,
   })),
 );
+const OnlineSearch = lazy(() =>
+  import("./features/OnlinePage").then((m) => ({
+    default: m.OnlineSearchRoute,
+  })),
+);
 const PuzzlePage = lazy(() =>
   import("./features/PuzzlePage").then((m) => ({ default: m.PuzzlePage })),
 );
@@ -101,11 +106,21 @@ function GameRoute() {
     </Suspense>
   );
 }
-function OnlineRoute({ match, setup }: { match?: boolean; setup?: boolean }) {
+function OnlineRoute({
+  match,
+  setup,
+  search,
+}: {
+  match?: boolean;
+  setup?: boolean;
+  search?: boolean;
+}) {
   const { pathname } = useLocation();
   return (
     <Suspense fallback={<div className="loading">{shellT.openingDuel}</div>}>
-      {setup ? (
+      {search ? (
+        <OnlineSearch />
+      ) : setup ? (
         <OnlineSetup />
       ) : match ? (
         <OnlineMatch key={pathname} />
@@ -194,6 +209,10 @@ function App() {
                   <Route path="play/:id" element={<GameRoute />} />
                   <Route path="online" element={<OnlineRoute />} />
                   <Route path="online/nova" element={<OnlineRoute setup />} />
+                  <Route
+                    path="online/procurar"
+                    element={<OnlineRoute search />}
+                  />
                   <Route path="online/:code" element={<OnlineRoute match />} />
                   <Route path="*" element={<Home />} />
                 </Route>

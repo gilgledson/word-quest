@@ -25,6 +25,7 @@ import {
   type OnlineRoom,
   type OnlineSeat,
 } from "../game/online";
+import type { LobbyEntry } from "../game/matchmaking";
 import { UnverifiedError, type JoinResult, type OnlineBackend } from "./online";
 
 interface StoredRoom extends Omit<OnlineRoom, "state" | "grid"> {
@@ -206,6 +207,31 @@ export function firebaseBackend(): OnlineBackend {
           .catch(() => {});
         void remove(mine).catch(() => {});
       };
+    },
+    async lobby(lang) {
+      await uid();
+      const all = (await get(ref(db, `lobby/${lang}`))).val() as Record<
+        string,
+        Omit<LobbyEntry, "code">
+      > | null;
+      return Object.entries(all ?? {}).map(([code, e]) => ({ ...e, code }));
+    },
+    async list(lang, { code, ...entry }) {
+      await set(ref(db, `lobby/${lang}/${code}`), entry);
+    },
+    async unlist(lang, code) {
+      await remove(ref(db, `lobby/${lang}/${code}`));
+    },
+    async withdraw(code) {
+      // Na mesma transação: se o convidado entrou neste instante, a sala fica e a partida começa.
+      const result = await runTransaction(
+        room(code),
+        (current: StoredRoom | null) =>
+          current?.guest || (current && current.status !== "waiting")
+            ? undefined
+            : null,
+      );
+      return result.committed;
     },
   };
   return {

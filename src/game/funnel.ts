@@ -27,7 +27,17 @@ export const withMilestone = <P extends WithMilestones>(
 /** Nome do modo da partida nos eventos. */
 export const duelMode = (m: {
   online?: boolean;
+  /** Procura de oponente em que ninguém chegou (o rival do jogo assumiu). */
+  bot?: boolean;
   daily?: boolean;
   casual?: boolean;
 }) =>
-  m.online ? "online" : m.daily ? "diario" : m.casual ? "casual" : "aventura";
+  m.online
+    ? m.bot
+      ? "online_bot"
+      : "online"
+    : m.daily
+      ? "diario"
+      : m.casual
+        ? "casual"
+        : "aventura";

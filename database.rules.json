@@ -8,6 +8,15 @@
     "content-en": {
       ".read": true
     },
+    "lobby": {
+      "$lang": {
+        ".read": "auth != null",
+        "$code": {
+          ".write": "auth != null && (!newData.exists() || (!data.exists() && newData.child('uid').val() === auth.uid))",
+          ".validate": "$code.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['uid', 'createdAt']) && newData.child('createdAt').isNumber()"
+        }
+      }
+    },
     "rooms": {
       "$code": {
         ".read": "auth != null",
