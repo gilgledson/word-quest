@@ -533,7 +533,12 @@ export function Duel({
     inTutorial && guidedWord && session
       ? guided(guidedWord, session)
       : undefined;
-  const guideActive = !!guide && !!session && guideUsable(guide, session);
+  // Depois de confirmada (ou pulada) a palavra guiada fica marcada em `tipsSeen` ("palavra").
+  const guideActive =
+    !!guide &&
+    !!session &&
+    !player.tipsSeen.includes("palavra") &&
+    guideUsable(guide, session);
   const coachOn =
     guideActive &&
     session?.versus?.turn === "p" &&
@@ -1150,7 +1155,12 @@ export function Duel({
   // Tutorial da fase 1 (só na campanha, para quem ainda não o concluiu).
   const tutorial =
     !player.tutorialDone && !daily && !casual && puzzle.number === 1;
-  /** Pular o tutorial: encerra o gesto em andamento (as letras postas ficam) e conta onde parou. */
+  /**
+   * Pular: encerra o gesto em andamento (as letras postas ficam) e conta onde parou. Na palavra
+   * guiada pula só ela: a partida segue curta, com as mesmas letras, e as dicas de 4 passos
+   * continuam (quem pulava ali caía numa cruzadinha inteira sem orientação nenhuma e desistia).
+   * Nas dicas de 4 passos ("rival") encerra o tutorial.
+   */
   const skipTutorial = (step: "word" | "confirm" | "rival") => {
     letterDrag.cancel();
     track("tutorial_skipped", {
@@ -1158,7 +1168,13 @@ export function Duel({
       letters_placed: guide?.filled ?? 0,
       word_length: guide?.cells.length ?? 0,
     });
-    update((p) => ({ ...p, tutorialDone: true }));
+    update((p) =>
+      step === "rival"
+        ? { ...p, tutorialDone: true }
+        : p.tipsSeen.includes("palavra")
+          ? p
+          : { ...p, tipsSeen: [...p.tipsSeen, "palavra"] },
+    );
   };
   const tutorialStep = botTurn ? 3 : hasPending ? 2 : 1;
   // Primeiro passo: a peça do banco que serve na casa azul brilha sozinha, e o passo diz qual é.
