@@ -6,6 +6,8 @@
  * As moedas só entram quando o anúncio confirma a recompensa (vídeo assistido até o fim); um vídeo
  * fechado antes não paga nem conta no limite (ver `services/rewardedAds`).
  */
+import { duelCoins, economy } from "./engine/types";
+
 export const REWARDED = {
   /** Moedas por vídeo na loja. */
   coins: 30,
@@ -78,4 +80,26 @@ export function mergeRewarded(
     return { date: cloud.date, count: cloud.count };
   if (cloud.date < local.date) return local;
   return { ...local, count: Math.max(local.count, cloud.count) };
+}
+
+/**
+ * Moedas que o vídeo do fim do duelo pode dobrar: as que esta partida acabou de pagar. Zero (sem
+ * oferta) ao reabrir uma partida já paga, numa revanche que não paga, no tutorial e na derrota que
+ * não paga nada. Vale para Aventura, Casual, Diário e duelo ao vivo (com pessoa ou com o rival).
+ */
+export function doubleableCoins(o: {
+  result: "win" | "draw" | "loss";
+  daily: boolean;
+  online: boolean;
+  /** A partida ainda não tinha pago quando começou (ver `settleSession`). */
+  unpaid: boolean;
+  tutorial: boolean;
+}): number {
+  if (!o.unpaid || o.tutorial) return 0;
+  const paid = o.daily
+    ? o.result === "win"
+      ? economy.daily
+      : 0
+    : duelCoins(o.result, o.online);
+  return Math.max(0, paid);
 }

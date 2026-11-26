@@ -75,6 +75,7 @@ import { ResultSheet } from "./puzzle/ResultSheet";
 import { TutorialCoach } from "./puzzle/TutorialCoach";
 import { guided, guideUsable, tutorialPick } from "./puzzle/tutorialPick";
 import { settleSession } from "./puzzle/settleSession";
+import { doubleableCoins } from "../game/rewarded";
 import { track } from "../services/telemetry";
 import { achievedIds, achievementStatus } from "../game/achievements";
 import { useScoreFloats } from "./puzzle/useScoreFloats";
@@ -321,8 +322,9 @@ export function Duel({
   }, [botTurn]);
   const finished = !!engine && !!session && engine.complete(session);
   const wasFinished = useRef(finished);
-  // Vídeo premiado no fim do duelo: dobra as moedas que esta partida acabou de pagar. Não vale ao
-  // reabrir uma partida já concluída, numa revanche que não paga, no tutorial nem no duelo ao vivo.
+  // Vídeo premiado no fim do duelo: dobra as moedas que esta partida acabou de pagar (também no
+  // duelo ao vivo). Não vale ao reabrir uma partida já concluída, numa revanche que não paga nem no
+  // tutorial (ver `doubleableCoins`).
   const payState = useRef({ key: "", unpaid: false, tutorial: false });
   if (!finished && session) {
     if (payState.current.key !== sessionKey)
@@ -444,16 +446,15 @@ export function Duel({
       sfx(p > ai ? "win" : p === ai ? "draw" : "lose");
       if (p > ai) void celebrate(player.animations);
       setResultOpen(true);
-      const paid = daily
-        ? p > ai
-          ? economy.daily
-          : 0
-        : duelCoins(p > ai ? "win" : p === ai ? "draw" : "loss", false);
       const pay = payState.current;
       setDoubleCoins(
-        !online && pay.key === sessionKey && pay.unpaid && !pay.tutorial
-          ? Math.max(0, paid)
-          : 0,
+        doubleableCoins({
+          result: p > ai ? "win" : p === ai ? "draw" : "loss",
+          daily,
+          online: !!online,
+          unpaid: pay.key === sessionKey && pay.unpaid,
+          tutorial: pay.tutorial,
+        }),
       );
       reach("first_duel_end", {
         result: p > ai ? "win" : p === ai ? "draw" : "loss",
