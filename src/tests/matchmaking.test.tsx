@@ -235,7 +235,10 @@ describe("tela de procurar oponente", () => {
       ),
     ).toBeInTheDocument();
     // Pessoa real vinda da busca: modo online, origem busca.
-    expect(starts().at(-1)).toMatchObject({ mode: "online", source: "busca" });
+    expect(starts().at(-1)).toMatchObject({
+      mode: "online",
+      match_source: "busca",
+    });
   });
 
   it("duelo de código de amigo sai na medição com origem código", async () => {
@@ -247,7 +250,10 @@ describe("tela de procurar oponente", () => {
       .join("AMG234", { uid: "eu", name: "Gil", avatar: "jogador" });
     open("/online/AMG234");
     await screen.findByRole("heading", { name: "Contra Bia" });
-    expect(starts().at(-1)).toMatchObject({ mode: "online", source: "codigo" });
+    expect(starts().at(-1)).toMatchObject({
+      mode: "online",
+      match_source: "codigo",
+    });
   });
 
   it("sem ninguém, abre uma sala pública; quem procura depois entra nela", async () => {
@@ -312,7 +318,7 @@ describe("tela de procurar oponente", () => {
     expect(heading).toBeInTheDocument();
     expect(starts().at(-1)).toMatchObject({
       mode: "online_bot",
-      source: "busca",
+      match_source: "busca",
     });
     expect(screen.getByText("DUELO AO VIVO")).toBeInTheDocument();
     // Em andamento, marcada como as outras (o aviso do topo leva de volta a ela).

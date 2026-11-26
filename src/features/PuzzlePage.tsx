@@ -180,7 +180,7 @@ export function Duel({
   const mode = duelMode({ online: !!online, bot: online?.bot, daily, casual });
   // Duelo ao vivo: de onde veio (Procurar oponente ou código de amigo).
   const sourceParam: Record<string, string> = online
-    ? { source: online.source ?? "codigo" }
+    ? { match_source: online.source ?? "codigo" }
     : {};
   /** Marco do funil da primeira experiência: medido uma vez só por jogador (ver game/funnel). */
   const reach = (
