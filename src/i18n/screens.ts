@@ -579,3 +579,42 @@ export const creditsT = texts({
     capacitor: "Capacitor (core, Android and haptics), vite-plugin-pwa",
   },
 });
+
+/** Vídeo premiado (opcional): loja, atalho de quem não tem moedas e fim do duelo. */
+export const rewardedT = texts({
+  pt: {
+    cardTitle: "Moedas grátis",
+    cardShort: "Sem moedas?",
+    cardLeft: (left: number) =>
+      `Vídeo curto · ${left === 1 ? "resta 1 hoje" : `restam ${left} hoje`}`,
+    watch: (coins: number) => `Assistir vídeo: +${coins} moedas`,
+    double: (coins: number) => `Dobrar moedas: vídeo +${coins}`,
+    doubleLabel: (coins: number) =>
+      `Assistir a um vídeo para dobrar as moedas: mais ${coins}`,
+    loading: "Abrindo o vídeo…",
+    earned: (coins: number) => `+${coins} moedas! Obrigado por assistir.`,
+    closedEarly: "Assista até o fim para ganhar as moedas.",
+    failed: "O vídeo não abriu agora. Tente mais tarde.",
+    simTitle: "Vídeo de teste (simulado)",
+    simWait: (s: number) => `A recompensa chega em ${s} s…`,
+    simDone: "Recompensa garantida! Pode fechar.",
+    simClose: "Fechar vídeo",
+  },
+  en: {
+    cardTitle: "Free coins",
+    cardShort: "Short on coins?",
+    cardLeft: (left: number) => `Quick video · ${left} left today`,
+    watch: (coins: number) => `Watch video: +${coins} coins`,
+    double: (coins: number) => `Double coins: video +${coins}`,
+    doubleLabel: (coins: number) =>
+      `Watch a video to double your coins: ${coins} more`,
+    loading: "Opening the video…",
+    earned: (coins: number) => `+${coins} coins! Thanks for watching.`,
+    closedEarly: "Watch until the end to get the coins.",
+    failed: "The video didn't open right now. Try again later.",
+    simTitle: "Test video (simulated)",
+    simWait: (s: number) => `Reward in ${s} s…`,
+    simDone: "Reward earned! You can close it.",
+    simClose: "Close video",
+  },
+});

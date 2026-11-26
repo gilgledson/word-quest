@@ -1280,8 +1280,8 @@ footer {
 }
 .shop-tip-bag {
   flex: none;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   object-fit: contain;
 }
 .shop-buy {
@@ -1309,12 +1309,14 @@ footer {
   max-width: 460px;
   min-height: 52px;
   margin: 10px auto 0;
-  padding: 8px 14px;
+  padding: 4px 14px;
   border: 3px solid #bfe0ff;
   border-radius: 20px;
   background: linear-gradient(#eef7ff, #d6ecff);
   color: #15365e;
+  font-size: 14px;
   font-weight: 800;
+  line-height: 1.25;
   text-align: center;
 }
 .shop-tip b {
@@ -1376,6 +1378,34 @@ footer {
     font-size: 14px;
   }
   .shop-buy > span {
+    padding-left: 0;
+    border-left: 0;
+    font-size: 15px;
+  }
+}
+/* Com o card do vídeo premiado, o mesmo layout compacto vale até telas um pouco mais altas. */
+@media (max-height: 880px) {
+  .shop-list:has(~ .shop-video) .shop-item {
+    grid-template-columns: 64px minmax(0, 1fr) auto;
+    grid-template-areas: "art text buy";
+  }
+  .shop-list:has(~ .shop-video) .shop-item p {
+    display: none;
+  }
+  .shop-list:has(~ .shop-video) .shop-item-text {
+    padding-left: 10px;
+  }
+  .shop-list:has(~ .shop-video) .shop-item h2 {
+    font-size: 17px;
+  }
+  .shop-list:has(~ .shop-video) .shop-buy {
+    flex-direction: column;
+    gap: 0;
+    min-height: 0;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+  .shop-list:has(~ .shop-video) .shop-buy > span {
     padding-left: 0;
     border-left: 0;
     font-size: 15px;
@@ -1444,4 +1474,82 @@ footer {
   background: transparent;
   color: inherit;
   opacity: 0.6;
+}
+
+/* Vídeo premiado (opcional): card da loja, atalho no item e botão do fim do duelo. */
+.shop-video {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 460px;
+  margin: 10px auto 0;
+  padding: 8px 12px;
+  border: 3px solid #b9e3a5;
+  border-radius: 22px;
+  background: linear-gradient(#f3fff0, #dcf6d2);
+  box-shadow: 0 6px 16px #1f4a1020;
+}
+.shop-video-art {
+  width: 100%;
+  max-height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 3px 4px #1f4a1033);
+}
+.shop-video-text {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.shop-video h2 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 17px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 900;
+}
+.shop-video p {
+  margin: 0;
+  color: #3b5a2c;
+  font-size: 12px;
+  font-weight: 700;
+}
+.rewarded-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  font-size: 16px;
+}
+.shop-video .rewarded-button {
+  gap: 6px;
+  padding-inline: 12px;
+  font-size: 18px;
+  white-space: nowrap;
+}
+.rewarded-sim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: #0b1420e6;
+}
+.rewarded-sim-card {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 340px);
+  padding: 20px;
+  border-radius: 22px;
+  background: #fffcf1;
+  color: #15365e;
+  text-align: center;
+}
+.rewarded-sim-card p {
+  margin: 0;
+  font-weight: 800;
 }

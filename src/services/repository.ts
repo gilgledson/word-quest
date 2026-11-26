@@ -2,6 +2,7 @@ import Dexie, { type Table } from "dexie";
 import type { BotLevel, Session } from "../game/crossword-engine";
 import { defaultName } from "../game/avatars";
 import type { BotRoom } from "../game/matchmaking";
+import type { RewardedState } from "../game/rewarded";
 export interface Player {
   name: string;
   /** Id de `PLAYER_AVATARS`. */
@@ -71,6 +72,8 @@ export interface Player {
   profileSet?: boolean;
   /** Recompensa por voltar: último dia pego e o dia do ciclo de 7 (ver game/loginReward). */
   loginReward?: { last: string; day: number };
+  /** Vídeos premiados que pagaram hoje e partidas já dobradas (ver game/rewarded). */
+  rewarded?: RewardedState;
   /** Lembretes diários por notificação (padrão: ligados; o Android ainda pede permissão). */
   reminders?: boolean;
   /**

@@ -11,6 +11,11 @@ import { economy } from "../../game/crossword-engine";
 import type { Mood, OpponentProfile } from "../../game/opponents";
 import { track } from "../../services/telemetry";
 import { resultText as t } from "../../i18n/result";
+import { rewardedT } from "../../i18n/screens";
+import {
+  RewardedButton,
+  rewardedMessage,
+} from "../../components/RewardedButton";
 
 export type DuelResult = "win" | "draw" | "loss";
 
@@ -52,6 +57,10 @@ interface Props {
   onReplay: () => void;
   /** O jogador recolheu o cartão: a vez de pedir a nota na loja, por exemplo. */
   onCollapse?: () => void;
+  /** Moedas que o vídeo premiado pode dobrar (0 = sem oferta: partida reaberta, tutorial…). */
+  doubleCoins?: number;
+  /** Partida que o vídeo dobra (uma vez só). */
+  doubleKey?: string;
 }
 
 const titleOf = (result: DuelResult, rival: string) =>
@@ -104,7 +113,10 @@ export function ResultSheet(props: Props) {
     onNext,
     onReplay,
     onCollapse,
+    doubleCoins = 0,
+    doubleKey,
   } = props;
+  const [videoNote, setVideoNote] = useState("");
   // Partida terminada: o cartão sobe aberto (também ao reabrir uma fase já concluída).
   const [open, setOpen] = useState(true);
   // Recolher o cartão avisa a tela (uma vez por recolhida).
@@ -249,6 +261,22 @@ export function ResultSheet(props: Props) {
                   <VictoryStars count={stars} total={3} enabled={enabled} />
                 )}
               </div>
+            )}
+            {doubleCoins > 0 && doubleKey && (
+              <RewardedButton
+                place="duel_end"
+                coins={doubleCoins}
+                doubleKey={doubleKey}
+                label={rewardedT.double(doubleCoins)}
+                ariaLabel={rewardedT.doubleLabel(doubleCoins)}
+                className="button rewarded-button result-sheet-double"
+                onResult={(o, c) => setVideoNote(rewardedMessage(o, c))}
+              />
+            )}
+            {videoNote && (
+              <p className="result-sheet-note" role="status">
+                {videoNote}
+              </p>
             )}
             {achievements.length > 0 && (
               <p className="result-sheet-note" role="status">

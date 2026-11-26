@@ -321,6 +321,21 @@ export function Duel({
   }, [botTurn]);
   const finished = !!engine && !!session && engine.complete(session);
   const wasFinished = useRef(finished);
+  // Vídeo premiado no fim do duelo: dobra as moedas que esta partida acabou de pagar. Não vale ao
+  // reabrir uma partida já concluída, numa revanche que não paga, no tutorial nem no duelo ao vivo.
+  const payState = useRef({ key: "", unpaid: false, tutorial: false });
+  if (!finished && session) {
+    if (payState.current.key !== sessionKey)
+      payState.current = {
+        key: sessionKey,
+        unpaid: false,
+        tutorial: !player.tutorialDone,
+      };
+    payState.current.unpaid = daily
+      ? !player.daily.includes(date)
+      : !(sessionKey in player.duels);
+  }
+  const [doubleCoins, setDoubleCoins] = useState(0);
   // Medição da Aventura fase a fase (como nos jogos de fase): início, fim e abandono, com o número
   // da fase e da tentativa. Casual, Diário e duelo ao vivo não entram.
   const campaign =
@@ -429,6 +444,17 @@ export function Duel({
       sfx(p > ai ? "win" : p === ai ? "draw" : "lose");
       if (p > ai) void celebrate(player.animations);
       setResultOpen(true);
+      const paid = daily
+        ? p > ai
+          ? economy.daily
+          : 0
+        : duelCoins(p > ai ? "win" : p === ai ? "draw" : "loss", false);
+      const pay = payState.current;
+      setDoubleCoins(
+        !online && pay.key === sessionKey && pay.unpaid && !pay.tutorial
+          ? Math.max(0, paid)
+          : 0,
+      );
       reach("first_duel_end", {
         result: p > ai ? "win" : p === ai ? "draw" : "loss",
         mode,
@@ -460,6 +486,7 @@ export function Duel({
           : {}),
       });
     }
+    if (!finished) setDoubleCoins(0);
     wasFinished.current = finished;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [finished]);
@@ -1502,6 +1529,8 @@ export function Duel({
           enabled={prefs.enabled}
           onNext={() => setSelected("")}
           onReplay={replay}
+          doubleCoins={doubleCoins}
+          doubleKey={sessionKey}
           onCollapse={() => {
             if (!resultOpen) return;
             setResultOpen(false);
