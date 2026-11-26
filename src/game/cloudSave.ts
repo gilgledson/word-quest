@@ -3,6 +3,7 @@ import {
   type PlayAccount,
   type Player,
 } from "../services/repository";
+import { mergeRewarded } from "./rewarded";
 
 /**
  * Progresso guardado na conta do jogador (Jogos salvos do Google Play Games). Vai só o que é
@@ -25,6 +26,8 @@ export interface CloudSave {
   tourDone: boolean;
   tipsSeen: string[];
   jokerTourDone: boolean;
+  /** Vídeos premiados do dia (trocar de aparelho não devolve vídeos ao limite). */
+  rewarded?: { date: string; count: number };
 }
 
 export function toCloud(p: Player): CloudSave {
@@ -44,6 +47,9 @@ export function toCloud(p: Player): CloudSave {
     tourDone: p.tourDone,
     tipsSeen: p.tipsSeen,
     jokerTourDone: p.jokerTourDone,
+    ...(p.rewarded
+      ? { rewarded: { date: p.rewarded.date, count: p.rewarded.count } }
+      : {}),
   };
 }
 
@@ -93,6 +99,15 @@ export function parseCloud(text: string | null | undefined) {
     tipsSeen: strings(raw.tipsSeen),
     jokerTourDone: raw.jokerTourDone === true,
   };
+  if (
+    isRecord(raw.rewarded) &&
+    typeof raw.rewarded.date === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(raw.rewarded.date)
+  )
+    save.rewarded = {
+      date: raw.rewarded.date,
+      count: count(raw.rewarded.count),
+    };
   return save;
 }
 
@@ -158,6 +173,7 @@ export function mergeCloud(local: Player, cloud: CloudSave): Player {
     tourDone: local.tourDone || cloud.tourDone,
     tipsSeen: union(local.tipsSeen, cloud.tipsSeen),
     jokerTourDone: local.jokerTourDone || cloud.jokerTourDone,
+    rewarded: mergeRewarded(local.rewarded, cloud.rewarded),
   };
 }
 

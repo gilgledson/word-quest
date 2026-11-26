@@ -7,4 +7,8 @@ interface ImportMetaEnv {
   /** Token de depuração do App Check (só no `.env.local`; ver `src/services/appCheck.ts`). */
   readonly VITE_APPCHECK_DEBUG_TOKEN?: string;
   readonly VITE_ONLY_BUNDLED_CONTENT?: string;
+  /** "1" liga o vídeo premiado no build, "0" desliga (ver `src/services/adsConfig.ts`). */
+  readonly VITE_REWARDED_ADS?: string;
+  /** Bloco de anúncio premiado do AdMob (Android) para o build da loja. */
+  readonly VITE_ADMOB_REWARDED_ID?: string;
 }

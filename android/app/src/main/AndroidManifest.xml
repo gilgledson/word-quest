@@ -44,6 +44,13 @@
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/game_services_project_id" />
 
+        <!-- AdMob (vídeo premiado, src/services/rewardedAds.ts). Sem este App ID o SDK fecha o app ao
+             abrir. Este é o App ID de TESTE do Google: troque pelo do app no AdMob antes de ligar os
+             vídeos na versão da loja. -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-3940256099942544~3347511713" />
+
         <!-- Analytics sem identificador de publicidade nem sinais para anúncios: só medição de uso. -->
         <meta-data
             android:name="google_analytics_adid_collection_enabled"
