@@ -169,11 +169,10 @@ describe("primeira jogada guiada do tutorial", () => {
       Object.keys(saved.tiles).length,
     );
   });
-  it("Pular (antes ou depois de pôr letras) encerra e conta onde parou; as letras ficam", () => {
+  it("Pular a palavra guiada some com o guia, conta onde parou e as letras ficam", () => {
     open();
     fireEvent.click(tileOf(cells[0].letter));
     fireEvent.click(screen.getByRole("button", { name: "Pular" }));
-    expect(usePlayer.getState().player.tutorialDone).toBe(true);
     expect(guide()).toBeNull();
     expect(letterAt(cells[0].key)).toBe(cells[0].letter);
     expect(tracked.find((t) => t.name === "tutorial_skipped")?.params).toEqual({
@@ -181,6 +180,27 @@ describe("primeira jogada guiada do tutorial", () => {
       letters_placed: 1,
       word_length: cells.length,
     });
+  });
+  it("Pular antes da primeira letra mantém o tutorial: mesmas letras, partida curta e dicas", () => {
+    open();
+    const before = session();
+    fireEvent.click(screen.getByRole("button", { name: "Pular" }));
+    const p = usePlayer.getState().player;
+    expect(p.tutorialDone).toBe(false);
+    expect(p.tipsSeen).toContain("palavra");
+    expect(guide()).toBeNull();
+    // A dica de 4 passos continua (antes o jogador caía na cruzadinha inteira sem orientação).
+    expect(document.querySelector(".tutorial-tip")).not.toBeNull();
+    const now = session() ?? before;
+    if (before && now) expect(now.versus?.rounds).toBe(before.versus?.rounds);
+    // As peças do banco ainda formam a palavra guiada.
+    for (const c of cells) expect(tileOf(c.letter)).toBeTruthy();
+  });
+  it("Pular nas dicas de 4 passos encerra o tutorial", () => {
+    open({ tipsSeen: ["palavra"] });
+    fireEvent.click(screen.getByRole("button", { name: "Pular" }));
+    expect(usePlayer.getState().player.tutorialDone).toBe(true);
+    expect(document.querySelector(".tutorial-tip")).toBeNull();
   });
   it("um arraste em andamento é encerrado ao pular, sem soltar a peça", () => {
     open();

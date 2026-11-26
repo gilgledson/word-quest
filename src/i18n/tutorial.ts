@@ -12,7 +12,7 @@ export const coachText = texts({
     tapConfirm: "Toque em ✓ para confirmar",
     points: (n: number) => `+${n} pontos`,
     firstWord: "Monte sua primeira palavra!",
-    dragBefore: "Arraste as letras para formar ",
+    dragBefore: "Toque nas letras para formar ",
     dragAfter: ".",
     nextLetter: "Próxima letra: ",
     progress: (filled: number, total: number) => `${filled} de ${total} letras`,
@@ -24,7 +24,7 @@ export const coachText = texts({
     tapConfirm: "Tap ✓ to confirm",
     points: (n: number) => `+${n} ${n === 1 ? "point" : "points"}`,
     firstWord: "Build your first word!",
-    dragBefore: "Drag the letters to spell ",
+    dragBefore: "Tap the letters to spell ",
     dragAfter: ".",
     nextLetter: "Next letter: ",
     progress: (filled: number, total: number) =>
@@ -74,7 +74,7 @@ export const tourText = texts({
     inicioTitle: "Comece pela pista",
     inicio:
       "A resposta vai nas casas azuis, no sentido da seta. Toque em outra pista quando quiser trocar.",
-    dueloTitle: "Agora é a vez do rival",
+    dueloTitle: "Um de cada vez",
     duelo:
       "Vocês jogam vez a vez. Fechar uma palavra vale a palavra inteira. Quem tiver mais pontos no fim vence!",
     trocarTitle: "Trocar e Dica",
@@ -97,7 +97,7 @@ export const tourText = texts({
     inicioTitle: "Start with the clue",
     inicio:
       "The answer goes in the blue squares, in the direction of the arrow. Tap another clue anytime to switch.",
-    dueloTitle: "Now it's your rival's turn",
+    dueloTitle: "Taking turns",
     duelo:
       "You take turns. Finishing a word scores the whole word. Most points at the end wins!",
     trocarTitle: "Swap and Hint",

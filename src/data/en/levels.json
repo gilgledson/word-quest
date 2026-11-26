@@ -9,7 +9,7 @@
     "words": [
       {
         "id": "teeth",
-        "clue": "Pearly whites",
+        "clue": "You brush them",
         "dica": "The hard white biters in your mouth.",
         "answer": "TEETH",
         "direction": "horizontal",
@@ -21,7 +21,7 @@
       },
       {
         "id": "ex",
-        "clue": "Former partner",
+        "clue": "Past love",
         "dica": "Someone you used to date",
         "answer": "EX",
         "direction": "horizontal",
@@ -57,7 +57,7 @@
       },
       {
         "id": "crane",
-        "clue": "Tall wader",
+        "clue": "Tall bird",
         "dica": "A tall bird with long legs and neck that dances.",
         "answer": "CRANE",
         "direction": "horizontal",
@@ -129,7 +129,7 @@
       },
       {
         "id": "hose",
-        "clue": "Fire tube",
+        "clue": "Water pipe",
         "dica": "A long flexible tube that sprays water.",
         "answer": "HOSE",
         "direction": "vertical",
@@ -163,7 +163,7 @@
       },
       {
         "id": "chore",
-        "clue": "Routine job",
+        "clue": "House task",
         "dica": "A small task you do regularly.",
         "answer": "CHORE",
         "direction": "horizontal",
@@ -187,7 +187,7 @@
       },
       {
         "id": "event",
-        "clue": "Meet contest",
+        "clue": "Sports contest",
         "dica": "One contest in a big sports competition.",
         "answer": "EVENT",
         "direction": "horizontal",
@@ -223,7 +223,7 @@
       },
       {
         "id": "screw",
-        "clue": "Twisty fastener",
+        "clue": "Turned by a driver",
         "dica": "A metal pin with a spiral, turned into wood.",
         "answer": "SCREW",
         "direction": "vertical",
@@ -247,7 +247,7 @@
       },
       {
         "id": "cove",
-        "clue": "Tiny bay",
+        "clue": "Small bay",
         "dica": "A small sheltered bay on the coast.",
         "answer": "COVE",
         "direction": "vertical",
@@ -259,7 +259,7 @@
       },
       {
         "id": "arena",
-        "clue": "Indoor venue",
+        "clue": "Sports hall",
         "dica": "A big indoor hall where games are played.",
         "answer": "ARENA",
         "direction": "vertical",
@@ -341,7 +341,7 @@
       },
       {
         "id": "sheet",
-        "clue": "Bed linen",
+        "clue": "Bed cover",
         "dica": "A large thin cloth that covers a mattress.",
         "answer": "SHEET",
         "direction": "horizontal",

@@ -794,7 +794,14 @@ function ProfileSettings() {
         <button
           className="test-sound"
           disabled={!p.tutorialDone}
-          onClick={() => update((s) => ({ ...s, tutorialDone: false }))}
+          onClick={() =>
+            // Rever o tutorial traz de volta a palavra guiada (confirmada ou pulada antes).
+            update((s) => ({
+              ...s,
+              tutorialDone: false,
+              tipsSeen: s.tipsSeen.filter((x) => x !== "palavra"),
+            }))
+          }
         >
           <Sparkles size={18} />{" "}
           {p.tutorialDone ? profileT.replayTutorial : profileT.tutorialOn}

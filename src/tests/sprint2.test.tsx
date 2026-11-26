@@ -139,8 +139,11 @@ describe("tutorial da fase 1", () => {
     fireEvent.click(pick ?? rackButtons()[0]);
     expect(usePlayer.getState().player.tutorialDone).toBe(true);
   });
-  it("Pular encerra o tutorial e grava a preferência", async () => {
+  it("Pular a palavra guiada deixa as dicas; Pular de novo encerra e grava a preferência", async () => {
     open(false);
+    fireEvent.click(screen.getByRole("button", { name: "Pular" }));
+    expect(usePlayer.getState().player.tutorialDone).toBe(false);
+    expect(screen.getByRole("note")).toHaveTextContent("1/4");
     fireEvent.click(screen.getByRole("button", { name: "Pular" }));
     expect(usePlayer.getState().player.tutorialDone).toBe(true);
     expect(screen.queryByRole("note")).toBeNull();

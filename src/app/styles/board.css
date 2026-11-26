@@ -1623,7 +1623,7 @@
   position: fixed;
   display: grid;
   gap: 4px;
-  padding: 12px 14px 10px;
+  padding: 12px 44px 12px;
   border: 3px solid #fff2c9;
   border-radius: 18px;
   background: #fffaf0;
@@ -1656,15 +1656,18 @@
   color: #45525c;
 }
 .coach-skip {
-  justify-self: center;
-  min-height: 36px;
-  padding: 4px 14px;
+  /* Discreto, no canto: o balão não pode parecer um aviso que se fecha com "Pular" (quase todos
+     que pulavam o faziam antes de pôr a primeira letra). */
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  min-height: 32px;
+  padding: 4px 8px;
   border: 0;
   background: none;
-  color: #1c5fc4;
-  font-size: 14px;
-  font-weight: 800;
-  text-decoration: underline;
+  color: #5b6773;
+  font-size: 12px;
+  font-weight: 700;
   cursor: pointer;
 }
 @media (prefers-reduced-motion: reduce) {
