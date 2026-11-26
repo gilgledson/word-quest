@@ -15,6 +15,7 @@ import { opponentById } from "../game/opponents";
 import {
   alreadyDoubled,
   creditVideo,
+  doubleableCoins,
   mergeRewarded,
   REWARDED,
   videosLeft,
@@ -268,6 +269,36 @@ describe("Botões na loja", () => {
     await act(async () => {});
     await act(async () => {});
     expect(screen.queryByRole("button", { name: /vídeo/i })).toBeNull();
+  });
+});
+
+describe("Quanto o fim do duelo pode dobrar", () => {
+  const base = {
+    result: "win" as const,
+    daily: false,
+    online: false,
+    unpaid: true,
+    tutorial: false,
+  };
+  it("Aventura e Casual: o que o duelo pagou (vitória 50, empate 25)", () => {
+    expect(doubleableCoins(base)).toBe(50);
+    expect(doubleableCoins({ ...base, result: "draw" })).toBe(25);
+  });
+  it("duelo ao vivo (pessoa ou rival da busca) também dobra", () => {
+    expect(doubleableCoins({ ...base, online: true })).toBe(50);
+    expect(doubleableCoins({ ...base, online: true, result: "draw" })).toBe(25);
+  });
+  it("derrota não oferece vídeo (não pagou, ou tirou moedas)", () => {
+    expect(doubleableCoins({ ...base, result: "loss" })).toBe(0);
+    expect(doubleableCoins({ ...base, online: true, result: "loss" })).toBe(0);
+  });
+  it("Diário: só a vitória do dia", () => {
+    expect(doubleableCoins({ ...base, daily: true })).toBe(70);
+    expect(doubleableCoins({ ...base, daily: true, result: "draw" })).toBe(0);
+  });
+  it("partida já paga (reaberta ou revanche) e tutorial ficam sem oferta", () => {
+    expect(doubleableCoins({ ...base, unpaid: false })).toBe(0);
+    expect(doubleableCoins({ ...base, tutorial: true })).toBe(0);
   });
 });
 
