@@ -28,6 +28,7 @@ import {
 } from "../game/crossword-engine";
 import { OPPONENT_LEVELS, opponentTurn } from "../game/opponent";
 import { humanThinkMs } from "../game/matchmaking";
+import type { MatchSource } from "../game/online";
 import { usePlayer } from "../stores/player";
 import { itemCount, spendItem, VOWELS } from "../game/shop";
 import { ItemsDialog } from "./puzzle/ItemsDialog";
@@ -132,6 +133,8 @@ export interface OnlineDuel {
    * aparelho, com o tempo de jogada de uma pessoa. A tela é a do duelo ao vivo.
    */
   bot?: boolean;
+  /** De onde veio a partida (busca ou código de amigo), para a medição. */
+  source?: MatchSource;
   /** Envia ao servidor a vez que este jogador acabou de confirmar. */
   onTurn: (next: Session) => void;
   /** Aviso fixo sobre a conexão do amigo, quando há. */
@@ -175,6 +178,10 @@ export function Duel({
     guidedWord,
   } = setup;
   const mode = duelMode({ online: !!online, bot: online?.bot, daily, casual });
+  // Duelo ao vivo: de onde veio (Procurar oponente ou código de amigo).
+  const sourceParam: Record<string, string> = online
+    ? { source: online.source ?? "codigo" }
+    : {};
   /** Marco do funil da primeira experiência: medido uma vez só por jogador (ver game/funnel). */
   const reach = (
     m: Milestone,
@@ -363,6 +370,7 @@ export function Duel({
     if (session.versus.rngCount !== 0 || session.history.length) return;
     track("duel_start", {
       mode,
+      ...sourceParam,
       size: `${puzzle.cols}x${puzzle.rows}`,
       bot_level: session.versus.level,
       opponent: session.versus.opponent ?? "",
@@ -429,6 +437,7 @@ export function Duel({
         duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
       });
       track("duel_end", {
+        ...sourceParam,
         result: p > ai ? "win" : p === ai ? "draw" : "loss",
         mode: online
           ? online.bot

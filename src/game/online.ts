@@ -74,11 +74,22 @@ export interface OnlineRoom {
    * `ROOM_EXPIRED` (a sala ficou parada mais que `ROOM_EXPIRE_MS`, sem vencedor).
    */
   endedBy?: string;
+  /**
+   * De onde veio a partida: "busca" (Procurar oponente) ou, sem o campo, "codigo" (amigo
+   * convidado pelo código). Vai na medição para separar os duelos entre pessoas.
+   */
+  source?: MatchSource;
   /** Quando a sala foi criada (ms). */
   createdAt?: number;
   /** Último movimento na sala: criação, entrada do amigo, jogada ou encerramento (ms). */
   updatedAt?: number;
 }
+
+export type MatchSource = "busca" | "codigo";
+/** Origem da partida (salas sem o campo são de código). */
+export const roomSource = (
+  room: Pick<OnlineRoom, "source"> | null | undefined,
+) => room?.source ?? "codigo";
 
 /** Idioma das pistas da sala (salas antigas: português). */
 export const roomLang = (

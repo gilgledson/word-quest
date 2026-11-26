@@ -61,6 +61,7 @@ import {
   toShared,
   themeOfPuzzle,
   roomLang,
+  roomSource,
   toView,
   type OnlineRoom,
   type OnlineSeat,
@@ -907,6 +908,7 @@ function LiveMatch({ code }: { code: string }) {
           rival: rivalProfile(rival),
           incoming: view,
           onTurn: send,
+          source: roomSource(room),
           turnSeconds: room.rules?.turnSeconds,
           leaveWarning:
             room.status === "playing"
@@ -1063,6 +1065,7 @@ export function OnlineSearch() {
             status: "waiting",
             rev: 0,
             rules: MATCH_RULES,
+            source: "busca",
             state: startOnline(puzzle.id, `${fresh}:${Date.now()}`, puzzle),
           };
           if (await b.create(room)) {
@@ -1256,6 +1259,7 @@ function BotMatch({ code, room }: { code: string; room: BotRoom }) {
         online={{
           rival,
           bot: true,
+          source: "busca",
           onTurn: () => {},
           turnSeconds: room.rules.turnSeconds,
           leaveWarning: live

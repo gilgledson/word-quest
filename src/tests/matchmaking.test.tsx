@@ -41,6 +41,18 @@ vi.mock("../services/repository", async (importOriginal) => {
   };
 });
 
+const tracked: { name: string; params?: Record<string, unknown> }[] = [];
+vi.mock("../services/telemetry", async (importOriginal) => {
+  const mod = await importOriginal<typeof import("../services/telemetry")>();
+  return {
+    ...mod,
+    track: (name: string, params?: Record<string, unknown>) =>
+      tracked.push({ name, params }),
+  };
+});
+const starts = () =>
+  tracked.filter((t) => t.name === "duel_start").map((t) => t.params);
+
 const grid = boardPuzzles("6x6")[0];
 
 describe("procura de oponente: regras", () => {
@@ -148,6 +160,7 @@ describe("procura de oponente: regras", () => {
 describe("tela de procurar oponente", () => {
   let mem: ReturnType<typeof memoryBackend>;
   beforeEach(() => {
+    tracked.length = 0;
     mem = memoryBackend();
     setOnlineBackend(mem.as("eu"));
     usePlayer.setState({
@@ -189,6 +202,7 @@ describe("tela de procurar oponente", () => {
     status: "waiting",
     rev: 0,
     rules: MATCH_RULES,
+    source: "busca",
     state: startOnline(grid.id, code, grid),
   });
 
@@ -220,6 +234,20 @@ describe("tela de procurar oponente", () => {
         { timeout: 3000 },
       ),
     ).toBeInTheDocument();
+    // Pessoa real vinda da busca: modo online, origem busca.
+    expect(starts().at(-1)).toMatchObject({ mode: "online", source: "busca" });
+  });
+
+  it("duelo de código de amigo sai na medição com origem código", async () => {
+    await mem
+      .as("bia")
+      .create({ ...waiting("AMG234", "bia", "Bia"), source: undefined });
+    await mem
+      .as("eu")
+      .join("AMG234", { uid: "eu", name: "Gil", avatar: "jogador" });
+    open("/online/AMG234");
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    expect(starts().at(-1)).toMatchObject({ mode: "online", source: "codigo" });
   });
 
   it("sem ninguém, abre uma sala pública; quem procura depois entra nela", async () => {
@@ -231,6 +259,7 @@ describe("tela de procurar oponente", () => {
     const room = mem.rooms.get(entry.code)!;
     expect(room.host.uid).toBe("eu");
     expect(room.rules).toEqual(MATCH_RULES);
+    expect(room.source).toBe("busca");
     expect(room.grid?.cols).toBe(6);
     expect(room.grid?.rows).toBe(6);
     await act(async () => {
@@ -281,6 +310,10 @@ describe("tela de procurar oponente", () => {
       name: `Contra ${room.rival.name}`,
     });
     expect(heading).toBeInTheDocument();
+    expect(starts().at(-1)).toMatchObject({
+      mode: "online_bot",
+      source: "busca",
+    });
     expect(screen.getByText("DUELO AO VIVO")).toBeInTheDocument();
     // Em andamento, marcada como as outras (o aviso do topo leva de volta a ela).
     expect(usePlayer.getState().player.activeOnline).toBe(code);
