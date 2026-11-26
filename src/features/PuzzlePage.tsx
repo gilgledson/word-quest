@@ -27,6 +27,8 @@ import {
   type Session,
 } from "../game/crossword-engine";
 import { OPPONENT_LEVELS, opponentTurn } from "../game/opponent";
+import { humanThinkMs } from "../game/matchmaking";
+import type { MatchSource } from "../game/online";
 import { usePlayer } from "../stores/player";
 import { itemCount, spendItem, VOWELS } from "../game/shop";
 import { ItemsDialog } from "./puzzle/ItemsDialog";
@@ -125,7 +127,14 @@ const lastBotChip = (m: LastBotMove) =>
 export interface OnlineDuel {
   rival: OpponentProfile;
   /** Estado mais recente da sala, já do ponto de vista deste jogador. */
-  incoming: Session;
+  incoming?: Session;
+  /**
+   * Ninguém chegou na procura de oponente: quem joga do outro lado é o rival do jogo, aqui no
+   * aparelho, com o tempo de jogada de uma pessoa. A tela é a do duelo ao vivo.
+   */
+  bot?: boolean;
+  /** De onde veio a partida (busca ou código de amigo), para a medição. */
+  source?: MatchSource;
   /** Envia ao servidor a vez que este jogador acabou de confirmar. */
   onTurn: (next: Session) => void;
   /** Aviso fixo sobre a conexão do amigo, quando há. */
@@ -168,7 +177,11 @@ export function Duel({
     session,
     guidedWord,
   } = setup;
-  const mode = duelMode({ online: !!online, daily, casual });
+  const mode = duelMode({ online: !!online, bot: online?.bot, daily, casual });
+  // Duelo ao vivo: de onde veio (Procurar oponente ou código de amigo).
+  const sourceParam: Record<string, string> = online
+    ? { match_source: online.source ?? "codigo" }
+    : {};
   /** Marco do funil da primeira experiência: medido uma vez só por jogador (ver game/funnel). */
   const reach = (
     m: Milestone,
@@ -357,6 +370,7 @@ export function Duel({
     if (session.versus.rngCount !== 0 || session.history.length) return;
     track("duel_start", {
       mode,
+      ...sourceParam,
       size: `${puzzle.cols}x${puzzle.rows}`,
       bot_level: session.versus.level,
       opponent: session.versus.opponent ?? "",
@@ -423,9 +437,12 @@ export function Duel({
         duration_s: Math.round((Date.now() - levelOpened.current) / 1000),
       });
       track("duel_end", {
+        ...sourceParam,
         result: p > ai ? "win" : p === ai ? "draw" : "loss",
         mode: online
-          ? "online"
+          ? online.bot
+            ? "online_bot"
+            : "online"
           : daily
             ? "diario"
             : casual
@@ -722,17 +739,21 @@ export function Duel({
     };
     const at = (ms: number, fn: () => void) =>
       botTimers.current.push(window.setTimeout(fn, ms));
+    // O oponente da procura pensa como uma pessoa, mesmo sem animações.
+    const human = online?.bot ? humanThinkMs(fresh.length, Math.random) : 0;
     if (!player.animations) {
-      at(0, finish);
+      at(human, finish);
       return;
     }
     // O rival "pensa" mais quando a jogada é maior e coloca as letras uma a uma. Ao vivo o amigo
     // já pensou: as letras entram logo.
-    const think = online
-      ? 250
-      : fresh.length
-        ? 500 + 130 * Math.min(fresh.length, 4)
-        : 700 + (turn.passed ? 0 : 150);
+    const think = online?.bot
+      ? human
+      : online
+        ? 250
+        : fresh.length
+          ? 500 + 130 * Math.min(fresh.length, 4)
+          : 700 + (turn.passed ? 0 : 150);
     fresh.forEach((cell, i) =>
       at(think + BOT_LETTER_MS * i, () => {
         setBotReveal((r) => ({ ...r, [cell]: turn.session.letters[cell] }));
@@ -743,7 +764,7 @@ export function Duel({
   };
   botStep.current = () => {
     // Ao vivo quem joga é o amigo: a vez dele chega pelo servidor (ver `rivalMoved`).
-    if (online) return;
+    if (online && !online.bot) return;
     const turn = opponentTurn(engine, session);
     showRivalMove({
       session: turn.session,
@@ -923,7 +944,7 @@ export function Duel({
       })),
     );
     // Ao vivo cada vez confirmada tem um número: é por ele que o amigo sabe que há jogada nova.
-    const count = versus.rngCount + (online ? 1 : 0);
+    const count = versus.rngCount + (online && !online.bot ? 1 : 0);
     const next: Session = engine.complete(r.session)
       ? { ...r.session, versus: { ...versus, rngCount: count } }
       : { ...r.session, versus: { ...versus, turn: "ai", rngCount: count } };

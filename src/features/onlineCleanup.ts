@@ -56,6 +56,19 @@ function forget(code: string, result: "win" | "draw" | "loss") {
  */
 export async function endOnlineMatch(code: string) {
   track("online_end_from_notice");
+  // Partida da procura contra o rival do jogo: fica só no aparelho, então só sai daqui.
+  if (usePlayer.getState().player.botRooms?.[code]) {
+    usePlayer.getState().update((p) => {
+      const botRooms = { ...p.botRooms };
+      delete botRooms[code];
+      return {
+        ...p,
+        botRooms,
+        activeOnline: p.activeOnline === code ? undefined : p.activeOnline,
+      };
+    });
+    return;
+  }
   try {
     const backend = await onlineBackend();
     const uid = await backend.uid();
@@ -85,6 +98,8 @@ export function useActiveOnlineCheck(
 ) {
   useEffect(() => {
     if (!code || onRoomPage || !onlineAvailable()) return;
+    // Partida da procura contra o rival do jogo: não está no servidor; a tela dela cuida da marca.
+    if (usePlayer.getState().player.botRooms?.[code]) return;
     let alive = true;
     void (async () => {
       try {

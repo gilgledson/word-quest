@@ -3,6 +3,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type CSSProperties,
   type FormEvent,
   type ReactNode,
 } from "react";
@@ -18,6 +19,7 @@ import {
   Copy,
   Dices,
   MailOpen,
+  Search,
   Share2,
   Swords,
   Timer,
@@ -59,6 +61,7 @@ import {
   toShared,
   themeOfPuzzle,
   roomLang,
+  roomSource,
   toView,
   type OnlineRoom,
   type OnlineSeat,
@@ -87,10 +90,23 @@ import { BoardSizePicker } from "./BoardSizePicker";
 import { Choices } from "./Choices";
 import { onlineText as T } from "../i18n/online";
 import { lang } from "../i18n";
+import {
+  MATCH_BOARD,
+  MATCH_RULES,
+  SEARCH_MS,
+  SEARCH_POLL_MS,
+  fakeSeat,
+  oldBotRooms,
+  pickEntry,
+  staleEntries,
+  type BotRoom,
+} from "../game/matchmaking";
 
 /** Depois de quanto tempo sem conexão do amigo o jogador pode encerrar a partida. */
 /** Quanto o amigo espera alguém sem conexão antes de poder encerrar (e ficar com a vitória). */
 export const RIVAL_OFFLINE_MS = 120_000;
+/** Quanto a tela "Oponente encontrado!" fica antes de abrir a partida. */
+const FOUND_MS = 1_800;
 
 const seatOf = (uid: string, name: string, avatar: string): OnlineSeat => ({
   uid,
@@ -171,6 +187,19 @@ export function OnlineLobby() {
         <span className="eyebrow">{T.eyebrow}</span>
         <h1>{T.playWithFriend}</h1>
       </div>
+      <section className="online-card online-quick" aria-label={T.findOpponent}>
+        <button
+          type="button"
+          className="button primary"
+          onClick={() => {
+            track("online_search_cta");
+            navigate("/online/procurar");
+          }}
+        >
+          <Search size={20} aria-hidden="true" /> {T.findOpponent}
+        </button>
+        <p className="online-hint">{T.findOpponentHint}</p>
+      </section>
       <div className="profile-tabs online-tabs" role="tablist">
         {(
           [
@@ -529,9 +558,18 @@ export function OnlineSetup() {
   );
 }
 
-/** A sala: espera o amigo, joga a partida e mostra o fim (resultado ou abandono). */
+/**
+ * A sala pelo código: a do servidor ou, se o código é de uma partida da procura em que ninguém
+ * chegou, essa partida guardada no aparelho (para quem joga, as duas são duelos ao vivo).
+ */
 export function OnlineMatch() {
   const code = cleanCode(useParams().code ?? "");
+  const bot = usePlayer((s) => s.player.botRooms?.[code]);
+  return bot ? <BotMatch code={code} room={bot} /> : <LiveMatch code={code} />;
+}
+
+/** A sala: espera o amigo, joga a partida e mostra o fim (resultado ou abandono). */
+function LiveMatch({ code }: { code: string }) {
   const { player, update } = usePlayer();
   const [conn, setConn] = useState<Loaded>({ kind: "loading" });
   const [room, setRoom] = useState<OnlineRoom | null | undefined>(undefined);
@@ -870,6 +908,7 @@ export function OnlineMatch() {
           rival: rivalProfile(rival),
           incoming: view,
           onTurn: send,
+          source: roomSource(room),
           turnSeconds: room.rules?.turnSeconds,
           leaveWarning:
             room.status === "playing"
@@ -902,6 +941,330 @@ export function OnlineMatch() {
                     void backend.abandon(code, rival.uid, uid);
                 }
               : undefined,
+        }}
+      />
+    </>
+  );
+}
+
+/**
+ * "Procurar oponente": entra na sala pública mais antiga do idioma ou abre uma e espera. Sem ninguém
+ * em `SEARCH_MS`, a partida segue contra o rival do jogo com cara de jogador (ver game/matchmaking).
+ * Sair da tela (Cancelar ou voltar) tira a sala da lista e a apaga.
+ */
+export function OnlineSearch() {
+  const navigate = useNavigate();
+  const update = usePlayer((s) => s.update);
+  const [found, setFound] = useState<OnlineSeat | null>(null);
+  const [error, setError] = useState("");
+  useEffect(() => {
+    let alive = true;
+    const timers: number[] = [];
+    let stopRoom = () => {};
+    /** Sala aberta por esta procura e ainda sem ninguém (é apagada se a procura parar). */
+    let mine: string | undefined;
+    let backend: OnlineBackend | undefined;
+    const clang = lang();
+    const started = Date.now();
+    const waited = () => Math.round((Date.now() - started) / 1000);
+    const stop = () => {
+      alive = false;
+      timers.forEach((t) => window.clearTimeout(t));
+      stopRoom();
+    };
+    const go = (code: string, rival: OnlineSeat, how: string) => {
+      if (!alive) return;
+      mine = undefined;
+      stop();
+      track("online_search_matched", { how, wait_s: waited() });
+      setFound(rival);
+      window.setTimeout(
+        () => navigate(`/online/${code}`, { replace: true }),
+        FOUND_MS,
+      );
+    };
+    /** Entra na sala pública mais antiga (antes de `before`); devolve a sala ou null. */
+    const tryJoin = async (b: OnlineBackend, uid: string, before?: number) => {
+      let entries = await b.lobby(clang);
+      for (const e of staleEntries(entries))
+        void b.unlist(clang, e.code).catch(() => {});
+      const me = usePlayer.getState().player;
+      for (;;) {
+        const entry = pickEntry(entries, uid, Date.now(), before);
+        if (!entry || !alive) return null;
+        entries = entries.filter((e) => e.code !== entry.code);
+        await b.unlist(clang, entry.code).catch(() => {});
+        const r = await b.join(entry.code, seatOf(uid, me.name, me.avatar));
+        if (r.ok && r.room.host.uid !== uid && r.room.status === "playing")
+          return r.room;
+      }
+    };
+    /** Ninguém chegou: a partida contra o rival do jogo, guardada no aparelho. */
+    const startBot = () => {
+      if (!alive) return;
+      const me = usePlayer.getState().player;
+      const puzzle = pickOnlinePuzzle(SURPRISE_THEME, Math.random, MATCH_BOARD);
+      const code = newCode();
+      const rival = fakeSeat(clang, me);
+      const room: BotRoom = {
+        grid: puzzle,
+        lang: clang,
+        rival,
+        rules: MATCH_RULES,
+        createdAt: Date.now(),
+      };
+      update((p) => {
+        const botRooms = { ...p.botRooms, [code]: room };
+        const sessions = { ...p.sessions };
+        for (const old of oldBotRooms(botRooms)) {
+          delete botRooms[old];
+          delete sessions[sessionKeyOf(old)];
+        }
+        sessions[sessionKeyOf(code)] = startOnline(
+          puzzle.id,
+          `${code}:${Date.now()}`,
+          puzzle,
+        );
+        return { ...p, botRooms, sessions };
+      });
+      go(code, rival, "bot");
+    };
+    /** Desiste de esperar: tira a sala da lista e a apaga, a menos que alguém tenha acabado de entrar. */
+    const giveUp = async (b: OnlineBackend, code: string) => {
+      await b.unlist(clang, code).catch(() => {});
+      return b.withdraw(code);
+    };
+    track("online_search_start", { lang: clang });
+    void (async () => {
+      try {
+        const b = (backend = await onlineBackend());
+        const uid = await b.uid();
+        const joined = await tryJoin(b, uid);
+        // Saiu da tela enquanto entrava: não deixa o outro esperando numa sala que não vai abrir.
+        if (joined && !alive)
+          return void b.abandon(joined.code, uid).catch(() => {});
+        if (joined) return go(joined.code, joined.host, "joined");
+        if (!alive) return;
+        // Ninguém esperando: abre a sala pública e espera.
+        const me = usePlayer.getState().player;
+        const puzzle = pickOnlinePuzzle(
+          SURPRISE_THEME,
+          Math.random,
+          MATCH_BOARD,
+        );
+        let code = "";
+        let createdAt = 0;
+        for (let attempt = 0; attempt < 5 && !code; attempt++) {
+          const fresh = newCode();
+          const room: OnlineRoom = {
+            code: fresh,
+            puzzleId: puzzle.id,
+            grid: puzzle,
+            lang: clang,
+            host: seatOf(uid, me.name, me.avatar),
+            status: "waiting",
+            rev: 0,
+            rules: MATCH_RULES,
+            source: "busca",
+            state: startOnline(puzzle.id, `${fresh}:${Date.now()}`, puzzle),
+          };
+          if (await b.create(room)) {
+            code = fresh;
+            createdAt = Date.now();
+          }
+        }
+        if (!code) throw new Error("sem código");
+        mine = code;
+        if (!alive) return void giveUp(b, code).catch(() => {});
+        await b.list(clang, { code, uid, createdAt });
+        update((p) => {
+          const sessions = { ...p.sessions };
+          delete sessions[sessionKeyOf(code)];
+          return { ...p, sessions };
+        });
+        stopRoom = b.watch(code, (room) => {
+          if (room?.status === "playing" && room.guest) {
+            void b.unlist(clang, code).catch(() => {});
+            go(code, room.guest, "hosted");
+          }
+        });
+        // Outra pessoa abriu sala antes (os dois procuraram ao mesmo tempo): vai para a dela.
+        const poll = () =>
+          timers.push(
+            window.setTimeout(async () => {
+              if (!alive) return;
+              try {
+                const older = await b.lobby(clang);
+                if (alive && pickEntry(older, uid, Date.now(), createdAt)) {
+                  if (!(await giveUp(b, code))) return; // alguém entrou na minha
+                  mine = undefined;
+                  const room = await tryJoin(b, uid, createdAt);
+                  if (room && !alive)
+                    return void b.abandon(room.code, uid).catch(() => {});
+                  if (room) return go(room.code, room.host, "joined");
+                  return startBot();
+                }
+              } catch {
+                // Falhou a conferência: segue esperando na própria sala.
+              }
+              poll();
+            }, SEARCH_POLL_MS),
+          );
+        poll();
+        timers.push(
+          window.setTimeout(async () => {
+            if (!alive) return;
+            try {
+              if (await giveUp(b, code)) {
+                mine = undefined;
+                startBot();
+              }
+            } catch {
+              startBot();
+            }
+          }, SEARCH_MS),
+        );
+      } catch (e) {
+        if (alive) setError(onlineErrorText(e));
+      }
+    })();
+    return () => {
+      const left = mine;
+      stop();
+      if (left && backend) {
+        track("online_search_cancel", { wait_s: waited() });
+        void backend.unlist(clang, left).catch(() => {});
+        void backend.withdraw(left).catch(() => {});
+      }
+    };
+  }, [navigate, update]);
+  const player = usePlayer((s) => s.player);
+  // Tempo de espera no relógio (para de contar quando o oponente aparece).
+  const [waited, setWaited] = useState(0);
+  useEffect(() => {
+    if (found || error) return;
+    const t = window.setInterval(() => setWaited((n) => n + 1), 1000);
+    return () => window.clearInterval(t);
+  }, [found, error]);
+  const clock = `${String(Math.floor(waited / 60)).padStart(2, "0")}:${String(waited % 60).padStart(2, "0")}`;
+  // Rostos que giram em volta do "?" enquanto procura (referência: procurar-oponente-chatgpt.png).
+  const orbit = useMemo(
+    () => PLAYER_AVATARS.filter((a) => a.id !== player.avatar).slice(0, 6),
+    [player.avatar],
+  );
+  return (
+    <div
+      className={`page-heading online-state online-search ${found ? "is-found" : "is-searching"}`}
+    >
+      <span className="eyebrow">{T.eyebrow}</span>
+      <h1>{error ? T.cantJoin : found ? T.found : T.searching}</h1>
+      <div className="online-versus search-versus" aria-hidden="true">
+        <span>
+          <OpponentAvatar opponent={avatarOf(player.avatar)} size={84} />
+          <b>{player.name.trim() || T.you}</b>
+        </span>
+        <i>VS</i>
+        <span className={found ? "found" : "searching"}>
+          {found ? (
+            <OpponentAvatar opponent={avatarOf(found.avatar)} size={84} />
+          ) : (
+            <span className="search-radar">
+              <span className="search-orbit">
+                {orbit.map((a, i) => (
+                  <span
+                    key={a.id}
+                    className="search-orbit-face"
+                    style={{ "--i": i, "--n": orbit.length } as CSSProperties}
+                  >
+                    <OpponentAvatar opponent={a} size={30} />
+                  </span>
+                ))}
+              </span>
+              <em>?</em>
+            </span>
+          )}
+          <b>{found ? found.name : "…"}</b>
+        </span>
+      </div>
+      {found ? (
+        <p className="search-ribbon">{T.getReady}</p>
+      ) : error ? (
+        <p role="alert">{error}</p>
+      ) : (
+        <>
+          <p className="search-clock">
+            <Timer size={20} aria-hidden="true" /> {T.waitTime}{" "}
+            <b role="timer">{clock}</b>
+          </p>
+          <p role="status">{T.searchingText}</p>
+        </>
+      )}
+      {!found && (
+        <Link className="button online-ghost" to="/online">
+          <X size={18} aria-hidden="true" /> {T.cancel}
+        </Link>
+      )}
+    </div>
+  );
+}
+
+/** Partida da procura contra o rival do jogo, na tela do duelo ao vivo. */
+function BotMatch({ code, room }: { code: string; room: BotRoom }) {
+  const { player, update } = usePlayer();
+  const puzzle = room.grid;
+  const engine = useMemo(() => new PuzzleEngine(puzzle), [puzzle]);
+  const sessionKey = sessionKeyOf(code);
+  const session = player.sessions[sessionKey];
+  const rival = rivalProfile(room.rival);
+  const live = !!session && !engine.complete(session);
+  // Em andamento fica marcada como as do servidor (o aviso no topo oferece voltar a ela).
+  useEffect(() => {
+    const active = usePlayer.getState().player.activeOnline;
+    if (live && active !== code) update((p) => ({ ...p, activeOnline: code }));
+    if (!live && active === code)
+      update((p) => ({ ...p, activeOnline: undefined }));
+  }, [live, code, update]);
+  if (!session)
+    return (
+      <div className="page-heading online-state">
+        <span className="eyebrow">{T.eyebrow}</span>
+        <h1>{T.notFound}</h1>
+        <p>{T.notFoundText}</p>
+        <Link className="button online-ghost" to="/online">
+          <ArrowLeft size={18} aria-hidden="true" /> {T.back}
+        </Link>
+      </div>
+    );
+  return (
+    <>
+      {room.lang !== lang() && (
+        <div className="online-banner" role="note">
+          <span>{T.otherLang(T.langName[room.lang])}</span>
+        </div>
+      )}
+      <Duel
+        setup={{
+          daily: false,
+          casual: true,
+          date: today(),
+          puzzle,
+          backTo: "/online",
+          theme: undefined,
+          botLevel: session.versus.level,
+          engine,
+          guidedWord: undefined,
+          sessionKey,
+          session,
+        }}
+        online={{
+          rival,
+          bot: true,
+          source: "busca",
+          onTurn: () => {},
+          turnSeconds: room.rules.turnSeconds,
+          leaveWarning: live
+            ? T.leaveWarning(code, RIVAL_OFFLINE_MS / 60_000, rival.name)
+            : undefined,
         }}
       />
     </>
@@ -988,6 +1351,13 @@ export function OnlineMatchRoute() {
   return (
     <OnlineProfileGate joining>
       <OnlineMatch />
+    </OnlineProfileGate>
+  );
+}
+export function OnlineSearchRoute() {
+  return (
+    <OnlineProfileGate joining={false}>
+      <OnlineSearch />
     </OnlineProfileGate>
   );
 }

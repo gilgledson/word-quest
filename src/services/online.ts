@@ -10,6 +10,7 @@ import {
   type OnlineRoom,
   type OnlineSeat,
 } from "../game/online";
+import type { LobbyEntry } from "../game/matchmaking";
 import { onlineText as T } from "../i18n/online";
 import { onlineConfigured } from "./firebaseConfig";
 
@@ -46,6 +47,17 @@ export interface OnlineBackend {
     uid: string,
     onOnline: (uids: string[]) => void,
   ): () => void;
+  /** Salas públicas esperando oponente num idioma ("Procurar oponente"). */
+  lobby(lang: string): Promise<LobbyEntry[]>;
+  /** Põe a sala na lista pública do idioma. */
+  list(lang: string, entry: LobbyEntry): Promise<void>;
+  /** Tira a sala da lista pública (quem entrou, quem desistiu ou uma esquecida). */
+  unlist(lang: string, code: string): Promise<void>;
+  /**
+   * Apaga a sala de quem desistiu de esperar, só se ninguém entrou nela. Devolve false quando
+   * alguém acabou de entrar (a partida começa).
+   */
+  withdraw(code: string): Promise<boolean>;
 }
 
 let backend: Promise<OnlineBackend> | undefined;
@@ -81,6 +93,11 @@ export function onlineErrorText(error: unknown) {
 /** Servidor em memória: dois "aparelhos" na mesma página. Usado nos testes. */
 export function memoryBackend() {
   const rooms = new Map<string, OnlineRoom>();
+  const lobbies = new Map<string, Map<string, LobbyEntry>>();
+  const lobbyOf = (lang: string) => {
+    if (!lobbies.has(lang)) lobbies.set(lang, new Map());
+    return lobbies.get(lang)!;
+  };
   const online = new Map<string, Set<string>>();
   const roomWatchers = new Map<string, Set<(r: OnlineRoom | null) => void>>();
   const presenceWatchers = new Map<string, Set<(u: string[]) => void>>();
@@ -171,6 +188,22 @@ export function memoryBackend() {
         tellPresence(code);
       };
     },
+    async lobby(lang) {
+      return copy([...lobbyOf(lang).values()]);
+    },
+    async list(lang, entry) {
+      lobbyOf(lang).set(entry.code, copy(entry));
+    },
+    async unlist(lang, code) {
+      lobbyOf(lang).delete(code);
+    },
+    async withdraw(code) {
+      const room = rooms.get(code);
+      if (room && (room.guest || room.status !== "waiting")) return false;
+      rooms.delete(code);
+      tell(code);
+      return true;
+    },
   });
-  return { as, rooms };
+  return { as, rooms, lobbies };
 }

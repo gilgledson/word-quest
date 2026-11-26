@@ -388,6 +388,16 @@ a.campaign-start {
 .app-playing > main:has(.online-state) .online-state {
   margin-top: 0;
 }
+/* Procurar oponente: o cartão fica no meio da tela, entre o topo e a barra de baixo. */
+.app > main:has(.online-search) {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  padding-bottom: 6dvh;
+}
+.app > main:has(.online-search) .online-search {
+  margin-top: 0;
+}
 /* Botões secundários do duelo ao vivo: contorno azul; o de cancelar, vermelho. */
 .button.online-ghost,
 .button.online-danger {
@@ -751,4 +761,222 @@ a.campaign-start {
 }
 .online-profile .avatar-picker small {
   display: none;
+}
+/* Procurar oponente (referência: docs/referencias/procurar-oponente-chatgpt.png): rostos girando
+   em volta do "?" com ondas de radar enquanto procura; no encontro, estouro de luz atrás do VS,
+   estrelinhas e a faixa dourada. */
+.online-quick {
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+}
+.online-quick .online-hint {
+  margin: 0;
+  text-align: center;
+}
+.online-search {
+  position: relative;
+  overflow: hidden;
+  gap: 12px;
+}
+.online-search h1 {
+  max-width: 270px;
+  font-size: 30px;
+  line-height: 1.08;
+}
+.search-versus {
+  position: relative;
+  /* A luz do encontro fica atrás dos rostos, mas sobre o fundo do cartão. */
+  isolation: isolate;
+  gap: 22px;
+  margin: 18px 0 4px;
+}
+.search-versus .opponent-avatar,
+.search-versus em {
+  width: 84px;
+  height: 84px;
+  border-width: 4px;
+  box-shadow: 0 4px 0 #d9a53a40;
+}
+.search-versus em {
+  position: relative;
+  z-index: 1;
+  font-size: 44px;
+  box-shadow:
+    0 0 0 4px #fff6d6,
+    0 0 24px #ffc94d;
+  animation: online-search-pulse 1.1s ease-in-out infinite;
+}
+.search-versus i {
+  font-size: 34px;
+}
+.search-versus b {
+  font-size: 16px;
+}
+.search-radar {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+/* Ondas saindo do "?". */
+.search-radar::before,
+.search-radar::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 3px solid #ffd45a;
+  border-radius: 50%;
+  animation: online-search-wave 2s ease-out infinite;
+}
+.search-radar::after {
+  animation-delay: 1s;
+}
+.search-orbit {
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    #fff4c400 52%,
+    #ffe7924d 53%,
+    #fff4c400 72%
+  );
+  animation: online-search-spin 7s linear infinite;
+}
+.search-orbit-face {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 26px;
+  height: 26px;
+  margin: -13px;
+  transform: rotate(calc(360deg / var(--n) * var(--i))) translateY(-58px);
+}
+.search-orbit .opponent-avatar {
+  width: 26px;
+  height: 26px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  opacity: 0.85;
+  box-shadow: 0 2px 6px #24365740;
+  /* Os rostos ficam de pé enquanto o anel gira (desfaz o ângulo da vaga e o giro do anel). */
+  transform: rotate(calc(-360deg / var(--n) * var(--i)));
+  animation: online-search-spin 7s linear infinite reverse;
+}
+.search-clock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px !important;
+  padding: 6px 16px;
+  border: 2px solid #f0c24a;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: #12264a !important;
+  font-weight: 800;
+}
+.search-clock svg {
+  color: #e2890b;
+}
+.search-clock b {
+  min-width: 48px;
+  color: #1d4fbf;
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+}
+/* Encontrado: luz atrás do VS, estrelinhas e o rosto do oponente entrando com um pulo. */
+.is-found .search-versus::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: 240px;
+  height: 240px;
+  margin: -120px;
+  z-index: -1;
+  background:
+    radial-gradient(circle, #fff7cf 0 18%, #ffe27a99 34%, #ffe27a00 62%),
+    repeating-conic-gradient(#ffd75a55 0 8deg, #ffd75a00 8deg 22deg);
+  border-radius: 50%;
+  animation: online-search-burst 0.6s ease-out both;
+}
+.is-found .search-versus::after {
+  content: "✦   ✦\A✦       ✦";
+  white-space: pre;
+  position: absolute;
+  inset: -14px -8px auto;
+  color: #f4b41a;
+  font-size: 20px;
+  line-height: 1.6;
+  text-align: center;
+  pointer-events: none;
+  animation: online-search-twinkle 1.2s ease-in-out infinite alternate;
+}
+.is-found .search-versus i {
+  transform: scale(1.15);
+  text-shadow:
+    0 2px 0 #fff,
+    0 0 16px #ffc94d;
+}
+.online-search .found .opponent-avatar {
+  animation: online-search-found 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+.search-ribbon {
+  position: relative;
+  margin: 4px 0 6px !important;
+  padding: 8px 26px;
+  background: linear-gradient(#ffe68e, #f6c443);
+  box-shadow: 0 3px 0 #c98f1a;
+  clip-path: polygon(0 0, 100% 0, 94% 50%, 100% 100%, 0 100%, 6% 50%);
+  color: #6b3a00 !important;
+  font-size: 16px;
+  font-weight: 900;
+  animation: online-search-found 0.5s 0.15s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+@keyframes online-search-pulse {
+  50% {
+    transform: scale(1.08);
+    filter: brightness(1.08);
+  }
+}
+@keyframes online-search-wave {
+  from {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+@keyframes online-search-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes online-search-found {
+  from {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes online-search-burst {
+  from {
+    transform: scale(0.3) rotate(-30deg);
+    opacity: 0;
+  }
+}
+@keyframes online-search-twinkle {
+  to {
+    opacity: 0.4;
+    transform: scale(0.94);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .online-search *,
+  .online-search *::before,
+  .online-search *::after,
+  .online-search .search-versus::before,
+  .online-search .search-versus::after {
+    animation: none !important;
+  }
 }

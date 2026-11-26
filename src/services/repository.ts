@@ -1,6 +1,7 @@
 import Dexie, { type Table } from "dexie";
 import type { BotLevel, Session } from "../game/crossword-engine";
 import { defaultName } from "../game/avatars";
+import type { BotRoom } from "../game/matchmaking";
 export interface Player {
   name: string;
   /** Id de `PLAYER_AVATARS`. */
@@ -47,6 +48,11 @@ export interface Player {
   wagers?: Record<string, number>;
   /** Código do duelo ao vivo em andamento (o lobby oferece voltar a ele). */
   activeOnline?: string;
+  /**
+   * Partidas da procura de oponente em que ninguém chegou e o rival do jogo assumiu (código →
+   * partida). Ficam só no aparelho: a tela da sala as abre como um duelo ao vivo.
+   */
+  botRooms?: Record<string, BotRoom>;
   /** Amigos (uid do duelo ao vivo) que já renderam moedas de convite. */
   invitedFriends?: string[];
   /** Grade em uso em cada fase (índice da variante); ausente = a original. Muda a cada revanche. */
