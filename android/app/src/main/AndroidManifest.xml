@@ -44,12 +44,11 @@
             android:name="com.google.android.gms.games.APP_ID"
             android:value="@string/game_services_project_id" />
 
-        <!-- AdMob (vídeo premiado, src/services/rewardedAds.ts). Sem este App ID o SDK fecha o app ao
-             abrir. Este é o App ID de TESTE do Google: troque pelo do app no AdMob antes de ligar os
-             vídeos na versão da loja. -->
+        <!-- AdMob (vídeo premiado, src/services/rewardedAds.ts): App ID do WordQuest no AdMob. Sem ele o
+             SDK fecha o app ao abrir. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
+            android:value="ca-app-pub-9508887934280684~7939976755" />
 
         <!-- Analytics sem identificador de publicidade nem sinais para anúncios: só medição de uso. -->
         <meta-data
@@ -86,16 +85,8 @@
     <uses-feature
         android:name="android.hardware.screen.portrait"
         android:required="false" />
-    <!-- O SDK do Analytics pede o ID de publicidade por padrão; o jogo não usa anúncios, então sai. -->
-    <uses-permission
-        android:name="com.google.android.gms.permission.AD_ID"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.ACCESS_ADSERVICES_AD_ID"
-        tools:node="remove" />
-    <uses-permission
-        android:name="android.permission.ACCESS_ADSERVICES_ATTRIBUTION"
-        tools:node="remove" />
+    <!-- O ID de publicidade (AD_ID, vindo do SDK do AdMob) fica: serve só aos vídeos premiados. O
+         Analytics continua sem usá-lo (google_analytics_adid_collection_enabled = false). -->
     <!-- O plugin de notificações pede alarme exato; o lembrete diário não precisa (a Play Store
          restringe essa permissão), então ele cai no agendamento aproximado do Android. -->
     <uses-permission
