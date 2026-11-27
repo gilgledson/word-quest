@@ -1341,7 +1341,8 @@
   gap: 5px;
   padding: 2px 9px;
   border-radius: 999px;
-  background: #1f9d35;
+  /* Verde escuro: o texto branco pequeno precisa de contraste de 4,5:1 (fica 5,45:1). */
+  background: #177a2b;
   color: #fff;
   font-size: clamp(10px, 2.8vw, 12px);
   font-weight: 900;
