@@ -7,6 +7,9 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { FramedAvatar } from "../components/FrameArt";
+import type { Player } from "../services/repository";
+import { currentFrame, isFrameId } from "../game/frames";
 import {
   Link,
   useNavigate,
@@ -90,6 +93,7 @@ import {
   NAME_MAX,
   NAME_MIN,
   PLAYER_AVATARS,
+  pickableAvatars,
 } from "../game/avatars";
 import { CoinIcon } from "../components/CoinIcon";
 import { RecaptchaNotice } from "../components/RecaptchaNotice";
@@ -115,11 +119,16 @@ export const RIVAL_OFFLINE_MS = 120_000;
 /** Quanto a tela "Oponente encontrado!" fica antes de abrir a partida. */
 const FOUND_MS = 1_800;
 
-const seatOf = (uid: string, name: string, avatar: string): OnlineSeat => ({
-  uid,
-  name: name.trim() || T.defaultPlayer,
-  avatar,
-});
+/** Assento do jogador na sala: nome, avatar e a moldura em uso (o amigo a vê no duelo). */
+const seatOf = (uid: string, p: Player): OnlineSeat => {
+  const frame = currentFrame(p);
+  return {
+    uid,
+    name: p.name.trim() || T.defaultPlayer,
+    avatar: p.avatar,
+    ...(frame ? { frame } : {}),
+  };
+};
 
 /** Tela de entrada do duelo ao vivo: criar uma partida ou entrar com o código do amigo. */
 export function OnlineLobby() {
@@ -155,21 +164,19 @@ export function OnlineLobby() {
     }
   };
   const enter = (backend: OnlineBackend, uid: string) =>
-    backend
-      .join(code, seatOf(uid, player.name, player.avatar))
-      .then((result) => {
-        if (result.ok) {
-          track("online_room_joined");
-          navigate(`/online/${code}`);
-        } else
-          setError(
-            result.reason === "missing"
-              ? T.missing
-              : result.reason === "full"
-                ? T.full
-                : T.over,
-          );
-      });
+    backend.join(code, seatOf(uid, player)).then((result) => {
+      if (result.ok) {
+        track("online_room_joined");
+        navigate(`/online/${code}`);
+      } else
+        setError(
+          result.reason === "missing"
+            ? T.missing
+            : result.reason === "full"
+              ? T.full
+              : T.over,
+        );
+    });
   // Sala com tempo ou aposta: o convidado vê as regras antes de entrar.
   const join = () =>
     run(async (backend, uid) => {
@@ -537,7 +544,7 @@ export function OnlineSetup() {
           puzzleId: puzzle.id,
           grid: puzzle,
           lang: lang(),
-          host: seatOf(uid, player.name, player.avatar),
+          host: seatOf(uid, player),
           status: "waiting",
           rev: 0,
           rules: { turnSeconds, bet },
@@ -649,10 +656,7 @@ function LiveMatch({ code }: { code: string }) {
       try {
         const backend = await onlineBackend();
         const uid = await backend.uid();
-        const joined = await backend.join(
-          code,
-          seatOf(uid, me.current.name, me.current.avatar),
-        );
+        const joined = await backend.join(code, seatOf(uid, me.current));
         if (!alive) return;
         if (!joined.ok) {
           setConn({
@@ -973,6 +977,7 @@ function LiveMatch({ code }: { code: string }) {
         }}
         online={{
           rival: rivalProfile(rival),
+          rivalFrame: isFrameId(rival?.frame) ? rival.frame : undefined,
           incoming: view,
           onTurn: send,
           source: roomSource(room),
@@ -1035,7 +1040,7 @@ export function OnlineSearch() {
         if (!entry || !alive) return null;
         entries = entries.filter((e) => e.code !== entry.code);
         await b.unlist(clang, entry.code).catch(() => {});
-        const r = await b.join(entry.code, seatOf(uid, me.name, me.avatar));
+        const r = await b.join(entry.code, seatOf(uid, me));
         if (r.ok && r.room.host.uid !== uid && r.room.status === "playing")
           return r.room;
       }
@@ -1102,7 +1107,7 @@ export function OnlineSearch() {
             puzzleId: puzzle.id,
             grid: puzzle,
             lang: clang,
-            host: seatOf(uid, me.name, me.avatar),
+            host: seatOf(uid, me),
             status: "waiting",
             rev: 0,
             rules: MATCH_RULES,
@@ -1202,13 +1207,21 @@ export function OnlineSearch() {
       <h1>{error ? T.cantJoin : found ? T.found : T.searching}</h1>
       <div className="online-versus search-versus" aria-hidden="true">
         <span>
-          <OpponentAvatar opponent={avatarOf(player.avatar)} size={84} />
+          <FramedAvatar
+            opponent={avatarOf(player.avatar)}
+            size={84}
+            frame={currentFrame(player)}
+          />
           <b>{player.name.trim() || T.you}</b>
         </span>
         <i>VS</i>
         <span className={found ? "found" : "searching"}>
           {found ? (
-            <OpponentAvatar opponent={avatarOf(found.avatar)} size={84} />
+            <FramedAvatar
+              opponent={avatarOf(found.avatar)}
+              size={84}
+              frame={isFrameId(found.frame) ? found.frame : undefined}
+            />
           ) : (
             <span className="search-radar">
               <span className="search-orbit">
@@ -1354,7 +1367,7 @@ export function OnlineProfileGate({
         <p className="online-hint">{T.profileHint}</p>
         <span className="profile-dialog-label">{T.chooseAvatar}</span>
         <ul className="avatar-picker" aria-label={T.avatars}>
-          {PLAYER_AVATARS.map((a) => (
+          {pickableAvatars(player).map((a) => (
             <li key={a.id}>
               <button
                 type="button"

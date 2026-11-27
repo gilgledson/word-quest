@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Play, UserPlus } from "lucide-react";
 import { avatarOf } from "../game/avatars";
+import { currentFrame } from "../game/frames";
+import { FrameArt } from "../components/FrameArt";
+import { usePlayer } from "../stores/player";
 import { track } from "../services/telemetry";
 import { homeT as t } from "../i18n/screens";
 import { onlineText as onlineT } from "../i18n/online";
@@ -19,17 +22,21 @@ export const friendAvatarFor = (mine: string) =>
  */
 export function DuelCard({ avatar }: { avatar: string }) {
   const me = avatarOf(avatar).id;
+  const frame = usePlayer((s) => currentFrame(s.player));
   const friend = friendAvatarFor(me);
   const myTurns = useMatchItems().filter((m) => m.state === "yourTurn").length;
   return (
     <section className="duel-card" aria-label={t.duelTitle}>
       <span className="duel-card-faces" aria-hidden="true">
-        <img
-          className="duel-face me"
-          src={`/art/opponents/${me}-happy.webp`}
-          alt=""
-          draggable={false}
-        />
+        <span className={`duel-face-wrap ${frame ? "has-frame" : ""}`}>
+          <img
+            className="duel-face me"
+            src={`/art/opponents/${me}-happy.webp`}
+            alt=""
+            draggable={false}
+          />
+          {frame && <FrameArt frame={frame} />}
+        </span>
         <img
           className="duel-vs"
           src="/art/duelo/vs.webp"

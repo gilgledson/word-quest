@@ -37,6 +37,66 @@ export const PLAYER_AVATARS: PlayerAvatar[] = [
   avatar("latina"),
 ];
 
+/**
+ * Avatares premium: comprados com moedas na loja (aba Perfil), com os mesmos seis humores. Ficam
+ * fora de `PLAYER_AVATARS` (a lista gratuita, usada também nos rivais da procura); `avatarOf` os
+ * reconhece. Pedidos pelo dono em 27/11/2026: femininos e masculinos, de 600 a 1.000 moedas.
+ */
+export const PREMIUM_AVATARS: PlayerAvatar[] = [
+  avatar("viking"),
+  avatar("guerreira"),
+  avatar("ninja"),
+  avatar("samurai"),
+  avatar("mago"),
+  avatar("feiticeira"),
+  avatar("rei"),
+  avatar("rainha"),
+];
+/**
+ * Avatares premium da cultura indiana (pedidos pelo dono em 27/11/2026: a Índia é o maior público).
+ * Esporte, festivais, dança e realeza; sem figuras religiosas.
+ */
+export const INDIA_AVATARS: PlayerAvatar[] = [
+  avatar("criquete"),
+  avatar("holi"),
+  avatar("diwali"),
+  avatar("dancarina"),
+  avatar("maraja"),
+  avatar("marani"),
+  // Segunda leva (27/11/2026): cinema, ciência, chá, música e esporte.
+  avatar("bollywood"),
+  avatar("diva"),
+  avatar("espacial"),
+  avatar("chai"),
+  avatar("citara"),
+  avatar("kabaddi"),
+];
+/** Todos os premium (heróis e Índia). */
+export const ALL_PREMIUM_AVATARS = [...PREMIUM_AVATARS, ...INDIA_AVATARS];
+export const AVATAR_PRICES: Record<string, number> = {
+  viking: 600,
+  guerreira: 600,
+  ninja: 700,
+  samurai: 700,
+  mago: 800,
+  feiticeira: 800,
+  rei: 1000,
+  rainha: 1000,
+  criquete: 600,
+  holi: 600,
+  diwali: 700,
+  dancarina: 800,
+  maraja: 1000,
+  marani: 1000,
+  bollywood: 800,
+  diva: 800,
+  espacial: 900,
+  chai: 600,
+  citara: 700,
+  kabaddi: 600,
+};
+export const isPremiumAvatar = (id: string) => id in AVATAR_PRICES;
+
 export const DEFAULT_AVATAR = PLAYER_AVATARS[0].id;
 
 export const DEFAULT_NAME = "Explorador";
@@ -62,4 +122,30 @@ export const needsProfile = (p: {
 
 /** Avatar válido para o id salvo (ids antigos ou desconhecidos voltam ao padrão). */
 export const avatarOf = (id: string | undefined): PlayerAvatar =>
-  PLAYER_AVATARS.find((a) => a.id === id) ?? PLAYER_AVATARS[0];
+  PLAYER_AVATARS.find((a) => a.id === id) ??
+  ALL_PREMIUM_AVATARS.find((a) => a.id === id) ??
+  PLAYER_AVATARS[0];
+
+/** O jogador pode usar este avatar: os gratuitos sempre; os premium, depois de comprar. */
+export const ownsAvatar = (p: { avatars?: string[] }, id: string) =>
+  !isPremiumAvatar(id) || (p.avatars ?? []).includes(id);
+
+/** Avatares para escolher (Perfil e antes do duelo ao vivo): os gratuitos e os premium comprados. */
+export const pickableAvatars = (p: { avatars?: string[] }) => [
+  ...PLAYER_AVATARS,
+  ...ALL_PREMIUM_AVATARS.filter((a) => ownsAvatar(p, a.id)),
+];
+
+/** Compra o avatar premium e já passa a usá-lo. Sem moedas ou já comprado, nada muda. */
+export function buyAvatar<
+  P extends { coins: number; avatar: string; avatars?: string[] },
+>(p: P, id: string): P {
+  const price = AVATAR_PRICES[id];
+  if (!price || ownsAvatar(p, id) || p.coins < price) return p;
+  return {
+    ...p,
+    coins: p.coins - price,
+    avatars: [...(p.avatars ?? []), id],
+    avatar: id,
+  };
+}

@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { WifiOff } from "lucide-react";
 import { OpponentPortrait } from "./OpponentPortrait";
+import { FrameArt } from "./FrameArt";
+import type { FrameId } from "../game/frames";
 import type { Mood, OpponentProfile } from "../game/opponents";
 import { MT } from "../i18n/match";
 
@@ -15,6 +17,8 @@ interface Side {
   offline?: boolean;
   /** Tocar no rosto encerra a partida (o amigo sumiu há tempo demais); sem isso, não é botão. */
   onClaim?: () => void;
+  /** Moldura de perfil em volta do rosto (a do jogador; no duelo online, também a do rival). */
+  frame?: FrameId;
 }
 
 /**
@@ -53,6 +57,7 @@ export function VersusPanel({
         size={38}
         animate={animate}
       />
+      {s.frame && <FrameArt frame={s.frame} />}
       {s.offline && (
         <span className="offline-badge" aria-hidden="true">
           <WifiOff strokeWidth={3} />
@@ -68,7 +73,7 @@ export function VersusPanel({
       {s.onClaim ? (
         <button
           type="button"
-          className="duelist-frame claim"
+          className={`duelist-frame claim ${s.frame ? "has-frame" : ""}`}
           aria-label={MT.offlineClaim(s.name)}
           onClick={s.onClaim}
         >
@@ -76,7 +81,7 @@ export function VersusPanel({
         </button>
       ) : (
         <span
-          className="duelist-frame"
+          className={`duelist-frame ${s.frame ? "has-frame" : ""}`}
           aria-label={s.offline ? MT.offline(s.name) : undefined}
           role={s.offline ? "img" : undefined}
         >

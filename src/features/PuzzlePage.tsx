@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { currentFrame, type FrameId } from "../game/frames";
 import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
 import { TileFlights, useTileFlights } from "../hooks/useTileFlights";
@@ -148,6 +149,8 @@ export interface OnlineDuel {
   leaveWarning?: string;
   /** Tempo máximo de cada jogada escolhido na sala (0 ou ausente = sem limite). */
   turnSeconds?: number;
+  /** Moldura de perfil do amigo (o jogador vê a dele no placar). */
+  rivalFrame?: FrameId;
 }
 /** O jogo é um confronto: o oponente vem da fase (ou do sorteio no casual e no diário). */
 export function PuzzlePage() {
@@ -1287,6 +1290,7 @@ export function Duel({
             score: session.scores.p,
             mood: playerMood.mood,
             moodKey: playerMood.key,
+            frame: currentFrame(player),
           }}
           rival={{
             face: rival,
@@ -1295,6 +1299,7 @@ export function Duel({
             mood: reaction.mood,
             moodKey: reaction.key,
             offline: !!online?.rivalOffline && !complete,
+            frame: online?.rivalFrame,
             onClaim: complete ? undefined : online?.onClaimWin,
           }}
           turn={versus.turn}

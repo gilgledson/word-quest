@@ -43,6 +43,12 @@ export interface Player {
   wordsFound: Record<string, string[]>;
   /** Quando o jogo pediu avaliação na loja (ISO), do mais antigo ao mais novo. */
   reviewAsks?: string[];
+  /** Avatares premium comprados (ids de `PREMIUM_AVATARS`, game/avatars). */
+  avatars?: string[];
+  /** Molduras de perfil compradas (ids de `FRAME_IDS`, game/frames). */
+  frames?: string[];
+  /** Moldura em uso em volta do avatar (uma das compradas); ausente = sem moldura. */
+  frame?: string;
   /** Itens da loja no inventário (usos restantes de cada um). */
   items?: Partial<Record<"curinga" | "vogal", number>>;
   /** Apostas reservadas em duelos ao vivo ainda não acertados (código da sala → moedas). */

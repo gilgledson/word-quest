@@ -1448,3 +1448,12 @@
     display: none;
   }
 }
+/* Rosto do jogador no card do duelo com a moldura de perfil por cima. */
+.duel-face-wrap {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+}
+.duel-face-wrap.has-frame .duel-face {
+  border-color: transparent;
+}
