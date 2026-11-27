@@ -50,11 +50,11 @@ test("jogada guiada: arrasta as letras pela tela escura, confirma e segue para a
   expect(await height()).toBe(h0);
   await page.getByRole("button", { name: /^Confirmar/ }).click();
   await expect(guide(page)).toHaveCount(0);
-  await expect(dialog(page)).toContainText("vez do rival");
+  await expect(dialog(page)).toContainText("Um de cada vez");
   // O "Entendi" da dica (o painel do tutorial também tem um, quando a vez volta ao jogador).
   await dialog(page).getByRole("button", { name: "Entendi" }).click();
   // Se o rival já jogou, a próxima dica (trocar) pode abrir logo em seguida.
-  await expect(dialog(page)).not.toContainText("vez do rival");
+  await expect(dialog(page)).not.toContainText("Um de cada vez");
   await waitSaved(page, "tipsSeen", ["palavra", "duelo"]);
 });
 
@@ -108,7 +108,9 @@ test.describe("em 360×640", () => {
     await expect(skip).toBeInViewport();
     await skip.click();
     await expect(guide(page)).toHaveCount(0);
-    await waitSaved(page, "tutorialDone", true);
+    // Pula só a palavra guiada: as dicas de 4 passos continuam.
+    await waitSaved(page, "tipsSeen", ["palavra"]);
+    await expect(page.locator(".tutorial-tip")).toBeInViewport();
   });
 });
 
@@ -118,7 +120,7 @@ test("‘Dispensar’ desliga as dicas seguintes e a escolha é lembrada", async
   await open(page);
   for (let i = 0; i < 4; i++) await dragSuggested(page);
   await page.getByRole("button", { name: /^Confirmar/ }).click();
-  await expect(dialog(page)).toContainText("vez do rival");
+  await expect(dialog(page)).toContainText("Um de cada vez");
   await page.getByRole("button", { name: "Dispensar" }).click();
   await expect(dialog(page)).toHaveCount(0);
   await waitSaved(page, "tourDone", true);
