@@ -772,10 +772,6 @@
   width: 1em;
   height: 1em;
 }
-.app-home .duel-card:active .duel-card-cta {
-  transform: translateY(2px);
-  box-shadow: 0 1px 0 #a86f00;
-}
 
 /* Telas baixas (360×640): arte do mundo mais baixa e espaços menores para tudo caber. */
 @media (max-height: 700px) {
@@ -1306,5 +1302,148 @@
   .home-video-watch {
     padding-inline: 9px;
     font-size: 14px;
+  }
+}
+
+/* ===== Duelo online em destaque (27/11/2026) =====
+   O duelo online é a função a popularizar: o card do topo fica mais forte (fundo dourado, selo
+   "Online") e ganha uma linha de ações: "Jogar agora" grande (busca de oponente) e "Convidar amigo". */
+.app-home .duel-card {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "faces text"
+    "actions actions";
+  row-gap: clamp(6px, 1dvh, 10px);
+  border-color: #efb52f;
+  background:
+    radial-gradient(circle at 18% 30%, #fffbe9 0 26%, transparent 60%),
+    linear-gradient(#fff4cf, #ffe39a);
+  box-shadow:
+    inset 0 0 0 2px #fff8e1,
+    0 8px 20px #2a1d0540;
+}
+.duel-card-faces {
+  grid-area: faces;
+  border-right-color: #ecd28e;
+}
+.duel-card-text {
+  grid-area: text;
+}
+.duel-card-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+.duel-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #1f9d35;
+  color: #fff;
+  font-size: clamp(10px, 2.8vw, 12px);
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.duel-card-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b6ffb9;
+  box-shadow: 0 0 0 0 #b6ffb9aa;
+  animation: duel-live 1.8s ease-out infinite;
+}
+@keyframes duel-live {
+  70% {
+    box-shadow: 0 0 0 6px #b6ffb900;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .duel-card-badge::before {
+    animation: none;
+  }
+}
+.duel-card-actions {
+  grid-area: actions;
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+.app-home .duel-card .duel-card-cta {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding-block: clamp(6px, 1.1dvh, 10px);
+  font-size: clamp(16px, 4.8vw, 22px);
+  text-decoration: none;
+}
+.duel-card-invite {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px clamp(10px, 3vw, 14px);
+  border: 2px solid #c98a00;
+  border-radius: 999px;
+  background: #fffaf0;
+  color: #5b3d00;
+  font-size: clamp(13px, 3.6vw, 16px);
+  font-weight: 900;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.duel-card-invite:active {
+  transform: translateY(2px);
+}
+.app-home .duel-card .duel-card-cta:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #a86f00;
+}
+/* Celular em pé: a arte do mundo encolhe um pouco para o duelo em destaque caber junto. */
+@media (orientation: portrait) {
+  .world-card-art {
+    height: clamp(64px, 10dvh, 150px);
+  }
+}
+/* Celular deitado: o card do duelo fica numa coluna (rostos, texto e ações empilhados). */
+@media (max-height: 500px) and (min-width: 540px) {
+  .app-home .duel-card {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "faces"
+      "text"
+      "actions";
+  }
+  .duel-card-title {
+    justify-content: center;
+  }
+  .duel-card-actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+.app-home .duel-card .duel-card-cta {
+  white-space: nowrap;
+}
+/* Telas até 400 px: "Convidar amigo" vira só o ícone, para "Jogar agora" caber numa linha. */
+@media (max-width: 400px) {
+  .duel-card-invite-text {
+    display: none;
+  }
+  .duel-card-invite {
+    width: clamp(44px, 13vw, 52px);
+    padding-inline: 0;
+  }
+}
+/* Celular em pé até 860 px de altura: "Fase N de 5" sai (a trilha já mostra a fase atual). */
+@media (orientation: portrait) and (max-height: 860px) {
+  .world-card-step {
+    display: none;
   }
 }

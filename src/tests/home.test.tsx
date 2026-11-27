@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { afterEach, it, expect } from "vitest";
 import { Home, Profile } from "../features/pages";
@@ -28,7 +34,7 @@ it("a fase não tem escolha de oponente: o link da campanha é só o da fase", (
     player: { ...structuredClone(initialPlayer), botLevel: "dificil" },
     ready: true,
   });
-  render(
+  const { container } = render(
     <MemoryRouter>
       <Home />
     </MemoryRouter>,
@@ -36,7 +42,9 @@ it("a fase não tem escolha de oponente: o link da campanha é só o da fase", (
   expect(
     screen.getByRole("link", { name: /Jogar primeira fase/ }),
   ).toHaveAttribute("href", "/play/vila-1");
-  expect(screen.queryByRole("link", { name: /Duelo/ })).toBeNull();
+  // No card do mundo não há escolha de oponente (o "Duelo online" do topo é outra coisa).
+  const world = container.querySelector<HTMLElement>(".world-card")!;
+  expect(within(world).queryByRole("link", { name: /Duelo/ })).toBeNull();
 });
 it("o perfil mostra os rivais (sem seletor): cada fase tem o seu e o último de cada mundo é o chefe", () => {
   usePlayer.setState({ player: structuredClone(initialPlayer), ready: true });
@@ -88,7 +96,7 @@ it("o botão principal diz o que o toque faz: jogar, continuar ou retomar", () =
   // A Loja saiu da home (fica no "+" das moedas, no topo).
   expect(screen.queryByRole("link", { name: /Loja de itens/ })).toBeNull();
 });
-it("o card 'Desafie seu amigo' leva ao duelo ao vivo, com o avatar do jogador contra o de um amigo", async () => {
+it("o card 'Duelo online' fica em destaque: Jogar agora abre a busca, Convidar amigo o lobby, com o avatar do jogador contra o de um amigo", async () => {
   const { memoryBackend, setOnlineBackend } =
     await import("../services/online");
   const { friendAvatarFor } = await import("../features/DuelCard");
@@ -103,8 +111,12 @@ it("o card 'Desafie seu amigo' leva ao duelo ao vivo, com o avatar do jogador co
     </MemoryRouter>,
   );
   expect(
-    screen.getByRole("link", { name: /Desafie seu amigo/ }),
-  ).toHaveAttribute("href", "/online");
+    screen.getByRole("link", { name: /Duelo online: jogar agora/ }),
+  ).toHaveAttribute("href", "/online/procurar");
+  expect(screen.getByRole("link", { name: "Convidar amigo" })).toHaveAttribute(
+    "href",
+    "/online",
+  );
   const faces = [...container.querySelectorAll(".duel-face")].map((i) =>
     i.getAttribute("src"),
   );
