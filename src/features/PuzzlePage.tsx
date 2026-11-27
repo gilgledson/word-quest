@@ -32,7 +32,7 @@ import type { MatchSource } from "../game/online";
 import { usePlayer } from "../stores/player";
 import { itemCount, spendItem, VOWELS } from "../game/shop";
 import { ItemsDialog } from "./puzzle/ItemsDialog";
-import { requestReview, shouldAskReview } from "../services/review";
+import { askReviewIfGood } from "../services/review";
 import {
   duelMode,
   reached,
@@ -1551,15 +1551,15 @@ export function Duel({
           onCollapse={() => {
             if (!resultOpen) return;
             setResultOpen(false);
-            // Vitória na Aventura: bom momento para pedir a nota na loja (com limites, ver review.ts).
+            // Vitória (em qualquer modo): bom momento para pedir a nota na loja (limites em review.ts).
+            if (winner !== "win") return;
             const wins = levels.filter((l) => player.stars[l.id]).length;
-            if (campaignWin && !online && shouldAskReview(player, wins)) {
-              update((p) => ({
-                ...p,
-                reviewAsks: [...(p.reviewAsks ?? []), new Date().toISOString()],
-              }));
-              void requestReview();
-            }
+            askReviewIfGood(
+              player,
+              wins,
+              (reviewAsks) => update((p) => ({ ...p, reviewAsks })),
+              "win",
+            );
           }}
         />
       )}

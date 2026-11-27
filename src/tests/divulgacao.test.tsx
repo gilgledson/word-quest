@@ -20,7 +20,9 @@ import { PuzzleEngine, positions } from "../game/crossword-engine";
 import { opponentFor } from "../game/opponents";
 import { initialPlayer, type Player } from "../services/repository";
 import {
+  askReviewIfGood,
   openStoreRating,
+  playDays,
   REVIEW_GAP_DAYS,
   shouldAskReview,
 } from "../services/review";
@@ -294,9 +296,41 @@ describe("Pedido de avaliação na loja", () => {
     ...structuredClone(initialPlayer),
     reviewAsks: asks,
   });
-  it("só a partir da 3ª fase vencida", () => {
-    expect(shouldAskReview(player(), 2, now)).toBe(false);
-    expect(shouldAskReview(player(), 3, now)).toBe(true);
+  const game = (date: string) => ({
+    puzzleId: "vila-1",
+    result: "win" as const,
+    p: 10,
+    ai: 5,
+    date,
+  });
+  it("no primeiro dia, só a partir da 3ª fase vencida", () => {
+    const today = { ...player(), history: [game("2026-11-16T10:00:00Z")] };
+    expect(shouldAskReview(today, 2, now)).toBe(false);
+    expect(shouldAskReview(today, 3, now)).toBe(true);
+  });
+  it("quem voltou em outro dia já recebe o pedido, mesmo sem 3 fases vencidas", () => {
+    const back = {
+      ...player(),
+      history: [game("2026-11-16T10:00:00Z"), game("2026-11-15T21:00:00Z")],
+    };
+    expect(playDays(back)).toBe(2);
+    expect(shouldAskReview(back, 0, now)).toBe(true);
+    // A recompensa diária de outro dia também conta como volta.
+    const reward = {
+      ...player(),
+      history: [game("2026-11-16T10:00:00Z")],
+      loginReward: { last: "2026-11-14", day: 2 },
+    };
+    expect(playDays(reward)).toBe(2);
+    expect(shouldAskReview(reward, 1, now)).toBe(true);
+  });
+  it("askReviewIfGood anota o pedido só quando é a hora", () => {
+    const save = vi.fn();
+    const first = { ...player(), history: [game("2026-11-16T10:00:00Z")] };
+    expect(askReviewIfGood(first, 1, save, "win", now)).toBe(false);
+    expect(save).not.toHaveBeenCalled();
+    expect(askReviewIfGood(first, 3, save, "chest", now)).toBe(true);
+    expect(save).toHaveBeenCalledWith([new Date(now).toISOString()]);
   });
   it("espera 45 dias entre pedidos e para depois de 3", () => {
     const recent = new Date(now - 10 * day).toISOString();
