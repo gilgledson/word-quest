@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Users } from "lucide-react";
+import { Play, UserPlus } from "lucide-react";
 import { avatarOf } from "../game/avatars";
 import { track } from "../services/telemetry";
 import { homeT as t } from "../i18n/screens";
@@ -11,26 +11,18 @@ export const friendAvatarFor = (mine: string) =>
   mine === "latina" ? "garoto" : "latina";
 
 /**
- * Card "Desafie seu amigo" da tela inicial (referência: docs/referencias/home-redesign-chatgpt.webp):
- * o avatar do jogador e o de um amigo frente a frente com o escudo VS, e "Convidar" leva ao duelo
- * ao vivo (/online), onde se cria a sala e se manda o código.
+ * Card "Duelo online" no topo da tela inicial: é a função que o jogo quer popularizar, então fica em
+ * destaque. O avatar do jogador e o de um adversário frente a frente com o escudo VS, o botão grande
+ * "Jogar agora" (abre direto a busca de oponente, que chama a IA se ninguém aparecer) e "Convidar
+ * amigo" (o lobby, onde se cria a sala e se manda o código). Com duelo por turnos esperando a jogada
+ * dele, o botão vira "Jogar (N)" e leva à lista de partidas.
  */
 export function DuelCard({ avatar }: { avatar: string }) {
   const me = avatarOf(avatar).id;
   const friend = friendAvatarFor(me);
-  // Duelo por turnos esperando a jogada dele: o card avisa (e leva ao lobby, que lista as partidas).
   const myTurns = useMatchItems().filter((m) => m.state === "yourTurn").length;
   return (
-    <Link
-      className="duel-card"
-      to="/online"
-      aria-label={
-        myTurns
-          ? `${t.duelTitle}: ${onlineT.yourTurnCount(myTurns)}`
-          : t.duelLabel
-      }
-      onClick={() => track("home_duel_card")}
-    >
+    <section className="duel-card" aria-label={t.duelTitle}>
       <span className="duel-card-faces" aria-hidden="true">
         <img
           className="duel-face me"
@@ -52,7 +44,10 @@ export function DuelCard({ avatar }: { avatar: string }) {
         />
       </span>
       <span className="duel-card-text">
-        <strong>{t.duelTitle}</strong>
+        <span className="duel-card-title">
+          <strong>{t.duelTitle}</strong>
+          <span className="duel-card-badge">{t.duelBadge}</span>
+        </span>
         {myTurns ? (
           <small className="duel-card-turn">
             {onlineT.yourTurnCount(myTurns)}
@@ -60,10 +55,34 @@ export function DuelCard({ avatar }: { avatar: string }) {
         ) : (
           <small>{t.duelSub}</small>
         )}
-        <span className="duel-card-cta" aria-hidden="true">
-          <Users size={20} /> {myTurns ? onlineT.play : t.duelInvite}
-        </span>
       </span>
-    </Link>
+      <span className="duel-card-actions">
+        <Link
+          className="duel-card-cta"
+          to={myTurns ? "/online" : "/online/procurar"}
+          aria-label={
+            myTurns
+              ? `${t.duelTitle}: ${onlineT.yourTurnCount(myTurns)}`
+              : t.duelPlayLabel
+          }
+          onClick={() =>
+            track("home_duel_card", { action: myTurns ? "turns" : "play" })
+          }
+        >
+          <Play size={20} fill="currentColor" aria-hidden="true" />{" "}
+          {myTurns ? `${onlineT.play} (${myTurns})` : t.duelPlay}
+        </Link>
+        <Link
+          className="duel-card-invite"
+          to="/online"
+          aria-label={t.duelInvite}
+          onClick={() => track("home_duel_card", { action: "invite" })}
+        >
+          <UserPlus size={18} aria-hidden="true" />
+          {/* Em telas estreitas fica só o ícone (o nome segue no aria-label). */}
+          <span className="duel-card-invite-text">{t.duelInvite}</span>
+        </Link>
+      </span>
+    </section>
   );
 }
