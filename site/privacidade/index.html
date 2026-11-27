@@ -21,7 +21,7 @@
   </head>
   <body>
     <h1>Política de Privacidade – WordQuest</h1>
-    <p>Última atualização: 26 de novembro de 2026.</p>
+    <p>Última atualização: 27 de novembro de 2026.</p>
     <p>
       O WordQuest é um jogo de palavras cruzadas em português desenvolvido pela
       Lunara Games Studio. Esta política explica quais informações o aplicativo
@@ -34,7 +34,8 @@
       falhas para melhorar o jogo e, se você escolher jogar com um amigo, entrar
       com o Google Play Games ou assistir a um vídeo premiado, usa os dados
       necessários para esses recursos funcionarem. Anúncios só aparecem quando
-      você escolhe assistir a um vídeo para ganhar moedas.
+      você escolhe assistir a um vídeo para ganhar moedas, e notificações só
+      chegam se você permitir.
     </p>
 
     <h2>Dados salvos no aparelho</h2>
@@ -94,13 +95,38 @@
       personalização de anúncios ficam desligados.
     </p>
 
-    <h2>Jogar com um amigo (duelo ao vivo)</h2>
+    <h2>Jogar com um amigo (duelo por turnos)</h2>
     <p>
-      Ao criar ou entrar em uma partida com código, o aplicativo envia ao
-      Firebase o nome e o avatar que você escolheu no jogo, as jogadas da
-      partida e um identificador anônimo gerado para o aparelho. Esses dados
-      servem só para a partida acontecer e ficam visíveis para quem está na
-      mesma sala. Esse recurso é opcional e precisa de internet.
+      Ao criar ou entrar em uma partida com código, ou ao procurar um oponente,
+      o aplicativo envia ao Firebase o nome e o avatar que você escolheu no
+      jogo, as jogadas da partida, a hora da última jogada e um identificador
+      anônimo gerado para o aparelho. Esses dados servem só para a partida
+      acontecer (cada jogador tem até 48 horas para fazer a jogada) e ficam
+      visíveis para quem está na mesma sala. Esse recurso é opcional e precisa
+      de internet.
+    </p>
+
+    <h2>Notificações</h2>
+    <p>O jogo pode mandar dois tipos de aviso, e os dois são opcionais:</p>
+    <ul>
+      <li>
+        <b>Lembrete diário:</b> se você ativar, o próprio aparelho agenda um
+        aviso para lembrar da recompensa e do desafio do dia. Nada é enviado
+        a um servidor para isso.
+      </li>
+      <li>
+        <b>Avisos do duelo por turnos:</b> se você permitir as notificações ao
+        entrar num duelo, o aplicativo registra o aparelho no Firebase Cloud
+        Messaging, do Google, e guarda no Firebase o código de notificação do
+        aparelho e o idioma do jogo, ligados ao mesmo identificador anônimo do
+        duelo. Esse código serve só para avisar quando é a sua vez, quando a
+        partida termina ou quando o prazo da jogada está acabando. Códigos que
+        deixam de valer (por exemplo, ao desinstalar o jogo) são apagados.
+      </li>
+    </ul>
+    <p>
+      Você pode desligar as notificações a qualquer momento nas configurações
+      do Android, em Apps &gt; WordQuest &gt; Notificações.
     </p>
 
     <h2>Proteção contra robôs</h2>
@@ -127,8 +153,8 @@
 
     <h2>Compartilhamento com terceiros</h2>
     <p>
-      Os dados acima são processados pelo Google (Firebase, Google Play Games e
-      AdMob) como prestador de serviço. O WordQuest não vende dados e não os
+      Os dados acima são processados pelo Google (Firebase, Firebase Cloud
+      Messaging, Google Play Games e AdMob) como prestador de serviço. O WordQuest não vende dados e não os
       compartilha com outras empresas.
     </p>
 
