@@ -99,7 +99,7 @@ import { lang } from "../i18n";
 import {
   MATCH_BOARD,
   MATCH_RULES,
-  SEARCH_MS,
+  searchWait,
   SEARCH_POLL_MS,
   fakeSeat,
   oldBotRooms,
@@ -985,7 +985,7 @@ function LiveMatch({ code }: { code: string }) {
 
 /**
  * "Procurar oponente": entra na sala pública mais antiga do idioma ou abre uma e espera. Sem ninguém
- * em `SEARCH_MS`, a partida segue contra o rival do jogo com cara de jogador (ver game/matchmaking).
+ * em `searchWait()` (de 20 a 50 s), a partida segue contra o rival do jogo com cara de jogador (ver game/matchmaking).
  * Sair da tela (Cancelar ou voltar) tira a sala da lista e a apaga.
  */
 export function OnlineSearch() {
@@ -1147,7 +1147,7 @@ export function OnlineSearch() {
             }, SEARCH_POLL_MS),
           );
         poll();
-        // Ninguém de verdade em `SEARCH_MS`: o rival do jogo entra sozinho (sem perguntar).
+        // Ninguém de verdade na espera sorteada (20 a 50 s): o rival do jogo entra sozinho.
         timers.push(
           window.setTimeout(async () => {
             if (!alive) return;
@@ -1159,7 +1159,7 @@ export function OnlineSearch() {
             } catch {
               startBot();
             }
-          }, SEARCH_MS),
+          }, searchWait()),
         );
       } catch (e) {
         if (alive) setError(onlineErrorText(e));

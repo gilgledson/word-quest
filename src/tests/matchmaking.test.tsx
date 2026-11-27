@@ -12,7 +12,9 @@ import {
   AVATAR_GENDER,
   LOBBY_FRESH_MS,
   MATCH_RULES,
-  SEARCH_MS,
+  SEARCH_MAX_MS,
+  SEARCH_MIN_MS,
+  searchWait,
   fakeSeat,
   humanThinkMs,
   oldBotRooms,
@@ -154,6 +156,20 @@ describe("procura de oponente: regras", () => {
       [1, 2, 3, 4, 5, 6, 7].map((n) => [`SALA0${n}`, room(n)]),
     );
     expect(oldBotRooms(rooms).sort()).toEqual(["SALA01", "SALA02"]);
+  });
+});
+
+describe("espera da procura", () => {
+  it("sorteada entre 20 e 50 s", () => {
+    expect(searchWait(() => 0)).toBe(SEARCH_MIN_MS);
+    expect(searchWait(() => 1)).toBe(SEARCH_MAX_MS);
+    expect(SEARCH_MIN_MS).toBe(20_000);
+    expect(SEARCH_MAX_MS).toBe(50_000);
+    for (let i = 0; i < 50; i++) {
+      const ms = searchWait();
+      expect(ms).toBeGreaterThanOrEqual(20_000);
+      expect(ms).toBeLessThanOrEqual(50_000);
+    }
   });
 });
 
@@ -307,7 +323,7 @@ describe("tela de procurar oponente", () => {
     await waitFor(() =>
       expect(screen.getByRole("timer")).not.toHaveTextContent("00:00"),
     );
-    await act(async () => void vi.advanceTimersByTime(SEARCH_MS + 50));
+    await act(async () => void vi.advanceTimersByTime(SEARCH_MAX_MS + 50));
     // Sem ninguém de verdade, sem perguntar nada: segue contra o rival do jogo.
     expect(screen.queryByRole("button", { name: /fila/i })).toBeNull();
     // A sala pública some do servidor; a partida fica só no aparelho.
