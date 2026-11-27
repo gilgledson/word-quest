@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import { followLinks } from "./services/links";
 import { followReminderTaps, syncReminders } from "./services/reminders";
+import { followPushTaps } from "./services/push";
 import { currentStreak } from "./game/dailyShare";
 import { today } from "./data/catalog";
 import { useEffect } from "react";
@@ -137,6 +138,8 @@ function LinkFollower() {
   useEffect(() => followLinks((route) => navigate(route)), [navigate]);
   // Tocar no lembrete diário também abre o jogo na tela certa.
   useEffect(() => followReminderTaps((route) => navigate(route)), [navigate]);
+  // E o aviso do duelo por turnos ("é sua vez") abre a partida.
+  useEffect(() => followPushTaps((route) => navigate(route)), [navigate]);
   return null;
 }
 /** Lembretes do dia refeitos quando muda o que eles anunciam (recompensa, diário, opção). */

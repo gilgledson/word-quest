@@ -50,6 +50,15 @@
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-9508887934280684~7939976755" />
 
+        <!-- Avisos do duelo por turnos (Cloud Functions → FCM, src/services/push.ts): ícone e canal
+             padrão quando a mensagem chega com o app fechado. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_stat_wordquest" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="duelo" />
+
         <!-- Analytics sem identificador de publicidade nem sinais para anúncios: só medição de uso. -->
         <meta-data
             android:name="google_analytics_adid_collection_enabled"

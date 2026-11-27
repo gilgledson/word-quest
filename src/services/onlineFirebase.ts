@@ -211,6 +211,12 @@ export function firebaseBackend(): OnlineBackend {
         void remove(mine).catch(() => {});
       };
     },
+    async savePushToken(token, lang) {
+      const me = await uid();
+      // Chave sem os caracteres que o banco não aceita (igual a tokenKey em functions/lib.js).
+      const key = token.replace(/[.#$[\]/]/g, "_").slice(0, 700);
+      await set(ref(db, `push/${me}/${key}`), { token, lang, at: Date.now() });
+    },
     async lobby(lang) {
       await uid();
       const all = (await get(ref(db, `lobby/${lang}`))).val() as Record<

@@ -50,6 +50,11 @@ export interface OnlineBackend {
   ): () => void;
   /** Salas públicas esperando oponente num idioma ("Procurar oponente"). */
   lobby(lang: string): Promise<LobbyEntry[]>;
+  /**
+   * Grava o token de notificação deste aparelho (`push/<uid>`), com o idioma dos avisos: as Cloud
+   * Functions avisam "é sua vez" por ele (ver functions/index.js).
+   */
+  savePushToken(token: string, lang: string): Promise<void>;
   /** Põe a sala na lista pública do idioma. */
   list(lang: string, entry: LobbyEntry): Promise<void>;
   /** Tira a sala da lista pública (quem entrou, quem desistiu ou uma esquecida). */
@@ -100,6 +105,8 @@ export function memoryBackend() {
     return lobbies.get(lang)!;
   };
   const online = new Map<string, Set<string>>();
+  /** Tokens de notificação gravados (token → idioma). */
+  const pushTokens = new Map<string, string>();
   const roomWatchers = new Map<string, Set<(r: OnlineRoom | null) => void>>();
   const presenceWatchers = new Map<string, Set<(u: string[]) => void>>();
   const copy = <T>(v: T): T => JSON.parse(JSON.stringify(v));
@@ -190,6 +197,9 @@ export function memoryBackend() {
         tellPresence(code);
       };
     },
+    async savePushToken(token, lang) {
+      pushTokens.set(token, lang);
+    },
     async lobby(lang) {
       return copy([...lobbyOf(lang).values()]);
     },
@@ -207,5 +217,5 @@ export function memoryBackend() {
       return true;
     },
   });
-  return { as, rooms, lobbies };
+  return { as, rooms, lobbies, pushTokens };
 }
