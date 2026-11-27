@@ -80,7 +80,12 @@ beforeEach(() => {
   setAdDriver(undefined);
   usePlayer.setState({ player: base(0), ready: true });
 });
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllEnvs();
+});
+/** Desliga pelo build (`VITE_REWARDED_ADS=0`), mesmo com a opção ligada na configuração. */
+const flagOff = () => vi.stubEnv("VITE_REWARDED_ADS", "0");
 
 describe("Regra do vídeo premiado", () => {
   it("30 moedas por vídeo e até 5 por dia", () => {
@@ -141,8 +146,12 @@ describe("Regra do vídeo premiado", () => {
 });
 
 describe("Opção e crédito", () => {
-  it("vem desligado por padrão", async () => {
-    expect(ADS_CONFIG.enabled).toBe(false);
+  it("ligado na versão publicada (conta AdMob aprovada e app verificado)", () => {
+    expect(ADS_CONFIG.enabled).toBe(true);
+    expect(rewardedEnabled()).toBe(true);
+  });
+  it("desligado pelo build: não carrega nem paga", async () => {
+    flagOff();
     expect(rewardedEnabled()).toBe(false);
     const d = fakeDriver();
     setAdDriver(d);
@@ -218,6 +227,7 @@ const renderShop = () =>
 
 describe("Botões na loja", () => {
   it("opção desligada: nenhum botão de vídeo", async () => {
+    flagOff();
     setAdDriver(fakeDriver());
     renderShop();
     await act(async () => {});
