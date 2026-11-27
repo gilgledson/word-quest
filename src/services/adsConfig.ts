@@ -1,12 +1,13 @@
 /**
- * Configuração do vídeo premiado (AdMob). Desligado por padrão: para ligar, troque `enabled` para
- * `true` (ou gere o build com `VITE_REWARDED_ADS=1`) e preencha `rewardedAndroid` com o ID do bloco
- * de anúncio premiado criado no AdMob (bloco "moedas_video" do app WordQuest). No desenvolvimento
+ * Configuração do vídeo premiado (AdMob). Ligado depois que a conta AdMob foi aprovada e o app
+ * verificado (app-ads.txt em wordquest.com.br). Para desligar, troque `enabled` para `false` e
+ * publique uma atualização ao vivo (ou gere o build com `VITE_REWARDED_ADS=0`). `rewardedAndroid` é
+ * o bloco premiado "moedas_video" do app WordQuest no AdMob. No desenvolvimento
  * (ou sem ID real) o jogo usa o bloco de teste do Google, que só mostra anúncios de teste.
  */
 export const ADS_CONFIG = {
   /** Liga o vídeo premiado no app (botões na loja e no fim do duelo). */
-  enabled: false,
+  enabled: true,
   /** Bloco de anúncio premiado do Android (ca-app-pub-XXXX/YYYY). Vazio = bloco de teste. */
   rewardedAndroid: "ca-app-pub-9508887934280684/7804245389",
 };
