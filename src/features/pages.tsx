@@ -1,4 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { FramedAvatar } from "../components/FrameArt";
+import { currentFrame } from "../game/frames";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import {
   ArrowRight,
@@ -64,7 +66,7 @@ import {
   opponentById,
   opponentFor,
 } from "../game/opponents";
-import { avatarOf, PLAYER_AVATARS } from "../game/avatars";
+import { avatarOf, pickableAvatars } from "../game/avatars";
 import { DailyRewardFlow } from "./DailyReward";
 import {
   askReminderPermission,
@@ -545,7 +547,11 @@ export function Profile() {
           aria-label={profileT.editAvatar}
           onClick={() => setEditing(true)}
         >
-          <OpponentAvatar opponent={avatarOf(p.avatar)} size={84} />
+          <FramedAvatar
+            opponent={avatarOf(p.avatar)}
+            size={84}
+            frame={currentFrame(p)}
+          />
           <span className="profile-avatar-edit" aria-hidden="true">
             <Pencil size={15} />
           </span>
@@ -626,7 +632,7 @@ function EditProfileDialog({ onClose }: { onClose: () => void }) {
         <h2>{profileT.editTitle}</h2>
         <span className="profile-dialog-label">{profileT.yourAvatar}</span>
         <ul className="avatar-picker" aria-label={profileT.avatars}>
-          {PLAYER_AVATARS.map((a) => (
+          {pickableAvatars(p).map((a) => (
             <li key={a.id}>
               <button
                 type="button"

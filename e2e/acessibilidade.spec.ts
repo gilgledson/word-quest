@@ -21,6 +21,9 @@ for (const path of [
   "/daily",
   "/profile",
   "/credits",
+  "/loja",
+  "/loja?aba=avatares",
+  "/loja?aba=molduras",
 ])
   test(`sem violações de acessibilidade em ${path}`, async ({ page }) => {
     await page.goto(path);

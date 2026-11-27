@@ -43,6 +43,8 @@ export interface OnlineSeat {
   uid: string;
   name: string;
   avatar: string;
+  /** Moldura de perfil em uso (id de game/frames); o rival a vê no placar. */
+  frame?: string;
 }
 export type OnlineStatus = "waiting" | "playing" | "finished" | "abandoned";
 export interface OnlineRoom {

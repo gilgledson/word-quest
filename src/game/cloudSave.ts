@@ -1,3 +1,5 @@
+import { isFrameId } from "./frames";
+import { isPremiumAvatar } from "./avatars";
 import {
   initialPlayer,
   type PlayAccount,
@@ -28,6 +30,11 @@ export interface CloudSave {
   jokerTourDone: boolean;
   /** Vídeos premiados do dia (trocar de aparelho não devolve vídeos ao limite). */
   rewarded?: { date: string; count: number };
+  /** Avatares premium comprados (comprar num aparelho vale no outro). */
+  avatars?: string[];
+  /** Molduras de perfil compradas e a em uso (comprar num aparelho vale no outro). */
+  frames?: string[];
+  frame?: string;
 }
 
 export function toCloud(p: Player): CloudSave {
@@ -50,6 +57,9 @@ export function toCloud(p: Player): CloudSave {
     ...(p.rewarded
       ? { rewarded: { date: p.rewarded.date, count: p.rewarded.count } }
       : {}),
+    ...(p.avatars?.length ? { avatars: p.avatars } : {}),
+    ...(p.frames?.length ? { frames: p.frames } : {}),
+    ...(p.frame ? { frame: p.frame } : {}),
   };
 }
 
@@ -99,6 +109,11 @@ export function parseCloud(text: string | null | undefined) {
     tipsSeen: strings(raw.tipsSeen),
     jokerTourDone: raw.jokerTourDone === true,
   };
+  const avatars = strings(raw.avatars).filter(isPremiumAvatar);
+  if (avatars.length) save.avatars = avatars;
+  const frames = strings(raw.frames).filter(isFrameId);
+  if (frames.length) save.frames = frames;
+  if (isFrameId(raw.frame)) save.frame = raw.frame;
   if (
     isRecord(raw.rewarded) &&
     typeof raw.rewarded.date === "string" &&
@@ -174,6 +189,16 @@ export function mergeCloud(local: Player, cloud: CloudSave): Player {
     tipsSeen: union(local.tipsSeen, cloud.tipsSeen),
     jokerTourDone: local.jokerTourDone || cloud.jokerTourDone,
     rewarded: mergeRewarded(local.rewarded, cloud.rewarded),
+    ...(local.avatars?.length || cloud.avatars?.length
+      ? { avatars: union(local.avatars ?? [], cloud.avatars ?? []) }
+      : {}),
+    // Molduras: a união das compradas; a em uso é a do aparelho (ou a da nuvem, se não há nenhuma).
+    ...(local.frames?.length || cloud.frames?.length
+      ? { frames: union(local.frames ?? [], cloud.frames ?? []) }
+      : {}),
+    ...(local.frame || cloud.frame
+      ? { frame: local.frame ?? cloud.frame }
+      : {}),
   };
 }
 
