@@ -27,6 +27,7 @@ import {
   rewardedEnabled,
 } from "../services/adsConfig";
 import {
+  AdUnavailable,
   setAdDriver,
   startRewarded,
   useRewarded,
@@ -142,6 +143,59 @@ describe("Regra do vídeo premiado", () => {
     expect(
       parseCloud(JSON.stringify({ v: 1, rewarded: { date: "x" } }))?.rewarded,
     ).toBeUndefined();
+  });
+});
+
+describe("Diagnóstico de vídeo indisponível", () => {
+  const events = (name: string) =>
+    tracked.filter((t) => t.name === name).map((t) => t.params);
+  it("vídeo carregado: rewarded_ready com a tentativa", async () => {
+    setAdDriver(fakeDriver());
+    await startRewarded();
+    expect(useRewarded.getState().ready).toBe(true);
+    expect(events("rewarded_ready")).toEqual([{ attempt: 0 }]);
+    expect(events("rewarded_unavailable")).toEqual([]);
+  });
+  it("sem anúncio para mostrar: etapa load com o código do SDK", async () => {
+    vi.useFakeTimers();
+    try {
+      setAdDriver({
+        ...fakeDriver(),
+        load: () => Promise.reject({ code: 3, message: "No fill." }),
+      });
+      await startRewarded();
+      expect(useRewarded.getState().ready).toBe(false);
+      expect(events("rewarded_unavailable")).toEqual([
+        { step: "load", code: "3", reason: "No fill.", attempt: 0 },
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+  it("consentimento recusado: etapa consent e nenhum vídeo carregado", async () => {
+    const d = fakeDriver();
+    let loads = 0;
+    setAdDriver({
+      ...d,
+      setup: () =>
+        Promise.reject(
+          new AdUnavailable("consent", "REQUIRED", "cannot_request_ads"),
+        ),
+      load: async () => {
+        loads++;
+        return true;
+      },
+    });
+    await startRewarded();
+    expect(loads).toBe(0);
+    expect(events("rewarded_unavailable")).toEqual([
+      {
+        step: "consent",
+        code: "REQUIRED",
+        reason: "cannot_request_ads",
+        attempt: 0,
+      },
+    ]);
   });
 });
 

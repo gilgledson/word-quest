@@ -18,11 +18,35 @@ import { rewardedT as t } from "../i18n/screens";
 
 export type AdOutcome = { earned: true } | { earned: false; reason: string };
 
+/** Etapa em que o vídeo deixou de ficar disponível (evento `rewarded_unavailable`). */
+export type AdStage = "plugin" | "consent" | "init" | "load";
+
+/** Falha com a etapa e o código do SDK (ex.: 3 = sem anúncio para mostrar agora). */
+export class AdUnavailable extends Error {
+  constructor(
+    readonly stage: AdStage,
+    readonly code = "",
+    message = "",
+  ) {
+    super(message || stage);
+  }
+}
+/** Etapa e código de um erro qualquer vindo do SDK (sem etapa conhecida, vale `fallback`). */
+const unavailable = (e: unknown, fallback: AdStage) => {
+  if (e instanceof AdUnavailable) return e;
+  const err = (e ?? {}) as { code?: unknown; message?: unknown };
+  return new AdUnavailable(
+    fallback,
+    err.code === undefined ? "" : String(err.code),
+    typeof err.message === "string" ? err.message : String(e ?? ""),
+  );
+};
+
 /** Quem toca o vídeo: o AdMob no Android, a simulação no navegador (e um falso nos testes). */
 export interface AdDriver {
-  /** Consentimento e início do SDK; `false` = sem anúncios neste aparelho. */
+  /** Consentimento e início do SDK; `false` (ou `AdUnavailable`) = sem anúncios neste aparelho. */
   setup(): Promise<boolean>;
-  /** Carrega um vídeo; `false` se não veio nenhum. */
+  /** Carrega um vídeo; `false` (ou `AdUnavailable`) se não veio nenhum. */
   load(): Promise<boolean>;
   /** Mostra o vídeo carregado e diz se o jogador ganhou a recompensa. */
   show(): Promise<AdOutcome>;
@@ -53,16 +77,27 @@ function admobDriver(): AdDriver {
   const unit = rewardedUnit();
   return {
     async setup() {
-      if (!Capacitor.isPluginAvailable("AdMob")) return false;
+      if (!Capacitor.isPluginAvailable("AdMob"))
+        throw new AdUnavailable("plugin", "", "no_plugin");
       const { AdMob, AdmobConsentStatus } = await plugin();
-      let info = await AdMob.requestConsentInfo();
-      if (
-        info.status === AdmobConsentStatus.REQUIRED &&
-        info.isConsentFormAvailable
-      )
-        info = await AdMob.showConsentForm();
-      if (!info.canRequestAds) return false;
-      await AdMob.initialize({ initializeForTesting: unit.isTesting });
+      let info;
+      try {
+        info = await AdMob.requestConsentInfo();
+        if (
+          info.status === AdmobConsentStatus.REQUIRED &&
+          info.isConsentFormAvailable
+        )
+          info = await AdMob.showConsentForm();
+      } catch (e) {
+        throw unavailable(e, "consent");
+      }
+      if (!info.canRequestAds)
+        throw new AdUnavailable("consent", info.status, "cannot_request_ads");
+      try {
+        await AdMob.initialize({ initializeForTesting: unit.isTesting });
+      } catch (e) {
+        throw unavailable(e, "init");
+      }
       return true;
     },
     async load() {
@@ -70,8 +105,8 @@ function admobDriver(): AdDriver {
       try {
         await AdMob.prepareRewardVideoAd(unit);
         return true;
-      } catch {
-        return false;
+      } catch (e) {
+        throw unavailable(e, "load");
       }
     },
     async show() {
@@ -182,10 +217,29 @@ export function setAdDriver(d: AdDriver | undefined) {
   useRewarded.setState({ ready: false, busy: false });
 }
 
+/**
+ * Por que o vídeo não ficou disponível (diagnóstico): a etapa (plugin, consentimento, início do SDK
+ * ou carga), o código do SDK e a tentativa. Sem isso, um vídeo que não carrega some em silêncio.
+ */
+function reportUnavailable(e: unknown, fallback: AdStage, attempt = 0) {
+  const u = unavailable(e, fallback);
+  track("rewarded_unavailable", {
+    step: u.stage,
+    code: u.code || "none",
+    reason: u.message.slice(0, 90),
+    attempt,
+  });
+}
+
 async function load() {
   if (!driver || useRewarded.getState().ready) return;
-  const ok = await driver.load().catch(() => false);
+  const attempt = retries;
+  const ok = await driver.load().catch((e) => {
+    reportUnavailable(e, "load", attempt);
+    return false;
+  });
   useRewarded.setState({ ready: ok });
+  if (ok) track("rewarded_ready", { attempt });
   if (!ok && retries++ < MAX_RETRIES) setTimeout(() => void load(), RETRY_MS);
 }
 
@@ -202,7 +256,10 @@ export function startRewarded() {
         ? simDriver()
         : undefined;
     if (!driver) return;
-    const ok = await driver.setup().catch(() => false);
+    const ok = await driver.setup().catch((e) => {
+      reportUnavailable(e, "init");
+      return false;
+    });
     if (ok) await load();
   })());
 }
