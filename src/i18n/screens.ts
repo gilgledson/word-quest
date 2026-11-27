@@ -120,6 +120,15 @@ export const homeT = texts({
     duelTitle: "Desafie seu amigo",
     duelSub: "Duelo online",
     duelInvite: "Convidar",
+    // Cards de vídeo premiado e da loja
+    videoTitle: "Ganhe moedas grátis",
+    videoSub: "Assista a um vídeo",
+    videoWatch: "Assistir",
+    videoEarned: (coins: number) => `+${coins} moedas!`,
+    shopTitle: "Loja",
+    shopSub: "Novidades e itens",
+    shopOpen: "Abrir loja",
+    shopLabel: "Loja: novidades e itens. Abrir loja",
   },
   en: {
     titleStart: "Your adventure begins!",
@@ -151,6 +160,14 @@ export const homeT = texts({
     duelTitle: "Challenge a friend",
     duelSub: "Live duel",
     duelInvite: "Invite",
+    videoTitle: "Get free coins",
+    videoSub: "Watch a video",
+    videoWatch: "Watch",
+    videoEarned: (coins: number) => `+${coins} coins!`,
+    shopTitle: "Shop",
+    shopSub: "New items and more",
+    shopOpen: "Open shop",
+    shopLabel: "Shop: new items and more. Open shop",
   },
 });
 

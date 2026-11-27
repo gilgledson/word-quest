@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { Clapperboard } from "lucide-react";
 import { today } from "../data/catalog";
 import {
@@ -27,13 +27,15 @@ interface Props {
   /** Texto enquanto o vídeo abre (padrão: "Abrindo o vídeo…"). */
   busyLabel?: string;
   className?: string;
+  /** Ícone antes do texto (padrão: a claquete). */
+  icon?: ReactNode;
   onResult?: (o: AdOutcome, coins: number) => void;
 }
 
 /**
  * Botão "assistir vídeo" do vídeo premiado. Some sozinho com a opção desligada, sem vídeo carregado,
  * com o limite do dia alcançado ou com a partida já dobrada. Nunca aparece durante a vez nem no
- * tutorial: só é posto na loja e no resultado do duelo.
+ * tutorial: só é posto na tela inicial, na loja e no resultado do duelo.
  */
 export function RewardedButton({
   place,
@@ -43,6 +45,7 @@ export function RewardedButton({
   ariaLabel,
   busyLabel = t.loading,
   className = "button rewarded-button",
+  icon = <Clapperboard size={18} aria-hidden="true" />,
   onResult,
 }: Props) {
   const state = usePlayer((s) => s.player.rewarded);
@@ -70,7 +73,7 @@ export function RewardedButton({
         onResult?.(o, coins);
       }}
     >
-      <Clapperboard size={18} aria-hidden="true" />
+      {icon}
       {busy ? busyLabel : label}
     </button>
   );

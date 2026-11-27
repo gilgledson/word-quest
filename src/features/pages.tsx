@@ -78,6 +78,7 @@ import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
 import { DuelCard } from "./DuelCard";
 import { WorldCard } from "./WorldCard";
+import { HomeShopCard, HomeVideoCard } from "./HomeCards";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
 import { canRateInStore, openStoreRating } from "../services/review";
@@ -94,6 +95,11 @@ export function Home() {
       <h1 className="sr-only">{wins ? homeT.titleGoing : homeT.titleStart}</h1>
       {onlineAvailable() && <DuelCard avatar={avatar} />}
       <WorldCard />
+      {/* Vídeo premiado e loja: uma faixa própria (deitado, os dois ficam lado a lado). */}
+      <div className="home-extras">
+        <HomeVideoCard />
+        <HomeShopCard />
+      </div>
       <DailyRewardFlow />
     </>
   );

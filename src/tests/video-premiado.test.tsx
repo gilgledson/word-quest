@@ -10,6 +10,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { today } from "../data/catalog";
 import { Shop } from "../features/Shop";
+import { HomeShopCard, HomeVideoCard } from "../features/HomeCards";
 import { ResultSheet } from "../features/puzzle/ResultSheet";
 import { opponentById } from "../game/opponents";
 import {
@@ -333,6 +334,63 @@ describe("Botões na loja", () => {
     await act(async () => {});
     await act(async () => {});
     expect(screen.queryByRole("button", { name: /vídeo/i })).toBeNull();
+  });
+});
+
+describe("Cards da tela inicial", () => {
+  const renderCards = () =>
+    render(
+      <MemoryRouter>
+        <HomeVideoCard />
+        <HomeShopCard />
+      </MemoryRouter>,
+    );
+  it("sem vídeo carregado: só o card da loja, que leva à loja", async () => {
+    flagOff();
+    setAdDriver(fakeDriver());
+    renderCards();
+    await act(async () => {});
+    expect(
+      screen.queryByRole("region", { name: "Ganhe moedas grátis" }),
+    ).toBeNull();
+    expect(
+      screen.getByRole("link", { name: /Loja: novidades e itens/ }),
+    ).toHaveAttribute("href", "/loja");
+  });
+  it("com vídeo pronto: 'Ganhe moedas grátis' e Assistir credita (place home)", async () => {
+    flagOn();
+    setAdDriver(fakeDriver({ earned: true }));
+    renderCards();
+    const watch = await screen.findByRole("button", {
+      name: /Assistir vídeo: \+30/,
+    });
+    expect(
+      screen.getByRole("region", { name: "Ganhe moedas grátis" }),
+    ).toHaveTextContent("Assista a um vídeo");
+    expect(watch).toHaveTextContent("Assistir");
+    expect(events("rewarded_offer_shown")[0].params).toEqual({ place: "home" });
+    await act(async () => {
+      fireEvent.click(watch);
+    });
+    await waitFor(() => expect(usePlayer.getState().player.coins).toBe(30));
+    expect(events("rewarded_earned")[0].params).toEqual({
+      place: "home",
+      coins: 30,
+    });
+    expect(await screen.findByText("+30 moedas!")).toBeInTheDocument();
+  });
+  it("o card do vídeo some quando o limite do dia acaba", async () => {
+    flagOn();
+    setAdDriver(fakeDriver());
+    usePlayer.setState({
+      player: { ...base(0), rewarded: { date: today(), count: 5 } },
+    });
+    renderCards();
+    await act(async () => {});
+    await act(async () => {});
+    expect(
+      screen.queryByRole("region", { name: "Ganhe moedas grátis" }),
+    ).toBeNull();
   });
 });
 
