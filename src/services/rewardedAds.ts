@@ -72,7 +72,7 @@ const canSimulate = () =>
     ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname));
 
 /** AdMob no Android. Versões antigas do app (sem o plugin) ficam sem vídeo. */
-function admobDriver(): AdDriver {
+export function admobDriver(): AdDriver {
   const plugin = () => import("@capacitor-community/admob");
   const unit = rewardedUnit();
   return {
@@ -89,9 +89,18 @@ function admobDriver(): AdDriver {
         )
           info = await AdMob.showConsentForm();
       } catch (e) {
-        throw unavailable(e, "consent");
+        // O pedido de consentimento falha sem a mensagem configurada no AdMob ("no form(s)
+        // configured") ou sem rede para buscá-la. Isso não pode derrubar o vídeo: fora da Europa o
+        // consentimento nem é exigido, e o SDK decide sozinho que anúncio pode mostrar. Fica só o
+        // registro, para saber quando acontece.
+        const u = unavailable(e, "consent");
+        track("rewarded_consent_error", {
+          code: u.code || "none",
+          reason: u.message.slice(0, 90),
+        });
+        info = undefined;
       }
-      if (!info.canRequestAds)
+      if (info && !info.canRequestAds)
         throw new AdUnavailable("consent", info.status, "cannot_request_ads");
       try {
         await AdMob.initialize({ initializeForTesting: unit.isTesting });
