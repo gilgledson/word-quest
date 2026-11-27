@@ -29,6 +29,7 @@ import {
 import { usePlayer } from "../stores/player";
 import { track } from "../services/telemetry";
 import { forget, wagerResult } from "./onlineCleanup";
+import { enableDuelPush } from "../services/push";
 
 interface MatchesStore {
   /** Este jogador no servidor (depois do login). */
@@ -122,6 +123,8 @@ export function MatchesWatcher() {
       usePlayer
         .getState()
         .update((p) => withMatch({ ...p, activeOnline: undefined }, legacy));
+    // Quem já deu a permissão tem o token renovado (ele muda de vez em quando).
+    void enableDuelPush({ ask: false });
     let alive = true;
     const stops: (() => void)[] = [];
     void (async () => {

@@ -146,6 +146,8 @@ export const onlineText = texts({
     waitingShort: (code: string) => `Esperando alguém entrar · ${code}`,
     queued: "Na fila: esperando um oponente",
     opponent: "Oponente",
+    pushChannel: "Duelos",
+    pushChannelText: "Avisa quando é sua vez num duelo por turnos.",
     endedShort: "Terminou · ver resultado",
     play: "Jogar",
     // Perfil
@@ -301,6 +303,8 @@ export const onlineText = texts({
     waitingShort: (code) => `Waiting for someone to join · ${code}`,
     queued: "In the queue: waiting for an opponent",
     opponent: "Opponent",
+    pushChannel: "Duels",
+    pushChannelText: "Lets you know when it's your turn in a turn-based duel.",
     endedShort: "Finished · see result",
     play: "Play",
     whoPlays: "Who's playing?",

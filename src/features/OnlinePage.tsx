@@ -80,6 +80,7 @@ import {
 import { usePlayer } from "../stores/player";
 import { Duel } from "./PuzzlePage";
 import { useMatchItems, type MatchItem } from "./myMatches";
+import { enableDuelPush } from "../services/push";
 import { copyText, shareText } from "../services/share";
 import { track } from "../services/telemetry";
 import { OpponentAvatar } from "../components/OpponentAvatar";
@@ -726,6 +727,10 @@ function LiveMatch({ code }: { code: string }) {
   // Partida em andamento entra em "Minhas partidas" (e o jogador recebe o aviso quando for a vez
   // dele). Acabou (e o jogador está vendo o resultado aqui) ou não é dele: sai da lista.
   const live = isLive(room);
+  // Duelo por turnos: pede (uma vez) a permissão de avisar quando for a vez dele.
+  useEffect(() => {
+    if (live && role) void enableDuelPush({ ask: true });
+  }, [live, role]);
   useEffect(() => {
     if (room === undefined) return;
     const p = usePlayer.getState().player;
