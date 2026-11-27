@@ -3,6 +3,8 @@ import { Users } from "lucide-react";
 import { avatarOf } from "../game/avatars";
 import { track } from "../services/telemetry";
 import { homeT as t } from "../i18n/screens";
+import { onlineText as onlineT } from "../i18n/online";
+import { useMatchItems } from "./myMatches";
 
 /** Quem aparece como "o amigo" no card: alguém diferente do avatar do jogador. */
 export const friendAvatarFor = (mine: string) =>
@@ -16,11 +18,17 @@ export const friendAvatarFor = (mine: string) =>
 export function DuelCard({ avatar }: { avatar: string }) {
   const me = avatarOf(avatar).id;
   const friend = friendAvatarFor(me);
+  // Duelo por turnos esperando a jogada dele: o card avisa (e leva ao lobby, que lista as partidas).
+  const myTurns = useMatchItems().filter((m) => m.state === "yourTurn").length;
   return (
     <Link
       className="duel-card"
       to="/online"
-      aria-label={t.duelLabel}
+      aria-label={
+        myTurns
+          ? `${t.duelTitle}: ${onlineT.yourTurnCount(myTurns)}`
+          : t.duelLabel
+      }
       onClick={() => track("home_duel_card")}
     >
       <span className="duel-card-faces" aria-hidden="true">
@@ -45,9 +53,15 @@ export function DuelCard({ avatar }: { avatar: string }) {
       </span>
       <span className="duel-card-text">
         <strong>{t.duelTitle}</strong>
-        <small>{t.duelSub}</small>
+        {myTurns ? (
+          <small className="duel-card-turn">
+            {onlineT.yourTurnCount(myTurns)}
+          </small>
+        ) : (
+          <small>{t.duelSub}</small>
+        )}
         <span className="duel-card-cta" aria-hidden="true">
-          <Users size={20} /> {t.duelInvite}
+          <Users size={20} /> {myTurns ? onlineT.play : t.duelInvite}
         </span>
       </span>
     </Link>

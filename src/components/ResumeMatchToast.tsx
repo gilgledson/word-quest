@@ -14,11 +14,22 @@ export function ResumeMatchToast({
   code,
   visible,
   onEnd,
+  id = TOAST_ID,
+  title = T.inProgress,
+  detail,
+  action = T.back,
 }: {
   code: string | undefined;
   visible: boolean;
   /** Encerra a partida (o jogador confirma antes). Sem isto, o aviso só oferece voltar. */
   onEnd?: (code: string) => void;
+  /** Aviso próprio (ex.: "Sua vez!"), que convive com o de partida em andamento. */
+  id?: string;
+  title?: string;
+  /** Segunda linha; sem ela, o código da sala. */
+  detail?: string;
+  /** Texto do botão que abre a partida. */
+  action?: string;
 }) {
   const closedFor = useRef<string | undefined>(undefined);
   const leaving = useRef(false);
@@ -26,17 +37,21 @@ export function ResumeMatchToast({
     const show = !!code && visible && closedFor.current !== code;
     if (!show) {
       leaving.current = true;
-      toast.dismiss(TOAST_ID);
+      toast.dismiss(id);
       return;
     }
     leaving.current = false;
-    if (toast.isActive(TOAST_ID)) return;
+    if (toast.isActive(id)) return;
     toast(
       <div className="resume-toast">
         <div className="resume-toast-text">
-          <strong>{T.inProgress}</strong>
+          <strong>{title}</strong>
           <span>
-            {T.code} <b>{code}</b>
+            {detail ?? (
+              <>
+                {T.code} <b>{code}</b>
+              </>
+            )}
           </span>
         </div>
         <div className="resume-toast-actions">
@@ -45,10 +60,10 @@ export function ResumeMatchToast({
             aria-label={T.backToMatch(code)}
             onClick={() => {
               leaving.current = true;
-              toast.dismiss(TOAST_ID);
+              toast.dismiss(id);
             }}
           >
-            {T.back}
+            {action}
           </Link>
           {onEnd && (
             <button
@@ -58,7 +73,7 @@ export function ResumeMatchToast({
               onClick={() => {
                 if (!window.confirm(T.endConfirm(code))) return;
                 leaving.current = true;
-                toast.dismiss(TOAST_ID);
+                toast.dismiss(id);
                 onEnd(code);
               }}
             >
@@ -71,7 +86,7 @@ export function ResumeMatchToast({
         </span>
       </div>,
       {
-        toastId: TOAST_ID,
+        toastId: id,
         autoClose: false,
         closeOnClick: false,
         draggable: true,
@@ -81,7 +96,7 @@ export function ResumeMatchToast({
         },
       },
     );
-  }, [code, visible, onEnd]);
+  }, [code, visible, onEnd, id, title, detail, action]);
   return null;
 }
 

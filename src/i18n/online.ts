@@ -44,7 +44,7 @@ export const onlineText = texts({
     findOpponent: "Procurar oponente",
     findOpponentHint: "Sem amigo agora? Jogue com alguém online, sem código.",
     searching: "Procurando oponente…",
-    searchingText: "Partida rápida 6×6, até 1 min por jogada.",
+    searchingText: "Partida rápida 6×6, por turnos.",
     found: "Oponente encontrado!",
     waitTime: "Tempo de espera:",
     getReady: "Prepare-se para o duelo!",
@@ -94,7 +94,8 @@ export const onlineText = texts({
       "Essa partida não existe mais. Crie outra e mande o código novo.",
     copyFailed: "Não deu para copiar. Anote o código acima.",
     callFriend: "Chame seu amigo",
-    sendCode: "Mande este código. A partida começa assim que ele entrar.",
+    sendCode:
+      "Mande este código. A partida começa quando ele entrar, mesmo mais tarde.",
     codeAria: (code: string) => `Código ${code}`,
     inviteCopied: "Convite copiado!",
     shareInvite: "Compartilhar convite",
@@ -108,7 +109,7 @@ export const onlineText = texts({
       `${name} saiu da partida. Você ganhou ${coins} moedas.`,
     matchEnded: "Partida encerrada",
     expired:
-      "A partida ficou parada por mais de um dia e foi encerrada. Ninguém ganhou nem perdeu.",
+      "Ninguém entrou na partida em 2 dias e ela foi encerrada. Ninguém ganhou nem perdeu.",
     rivalEnded: (name: string, min: number) =>
       `${name} encerrou a partida porque você ficou fora por mais de ${min} minutos.`,
     youLeft: "Você saiu desta partida.",
@@ -124,6 +125,29 @@ export const onlineText = texts({
     rivalOffline: (name: string) => `${name} está sem conexão…`,
     claimWin: (name: string, min: number) =>
       `${name} está sem conexão há mais de ${min} minutos. Encerrar a partida e ficar com a vitória?`,
+    // Duelo por turnos
+    waitingAsync:
+      "Pode fechar o jogo: a partida fica em Minhas partidas e você joga quando for sua vez.",
+    theirTurn: (name: string, hours: number) =>
+      `Vez de ${name}. Pode sair do jogo: ${name} tem até ${hours} h para jogar.`,
+    rivalTimedOut: (name: string, coins: number) =>
+      `${name} não jogou em 48 h. A vitória é sua: +${coins} moedas.`,
+    youTimedOut: (name: string) =>
+      `Você não jogou em 48 h e a vitória ficou com ${name}.`,
+    deadlineLabel: "Prazo por jogada:",
+    deadline: "48 h",
+    myMatches: "Minhas partidas",
+    yourTurn: "Sua vez!",
+    yourTurnVs: (name: string) => `Sua vez contra ${name}`,
+    yourTurnCount: (n: number) =>
+      n === 1 ? "É sua vez em 1 partida!" : `É sua vez em ${n} partidas!`,
+    theirTurnShort: (name: string, hours: number) =>
+      `Vez de ${name} · ${hours} h`,
+    waitingShort: (code: string) => `Esperando alguém entrar · ${code}`,
+    queued: "Na fila: esperando um oponente",
+    opponent: "Oponente",
+    endedShort: "Terminou · ver resultado",
+    play: "Jogar",
     // Perfil
     whoPlays: "Quem vai jogar?",
     profileAria: "Seu nome e avatar",
@@ -180,7 +204,7 @@ export const onlineText = texts({
     findOpponent: "Find an opponent",
     findOpponentHint: "No friend around? Play someone online, no code needed.",
     searching: "Looking for an opponent…",
-    searchingText: "Quick 6×6 match, up to 1 min per move.",
+    searchingText: "Quick 6×6 match, turn by turn.",
     found: "Opponent found!",
     waitTime: "Waiting:",
     getReady: "Get ready to duel!",
@@ -226,7 +250,7 @@ export const onlineText = texts({
       "This match doesn't exist anymore. Create a new one and send the new code.",
     copyFailed: "Couldn't copy. Write down the code above.",
     callFriend: "Invite your friend",
-    sendCode: "Send this code. The match starts as soon as they join.",
+    sendCode: "Send this code. The match starts when they join, even later on.",
     codeAria: (code) => `Code ${code}`,
     inviteCopied: "Invite copied!",
     shareInvite: "Share invite",
@@ -240,7 +264,7 @@ export const onlineText = texts({
       `${name} left the match. You won ${coins} coins.`,
     matchEnded: "Match over",
     expired:
-      "The match sat idle for over a day and was closed. Nobody won or lost.",
+      "Nobody joined the match in 2 days, so it was closed. Nobody won or lost.",
     rivalEnded: (name, min) =>
       `${name} ended the match because you were away for over ${min} minutes.`,
     youLeft: "You left this match.",
@@ -256,6 +280,29 @@ export const onlineText = texts({
     rivalOffline: (name) => `${name} is offline…`,
     claimWin: (name, min) =>
       `${name} has been offline for over ${min} minutes. End the match and take the win?`,
+    waitingAsync:
+      "You can close the game: the match stays in My matches and you play when it's your turn.",
+    theirTurn: (name, hours) =>
+      `${name}'s turn. You can leave the game: ${name} has up to ${hours} h to play.`,
+    rivalTimedOut: (name, coins) =>
+      `${name} didn't play within 48 h. The win is yours: +${coins} coins.`,
+    youTimedOut: (name) =>
+      `You didn't play within 48 h, so ${name} took the win.`,
+    deadlineLabel: "Time per move:",
+    deadline: "48 h",
+    myMatches: "My matches",
+    yourTurn: "Your turn!",
+    yourTurnVs: (name) => `Your turn against ${name}`,
+    yourTurnCount: (n) =>
+      n === 1
+        ? "It's your turn in 1 match!"
+        : `It's your turn in ${n} matches!`,
+    theirTurnShort: (name, hours) => `${name}'s turn · ${hours} h`,
+    waitingShort: (code) => `Waiting for someone to join · ${code}`,
+    queued: "In the queue: waiting for an opponent",
+    opponent: "Opponent",
+    endedShort: "Finished · see result",
+    play: "Play",
     whoPlays: "Who's playing?",
     profileAria: "Your name and avatar",
     profileHint: "Your friend will see this name and avatar in the match.",

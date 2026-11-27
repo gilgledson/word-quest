@@ -295,13 +295,21 @@ describe("tela de procurar oponente", () => {
     expect(await mem.as("x").lobby("pt")).toEqual([]);
   });
 
-  it("ninguém chegou: segue contra um oponente com cara de jogador, na tela do duelo ao vivo", async () => {
+  it("ninguém chegou em 20 s: o rival do jogo entra sozinho, com cara de jogador, na tela do duelo ao vivo", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     open();
     await waitFor(async () =>
       expect(await mem.as("x").lobby("pt")).toHaveLength(1),
     );
+    // O relógio da espera conta para cima (não é contagem regressiva).
+    expect(screen.getByRole("timer")).toHaveTextContent("00:00");
+    await act(async () => void vi.advanceTimersByTime(5_000));
+    await waitFor(() =>
+      expect(screen.getByRole("timer")).not.toHaveTextContent("00:00"),
+    );
     await act(async () => void vi.advanceTimersByTime(SEARCH_MS + 50));
+    // Sem ninguém de verdade, sem perguntar nada: segue contra o rival do jogo.
+    expect(screen.queryByRole("button", { name: /fila/i })).toBeNull();
     // A sala pública some do servidor; a partida fica só no aparelho.
     await waitFor(() => expect(mem.rooms.size).toBe(0));
     expect(await mem.as("x").lobby("pt")).toEqual([]);

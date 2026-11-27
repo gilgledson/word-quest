@@ -96,21 +96,90 @@ export const roomLang = (
   room: Pick<OnlineRoom, "lang"> | null | undefined,
 ): Lang => room?.lang ?? "pt";
 
-/** Sala parada (ninguém entrou ou ninguém jogou) há mais que isto é encerrada sozinha. */
-export const ROOM_EXPIRE_MS = 24 * 60 * 60 * 1000;
+/**
+ * Duelo por turnos: cada um joga quando puder (pode fechar o app no meio). Quem está na vez tem
+ * este prazo, contado da última jogada (ou da entrada do amigo); passou dele, perde a partida.
+ */
+export const TURN_DEADLINE_MS = 48 * 60 * 60 * 1000;
+/** Sala em que ninguém entrou há mais que isto é encerrada sozinha (sem vencedor). */
+export const ROOM_EXPIRE_MS = TURN_DEADLINE_MS;
 /** `endedBy` de uma sala encerrada por ficar parada: ninguém ganha nem perde. */
 export const ROOM_EXPIRED = "expirada";
+/** `endedBy` de uma partida em que quem estava na vez passou do prazo: o outro vence. */
+export const ROOM_TIMEOUT = "prazo";
 /** A partida ainda não acabou (esperando o amigo ou em jogo). */
 export const isLive = (room: Pick<OnlineRoom, "status"> | null | undefined) =>
   room?.status === "waiting" || room?.status === "playing";
-/** Sala ainda aberta, mas parada há mais que `ROOM_EXPIRE_MS`. Salas sem horário não expiram. */
+/**
+ * Sala esperando o amigo há mais que `ROOM_EXPIRE_MS` (ninguém entrou). Partida em jogo não expira:
+ * vale o prazo de quem está na vez (`timedOutUid`). Salas sem horário não expiram.
+ */
 export const isExpired = (
   room: Pick<OnlineRoom, "status" | "createdAt" | "updatedAt">,
   now = Date.now(),
 ) => {
   const last = room.updatedAt ?? room.createdAt;
-  return isLive(room) && last !== undefined && now - last > ROOM_EXPIRE_MS;
+  return (
+    room.status === "waiting" &&
+    last !== undefined &&
+    now - last > ROOM_EXPIRE_MS
+  );
 };
+/** Quem está na vez numa partida em jogo (uid); fora de jogo, ninguém. */
+export const turnUid = (
+  room: Pick<OnlineRoom, "status" | "state" | "host" | "guest">,
+) =>
+  room.status !== "playing"
+    ? undefined
+    : room.state.versus.turn === "p"
+      ? room.host.uid
+      : room.guest?.uid;
+/** Até quando (ms) quem está na vez pode jogar; fora de jogo (ou sala sem horário), sem prazo. */
+export const deadlineOf = (
+  room: Pick<OnlineRoom, "status" | "createdAt" | "updatedAt">,
+) => {
+  const last = room.updatedAt ?? room.createdAt;
+  return room.status === "playing" && last !== undefined
+    ? last + TURN_DEADLINE_MS
+    : undefined;
+};
+/** Quem perdeu a vez por passar do prazo (e com ela a partida), ou ninguém. */
+export const timedOutUid = (
+  room: Pick<
+    OnlineRoom,
+    "status" | "state" | "host" | "guest" | "createdAt" | "updatedAt"
+  >,
+  now = Date.now(),
+) => {
+  const deadline = deadlineOf(room);
+  return deadline !== undefined && now > deadline ? turnUid(room) : undefined;
+};
+/** Horas que ainda restam do prazo (arredondadas para cima, no mínimo 1). */
+export const hoursLeft = (
+  room: Pick<OnlineRoom, "status" | "createdAt" | "updatedAt">,
+  now = Date.now(),
+) => {
+  const deadline = deadlineOf(room);
+  return deadline === undefined
+    ? undefined
+    : Math.max(1, Math.ceil((deadline - now) / 3_600_000));
+};
+/** Como a partida está para este jogador, na lista "Minhas partidas". */
+export type MatchState = "yourTurn" | "theirTurn" | "waiting" | "ended";
+export const matchState = (
+  room: OnlineRoom,
+  uid: string,
+  now = Date.now(),
+): MatchState =>
+  room.status === "waiting"
+    ? isExpired(room, now)
+      ? "ended"
+      : "waiting"
+    : room.status !== "playing" || timedOutUid(room, now)
+      ? "ended"
+      : turnUid(room) === uid
+        ? "yourTurn"
+        : "theirTurn";
 /** A partida acabou porque o outro jogador saiu (e não por ficar parada): `uid` fica com a vitória. */
 export const wonByForfeitOf = (
   room: OnlineRoom | null | undefined,
@@ -212,6 +281,52 @@ export const cleanCode = (text: string) =>
     .replace(/[^A-Z0-9]/g, "")
     .slice(0, CODE_LENGTH);
 export const sessionKeyOf = (code: string) => `online:${code}`;
+
+/**
+ * Quem entra na sala joga primeiro: no duelo por turnos ele é quem está com o jogo aberto agora
+ * (quem criou a sala pode ter saído do app enquanto esperava). Só antes da primeira jogada.
+ */
+export const guestStarts = (state: Session): Session =>
+  state.versus.rngCount > 0
+    ? state
+    : { ...state, versus: { ...state.versus, turn: "ai" } };
+
+/** Quantas partidas ao vivo o jogador acompanha ao mesmo tempo ("Minhas partidas"). */
+export const MATCHES_MAX = 12;
+interface WithMatches {
+  onlineMatches?: string[];
+  activeOnline?: string;
+  botRooms?: Record<string, unknown>;
+}
+/**
+ * Partidas ao vivo (no servidor) que o jogador acompanha, da mais recente para a mais antiga. A marca
+ * antiga `activeOnline` (uma partida só) entra também, se for de uma sala do servidor.
+ */
+export const matchCodes = (p: WithMatches) => {
+  const legacy =
+    p.activeOnline && !p.botRooms?.[p.activeOnline] ? [p.activeOnline] : [];
+  return [...new Set([...(p.onlineMatches ?? []), ...legacy])];
+};
+/** O jogador passa a acompanhar a partida (vai para o topo da lista). */
+export const withMatch = <P extends WithMatches>(p: P, code: string): P =>
+  p.onlineMatches?.[0] === code
+    ? p
+    : {
+        ...p,
+        onlineMatches: [
+          code,
+          ...(p.onlineMatches ?? []).filter((c) => c !== code),
+        ].slice(0, MATCHES_MAX),
+      };
+/** A partida sai da lista (acabou e o jogador já viu, ou a sala sumiu). */
+export const withoutMatch = <P extends WithMatches>(p: P, code: string): P =>
+  !p.onlineMatches?.includes(code) && p.activeOnline !== code
+    ? p
+    : {
+        ...p,
+        onlineMatches: (p.onlineMatches ?? []).filter((c) => c !== code),
+        activeOnline: p.activeOnline === code ? undefined : p.activeOnline,
+      };
 
 /** Partida nova: a mesma do duelo, sem o curinga (só um dos dois o receberia). */
 export function startOnline(

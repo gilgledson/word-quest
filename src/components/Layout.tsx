@@ -2,6 +2,9 @@ import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
 import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
 import { ResumeMatchToast } from "./ResumeMatchToast";
+import { MatchesWatcher, useMatchItems } from "../features/myMatches";
+import { rivalProfile } from "../game/online";
+import { onlineText as onlineT } from "../i18n/online";
 import {
   endOnlineMatch,
   useActiveOnlineCheck,
@@ -74,6 +77,12 @@ export function Layout() {
     activeOnline,
     !!activeOnline && pathname === `/online/${activeOnline}`,
   );
+  // Duelo por turnos em que é a vez do jogador: "Sua vez!" com atalho, fora das telas do duelo
+  // (lá a lista "Minhas partidas" já mostra, e o aviso cobriria a sala e a procura).
+  const turns = useMatchItems();
+  const myTurn = pathname.startsWith("/online")
+    ? undefined
+    : turns.find((m) => m.state === "yourTurn");
   const home = pathname === "/";
   const playing = isPlayPath(pathname);
   const map = pathname.startsWith("/map");
@@ -115,14 +124,23 @@ export function Layout() {
           </Link>
         )}
       </header>
+      <MatchesWatcher />
       <ResumeMatchToast
         code={activeOnline}
         visible={!playing && !map}
         onEnd={endOnlineMatch}
       />
+      <ResumeMatchToast
+        id="sua-vez"
+        code={myTurn?.code}
+        visible={!playing && !map}
+        title={onlineT.yourTurn}
+        detail={onlineT.yourTurnVs(rivalProfile(myTurn?.rival).name)}
+        action={onlineT.play}
+      />
       {/* Só na tela inicial (nas outras cobriria o título); o aviso de partida em andamento ocupa
           o mesmo lugar, então um de cada vez. */}
-      <WebAppBar visible={home && !activeOnline} />
+      <WebAppBar visible={home && !activeOnline && !myTurn} />
       {error && (
         <p role="alert" className="error">
           {error}

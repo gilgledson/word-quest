@@ -38,7 +38,13 @@ import {
   inviteReward,
   isExpired,
   isLive,
+  hoursLeft,
   ROOM_EXPIRED,
+  ROOM_TIMEOUT,
+  timedOutUid,
+  turnUid,
+  withMatch,
+  withoutMatch,
   wonByForfeitOf,
   BET_OPTIONS,
   BOARD_SIZES,
@@ -48,7 +54,6 @@ import {
   themeSizes,
   type BoardSize,
   NO_RULES,
-  TURN_OPTIONS,
   turnLabel,
   newCode,
   roomPuzzle,
@@ -74,6 +79,7 @@ import {
 } from "../services/online";
 import { usePlayer } from "../stores/player";
 import { Duel } from "./PuzzlePage";
+import { useMatchItems, type MatchItem } from "./myMatches";
 import { copyText, shareText } from "../services/share";
 import { track } from "../services/telemetry";
 import { OpponentAvatar } from "../components/OpponentAvatar";
@@ -187,6 +193,7 @@ export function OnlineLobby() {
         <span className="eyebrow">{T.eyebrow}</span>
         <h1>{T.playWithFriend}</h1>
       </div>
+      <MyMatches />
       <section className="online-card online-quick" aria-label={T.findOpponent}>
         <button
           type="button"
@@ -336,6 +343,61 @@ export function OnlineLobby() {
   );
 }
 
+/** "Minhas partidas": os duelos por turnos do jogador, a vez dele primeiro. */
+function MyMatches() {
+  const items = useMatchItems();
+  if (!items.length) return null;
+  const label = ({ room, state, rival, code }: MatchItem) =>
+    state === "yourTurn"
+      ? T.yourTurn
+      : state === "theirTurn"
+        ? T.theirTurnShort(rivalProfile(rival).name, hoursLeft(room) ?? 48)
+        : state === "waiting"
+          ? roomSource(room) === "busca"
+            ? T.queued
+            : T.waitingShort(code)
+          : T.endedShort;
+  return (
+    <section
+      className="online-card online-matches"
+      aria-labelledby="my-matches-title"
+    >
+      <h2 id="my-matches-title">{T.myMatches}</h2>
+      <ul>
+        {items.map((m) => (
+          <li key={m.code}>
+            <Link
+              className={`online-match ${m.state}`}
+              to={`/online/${m.code}`}
+            >
+              {m.rival ? (
+                <OpponentAvatar opponent={avatarOf(m.rival.avatar)} size={40} />
+              ) : (
+                <em className="online-match-unknown" aria-hidden="true">
+                  ?
+                </em>
+              )}
+              <span>
+                <b>
+                  {m.rival
+                    ? rivalProfile(m.rival).name
+                    : roomSource(m.room) === "busca"
+                      ? T.opponent
+                      : T.yourFriend}
+                </b>
+                <small>{label(m)}</small>
+              </span>
+              {m.state === "yourTurn" && (
+                <i className="online-match-play">{T.play}</i>
+              )}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 type Loaded =
   | { kind: "loading" }
   | { kind: "error"; text: string }
@@ -369,10 +431,17 @@ function RulesSummary({
           {T.langLabel} <b>{T.langName[clues]}</b>
         </li>
       )}
-      <li>
-        <Timer size={16} aria-hidden="true" /> {T.turnLabel}{" "}
-        <b>{turnLabel(rules.turnSeconds)}</b>
-      </li>
+      {rules.turnSeconds ? (
+        <li>
+          <Timer size={16} aria-hidden="true" /> {T.turnLabel}{" "}
+          <b>{turnLabel(rules.turnSeconds)}</b>
+        </li>
+      ) : (
+        <li>
+          <Timer size={16} aria-hidden="true" /> {T.deadlineLabel}{" "}
+          <b>{T.deadline}</b>
+        </li>
+      )}
       <li>
         <CoinIcon size={16} /> {T.betLabel}{" "}
         <b>{rules.bet ? T.betCoins(rules.bet) : T.noBet}</b>
@@ -447,7 +516,8 @@ export function OnlineSetup() {
   const theme = themeFits ? chosenTheme : SURPRISE_THEME;
   const themeName =
     onlineThemes().find((t) => t.id === theme)?.nome ?? T.surprise;
-  const [turnSeconds, setTurnSeconds] = useState(0);
+  // Por turnos: sem relógio por jogada (vale o prazo de 48 h, igual para todas as salas).
+  const turnSeconds = 0;
   const [bet, setBet] = useState(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -520,13 +590,6 @@ export function OnlineSetup() {
         </p>
         <BoardSizePicker value={board} onChange={setBoard} />
         <Choices
-          title={T.turnTime}
-          options={TURN_OPTIONS}
-          value={turnSeconds}
-          label={(v) => (v ? turnLabel(v) : T.free)}
-          onChange={setTurnSeconds}
-        />
-        <Choices
           title={T.bet}
           options={BET_OPTIONS}
           value={bet}
@@ -573,7 +636,6 @@ function LiveMatch({ code }: { code: string }) {
   const { player, update } = usePlayer();
   const [conn, setConn] = useState<Loaded>({ kind: "loading" });
   const [room, setRoom] = useState<OnlineRoom | null | undefined>(undefined);
-  const [online, setOnline] = useState<string[]>([]);
   const [copied, setCopied] = useState("");
   const me = useRef(player);
   me.current = player;
@@ -604,16 +666,8 @@ function LiveMatch({ code }: { code: string }) {
           return;
         }
         setConn({ kind: "ready", backend, uid });
-        const stopRoom = backend.watch(code, (r) => alive && setRoom(r));
-        const stopPresence = backend.presence(
-          code,
-          uid,
-          (uids) => alive && setOnline(uids),
-        );
-        stop = () => {
-          stopRoom();
-          stopPresence();
-        };
+        // Por turnos: ninguém precisa estar conectado ao mesmo tempo (sem presença), vale o prazo.
+        stop = backend.watch(code, (r) => alive && setRoom(r));
       } catch (e) {
         if (alive) setConn({ kind: "error", text: onlineErrorText(e) });
       }
@@ -637,19 +691,21 @@ function LiveMatch({ code }: { code: string }) {
   const stored = player.sessions[sessionKey];
   const rival = room && role ? rivalSeat(room, role) : undefined;
 
-  // O amigo sumiu? Depois de um tempo sem conexão, quem ficou pode encerrar a partida.
-  const rivalOnline = !!rival && online.includes(rival.uid);
-  const [rivalGone, setRivalGone] = useState(false);
+  // Quem estava na vez passou do prazo: a partida acaba e o outro vence (qualquer um dos dois grava).
+  const timedOut = room ? timedOutUid(room) : undefined;
   useEffect(() => {
-    setRivalGone(false);
-    if (rivalOnline || room?.status !== "playing") return;
-    const t = window.setTimeout(() => setRivalGone(true), RIVAL_OFFLINE_MS);
-    return () => window.clearTimeout(t);
-  }, [rivalOnline, room?.status]);
+    if (!timedOut || !backend) return;
+    track("online_timeout", { mine: timedOut === uid });
+    void backend.abandon(code, timedOut, ROOM_TIMEOUT).catch(() => {});
+  }, [timedOut, backend, code, uid]);
 
   // Uma vez confirmada aqui que não chegou ao servidor (queda de rede) é enviada de novo.
   const send = (next: Session) => {
     if (!backend || !room || !role) return;
+    track("online_turn_sent", {
+      rev: next.versus.rngCount,
+      match_source: roomSource(room),
+    });
     void backend
       .play({
         ...room,
@@ -667,16 +723,17 @@ function LiveMatch({ code }: { code: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingRev, room?.rev, room?.status]);
 
-  // Partida em andamento fica marcada no jogador: o aviso no topo oferece voltar a ela. Sala que
-  // sumiu ou acabou deixa de ser marcada (senão o aviso não sai mais da tela).
+  // Partida em andamento entra em "Minhas partidas" (e o jogador recebe o aviso quando for a vez
+  // dele). Acabou (e o jogador está vendo o resultado aqui) ou não é dele: sai da lista.
   const live = isLive(room);
   useEffect(() => {
     if (room === undefined) return;
-    const active = usePlayer.getState().player.activeOnline;
-    if (live && role && active !== code)
-      update((p) => ({ ...p, activeOnline: code }));
-    if ((!live || !role) && active === code)
-      update((p) => ({ ...p, activeOnline: undefined }));
+    const p = usePlayer.getState().player;
+    const listed = p.onlineMatches?.includes(code);
+    if (live && role && (!listed || p.activeOnline === code))
+      update((q) => withMatch({ ...q, activeOnline: undefined }, code));
+    if ((!live || !role) && (listed || p.activeOnline === code))
+      update((q) => withoutMatch(q, code));
   }, [live, role, room, code, update]);
 
   // Sala parada há muito tempo (ninguém entrou ou ninguém joga): encerra sem vencedor.
@@ -791,6 +848,7 @@ function LiveMatch({ code }: { code: string }) {
       T.callFriend,
       T.sendCode,
       <>
+        <p className="online-hint">{T.waitingAsync}</p>
         <output className="online-code" aria-label={T.codeAria(code)}>
           {code}
         </output>
@@ -844,18 +902,22 @@ function LiveMatch({ code }: { code: string }) {
     return wonByForfeit
       ? heading(
           T.victory,
-          T.rivalLeft(rivalProfile(rival).name, economy.duel.win),
+          room.endedBy === ROOM_TIMEOUT
+            ? T.rivalTimedOut(rivalProfile(rival).name, economy.duel.win)
+            : T.rivalLeft(rivalProfile(rival).name, economy.duel.win),
         )
       : heading(
           T.matchEnded,
           room.endedBy === ROOM_EXPIRED
             ? T.expired
-            : room.endedBy && room.endedBy !== uid
-              ? T.rivalEnded(
-                  rivalProfile(rival).name,
-                  RIVAL_OFFLINE_MS / 60_000,
-                )
-              : T.youLeft,
+            : room.endedBy === ROOM_TIMEOUT
+              ? T.youTimedOut(rivalProfile(rival).name)
+              : room.endedBy && room.endedBy !== uid
+                ? T.rivalEnded(
+                    rivalProfile(rival).name,
+                    RIVAL_OFFLINE_MS / 60_000,
+                  )
+                : T.youLeft,
         );
 
   return (
@@ -910,36 +972,10 @@ function LiveMatch({ code }: { code: string }) {
           onTurn: send,
           source: roomSource(room),
           turnSeconds: room.rules?.turnSeconds,
-          leaveWarning:
-            room.status === "playing"
-              ? T.leaveWarning(
-                  code,
-                  RIVAL_OFFLINE_MS / 60_000,
-                  rivalProfile(rival).name,
-                )
-              : undefined,
+          // Por turnos: na vez do amigo, quanto tempo ele ainda tem (e que dá para sair do app).
           notice:
-            room.status === "playing" && !rivalOnline
-              ? rivalGone
-                ? T.rivalOfflineTap(rivalProfile(rival).name)
-                : T.rivalOffline(rivalProfile(rival).name)
-              : undefined,
-          // O amigo sem conexão aparece só no rosto dele, no placar (a faixa no topo empurrava o
-          // banco e os botões para fora da tela).
-          rivalOffline: room.status === "playing" && !rivalOnline,
-          onClaimWin:
-            room.status === "playing" && !rivalOnline && rivalGone && rival
-              ? () => {
-                  if (
-                    window.confirm(
-                      T.claimWin(
-                        rivalProfile(rival).name,
-                        RIVAL_OFFLINE_MS / 60_000,
-                      ),
-                    )
-                  )
-                    void backend.abandon(code, rival.uid, uid);
-                }
+            room.status === "playing" && turnUid(room) !== uid
+              ? T.theirTurn(rivalProfile(rival).name, hoursLeft(room) ?? 48)
               : undefined,
         }}
       />
@@ -1111,6 +1147,7 @@ export function OnlineSearch() {
             }, SEARCH_POLL_MS),
           );
         poll();
+        // Ninguém de verdade em `SEARCH_MS`: o rival do jogo entra sozinho (sem perguntar).
         timers.push(
           window.setTimeout(async () => {
             if (!alive) return;
