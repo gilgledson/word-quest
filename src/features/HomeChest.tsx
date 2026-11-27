@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { ChestReward } from "../components/ChestReward";
 import { chestPrize, chestsReady, wordsToNextChest } from "../game/chest";
+import { levels } from "../data/catalog";
+import { askReviewIfGood } from "../services/review";
 import { usePlayer } from "../stores/player";
 import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
@@ -49,6 +51,18 @@ export function HomeChest({ words }: { words: number }) {
     buzz(player.vibration, "win");
     setPrize(coins);
   };
+  // Ao fechar a janela do baú (momento feliz), pede a nota na loja se for a hora (ver review.ts).
+  const close = () => {
+    setPrize(null);
+    const p = usePlayer.getState().player;
+    const wins = levels.filter((l) => p.stars[l.id]).length;
+    askReviewIfGood(
+      p,
+      wins,
+      (reviewAsks) => update((q) => ({ ...q, reviewAsks })),
+      "chest",
+    );
+  };
   return (
     <>
       <button
@@ -63,8 +77,8 @@ export function HomeChest({ words }: { words: number }) {
       {prize !== null && (
         <div
           className="swap-backdrop chest-backdrop"
-          onClick={() => setPrize(null)}
-          onKeyDown={(e) => e.key === "Escape" && setPrize(null)}
+          onClick={close}
+          onKeyDown={(e) => e.key === "Escape" && close()}
         >
           <div
             className="swap-dialog chest-dialog"
@@ -78,7 +92,7 @@ export function HomeChest({ words }: { words: number }) {
               type="button"
               className="button primary"
               autoFocus
-              onClick={() => setPrize(null)}
+              onClick={close}
             >
               {t.continue}
             </button>
