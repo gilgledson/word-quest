@@ -10,15 +10,22 @@ import { PLAYER_AVATARS } from "./avatars";
 import type { Puzzle } from "./crossword-engine";
 import type { BoardSize, OnlineSeat, RoomRules } from "./online";
 
-/** Quanto tempo a procura espera outro jogador antes de cair no rival do jogo. */
-export const SEARCH_MS = 20_000;
+/**
+ * Quanto tempo a procura espera alguém de verdade antes de o rival do jogo entrar sozinho: sorteado
+ * a cada procura entre o mínimo e o máximo (mais chance de achar uma pessoa, e a espera não fica
+ * sempre igual).
+ */
+export const SEARCH_MIN_MS = 20_000;
+export const SEARCH_MAX_MS = 50_000;
+export const searchWait = (rand: () => number = Math.random) =>
+  SEARCH_MIN_MS + Math.round(rand() * (SEARCH_MAX_MS - SEARCH_MIN_MS));
 /** De quanto em quanto tempo quem espera confere se apareceu uma sala mais antiga que a sua. */
 export const SEARCH_POLL_MS = 3_000;
 /** Sala pública mais velha que isto já foi esquecida por quem abriu (app fechado no meio). */
 export const LOBBY_FRESH_MS = 60_000;
-/** Partida rápida: o menor tabuleiro e tempo por jogada (um estranho não pode travar a partida). */
+/** Partida rápida: o menor tabuleiro, por turnos (sem relógio por jogada: vale o prazo de 48 h). */
 export const MATCH_BOARD: BoardSize = "6x6";
-export const MATCH_RULES: RoomRules = { turnSeconds: 60, bet: 0 };
+export const MATCH_RULES: RoomRules = { turnSeconds: 0, bet: 0 };
 
 /** Uma sala pública esperando oponente (`lobby/<idioma>/<código>` no servidor). */
 export interface LobbyEntry {

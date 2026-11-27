@@ -993,3 +993,6 @@
     height: 3px;
   }
 }
+.duel-card-text small.duel-card-turn {
+  color: #124fb5;
+}

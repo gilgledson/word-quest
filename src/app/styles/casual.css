@@ -980,3 +980,69 @@ a.campaign-start {
     animation: none !important;
   }
 }
+
+/* "Minhas partidas" (duelo por turnos): a vez do jogador em destaque. */
+.online-matches h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.online-matches ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.online-match {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 2px #f0e2b8;
+  color: #12264a;
+  text-decoration: none;
+}
+.online-match > span {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+.online-match b,
+.online-match small {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.online-match small {
+  color: #45525c;
+  font-size: 13px;
+}
+.online-match.yourTurn {
+  background: #eaf5ff;
+  box-shadow: inset 0 0 0 2px #1c5fc4;
+}
+.online-match.yourTurn small {
+  color: #124fb5;
+  font-weight: 800;
+}
+.online-match-unknown {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f0e2b8;
+  font-style: normal;
+  font-weight: 900;
+}
+.online-match-play {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #1c5fc4;
+  color: #fff;
+  font-style: normal;
+  font-weight: 800;
+}

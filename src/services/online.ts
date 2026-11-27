@@ -6,6 +6,7 @@
  */
 import {
   ROOM_EXPIRED,
+  guestStarts,
   isLive,
   type OnlineRoom,
   type OnlineSeat,
@@ -130,6 +131,7 @@ export function memoryBackend() {
         if (room.status !== "waiting") return { ok: false, reason: "over" };
         room.guest = copy(me);
         room.status = "playing";
+        room.state = guestStarts(room.state);
         room.updatedAt = Date.now();
         tell(code);
       }

@@ -12,7 +12,9 @@ import {
   AVATAR_GENDER,
   LOBBY_FRESH_MS,
   MATCH_RULES,
-  SEARCH_MS,
+  SEARCH_MAX_MS,
+  SEARCH_MIN_MS,
+  searchWait,
   fakeSeat,
   humanThinkMs,
   oldBotRooms,
@@ -157,6 +159,20 @@ describe("procura de oponente: regras", () => {
   });
 });
 
+describe("espera da procura", () => {
+  it("sorteada entre 20 e 50 s", () => {
+    expect(searchWait(() => 0)).toBe(SEARCH_MIN_MS);
+    expect(searchWait(() => 1)).toBe(SEARCH_MAX_MS);
+    expect(SEARCH_MIN_MS).toBe(20_000);
+    expect(SEARCH_MAX_MS).toBe(50_000);
+    for (let i = 0; i < 50; i++) {
+      const ms = searchWait();
+      expect(ms).toBeGreaterThanOrEqual(20_000);
+      expect(ms).toBeLessThanOrEqual(50_000);
+    }
+  });
+});
+
 describe("tela de procurar oponente", () => {
   let mem: ReturnType<typeof memoryBackend>;
   beforeEach(() => {
@@ -295,13 +311,21 @@ describe("tela de procurar oponente", () => {
     expect(await mem.as("x").lobby("pt")).toEqual([]);
   });
 
-  it("ninguém chegou: segue contra um oponente com cara de jogador, na tela do duelo ao vivo", async () => {
+  it("ninguém chegou em 20 s: o rival do jogo entra sozinho, com cara de jogador, na tela do duelo ao vivo", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     open();
     await waitFor(async () =>
       expect(await mem.as("x").lobby("pt")).toHaveLength(1),
     );
-    await act(async () => void vi.advanceTimersByTime(SEARCH_MS + 50));
+    // O relógio da espera conta para cima (não é contagem regressiva).
+    expect(screen.getByRole("timer")).toHaveTextContent("00:00");
+    await act(async () => void vi.advanceTimersByTime(5_000));
+    await waitFor(() =>
+      expect(screen.getByRole("timer")).not.toHaveTextContent("00:00"),
+    );
+    await act(async () => void vi.advanceTimersByTime(SEARCH_MAX_MS + 50));
+    // Sem ninguém de verdade, sem perguntar nada: segue contra o rival do jogo.
+    expect(screen.queryByRole("button", { name: /fila/i })).toBeNull();
     // A sala pública some do servidor; a partida fica só no aparelho.
     await waitFor(() => expect(mem.rooms.size).toBe(0));
     expect(await mem.as("x").lobby("pt")).toEqual([]);

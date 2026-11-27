@@ -40,9 +40,20 @@ import {
   wonByForfeitOf,
   ROOM_EXPIRE_MS,
   ROOM_EXPIRED,
+  ROOM_TIMEOUT,
+  TURN_DEADLINE_MS,
+  guestStarts,
+  hoursLeft,
+  matchCodes,
+  matchState,
+  timedOutUid,
+  turnUid,
+  withMatch,
+  withoutMatch,
   type OnlineRoom,
 } from "../game/online";
 import { memoryBackend, setOnlineBackend } from "../services/online";
+import { MatchesWatcher, useMatches } from "../features/myMatches";
 import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 import {
@@ -165,6 +176,72 @@ describe("regras do duelo ao vivo", () => {
   });
 });
 
+describe("duelo por turnos: prazo, vez e lista", () => {
+  const base = (over: Partial<OnlineRoom> = {}): OnlineRoom => ({
+    code: "ABC234",
+    puzzleId: puzzle.id,
+    host: { uid: "eu", name: "Gil", avatar: "jogador" },
+    guest: { uid: "bia", name: "Bia", avatar: "panda" },
+    status: "playing",
+    rev: 0,
+    state: guestStarts(startOnline(puzzle.id, "semente")),
+    createdAt: 1_000,
+    updatedAt: 1_000,
+    ...over,
+  });
+  it("quem entra joga primeiro, só antes da primeira jogada", () => {
+    const s = startOnline(puzzle.id, "semente");
+    expect(guestStarts(s).versus.turn).toBe("ai");
+    const later = {
+      ...s,
+      versus: { ...s.versus, rngCount: 3, turn: "p" as const },
+    };
+    expect(guestStarts(later)).toBe(later);
+  });
+  it("48 h para jogar: passou, quem estava na vez perde", () => {
+    const room = base();
+    expect(turnUid(room)).toBe("bia");
+    expect(timedOutUid(room, 1_000 + TURN_DEADLINE_MS)).toBeUndefined();
+    expect(timedOutUid(room, 1_001 + TURN_DEADLINE_MS)).toBe("bia");
+    expect(hoursLeft(room, 1_000)).toBe(48);
+    expect(hoursLeft(room, 1_000 + TURN_DEADLINE_MS - 60_000)).toBe(1);
+    // Partida em jogo não expira sem vencedor; só a sala em que ninguém entrou.
+    expect(isExpired(room, 1_001 + TURN_DEADLINE_MS)).toBe(false);
+    expect(
+      isExpired(
+        base({ status: "waiting", guest: undefined }),
+        1_001 + ROOM_EXPIRE_MS,
+      ),
+    ).toBe(true);
+  });
+  it("estado na lista: vez de quem, esperando ou terminada", () => {
+    expect(matchState(base(), "bia", 2_000)).toBe("yourTurn");
+    expect(matchState(base(), "eu", 2_000)).toBe("theirTurn");
+    expect(
+      matchState(base({ status: "waiting", guest: undefined }), "eu", 2_000),
+    ).toBe("waiting");
+    expect(matchState(base({ status: "finished" }), "eu", 2_000)).toBe("ended");
+    expect(matchState(base(), "eu", 2_000 + TURN_DEADLINE_MS)).toBe("ended");
+  });
+  it("lista de partidas: a mais recente no topo, sem repetir, e a marca antiga entra", () => {
+    let p = {
+      onlineMatches: ["A"],
+      activeOnline: undefined as string | undefined,
+    };
+    p = withMatch(p, "B");
+    expect(p.onlineMatches).toEqual(["B", "A"]);
+    p = withMatch(p, "A");
+    expect(p.onlineMatches).toEqual(["A", "B"]);
+    expect(withoutMatch(p, "A").onlineMatches).toEqual(["B"]);
+    expect(matchCodes({ onlineMatches: ["A"], activeOnline: "C" })).toEqual([
+      "A",
+      "C",
+    ]);
+    // Partida contra o rival do jogo fica no aparelho, fora da lista do servidor.
+    expect(matchCodes({ activeOnline: "C", botRooms: { C: {} } })).toEqual([]);
+  });
+});
+
 describe("servidor em memória", () => {
   const room = (): OnlineRoom => ({
     code: "ABC234",
@@ -245,6 +322,7 @@ describe("telas do duelo ao vivo", () => {
   let mem: ReturnType<typeof memoryBackend>;
   beforeEach(() => {
     mem = memoryBackend();
+    useMatches.setState({ rooms: {}, uid: undefined });
     setOnlineBackend(mem.as("host"));
     // Sorteio fixo: a sala criada pela tela usa sempre a primeira grade.
     vi.spyOn(Math, "random").mockReturnValue(0);
@@ -269,6 +347,7 @@ describe("telas do duelo ao vivo", () => {
   const open = (path = "/online") =>
     render(
       <MemoryRouter initialEntries={[path]}>
+        <MatchesWatcher />
         <Routes>
           <Route path="online" element={<OnlineLobby />} />
           <Route path="online/nova" element={<OnlineSetup />} />
@@ -415,17 +494,38 @@ describe("telas do duelo ao vivo", () => {
     expect(writeText).toHaveBeenLastCalledWith(code);
   });
 
-  it("quando o amigo entra a partida começa, e as jogadas vão e voltam", async () => {
+  it("quando o amigo entra a partida começa (ele joga primeiro), e as jogadas vão e voltam", async () => {
     const code = await createRoom();
     await act(async () => {
       await mem.as("guest").join(code, bia);
     });
     await screen.findByRole("heading", { name: "Contra Bia" });
     expect(screen.getByText("DUELO AO VIVO")).toBeInTheDocument();
+    // Por turnos: quem entra joga primeiro, e quem espera pode sair do jogo.
+    expect(screen.getByText("VEZ DE BIA")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Pode sair do jogo: Bia tem até 48 h/),
+    ).toBeInTheDocument();
+    expect(usePlayer.getState().player.onlineMatches).toEqual([code]);
+
+    // Vez do convidado, direto no servidor: a tela do host mostra a jogada dele.
+    const start = mem.rooms.get(code)!;
+    const theirs = playOne(toView(start.state, "guest"));
+    await act(async () => {
+      await mem.as("guest").play({
+        ...start,
+        rev: 1,
+        state: toShared(theirs.next, "guest"),
+      });
+    });
+    // A jogada de Bia chega e a vez passa para o anfitrião.
+    await waitFor(() => expect(screen.queryByText("VEZ DE BIA")).toBeNull());
+    expect(
+      document.querySelector(`[data-cell="${theirs.cell}"]`)!,
+    ).toHaveTextContent(theirs.letter);
 
     // Vez do host: coloca uma letra certa e confirma pela tela.
-    const start = mem.rooms.get(code)!.state;
-    const mine = playOne(start);
+    const mine = playOne(mem.rooms.get(code)!.state);
     fireEvent.click(
       document.querySelector(`[aria-label^="Pista: ${mine.word.clue},"]`)!,
     );
@@ -436,30 +536,12 @@ describe("telas do duelo ao vivo", () => {
       })[0],
     );
     fireEvent.click(screen.getByRole("button", { name: /^Confirmar/ }));
-    await waitFor(() => expect(mem.rooms.get(code)!.rev).toBe(1));
+    await waitFor(() => expect(mem.rooms.get(code)!.rev).toBe(2));
     const afterHost = mem.rooms.get(code)!;
     expect(afterHost.state.versus.turn).toBe("ai");
     expect(afterHost.state.owners[mine.cell]).toBe("p");
     expect(screen.getByText("VEZ DE BIA")).toBeInTheDocument();
-
-    // Vez do convidado, direto no servidor: a tela do host mostra a jogada dele.
-    const theirs = playOne(toView(afterHost.state, "guest"));
-    await act(async () => {
-      await mem.as("guest").play({
-        ...afterHost,
-        rev: 2,
-        state: toShared(theirs.next, "guest"),
-      });
-    });
-    await waitFor(() =>
-      expect(screen.getByText(/Bia confirmou 1 letra/)).toBeInTheDocument(),
-    );
-    const local = usePlayer.getState().player.sessions[sessionKeyOf(code)];
-    expect(local.versus.turn).toBe("p");
-    expect(local.owners[theirs.cell]).toBe("ai");
-    expect(local.scores.ai).toBe(theirs.next.scores.p);
   });
-
   it("entrar com um código errado avisa, e com o certo abre a partida", async () => {
     await mem.as("amigo").create({
       code: "ABC234",
@@ -481,8 +563,9 @@ describe("telas do duelo ao vivo", () => {
     fireEvent.click(screen.getByRole("button", { name: "Entrar" }));
     await screen.findByRole("heading", { name: "Contra Bia" });
     expect(mem.rooms.get("ABC234")!.guest?.name).toBe("Gil");
-    // O convidado espera: a primeira vez é de quem criou.
-    expect(screen.getByText("VEZ DE BIA")).toBeInTheDocument();
+    // Por turnos: quem entra joga primeiro (quem criou pode nem estar com o jogo aberto).
+    expect(mem.rooms.get("ABC234")!.state.versus.turn).toBe("ai");
+    expect(screen.queryByText("VEZ DE BIA")).toBeNull();
   });
 
   it("se o amigo abandona, quem ficou vence e recebe as moedas uma vez só", async () => {
@@ -500,12 +583,9 @@ describe("telas do duelo ao vivo", () => {
     expect(usePlayer.getState().player.duels[sessionKeyOf(code)]).toBe("win");
   });
 
-  it("sala parada há mais de um dia é encerrada ao abrir, sem vitória para ninguém", async () => {
+  it("sala em que ninguém entrou em 2 dias é encerrada ao abrir, sem vitória para ninguém", async () => {
+    expect(ROOM_EXPIRE_MS).toBe(TURN_DEADLINE_MS);
     const code = await createRoom();
-    await act(async () => {
-      await mem.as("guest").join(code, bia);
-    });
-    await screen.findByRole("heading", { name: "Contra Bia" });
     cleanup();
     const old = Date.now() - ROOM_EXPIRE_MS - 1000;
     mem.rooms.set(code, {
@@ -517,11 +597,48 @@ describe("telas do duelo ao vivo", () => {
     open(`/online/${code}`);
     await screen.findByRole("heading", { name: "Partida encerrada" });
     expect(
-      screen.getByText(/ficou parada por mais de um dia/),
+      screen.getByText(/Ninguém entrou na partida em 2 dias/),
     ).toBeInTheDocument();
     expect(mem.rooms.get(code)!.endedBy).toBe(ROOM_EXPIRED);
     expect(usePlayer.getState().player.coins).toBe(before);
-    expect(usePlayer.getState().player.activeOnline).toBeUndefined();
+    expect(usePlayer.getState().player.onlineMatches ?? []).toEqual([]);
+  });
+  it("prazo: quem não joga em 48 h perde, e quem esperou vence com as moedas", async () => {
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    await screen.findByRole("heading", { name: "Contra Bia" });
+    cleanup();
+    // A vez é de Bia (quem entrou) e ela ficou mais de 48 h sem jogar.
+    const old = Date.now() - TURN_DEADLINE_MS - 1000;
+    mem.rooms.set(code, { ...mem.rooms.get(code)!, updatedAt: old });
+    const before = usePlayer.getState().player.coins;
+    open(`/online/${code}`);
+    await screen.findByRole("heading", { name: "Vitória!" });
+    expect(screen.getByText(/Bia não jogou em 48 h/)).toBeInTheDocument();
+    expect(mem.rooms.get(code)!.endedBy).toBe(ROOM_TIMEOUT);
+    expect(mem.rooms.get(code)!.left).toBe("guest");
+    expect(usePlayer.getState().player.coins).toBe(before + economy.duel.win);
+  });
+  it("prazo: quem estava na vez e passou de 48 h vê que perdeu", async () => {
+    const code = await createRoom();
+    await act(async () => {
+      await mem.as("guest").join(code, bia);
+    });
+    const room = mem.rooms.get(code)!;
+    // Vira a vez para o anfitrião (Gil) e deixa passar o prazo.
+    mem.rooms.set(code, {
+      ...room,
+      state: { ...room.state, versus: { ...room.state.versus, turn: "p" } },
+      updatedAt: Date.now() - TURN_DEADLINE_MS - 1000,
+    });
+    cleanup();
+    open(`/online/${code}`);
+    await screen.findByRole("heading", { name: "Partida encerrada" });
+    expect(
+      screen.getByText("Você não jogou em 48 h e a vitória ficou com Bia."),
+    ).toBeInTheDocument();
   });
   it("partida terminada com um amigo novo rende moedas de convite a quem criou a sala, uma vez por amigo", async () => {
     const code = await createRoom();
@@ -547,59 +664,32 @@ describe("telas do duelo ao vivo", () => {
     expect(after.coins).toBe(before + economy.invite);
     expect(after.invitedFriends).toEqual(["guest"]);
   });
-  it("sair sem querer: a seta pergunta antes, e a partida segue marcada para voltar", async () => {
+  it("sair no meio é normal: a seta não pergunta e a partida fica em Minhas partidas", async () => {
     const code = await createRoom();
     await act(async () => {
       await mem.as("guest").join(code, bia);
     });
     await screen.findByRole("heading", { name: "Contra Bia" });
-    expect(usePlayer.getState().player.activeOnline).toBe(code);
-    // Cancelar a pergunta mantém na partida.
-    const ask = vi.spyOn(window, "confirm").mockReturnValue(false);
+    const ask = vi.spyOn(window, "confirm");
     fireEvent.click(screen.getByRole("link", { name: "Voltar" }));
-    expect(ask).toHaveBeenCalledOnce();
-    expect(ask.mock.calls[0][0]).toContain(code);
-    expect(
-      screen.getByRole("heading", { name: "Contra Bia" }),
-    ).toBeInTheDocument();
-    // Confirmar sai para o lobby; a partida continua marcada, e o aviso no topo das telas
-    // ("Partida em andamento · Voltar", ver "Aviso da partida em andamento") leva de volta.
-    ask.mockReturnValue(true);
-    fireEvent.click(screen.getByRole("link", { name: "Voltar" }));
-    expect(
-      await screen.findByRole("heading", { name: "Jogar com um amigo" }),
-    ).toBeInTheDocument();
-    expect(usePlayer.getState().player.activeOnline).toBe(code);
+    expect(ask).not.toHaveBeenCalled();
+    await screen.findByRole("heading", { name: "Jogar com um amigo" });
+    expect(usePlayer.getState().player.onlineMatches).toEqual([code]);
+    // A lista mostra a partida, com a vez de Bia e o prazo.
+    const list = await screen.findByRole("region", { name: "Minhas partidas" });
+    expect(list).toHaveTextContent("Bia");
+    expect(list).toHaveTextContent("Vez de Bia · 48 h");
   });
-  it("amigo sem conexão aparece só no rosto dele (sem faixa empurrando a tela); depois de 2 minutos o rosto encerra a partida", async () => {
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+  it("por turnos não há presença: o rosto do amigo não fica cinza nem vira botão de encerrar", async () => {
     const code = await createRoom();
     await act(async () => {
       await mem.as("guest").join(code, bia);
     });
     await screen.findByRole("heading", { name: "Contra Bia" });
-    // A amiga não está na sala: rosto em cinza com o selo, e nenhuma faixa no topo.
-    const rival = screen.getByTestId("duelist-rival");
-    expect(rival).toHaveClass("offline");
-    expect(
-      screen.getByRole("img", { name: "Bia está sem conexão" }),
-    ).toBeInTheDocument();
-    expect(document.querySelector(".online-banner")).toBeNull();
+    expect(screen.getByTestId("duelist-rival")).not.toHaveClass("offline");
     expect(
       screen.queryByRole("button", { name: /encerrar a partida/ }),
     ).toBeNull();
-    // Passados 2 minutos, o rosto vira botão; confirmar encerra e dá a vitória.
-    act(() => void vi.advanceTimersByTime(RIVAL_OFFLINE_MS + 100));
-    const claim = await screen.findByRole("button", {
-      name: "Bia está sem conexão: encerrar a partida e ficar com a vitória",
-    });
-    const ask = vi.spyOn(window, "confirm").mockReturnValue(true);
-    await act(async () => {
-      fireEvent.click(claim);
-    });
-    expect(ask).toHaveBeenCalledOnce();
-    expect(await screen.findByText(/Bia saiu da partida/)).toBeInTheDocument();
-    vi.useRealTimers();
   });
   it("o amigo só pode encerrar depois de 2 minutos; quem ficou fora vê quem encerrou", async () => {
     expect(RIVAL_OFFLINE_MS).toBe(120_000);
@@ -620,21 +710,22 @@ describe("telas do duelo ao vivo", () => {
     // A partida acabou: o lobby não oferece mais voltar.
     expect(usePlayer.getState().player.activeOnline).toBeUndefined();
   });
-  it("configuração: quem cria escolhe tempo por jogada e aposta, e a sala de espera mostra as regras", async () => {
+  it("configuração: quem cria escolhe a aposta (sem relógio: 48 h por jogada) e a sala de espera mostra as regras", async () => {
     usePlayer.setState((st) => ({ player: { ...st.player, coins: 40 } }));
     const code = await createRoom(() => {
       // Apostas acima do saldo (40) ficam desligadas.
       expect(screen.getByRole("radio", { name: "50" })).toBeDisabled();
-      fireEvent.click(screen.getByRole("radio", { name: "1 min" }));
+      expect(screen.queryByRole("radio", { name: "1 min" })).toBeNull();
       fireEvent.click(screen.getByRole("radio", { name: "25" }));
       expect(screen.getByRole("status")).toHaveTextContent(
         "Cada um aposta 25: quem vencer leva 50 moedas.",
       );
     });
-    expect(mem.rooms.get(code)!.rules).toEqual({ turnSeconds: 60, bet: 25 });
+    expect(mem.rooms.get(code)!.rules).toEqual({ turnSeconds: 0, bet: 25 });
     const rules = screen.getByRole("list", { name: "Regras da partida" });
-    expect(rules).toHaveTextContent("Jogada: 1 min");
+    expect(rules).toHaveTextContent("Prazo por jogada: 48 h");
     expect(rules).toHaveTextContent("Aposta: 25 moedas");
+    expect(screen.getByText(/Pode fechar o jogo/)).toBeInTheDocument();
   });
   it("perder um duelo ao vivo sem aposta não tira moedas (só a aposta conta)", async () => {
     expect(duelCoins("loss", true)).toBe(0);
@@ -763,21 +854,27 @@ describe("telas do duelo ao vivo", () => {
     // Na partida vale o relógio da sala (30 s), quando é a vez de quem entrou.
     expect(usePlayer.getState().player.coins).toBe(30);
   });
-  it("relógio: com tempo por jogada, a vez de quem joga corre no relógio da sala; sem limite, não há relógio", async () => {
-    const code = await createRoom(() =>
-      fireEvent.click(screen.getByRole("radio", { name: "30 s" })),
-    );
-    await act(async () => {
-      await mem.as("guest").join(code, bia);
+  it("relógio: salas antigas com tempo por jogada ainda correm no relógio; as novas não têm relógio", async () => {
+    await mem.as("amigo").create({
+      code: "OLD234",
+      puzzleId: puzzle.id,
+      host: { uid: "amigo", name: "Bia", avatar: "panda" },
+      status: "waiting",
+      rev: 0,
+      rules: { turnSeconds: 30, bet: 0 },
+      state: startOnline(puzzle.id, "semente"),
     });
+    await mem
+      .as("host")
+      .join("OLD234", { uid: "host", name: "Gil", avatar: "jogador" });
+    open("/online/OLD234");
     await screen.findByRole("heading", { name: "Contra Bia" });
     expect(screen.getByRole("timer")).toHaveAccessibleName(
       "Relógio do turno: 30 segundos",
     );
     cleanup();
-    mem = memoryBackend();
-    setOnlineBackend(mem.as("host"));
-    const plain = await createRoom();
+    await createRoom();
+    const plain = [...mem.rooms.keys()].find((k) => k !== "OLD234")!;
     await act(async () => {
       await mem.as("guest").join(plain, bia);
     });
@@ -792,9 +889,10 @@ describe("telas do duelo ao vivo", () => {
   });
 });
 
-describe("Aviso da partida em andamento", () => {
+describe("Minhas partidas e o aviso Sua vez", () => {
   let mem: ReturnType<typeof memoryBackend>;
-  const waiting = (over: Partial<OnlineRoom> = {}): OnlineRoom => ({
+  const bia = { uid: "bia", name: "Bia", avatar: "panda" };
+  const room = (over: Partial<OnlineRoom> = {}): OnlineRoom => ({
     code: "ABC234",
     puzzleId: puzzle.id,
     host: { uid: "eu", name: "Gil", avatar: "jogador" },
@@ -805,9 +903,18 @@ describe("Aviso da partida em andamento", () => {
     updatedAt: Date.now(),
     ...over,
   });
+  /** Em jogo contra Bia; `turn` "p" = vez de quem criou (eu). */
+  const playing = (turn: "p" | "ai", over: Partial<OnlineRoom> = {}) => {
+    const base = room({ status: "playing", guest: bia });
+    return {
+      ...base,
+      state: { ...base.state, versus: { ...base.state.versus, turn } },
+      ...over,
+    };
+  };
   beforeEach(() => {
     mem = memoryBackend();
-    mem.rooms.set("ABC234", waiting());
+    useMatches.setState({ rooms: {}, uid: undefined });
     setOnlineBackend(mem.as("eu"));
   });
   afterEach(() => {
@@ -815,6 +922,15 @@ describe("Aviso da partida em andamento", () => {
     setOnlineBackend(undefined);
     vi.restoreAllMocks();
   });
+  const listed = (extra: Partial<typeof initialPlayer> = {}) =>
+    usePlayer.setState({
+      player: {
+        ...structuredClone(initialPlayer),
+        onlineMatches: ["ABC234"],
+        ...extra,
+      },
+      ready: true,
+    });
   const at = async (path: string) => {
     const { Layout } = await import("../components/Layout");
     const { Toasts } = await import("../components/ResumeMatchToast");
@@ -823,116 +939,99 @@ describe("Aviso da partida em andamento", () => {
         <Toasts />
         <Routes>
           <Route element={<Layout />}>
+            <Route path="online" element={<OnlineLobby />} />
             <Route path="*" element={<p>tela</p>} />
           </Route>
         </Routes>
       </MemoryRouter>,
     );
   };
-  it("aparece fora da partida, em todas as telas, e leva de volta à sala", async () => {
-    usePlayer.setState({
-      player: { ...structuredClone(initialPlayer), activeOnline: "ABC234" },
-      ready: true,
+  const settle = () =>
+    act(async () => {
+      await new Promise((r) => setTimeout(r, 50));
     });
-    for (const path of ["/", "/casual", "/daily", "/profile"]) {
+  it("na vez do jogador, 'Sua vez!' aparece fora da partida e leva à sala", async () => {
+    mem.rooms.set("ABC234", playing("p"));
+    listed();
+    for (const path of ["/", "/casual", "/profile"]) {
       await at(path);
       expect(
         await screen.findByRole("link", {
           name: "Voltar para a partida ABC234",
         }),
       ).toHaveAttribute("href", "/online/ABC234");
-      expect(screen.getByText(/Partida em andamento/)).toBeInTheDocument();
+      expect(screen.getByText("Sua vez!")).toBeInTheDocument();
+      expect(screen.getByText("Sua vez contra Bia")).toBeInTheDocument();
       cleanup();
     }
   });
-  it("não aparece dentro da partida, no mapa nem sem partida em andamento", async () => {
+  it("não aparece na vez do amigo, dentro da partida nem no mapa", async () => {
+    mem.rooms.set("ABC234", playing("ai"));
+    listed();
+    await at("/");
+    await settle();
+    expect(screen.queryByText("Sua vez!")).toBeNull();
+    cleanup();
+    mem.rooms.set("ABC234", playing("p"));
+    for (const path of ["/online/ABC234", "/map/floresta"]) {
+      await at(path);
+      await settle();
+      expect(screen.queryByText("Sua vez!")).toBeNull();
+      cleanup();
+    }
+  });
+  it("o lobby lista as partidas: a vez do jogador primeiro, com o prazo do amigo", async () => {
+    mem.rooms.set("ABC234", playing("ai"));
+    mem.rooms.set("XYZ234", { ...playing("p"), code: "XYZ234" });
+    mem.rooms.set("FILA23", room({ code: "FILA23", source: "busca" }));
+    listed({ onlineMatches: ["ABC234", "XYZ234", "FILA23"] });
+    await at("/online");
+    const list = await screen.findByRole("region", { name: "Minhas partidas" });
+    await waitFor(() => expect(list.querySelectorAll("li")).toHaveLength(3));
+    const rows = [...list.querySelectorAll("li")].map((li) => li.textContent);
+    expect(rows[0]).toContain("Sua vez!");
+    expect(rows[1]).toContain("Vez de Bia · 48 h");
+    expect(rows[2]).toContain("Na fila: esperando um oponente");
+  });
+  it("a marca antiga (uma partida só) passa para a lista", async () => {
+    mem.rooms.set("ABC234", playing("ai"));
     usePlayer.setState({
       player: { ...structuredClone(initialPlayer), activeOnline: "ABC234" },
       ready: true,
     });
-    for (const path of ["/online/ABC234", "/map/floresta"]) {
-      await at(path);
-      await act(async () => {
-        await new Promise((r) => setTimeout(r, 50));
-      });
-      expect(
-        screen.queryByRole("link", { name: /Voltar para a partida/ }),
-      ).toBeNull();
-      cleanup();
-    }
-    usePlayer.setState({
-      player: structuredClone(initialPlayer),
-      ready: true,
-    });
-    await at("/");
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
-    });
-    expect(
-      screen.queryByRole("link", { name: /Voltar para a partida/ }),
-    ).toBeNull();
-  });
-
-  const marked = (extra: Partial<typeof initialPlayer> = {}) =>
-    usePlayer.setState({
-      player: {
-        ...structuredClone(initialPlayer),
-        activeOnline: "ABC234",
-        ...extra,
-      },
-      ready: true,
-    });
-  it("sai sozinho quando a sala não existe mais ou já acabou", async () => {
-    for (const set of [
-      () => mem.rooms.delete("ABC234"),
-      () => mem.rooms.set("ABC234", waiting({ status: "finished" })),
-    ]) {
-      set();
-      marked();
-      await at("/");
-      await waitFor(() =>
-        expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
-      );
-      cleanup();
-    }
-  });
-  it("sala parada há mais de um dia expira, o aviso sai e a aposta volta", async () => {
-    const old = Date.now() - ROOM_EXPIRE_MS - 1000;
-    mem.rooms.set("ABC234", waiting({ createdAt: old, updatedAt: old }));
-    marked({ coins: 50, wagers: { ABC234: 10 } });
     await at("/");
     await waitFor(() =>
-      expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
+      expect(usePlayer.getState().player.onlineMatches).toEqual(["ABC234"]),
     );
-    expect(mem.rooms.get("ABC234")!.endedBy).toBe(ROOM_EXPIRED);
+    expect(usePlayer.getState().player.activeOnline).toBeUndefined();
+  });
+  it("sala que sumiu sai da lista e a aposta reservada volta", async () => {
+    listed({ coins: 50, wagers: { ABC234: 10 } });
+    await at("/");
+    await waitFor(() =>
+      expect(usePlayer.getState().player.onlineMatches).toEqual([]),
+    );
     expect(usePlayer.getState().player.coins).toBe(60);
     expect(usePlayer.getState().player.wagers?.ABC234).toBeUndefined();
   });
-  it("sala aberta e recente continua com o aviso", async () => {
-    marked();
+  it("sala sem ninguém há 2 dias expira; na vez do amigo, passado o prazo, o jogador vence", async () => {
+    const old = Date.now() - ROOM_EXPIRE_MS - 1000;
+    mem.rooms.set("ABC234", room({ createdAt: old, updatedAt: old }));
+    listed();
     await at("/");
-    await screen.findByRole("link", { name: "Voltar para a partida ABC234" });
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 50));
-    });
-    expect(usePlayer.getState().player.activeOnline).toBe("ABC234");
-  });
-  it("Encerrar no aviso pergunta antes, fecha a sala e tira o aviso", async () => {
-    marked();
-    await at("/");
-    const end = await screen.findByRole("button", {
-      name: "Encerrar a partida ABC234",
-    });
-    const confirm = vi.spyOn(window, "confirm").mockReturnValueOnce(false);
-    fireEvent.click(end);
-    expect(confirm).toHaveBeenCalled();
-    expect(mem.rooms.get("ABC234")!.status).toBe("waiting");
-    confirm.mockReturnValueOnce(true);
-    fireEvent.click(end);
     await waitFor(() =>
-      expect(usePlayer.getState().player.activeOnline).toBeUndefined(),
+      expect(mem.rooms.get("ABC234")!.endedBy).toBe(ROOM_EXPIRED),
     );
-    expect(mem.rooms.get("ABC234")!.status).toBe("abandoned");
-    expect(mem.rooms.get("ABC234")!.left).toBe("eu");
+    cleanup();
+    mem.rooms.set(
+      "ABC234",
+      playing("ai", { updatedAt: Date.now() - TURN_DEADLINE_MS - 1000 }),
+    );
+    await at("/");
+    await waitFor(() =>
+      expect(mem.rooms.get("ABC234")!.endedBy).toBe(ROOM_TIMEOUT),
+    );
+    expect(mem.rooms.get("ABC234")!.left).toBe("bia");
+    expect(wonByForfeitOf(mem.rooms.get("ABC234"), "eu")).toBe(true);
   });
 });

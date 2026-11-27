@@ -47,8 +47,13 @@ export interface Player {
   items?: Partial<Record<"curinga" | "vogal", number>>;
   /** Apostas reservadas em duelos ao vivo ainda não acertados (código da sala → moedas). */
   wagers?: Record<string, number>;
-  /** Código do duelo ao vivo em andamento (o lobby oferece voltar a ele). */
+  /**
+   * Código do duelo ao vivo em andamento. Hoje só as partidas da procura contra o rival do jogo
+   * (`botRooms`); as do servidor ficam em `onlineMatches` (marcas antigas migram para lá).
+   */
   activeOnline?: string;
+  /** Duelos por turnos que o jogador acompanha ("Minhas partidas"), do mais recente ao mais antigo. */
+  onlineMatches?: string[];
   /**
    * Partidas da procura de oponente em que ninguém chegou e o rival do jogo assumiu (código →
    * partida). Ficam só no aparelho: a tela da sala as abre como um duelo ao vivo.

@@ -11,6 +11,7 @@ import {
   ROOM_EXPIRED,
   roleOf,
   toView,
+  withoutMatch,
   type OnlineRoom,
 } from "../game/online";
 import { onlineAvailable, onlineBackend } from "../services/online";
@@ -35,15 +36,14 @@ export function wagerResult(
   return mine.p > mine.ai ? "win" : mine.p === mine.ai ? "draw" : "loss";
 }
 
-/** Tira a marca da partida e acerta a aposta que ainda estava reservada para ela. */
-function forget(code: string, result: "win" | "draw" | "loss") {
+/** Tira a partida da lista (e a marca antiga) e acerta a aposta que ainda estava reservada para ela. */
+export function forget(code: string, result: "win" | "draw" | "loss") {
   usePlayer.getState().update((p) => {
     const reserved = p.wagers?.[code];
     const wagers = { ...p.wagers };
     delete wagers[code];
     return {
-      ...p,
-      activeOnline: p.activeOnline === code ? undefined : p.activeOnline,
+      ...withoutMatch(p, code),
       coins: p.coins + (reserved ? betPayout(reserved, result) : 0),
       wagers,
     };

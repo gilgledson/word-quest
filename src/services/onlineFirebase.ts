@@ -21,6 +21,7 @@ import {
 } from "firebase/database";
 import {
   ROOM_EXPIRED,
+  guestStarts,
   isLive,
   type OnlineRoom,
   type OnlineSeat,
@@ -139,6 +140,8 @@ export function firebaseBackend(): OnlineBackend {
             ...current,
             guest: seat,
             status: "playing",
+            // Por turnos: quem entra (e está com o jogo aberto agora) joga primeiro.
+            state: JSON.stringify(guestStarts(JSON.parse(current.state))),
             updatedAt: Date.now(),
           };
         },
