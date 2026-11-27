@@ -305,7 +305,7 @@
     min-height: 44px;
   }
 }
-@media (max-height: 500px) and (min-width: 600px) {
+@media (max-height: 500px) and (min-width: 540px) {
   .app-home {
     max-width: 960px;
     grid-template-rows: 44px minmax(0, 1fr) 50px;
@@ -489,7 +489,7 @@
   font-weight: 900;
 }
 /* Celular deitado / tela baixa e larga: loja e botão principal dividem a segunda linha. */
-@media (max-height: 500px) and (min-width: 600px) {
+@media (max-height: 500px) and (min-width: 540px) {
   .app-home .shop-card {
     grid-area: 2 / 2;
     align-self: center;
@@ -857,7 +857,7 @@
 }
 /* Celular deitado (tela baixa): não cabe um card abaixo do outro, então o de duelo fica à esquerda
    e o do mundo à direita, tudo menor para caber entre o topo e o menu. */
-@media (max-height: 500px) and (min-width: 600px) {
+@media (max-height: 500px) and (min-width: 540px) {
   .app-home > main {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
     grid-template-rows: auto;
@@ -995,4 +995,316 @@
 }
 .duel-card-text small.duel-card-turn {
   color: #124fb5;
+}
+
+/* ===== Cards "Ganhe moedas grátis" e "Loja" (abaixo do card do mundo) =====
+   Referência enviada pelo dono em 27/11/2026: card verde do vídeo premiado com o botão "Assistir" e
+   card creme da loja com a vitrine de itens e "Abrir loja". */
+.home-video-card,
+.app-home .home-shop-card {
+  display: grid;
+  align-items: center;
+  gap: clamp(8px, 2.6vw, 12px);
+  padding: clamp(6px, 1dvh, 10px) clamp(10px, 3vw, 14px);
+  border-radius: 24px;
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 6px 16px #2a1d0526;
+  color: #15365e;
+  text-decoration: none;
+  min-height: min-content;
+}
+.home-video-card {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  border: 3px solid #bfe8b5;
+  background:
+    radial-gradient(circle at 14% 50%, #ffffff 0 18%, transparent 46%),
+    linear-gradient(#effcec, #d4f2cd);
+}
+.home-video-art {
+  width: clamp(56px, 18vw, 84px);
+  height: auto;
+  filter: drop-shadow(0 3px 4px #1b5e2033);
+}
+.home-card-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.home-card-text strong {
+  font-size: clamp(16px, 4.8vw, 22px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+.home-card-text small {
+  color: #3f5161;
+  font-size: clamp(12px, 3.6vw, 16px);
+  font-weight: 800;
+}
+.home-video-watch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: clamp(6px, 1dvh, 10px) clamp(12px, 3.6vw, 18px);
+  border: 2px solid #15862a;
+  border-radius: 999px;
+  background: linear-gradient(#4fd35f, #1f9d35);
+  box-shadow:
+    inset 0 2px 0 #ffffff55,
+    0 3px 0 #116b22;
+  color: #fff;
+  font: inherit;
+  font-size: clamp(15px, 4.4vw, 20px);
+  font-weight: 900;
+  cursor: pointer;
+}
+.home-video-watch:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #116b22;
+}
+.home-video-watch:disabled {
+  opacity: 0.75;
+}
+.app-home .home-shop-card {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  border: 3px solid #f3d27a;
+  background: #fffaf0;
+}
+.home-shop-art {
+  width: clamp(48px, 15vw, 68px);
+  height: auto;
+  filter: drop-shadow(0 3px 4px #3b260033);
+}
+/* Vitrine: moedas, vogais e o curinga, um pouco sobrepostos, sobre um fundo bege. */
+.home-shop-window {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 14px;
+  background: #f5ecd6;
+}
+.home-shop-window img {
+  height: clamp(26px, 8vw, 38px);
+  width: auto;
+  filter: drop-shadow(0 2px 3px #3b260033);
+}
+.home-shop-window img + img {
+  margin-left: -4px;
+}
+.home-shop-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: clamp(5px, 0.9dvh, 8px) clamp(10px, 3vw, 14px);
+  border: 2px solid #c98a00;
+  border-radius: 999px;
+  background: linear-gradient(#ffe48a, #f4b81c);
+  box-shadow: 0 3px 0 #a86f00;
+  color: #3b2600;
+  font-size: clamp(13px, 3.8vw, 17px);
+  font-weight: 900;
+  white-space: nowrap;
+}
+.app-home .home-shop-card:active .home-shop-open {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #a86f00;
+}
+/* Celulares estreitos: a vitrine sai para o nome e o botão caberem. */
+@media (max-width: 345px) {
+  .home-shop-window {
+    display: none;
+  }
+  .app-home .home-shop-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+}
+/* Cada card ocupa a altura do próprio conteúdo, em pé ou deitado (com as linhas "auto" a grade
+   encolhia o card do mundo e o seguinte passava por cima). No celular em pé, com os dois cards
+   novos, a arte do mundo, a trilha e o duelo ficam um pouco menores para tudo caber numa tela, como
+   na referência; se não couber, a área dos cards rola. */
+.app-home > main {
+  grid-template-rows: none;
+  grid-auto-rows: max-content;
+}
+@media (orientation: portrait) {
+  .app-home > main {
+    gap: clamp(8px, 1.3dvh, 14px);
+  }
+  .world-card-art {
+    height: clamp(72px, 12.5dvh, 160px);
+  }
+  .world-card-step {
+    font-size: clamp(13px, 3.8vw, 18px);
+  }
+  .world-card-body {
+    gap: clamp(2px, 0.5dvh, 6px);
+    padding: clamp(6px, 1.1dvh, 12px) clamp(12px, 4vw, 20px)
+      clamp(8px, 1.4dvh, 14px);
+  }
+  .world-card h2 {
+    font-size: clamp(22px, 6.6vw, 34px);
+  }
+  .world-step {
+    width: clamp(32px, 9.6vw, 44px);
+    font-size: clamp(15px, 4.6vw, 20px);
+  }
+  .world-trail-chest .journey-chest {
+    width: clamp(36px, 11vw, 50px);
+    height: clamp(40px, 12vw, 54px);
+  }
+  .app-home .world-card .continue-button {
+    min-height: clamp(44px, 6dvh, 56px);
+    margin-top: clamp(2px, 0.6dvh, 8px);
+  }
+  .app-home .duel-card {
+    padding-block: clamp(6px, 1dvh, 10px);
+  }
+  .duel-face {
+    width: clamp(46px, 13vw, 66px);
+  }
+  .duel-vs {
+    width: clamp(38px, 12vw, 54px);
+  }
+  .duel-card-cta {
+    padding-block: 4px;
+  }
+}
+/* Celulares em pé (até 600 px): os cards novos usam letras e botões menores. */
+@media (max-width: 600px) {
+  .home-video-art {
+    width: clamp(52px, 16vw, 66px);
+  }
+  .home-card-text strong {
+    font-size: clamp(15px, 4.6vw, 19px);
+  }
+  .home-card-text small {
+    font-size: clamp(11px, 3.3vw, 14px);
+  }
+  .home-shop-art {
+    width: clamp(44px, 13vw, 56px);
+  }
+  .home-shop-window {
+    padding: 3px 5px;
+  }
+  .home-shop-window img {
+    height: clamp(20px, 6.2vw, 28px);
+  }
+  .home-video-watch {
+    padding-inline: clamp(10px, 3vw, 14px);
+    font-size: clamp(14px, 4.2vw, 18px);
+  }
+  .home-shop-open {
+    padding: 5px 9px;
+    font-size: clamp(12px, 3.5vw, 14px);
+  }
+  .home-shop-open svg {
+    width: 15px;
+    height: 15px;
+  }
+  .app-home .home-shop-card {
+    gap: 7px;
+    padding-inline: 10px;
+  }
+}
+/* O subtítulo quebra só entre palavras ("Novidades / e itens"), nunca no meio de uma. */
+.home-card-text small {
+  overflow-wrap: normal;
+  word-break: normal;
+}
+/* Celulares de 360 px (ex.: Moto G14): o carrinho sai do botão e a vitrine encolhe, para o nome
+   da loja caber sem cortar palavras. */
+@media (max-width: 370px) {
+  .home-shop-open svg {
+    display: none;
+  }
+  .home-shop-window img {
+    height: 20px;
+  }
+  .app-home .home-shop-card {
+    gap: 6px;
+  }
+}
+/* Faixa do vídeo premiado e da loja: um abaixo do outro em pé; lado a lado (cada um com a metade
+   da largura, ou a largura toda quando o vídeo não está disponível) na tela deitada. */
+.home-extras {
+  display: grid;
+  gap: inherit;
+  min-height: min-content;
+}
+@media (orientation: landscape) and (min-width: 540px) {
+  .app-home > main > .home-extras {
+    grid-column: 1 / -1;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  /* Versão compacta: ícone, título e botão numa linha (sem subtítulo nem vitrine). */
+  .home-extras .home-card-text small,
+  .home-shop-window {
+    display: none;
+  }
+  .home-video-card,
+  .app-home .home-shop-card {
+    padding-block: 4px;
+  }
+  .app-home .home-shop-card {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+  .home-video-art,
+  .home-shop-art {
+    width: 44px;
+  }
+  .home-card-text strong {
+    font-size: 16px;
+  }
+  .home-video-watch,
+  .home-shop-open {
+    padding: 5px 12px;
+    font-size: 15px;
+  }
+}
+/* Celular deitado bem baixo (até 380 px de altura, ex.: 640×360): o card do duelo perde os
+   rostos (fica só o título e o botão) para o vídeo e a loja caberem embaixo. */
+@media (orientation: landscape) and (max-height: 380px) and (min-width: 540px) {
+  .duel-card-faces {
+    display: none;
+  }
+  .app-home .duel-card {
+    align-content: center;
+  }
+  .home-extras .home-video-art,
+  .home-extras .home-shop-art {
+    width: 36px;
+  }
+  .home-extras .home-card-text strong {
+    font-size: 14px;
+  }
+  .home-extras .home-video-watch,
+  .home-extras .home-shop-open {
+    padding-inline: 10px;
+    font-size: 14px;
+  }
+}
+/* Celular deitado estreito (até 620 px, ex.: 568×320): o texto do mundo não cabe ao lado da arte,
+   então a arte sai e o card fica só com o texto. */
+@media (orientation: landscape) and (max-height: 500px) and (min-width: 540px) and (max-width: 620px) {
+  .world-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .world-card-art {
+    display: none;
+  }
+}
+/* Celulares pequenos (320 px): o título do vídeo em duas linhas no máximo. */
+@media (max-width: 340px) {
+  .home-video-art {
+    width: 44px;
+  }
+  .home-card-text strong {
+    font-size: 14px;
+  }
+  .home-video-watch {
+    padding-inline: 9px;
+    font-size: 14px;
+  }
 }

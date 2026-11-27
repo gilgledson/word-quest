@@ -16,7 +16,7 @@ export const REWARDED = {
 } as const;
 
 /** Onde o botão apareceu: card da loja, atalho de quem não tem moedas, fim do duelo. */
-export type RewardedPlace = "shop" | "shop_short" | "duel_end";
+export type RewardedPlace = "home" | "shop" | "shop_short" | "duel_end";
 
 export interface RewardedState {
   /** Dia (AAAA-MM-DD) da contagem abaixo. */
