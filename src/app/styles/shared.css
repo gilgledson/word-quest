@@ -2331,3 +2331,6 @@ footer {
   inset: 0;
   z-index: 0;
 }
+.league-zone-row {
+  padding: 0 2px;
+}

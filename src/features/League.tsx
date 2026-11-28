@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowDown, ArrowUp, Clock3, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
@@ -243,36 +243,41 @@ export function LeaguePage() {
               {rows.map((r, i) => {
                 const rank = i + 1;
                 const frame = isFrameId(r.frame) ? r.frame : undefined;
+                // As faixas das zonas ficam em linhas próprias, entre os jogadores.
                 return (
-                  <li
-                    key={r.uid}
-                    className={`league-row ${r.mine ? "mine" : ""} ${rank <= up && r.xp > 0 ? "promo" : ""} ${rank > size - down ? "demo" : ""}`}
-                  >
-                    {/* As faixas ficam entre as linhas, onde a zona começa ou termina. */}
+                  <Fragment key={r.uid}>
                     {rank === size - down + 1 && down > 0 && (
-                      <span className="league-zone demo">
-                        <ArrowDown size={14} aria-hidden="true" /> {t.demo}
-                      </span>
+                      <li className="league-zone-row">
+                        <span className="league-zone demo">
+                          <ArrowDown size={14} aria-hidden="true" /> {t.demo}
+                        </span>
+                      </li>
                     )}
-                    <span className={`league-rank r${rank}`}>
-                      <span className="sr-only">{t.rank} </span>
-                      {rank}
-                    </span>
-                    <FramedAvatar
-                      opponent={avatarOf(r.avatar)}
-                      size={30}
-                      frame={frame}
-                    />
-                    <span className="league-name">
-                      {r.mine ? t.you : r.name}
-                    </span>
-                    <span className="league-xp">{t.xpValue(r.xp)}</span>
-                    {rank === up && rank < size && (
-                      <span className="league-zone promo">
-                        <ArrowUp size={14} aria-hidden="true" /> {t.promo}
+                    <li
+                      className={`league-row ${r.mine ? "mine" : ""} ${rank <= up && r.xp > 0 ? "promo" : ""} ${rank > size - down ? "demo" : ""}`}
+                    >
+                      <span className={`league-rank r${rank}`}>
+                        <span className="sr-only">{t.rank} </span>
+                        {rank}
                       </span>
+                      <FramedAvatar
+                        opponent={avatarOf(r.avatar)}
+                        size={30}
+                        frame={frame}
+                      />
+                      <span className="league-name">
+                        {r.mine ? t.you : r.name}
+                      </span>
+                      <span className="league-xp">{t.xpValue(r.xp)}</span>
+                    </li>
+                    {rank === up && rank < size && r.xp > 0 && (
+                      <li className="league-zone-row">
+                        <span className="league-zone promo">
+                          <ArrowUp size={14} aria-hidden="true" /> {t.promo}
+                        </span>
+                      </li>
                     )}
-                  </li>
+                  </Fragment>
                 );
               })}
             </ol>
