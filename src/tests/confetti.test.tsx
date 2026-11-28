@@ -14,10 +14,14 @@ import { initialPlayer } from "../services/repository";
 import { usePlayer } from "../stores/player";
 
 const fire = vi.fn();
-vi.mock("canvas-confetti", () => ({ default: (o: unknown) => fire(o) }));
+const reset = vi.fn();
+vi.mock("canvas-confetti", () => ({
+  default: Object.assign((o: unknown) => fire(o), { reset: () => reset() }),
+}));
 afterEach(cleanup);
 beforeEach(() => {
   fire.mockClear();
+  reset.mockClear();
 });
 
 describe("Confete da vitória", () => {
@@ -30,6 +34,20 @@ describe("Confete da vitória", () => {
     // Espera as rajadas laterais, para não vazarem para o teste seguinte.
     await new Promise((r) => setTimeout(r, 400));
     expect(fire.mock.calls.length).toBeGreaterThanOrEqual(3);
+  });
+  it("o confete é encerrado à força depois do tempo máximo (canvas nunca fica preso)", async () => {
+    vi.useFakeTimers();
+    try {
+      const { celebrate, CONFETTI_MAX_MS } =
+        await import("../services/confetti");
+      await celebrate(true);
+      vi.advanceTimersByTime(CONFETTI_MAX_MS - 1);
+      expect(reset).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(1);
+      expect(reset).toHaveBeenCalledTimes(1);
+    } finally {
+      vi.useRealTimers();
+    }
   });
   it("vencer o duelo solta confete; só passar a vez não", async () => {
     const puzzle = levels[0];

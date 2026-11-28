@@ -54,7 +54,9 @@ async function create(): Promise<Particles | undefined> {
   await app.init({
     backgroundAlpha: 0,
     resizeTo: window,
-    antialias: true,
+    // Sem antialias: as partículas são pequenas e o MSAA multiplicava a memória de vídeo da tela
+    // inteira, o que faltava para o resto da página em celulares mais fracos.
+    antialias: false,
     autoDensity: true,
     resolution: Math.min(window.devicePixelRatio || 1, 2),
     preference: "webgl",

@@ -3,6 +3,8 @@
  * animações estão desligadas ou o sistema pede menos movimento.
  */
 const COLORS = ["#ffc933", "#35b3ff", "#63d9a0", "#ff7aa8", "#ffffff"];
+/** Tempo máximo do confete na tela (a animação normal dura ~4 s). */
+export const CONFETTI_MAX_MS = 4500;
 export async function celebrate(animations: boolean) {
   if (!animations) return;
   try {
@@ -35,6 +37,10 @@ export async function celebrate(animations: boolean) {
         origin: { x: 1, y: 0.8 },
       });
     }, 250);
+    // Encerra à força: em celulares com pouca memória de vídeo o canvas do confete não consegue
+    // ser desenhado, a animação cai para ~2 quadros por segundo e o canvas de tela inteira ficava
+    // por cima de todas as telas por minutos, piscando em branco (moto g14, 27/11/2026).
+    setTimeout(() => confetti.reset?.(), CONFETTI_MAX_MS);
   } catch {
     /* O confete é só enfeite: sem canvas ou sem rede, a partida segue normal. */
   }
