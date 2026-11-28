@@ -162,10 +162,42 @@ const TEXTS = {
       body: `You didn't play within 48 h, so ${n} took the win.`,
     }),
   },
+  es: {
+    turn: (n) => ({
+      title: "¡Tu turno en WordQuest!",
+      body: `${n} ya jugó. Haz tu jugada (tienes 48 h).`,
+    }),
+    remind: (n) => ({
+      title: "¡No pierdas la partida!",
+      body: `Te quedan menos de 12 h para jugar contra ${n}.`,
+    }),
+    finished: (n, r) => ({
+      title:
+        r === "win"
+          ? "¡Ganaste!"
+          : r === "draw"
+            ? "¡Empate!"
+            : "Partida terminada",
+      body:
+        r === "win"
+          ? `Terminó la partida contra ${n}: ¡ganaste tú!`
+          : r === "draw"
+            ? `La partida contra ${n} terminó en empate.`
+            : `${n} ganó la partida. ¿Vamos por la revancha?`,
+    }),
+    timeoutWin: (n) => ({
+      title: "¡Victoria!",
+      body: `${n} no jugó en 48 h. La victoria es tuya.`,
+    }),
+    timeoutLoss: (n) => ({
+      title: "Partida terminada",
+      body: `No jugaste en 48 h y la victoria fue para ${n}.`,
+    }),
+  },
 };
 /** Título e texto do aviso no idioma do aparelho (o gravado com o token). */
 export function messageFor(notice, lang) {
-  const t = TEXTS[lang === "en" ? "en" : "pt"];
+  const t = TEXTS[lang === "en" || lang === "es" ? lang : "pt"];
   return t[notice.kind](notice.rival, notice.result);
 }
 

@@ -31,3 +31,5 @@ content/build/
 # Pacotes do app publicados ao vivo (scripts/publish-app.mjs): gerados, não versionados
 content/hosting/app/
 scripts/data/en/dictionary.txt
+# Lista derivada do RLA-ES (GPLv3/LGPLv3/MPL): scripts/build-dictionary.mjs --lang es
+scripts/data/es/dictionary.txt

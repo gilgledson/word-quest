@@ -19,7 +19,7 @@ export class PuzzleValidator {
     const inside = (r: number, c: number) =>
       r >= 0 && c >= 0 && r < p.rows && c < p.cols;
     for (const w of p.words) {
-      if (!/^[A-Z]+$/.test(normalize(w.answer)))
+      if (!/^[A-ZÑ]+$/.test(normalize(w.answer)))
         errors.push("Resposta inválida");
       if (p.words.filter((other) => other.id === w.id).length !== 1)
         errors.push("ID de palavra duplicado");
@@ -31,7 +31,7 @@ export class PuzzleValidator {
         // A pista completa não pode trazer a própria resposta (nem sem acento).
         else if (
           normalize(w.dica)
-            .split(/[^A-Z]+/)
+            .split(/[^A-ZÑ]+/)
             .includes(normalize(w.answer))
         )
           errors.push("Pista completa com a resposta");

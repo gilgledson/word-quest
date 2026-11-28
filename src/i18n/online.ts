@@ -16,7 +16,10 @@ export const onlineText = texts({
     surprise: "Surpresa",
     // Idioma da sala (as pistas da grade são no idioma de quem criou)
     langLabel: "Pistas em",
-    langName: { pt: "português", en: "inglês" } as Record<string, string>,
+    langName: { pt: "português", en: "inglês", es: "espanhol" } as Record<
+      string,
+      string
+    >,
     otherLang: (name: string) =>
       `Este duelo é em ${name}: as pistas aparecem em ${name} para os dois.`,
     noLimit: "Sem limite",
@@ -181,7 +184,7 @@ export const onlineText = texts({
       `${label}, ${nome}, ${tempo.replace("~", "about ")}`,
     surprise: "Surprise",
     langLabel: "Clues in",
-    langName: { pt: "Portuguese", en: "English" },
+    langName: { pt: "Portuguese", en: "English", es: "Spanish" },
     otherLang: (name) =>
       `This duel is in ${name}: both players see the clues in ${name}.`,
     noLimit: "No limit",
@@ -323,5 +326,159 @@ export const onlineText = texts({
     endConfirm: (code) =>
       `End match ${code}? If it already started, it counts as a loss for you.`,
     end: "End",
+  },
+  es: {
+    sizes: {
+      "6x6": { nome: "Rápido", tempo: "~1 min" },
+      "6x7": { nome: "Ligero", tempo: "~1.5 min" },
+      "7x7": { nome: "Medio", tempo: "~2 min" },
+      "8x8": { nome: "Largo", tempo: "~3 min" },
+    },
+    boardSizeTitle: "Tamaño del tablero",
+    sizeAria: (label, nome, tempo) =>
+      `${label}, ${nome}, ${tempo.replace("~", "unos ")}`,
+    surprise: "Sorpresa",
+    langLabel: "Pistas en",
+    langName: { pt: "portugués", en: "inglés", es: "español" },
+    otherLang: (name) =>
+      `Este duelo es en ${name}: los dos ven las pistas en ${name}.`,
+    noLimit: "Sin límite",
+    friendName: "Amigo",
+    rivalTagline: "¡Buena partida!",
+    rivalWin: "¡Esta fue mía!",
+    rivalLose: "¡Bien! Te lo ganaste.",
+    inviteText: (code, link) =>
+      `¡Te reto en WordQuest! Toca para entrar al duelo: ${link}\n` +
+      `O abre el juego, toca "Jugar con un amigo" e ingresa el código ${code}.`,
+    unavailable:
+      "No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.",
+    updateApp: "Actualiza WordQuest en Play Store para jugar duelos en vivo.",
+    unverifiedBrowser:
+      "No pudimos verificar este navegador. Inténtalo de nuevo o juega en la app.",
+    missing: "No encontré ninguna partida con ese código.",
+    full: "Esta partida ya tiene dos jugadores.",
+    over: "Esta partida ya terminó.",
+    eyebrow: "DUELO EN VIVO",
+    playWithFriend: "Jugar con un amigo",
+    findOpponent: "Buscar rival",
+    findOpponentHint:
+      "¿No hay amigos cerca? Juega con alguien en línea, sin código.",
+    searching: "Buscando rival…",
+    searchingText: "Partida rápida de 6×6, por turnos.",
+    found: "¡Rival encontrado!",
+    waitTime: "Tiempo de espera:",
+    getReady: "¡Prepárate para el duelo!",
+    notAvailable:
+      "Los duelos en vivo aún no están disponibles en esta versión.",
+    back: "Volver",
+    createMatch: "Crear partida",
+    joinWithCode: "Entrar con código",
+    chooseTheme: "Elige un tema",
+    setupMatch: "Configurar partida",
+    matchCode: "Código de la partida",
+    codeHint: "Ingresa el código que te envió tu amigo.",
+    join: "Entrar",
+    defaultPlayer: "Jugador",
+    rulesAria: "Reglas de la partida",
+    themeLabel: "Tema:",
+    boardLabel: "Tablero:",
+    turnLabel: "Jugada:",
+    betLabel: "Apuesta:",
+    betCoins: (n) => `${n} monedas`,
+    noBet: "sin apuesta",
+    matchOf: (name) => `Partida de ${name}`,
+    cantBet: (coins, bet) =>
+      `Tienes ${coins} monedas: no te alcanza para apostar ${bet}.`,
+    winnerTakes: (prize, coins) =>
+      `Quien gane se lleva ${prize} monedas. Tienes ${coins}.`,
+    joinAndBet: (bet) => `Entrar y apostar ${bet}`,
+    joinMatch: "Entrar a la partida",
+    you: "Tú",
+    yourFriend: "Tu amigo",
+    change: "cambiar",
+    turnTime: "Tiempo por jugada",
+    free: "Libre",
+    bet: "Apuesta",
+    none: "Sin",
+    eachBets: (bet, prize, coins) =>
+      `Cada uno apuesta ${bet}: quien gane se lleva ${prize} monedas. Tienes ${coins}.`,
+    noBetMatch: (coins) => `Partida sin apuesta. Tienes ${coins} monedas.`,
+    cantJoin: "No se pudo entrar",
+    joining: "Entrando a la partida…",
+    oneMoment: "Un momento.",
+    notFound: "Partida no encontrada",
+    notFoundText:
+      "Esta partida ya no existe. Crea otra y envía el código nuevo.",
+    copyFailed: "No se pudo copiar. Anota el código de arriba.",
+    callFriend: "Invita a tu amigo",
+    sendCode:
+      "Envía este código. La partida empieza cuando tu amigo entre, aunque sea más tarde.",
+    codeAria: (code) => `Código ${code}`,
+    inviteCopied: "¡Invitación copiada!",
+    shareInvite: "Compartir invitación",
+    codeCopied: "¡Código copiado!",
+    copyCode: "Copiar código",
+    inviteBonus: (coins, left) =>
+      `Gana ${coins} monedas cuando un amigo nuevo juegue contigo (faltan ${left}).`,
+    cancel: "Cancelar",
+    victory: "¡Victoria!",
+    rivalLeft: (name, coins) =>
+      `${name} salió de la partida. Ganaste ${coins} monedas.`,
+    matchEnded: "Partida terminada",
+    expired:
+      "Nadie entró a la partida en 2 días y se cerró. Nadie ganó ni perdió.",
+    rivalEnded: (name, min) =>
+      `${name} terminó la partida porque estuviste fuera más de ${min} minutos.`,
+    youLeft: "Saliste de esta partida.",
+    inviteRewarded: (coins, name) =>
+      `Premio por invitar: ¡+${coins} monedas por jugar con ${name}!`,
+    betWon: (n) => `Apuesta ganada: ¡+${n} monedas!`,
+    betDraw: "Empate: recuperaste tu apuesta.",
+    betLost: (n) => `Apuesta perdida: ${n} monedas.`,
+    leaveWarning: (code, min, name) =>
+      `¿Salir de la partida? Para volver, usa "Volver a la partida" en Jugar con un amigo (código ${code}). Si estás fuera más de ${min} minutos, ${name} puede terminarla y quedarse con la victoria.`,
+    rivalOfflineTap: (name) =>
+      `${name} está sin conexión. Toca su cara para terminar la partida y ganar.`,
+    rivalOffline: (name) => `${name} está sin conexión…`,
+    claimWin: (name, min) =>
+      `${name} lleva más de ${min} minutos sin conexión. ¿Terminar la partida y quedarte con la victoria?`,
+    waitingAsync:
+      "Puedes cerrar el juego: la partida queda en Mis partidas y juegas cuando sea tu turno.",
+    theirTurn: (name, hours) =>
+      `Turno de ${name}. Puedes salir del juego: ${name} tiene hasta ${hours} h para jugar.`,
+    rivalTimedOut: (name, coins) =>
+      `${name} no jugó en 48 h. La victoria es tuya: +${coins} monedas.`,
+    youTimedOut: (name) => `No jugaste en 48 h y la victoria fue para ${name}.`,
+    deadlineLabel: "Plazo por jugada:",
+    deadline: "48 h",
+    myMatches: "Mis partidas",
+    yourTurn: "¡Tu turno!",
+    yourTurnVs: (name) => `Tu turno contra ${name}`,
+    yourTurnCount: (n) =>
+      n === 1 ? "¡Es tu turno en 1 partida!" : `¡Es tu turno en ${n} partidas!`,
+    theirTurnShort: (name, hours) => `Turno de ${name} · ${hours} h`,
+    waitingShort: (code) => `Esperando que alguien entre · ${code}`,
+    queued: "En la fila: esperando un rival",
+    opponent: "Rival",
+    pushChannel: "Duelos",
+    pushChannelText: "Te avisa cuando es tu turno en un duelo por turnos.",
+    endedShort: "Terminó · ver resultado",
+    play: "Jugar",
+    whoPlays: "¿Quién va a jugar?",
+    profileAria: "Tu nombre y avatar",
+    profileHint: "Tu amigo verá este nombre y este avatar en la partida.",
+    chooseAvatar: "Elige tu avatar",
+    avatars: "Avatares",
+    yourName: "Tu nombre",
+    namePlaceholder: "Cómo te llama tu amigo",
+    joinDuel: "Entrar al duelo",
+    continue: "Continuar",
+    inProgress: "Partida en curso",
+    code: "Código",
+    backToMatch: (code) => `Volver a la partida ${code}`,
+    endMatchAria: (code) => `Terminar la partida ${code}`,
+    endConfirm: (code) =>
+      `¿Terminar la partida ${code}? Si ya empezó, cuenta como derrota para ti.`,
+    end: "Terminar",
   },
 });

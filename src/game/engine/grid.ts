@@ -1,7 +1,12 @@
 import type { PuzzleWord } from "./types";
 import { hash, random } from "./random";
+/** Tira os acentos (Á vira A), mas o Ñ do espanhol fica: é uma letra própria. */
 export const normalize = (text: string) =>
-  text.normalize("NFD").replace(/[̀-ͯ]/g, "").toUpperCase();
+  text
+    .normalize("NFD")
+    .replace(/(?<![nN])\u0303|[\u0300-\u0302\u0304-\u036f]/g, "")
+    .normalize("NFC")
+    .toUpperCase();
 export const key = (row: number, col: number) => `${row},${col}`;
 export const positions = (word: PuzzleWord) =>
   Array.from(normalize(word.answer), (letter, i) => ({

@@ -136,22 +136,24 @@ export function makeMold(rand, opts = {}) {
 // Índice por (comprimento, posição, letra) em bitsets: achar as palavras que cabem num espaço é um
 // AND de poucas máscaras, em vez de varrer o vocabulário inteiro a cada nó da busca.
 const indexCache = new WeakMap();
+/** Posição da letra no índice: A–Z e, no fim, o Ñ do espanhol. */
+const letterIndex = (ch) => (ch === "Ñ" ? 26 : ch.charCodeAt(0) - 65);
 function indexFor(wordsByLen) {
   let ix = indexCache.get(wordsByLen);
   if (ix) return ix;
   ix = {};
   for (const [len, list] of Object.entries(wordsByLen)) {
     const L = Number(len);
-    const words = list.filter((w) => /^[A-Z]+$/.test(w));
+    const words = list.filter((w) => /^[A-ZÑ]+$/.test(w));
     const W = (words.length + 31) >>> 5;
     const masks = Array.from({ length: L }, () =>
-      Array.from({ length: 26 }, () => new Uint32Array(W)),
+      Array.from({ length: 27 }, () => new Uint32Array(W)),
     );
     const all = new Uint32Array(W);
     words.forEach((w, j) => {
       all[j >>> 5] |= 1 << (j & 31);
       for (let i = 0; i < L; i++)
-        masks[i][w.charCodeAt(i) - 65][j >>> 5] |= 1 << (j & 31);
+        masks[i][letterIndex(w[i])][j >>> 5] |= 1 << (j & 31);
     });
     ix[L] = { words, W, masks, all };
   }
@@ -212,7 +214,7 @@ export function solve(
     const fixed = [];
     for (let i = 0; i < slot.len; i++) {
       const ch = letters[slot.cells[i]];
-      if (ch) fixed.push(e.masks[i][ch.charCodeAt(0) - 65]);
+      if (ch) fixed.push(e.masks[i][letterIndex(ch)]);
     }
     let count = 0;
     const tm = restrict ? themeMask(slot.len) : null;

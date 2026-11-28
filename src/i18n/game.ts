@@ -218,6 +218,112 @@ export const gameText = texts({
       pack: (pack: string) => `Bundle ${pack}`,
     },
   },
+  es: {
+    achievements: {
+      "primeiro-passo": {
+        title: "El primer paso",
+        text: "Gana tu primer nivel.",
+      },
+      "palavras-25": {
+        title: "Aprendiz de palabras",
+        text: "Descubre 25 palabras.",
+      },
+      "palavras-100": {
+        title: "Coleccionista",
+        text: "Descubre 100 palabras.",
+      },
+      "palavras-300": {
+        title: "Diccionario andante",
+        text: "Descubre 300 palabras.",
+      },
+      "duelos-5": { title: "Duelista", text: "Gana 5 duelos." },
+      "duelos-20": { title: "Campeón de duelos", text: "Gana 20 duelos." },
+      "mao-certeira": {
+        title: "Pulso firme",
+        text: "Gana un duelo sin fallar ninguna letra.",
+      },
+      chefe: { title: "Cazajefes", text: "Vence al jefe de un mundo." },
+      "mundo-completo": {
+        title: "Mundo completo",
+        text: "Gana todos los niveles de un mundo.",
+      },
+      "rivais-6": {
+        title: "Sin miedo a nadie",
+        text: "Vence a 6 rivales distintos en Aventura.",
+      },
+      "estrelas-30": { title: "Cielo estrellado", text: "Reúne 30 estrellas." },
+      "diario-1": { title: "Ritual diario", text: "Gana un Desafío diario." },
+      "diario-7": {
+        title: "Semana perfecta",
+        text: "Gana el Desafío diario 7 días seguidos.",
+      },
+    },
+    allBossesTitle: "Leyenda de los cinco mundos",
+    allBossesText: (n: number) => `Vence a los ${n} jefes.`,
+    shop: {
+      curinga: {
+        nome: "Comodín",
+        texto:
+          "Entra en tu atril y se vuelve la letra de cualquier casilla: siempre acierta.",
+        resumo: "Se vuelve la letra de cualquier casilla y siempre acierta.",
+      },
+      vogal: {
+        nome: "Kit de vocales",
+        texto:
+          "5 usos. En cada uno, eliges una vocal que el tablero todavía necesita y llega a tu atril.",
+        resumo: "Elige una vocal que el tablero todavía necesita.",
+      },
+    },
+    avatars: {
+      jogador: "Explorador",
+      menina: "Aventurera",
+      garoto: "Cazador",
+      gatinho: "Gatito",
+      panda: "Panda",
+      cientista: "Científica",
+      skatista: "Skater",
+      pirata: "Pirata",
+      detetive: "Detective",
+      astronauta: "Astronauta",
+      cavaleiro: "Caballero",
+      coelhinha: "Conejita",
+      latino: "Latino",
+      latina: "Latina",
+      viking: "Vikingo",
+      guerreira: "Guerrera",
+      ninja: "Ninja",
+      samurai: "Samurái",
+      mago: "Mago",
+      feiticeira: "Hechicera",
+      rei: "Rey",
+      rainha: "Reina",
+      criquete: "Jugador de Críquet",
+      holi: "Holi",
+      diwali: "Diwali",
+      dancarina: "Bailarina",
+      maraja: "Maharajá",
+      marani: "Maharaní",
+      bollywood: "Estrella de Bollywood",
+      diva: "Diva de Bollywood",
+      espacial: "Científica Espacial",
+      chai: "Maestro del Chai",
+      citara: "Músico de Sitar",
+      kabaddi: "Jugador de Kabaddi",
+    },
+    levels: { facil: "Fácil", medio: "Medio", dificil: "Difícil" },
+    styles: { cuidadoso: "Cuidadoso", agressivo: "Agresivo" },
+    loadError:
+      "No se puede leer tu progreso. Revisa el almacenamiento del navegador.",
+    saveError:
+      "No se pudo guardar. Mantén esta página abierta y revisa el almacenamiento.",
+    version: {
+      builtin: "de la app",
+      web: (pack: string) => `Versión web · paquete ${pack}`,
+      native: (native: string, pack: string) =>
+        `Versión ${native} · paquete ${pack}`,
+      pack: (pack: string) => `Paquete ${pack}`,
+    },
+  },
 });
 
 /** Notificações locais do lembrete diário. */
@@ -239,5 +345,14 @@ export const reminderText = texts({
       `Don't lose your ${streak}-day streak. Today's reward: +${coins} coins.`,
     plain: (coins: number) =>
       `A new crossword is waiting. Today's reward: +${coins} coins.`,
+  },
+  es: {
+    title: "¡Llegó tu desafío diario!",
+    day7: (coins: number) =>
+      `Hoy es el Día 7: ¡un cofre con ${coins} monedas te está esperando!`,
+    streak: (streak: number, coins: number) =>
+      `No pierdas tu racha de ${streak} días. Recompensa de hoy: +${coins} monedas.`,
+    plain: (coins: number) =>
+      `Te espera un crucigrama nuevo. Recompensa de hoy: +${coins} monedas.`,
   },
 });

@@ -5,8 +5,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { scriptData as dir } from "./lib/lang.mjs";
-const strip = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
+import { scriptData as dir, strip } from "./lib/lang.mjs";
 export const MAX_CLUE = 18;
 export const MAX_TOKEN = 9;
 export const MAX_LINES = 2;
@@ -82,7 +81,7 @@ export function validateEntry(e, dictionary, pistas) {
     if (
       strip(e.dica)
         .toUpperCase()
-        .split(/[^A-Z]+/)
+        .split(/[^A-ZÑ]+/)
         .includes(word)
     )
       return "dica contém a resposta";

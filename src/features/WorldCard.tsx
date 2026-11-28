@@ -58,6 +58,12 @@ const WORLD_SCENES: Record<string, { src: string; focus?: string }> = {
   deserto: { src: "/art/mundos/deserto.webp", focus: "50% 14%" },
   reino: { src: "/art/mundos/reino.webp", focus: "50% 12%" },
   ilhas: { src: "/art/mundos/ilhas.webp", focus: "50% 22%" },
+  // Espanhol: os mesmos mundos, com ids próprios (o progresso de cada idioma fica separado).
+  aldea: { src: "/art/mundos/vila.webp", focus: "50% 42%" },
+  bosque: { src: "/art/mundos/floresta.webp" },
+  desierto: { src: "/art/mundos/deserto.webp", focus: "50% 14%" },
+  castillo: { src: "/art/mundos/reino.webp", focus: "50% 12%" },
+  islas: { src: "/art/mundos/ilhas.webp", focus: "50% 22%" },
 };
 export const worldArt = (w: Pick<WorldMapInfo, "id" | "art">) =>
   WORLD_SCENES[w.id] ?? { src: w.art };

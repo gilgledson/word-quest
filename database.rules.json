@@ -8,6 +8,9 @@
     "content-en": {
       ".read": true
     },
+    "content-es": {
+      ".read": true
+    },
     "lobby": {
       "$lang": {
         ".read": "auth != null",
