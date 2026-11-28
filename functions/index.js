@@ -123,7 +123,11 @@ export const turnSweep = onSchedule("every 60 minutes", async () => {
       if (action.kind === "timeout" || action.kind === "expire") {
         // Na transação: se alguém jogou agora mesmo, não encerra.
         await db.ref(`rooms/${code}`).transaction((current) => {
-          if (!current || current.status !== room.status) return undefined;
+          // A 1ª chamada costuma vir com null (o Admin SDK ainda não tem a sala em cache): devolver
+          // null faz o Firebase repetir com o valor do servidor. Antes, cancelar aqui fazia nenhuma
+          // sala ser encerrada pelo prazo (duelos parados em "jogando" e salas esperando para sempre).
+          if (current === null) return null;
+          if (current.status !== room.status) return undefined;
           if ((current.updatedAt ?? 0) !== (room.updatedAt ?? 0))
             return undefined;
           return action.kind === "timeout"
