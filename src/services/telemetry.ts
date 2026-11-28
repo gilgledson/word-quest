@@ -89,6 +89,7 @@ export function screenOf(pathname: string) {
   if (pathname === "/profile") return "perfil";
   if (pathname === "/credits") return "creditos";
   if (pathname === "/loja") return "loja";
+  if (pathname === "/liga") return "liga";
   if (pathname === "/online") return "online_lobby";
   if (pathname === "/online/nova") return "online_configurar";
   if (pathname.startsWith("/online/")) return "partida_online";

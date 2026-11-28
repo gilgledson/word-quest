@@ -4,10 +4,15 @@
  * - `turnSweep`: de hora em hora encerra partidas com o prazo de 48 h vencido (o aviso sai pela
  *   mudança da sala), encerra salas sem ninguém há 48 h e lembra quem está na vez a 12 h do fim.
  * Os tokens ficam em `push/<uid>/<chave>` ({ token, lang, at }), gravados pelo app (src/services/push.ts).
+ *
+ * Ligas semanais (docs/planos/ligas-semanais.md; regras puras em league.js):
+ * - `leagueJoin`: põe o jogador num grupo da liga dele na semana (uma vez por semana);
+ * - `leagueClose`: toda segunda 00:05 UTC fecha a semana anterior (quem sobe, quem desce, moedas).
  */
 import { setGlobalOptions } from "firebase-functions/v2";
 import { onValueWritten } from "firebase-functions/v2/database";
 import { onSchedule } from "firebase-functions/v2/scheduler";
+import { HttpsError, onCall } from "firebase-functions/v2/https";
 import { logger } from "firebase-functions";
 import { initializeApp } from "firebase-admin/app";
 import { getDatabase } from "firebase-admin/database";
@@ -19,6 +24,13 @@ import {
   noticesFor,
   sweepAction,
 } from "./lib.js";
+import {
+  closeWeekUpdates,
+  nextSeat,
+  previousWeek,
+  tierOf,
+  weekOf,
+} from "./league.js";
 
 setGlobalOptions({ region: "us-central1", maxInstances: 5 });
 initializeApp();
@@ -139,3 +151,63 @@ export const turnSweep = onSchedule("every 60 minutes", async () => {
     }
   }
 });
+
+/**
+ * Assento do jogador na liga desta semana: o mesmo se ele já entrou; senão, o grupo aberto da liga
+ * dele (`leagueState/{uid}/tier`, Bronze para quem nunca jogou). Enquanto a semana anterior em que
+ * ele jogou não foi fechada (segunda entre 00:00 e 00:05 UTC), responde `{ pending: true }`.
+ */
+export const leagueJoin = onCall(async (request) => {
+  const uid = request.auth?.uid;
+  if (!uid) throw new HttpsError("unauthenticated", "login");
+  const db = getDatabase();
+  const week = weekOf(Date.now());
+  const seatRef = db.ref(`leagueSeat/${week}/${uid}`);
+  const seat = (await seatRef.get()).val();
+  if (seat) return { week, ...seat };
+  const last = previousWeek(week);
+  const [played, closed, state] = await Promise.all([
+    db.ref(`leagueSeat/${last}/${uid}`).get(),
+    db.ref(`leagueClosed/${last}`).get(),
+    db.ref(`leagueState/${uid}/tier`).get(),
+  ]);
+  if (played.exists() && !closed.exists()) return { week, pending: true };
+  const tier = tierOf(state.val() ?? undefined);
+  let taken;
+  await db.ref(`leagueOpen/${week}/${tier}`).transaction((open) => {
+    taken = nextSeat(open);
+    return taken;
+  });
+  const mine = { tier, group: String(taken.group) };
+  // Se duas chamadas correram juntas, vale o assento gravado primeiro.
+  const result = await seatRef.transaction((current) => current ?? mine);
+  logger.info("liga: entrou", { tier, group: mine.group });
+  return { week, ...result.snapshot.val() };
+});
+
+/** Semanas guardadas depois de fechadas (as mais antigas são apagadas). */
+const KEEP_WEEKS = 3;
+
+export const leagueClose = onSchedule(
+  { schedule: "5 0 * * 1", timeZone: "UTC" },
+  async () => {
+    const db = getDatabase();
+    const week = previousWeek(weekOf(Date.now()));
+    // Fecha primeiro: daqui em diante as regras recusam XP novo nessa semana.
+    await db.ref(`leagueClosed/${week}`).set(true);
+    const leagues = (await db.ref(`leagues/${week}`).get()).val() ?? {};
+    const entries = Object.entries(closeWeekUpdates(week, leagues));
+    for (let i = 0; i < entries.length; i += 500)
+      await db.ref().update(Object.fromEntries(entries.slice(i, i + 500)));
+    logger.info("liga: semana fechada", { week, players: entries.length });
+    // Apaga as semanas antigas (os resultados já estão em leagueState).
+    let old = week;
+    for (let i = 0; i < KEEP_WEEKS; i++) old = previousWeek(old);
+    for (let i = 0; i < 3; i++, old = previousWeek(old))
+      await db.ref().update({
+        [`leagues/${old}`]: null,
+        [`leagueSeat/${old}`]: null,
+        [`leagueOpen/${old}`]: null,
+      });
+  },
+);

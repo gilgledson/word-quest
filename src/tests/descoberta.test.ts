@@ -104,3 +104,20 @@ it("o oponente coloca as primeiras e o jogador fecha: conta para o jogador", () 
   p = settleSession(p, lockSome(partial, cells.slice(-1), "p"), 0, ctx);
   expect(p.wordsFound[puzzle.id]).toEqual([puzzle.words[0].id]);
 });
+it("palavra descoberta soma XP na liga da semana, uma vez só", () => {
+  const start = fresh();
+  const now = Date.UTC(2026, 10, 27, 12);
+  let p = player({ sessions: { k: start } });
+  p = settleSession(p, close(start, 0, "p"), 0, { ...ctx, now });
+  expect(p.league).toEqual({ week: "2026-11-23", xp: 10, sent: 0 });
+  p = settleSession(p, p.sessions.k, 0, { ...ctx, now });
+  expect(p.league?.xp).toBe(10);
+  // Palavra do oponente não rende XP.
+  const q = settleSession(
+    player({ sessions: { k: start } }),
+    close(start, 0, "ai"),
+    0,
+    { ...ctx, now },
+  );
+  expect(q.league).toBeUndefined();
+});

@@ -92,6 +92,24 @@ export interface Player {
    * o Perfil mostra a conta na hora, sem esperar o login automático nem depender de internet.
    */
   playGames?: PlayAccount;
+  /**
+   * XP da liga semanal feito no aparelho (ver game/league). Fica só aqui: a liga é do uid do duelo
+   * ao vivo, não vai para a nuvem do Play Games.
+   */
+  league?: {
+    week: string;
+    xp: number;
+    sent: number;
+    /** Liga e grupo desta semana, depois de entrar (ver services/league). */
+    seat?: {
+      tier: "bronze" | "prata" | "ouro" | "cristal" | "diamante";
+      group: string;
+    };
+  };
+  /** Liga atual, como o servidor disse da última vez (para mostrar sem internet). */
+  leagueTier?: "bronze" | "prata" | "ouro" | "cristal" | "diamante";
+  /** Última semana cujo resultado da liga já foi mostrado e pago. */
+  leagueSeen?: string;
 }
 export interface PlayAccount {
   name: string;

@@ -1457,3 +1457,169 @@
 .duel-face-wrap.has-frame .duel-face {
   border-color: transparent;
 }
+
+/* Card da liga semanal: emblema, liga, posição e "Ver liga" numa faixa baixa (abaixo do duelo). */
+.app-home .league-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(8px, 3vw, 14px);
+  padding: 4px clamp(10px, 3.4vw, 16px);
+  border: 3px solid #f3d27a;
+  border-radius: 20px;
+  background: #fffaf0;
+  box-shadow:
+    inset 0 0 0 2px #fffdf6,
+    0 6px 16px #2a1d0526;
+  color: #15365e;
+}
+.league-card .league-emblem {
+  width: clamp(38px, 11vw, 48px);
+  height: auto;
+  filter: drop-shadow(0 3px 4px #3b260040);
+}
+.league-card-text {
+  display: grid;
+  gap: 1px;
+  min-width: 0;
+}
+.league-card-text strong {
+  font-size: clamp(16px, 4.4vw, 20px);
+  font-weight: 900;
+  line-height: 1.1;
+}
+.league-card-text small {
+  color: #4d5c6e;
+  font-size: clamp(12px, 3.3vw, 14px);
+  font-weight: 800;
+}
+.league-card-ends {
+  white-space: nowrap;
+}
+.league-card-ends svg {
+  display: inline;
+  vertical-align: -2px;
+}
+.league-card-cta {
+  padding: 6px 14px;
+  border: 2px solid #1f5fc2;
+  border-radius: 999px;
+  background: linear-gradient(#5aa8ff, #2f74e0);
+  box-shadow: 0 3px 0 #1d4f9e;
+  color: #fff;
+  font-size: clamp(13px, 3.8vw, 16px);
+  font-weight: 900;
+  white-space: nowrap;
+  text-decoration: none;
+}
+@media (max-height: 700px) {
+  .league-card .league-emblem {
+    width: 34px;
+  }
+}
+/* Celular deitado: o card da liga fica embaixo do mundo, na coluna da direita (mais larga), e o do
+   duelo ocupa a coluna da esquerda nas duas linhas. */
+@media (max-height: 500px) and (min-width: 540px) {
+  .app-home > main > .duel-card {
+    grid-area: 1 / 1 / 3 / 2;
+  }
+  .app-home > main > .world-card {
+    grid-area: 1 / 2;
+  }
+  .app-home > main > .league-card {
+    grid-area: 2 / 2;
+  }
+}
+/* Celular em pé com o vídeo e a loja (referência: docs/referencias/ligas/inicio-com-liga-chatgpt.png):
+   os dois cards lado a lado, cada um com a arte e o texto em cima e o botão largo embaixo, para a
+   tela inicial caber sem rolar com o card da liga. Só com a loja, ela continua numa faixa. */
+@media (orientation: portrait) {
+  .app-home > main > .home-extras:has(> :nth-child(2)) {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+  .home-extras:has(> :nth-child(2)) > .home-video-card,
+  .app-home .home-extras:has(> :nth-child(2)) > .home-shop-card {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "art text"
+      "btn btn";
+    align-content: space-between;
+    gap: 6px 8px;
+    padding: 8px 10px 10px;
+    border-radius: 22px;
+  }
+  .home-extras:has(> :nth-child(2)) .home-video-art,
+  .home-extras:has(> :nth-child(2)) .home-shop-art {
+    grid-area: art;
+    width: clamp(40px, 12vw, 58px);
+  }
+  .home-extras:has(> :nth-child(2)) .home-card-text {
+    grid-area: text;
+  }
+  .home-extras:has(> :nth-child(2)) .home-card-text strong {
+    font-size: clamp(14px, 4.2vw, 19px);
+  }
+  .home-extras:has(> :nth-child(2)) .home-card-text small {
+    font-size: clamp(11px, 3.2vw, 14px);
+    line-height: 1.2;
+  }
+  .home-extras:has(> :nth-child(2)) .home-video-watch,
+  .home-extras:has(> :nth-child(2)) .home-shop-open {
+    grid-area: btn;
+    justify-content: center;
+    width: 100%;
+    padding-block: 6px;
+  }
+  .home-extras:has(> :nth-child(2)) .home-shop-open svg {
+    display: inline;
+  }
+  .home-extras:has(> :nth-child(2)) .home-shop-window {
+    display: none;
+  }
+}
+/* Com o card da liga, cada card em pé fica um pouco mais justo para a tela inicial caber sem rolar
+   (referência: docs/referencias/ligas/inicio-com-liga-chatgpt.png). */
+@media (orientation: portrait) {
+  .app-home > main:has(> .league-card) {
+    gap: clamp(6px, 1dvh, 10px);
+  }
+  .app-home > main:has(> .league-card) .duel-card-text small {
+    font-size: clamp(11px, 3.3vw, 14px);
+    line-height: 1.25;
+  }
+  .app-home > main:has(> .league-card) .world-card-art {
+    height: clamp(56px, 8.6dvh, 120px);
+  }
+  .app-home > main:has(> .league-card) .world-card-body {
+    gap: 2px;
+    padding-block: 4px 8px;
+  }
+  .app-home > main:has(> .league-card) .league-card {
+    padding-block: 2px;
+  }
+  .app-home > main:has(> .league-card) .league-card .league-emblem {
+    width: clamp(34px, 10vw, 44px);
+  }
+  .app-home > main:has(> .league-card) .league-card-cta {
+    padding-block: 5px;
+  }
+  .home-extras:has(> :nth-child(2)) > .home-video-card,
+  .app-home .home-extras:has(> :nth-child(2)) > .home-shop-card {
+    gap: 4px 6px;
+    padding: 6px 8px 8px;
+  }
+  .home-extras:has(> :nth-child(2)) .home-video-art,
+  .home-extras:has(> :nth-child(2)) .home-shop-art {
+    width: clamp(34px, 10vw, 50px);
+  }
+  .home-extras:has(> :nth-child(2)) .home-card-text strong {
+    font-size: clamp(13px, 3.9vw, 18px);
+  }
+  .home-extras:has(> :nth-child(2)) .home-video-watch,
+  .home-extras:has(> :nth-child(2)) .home-shop-open {
+    padding-block: 4px;
+    font-size: clamp(13px, 3.8vw, 17px);
+  }
+}

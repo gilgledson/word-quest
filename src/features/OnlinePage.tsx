@@ -7,6 +7,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { addLeagueXp, LEAGUE_XP } from "../game/league";
 import { FramedAvatar } from "../components/FrameArt";
 import type { Player } from "../services/repository";
 import { currentFrame, isFrameId } from "../game/frames";
@@ -758,11 +759,14 @@ function LiveMatch({ code }: { code: string }) {
     update((p) =>
       sessionKey in p.duels
         ? p
-        : {
-            ...p,
-            coins: p.coins + economy.duel.win,
-            duels: { ...p.duels, [sessionKey]: "win" },
-          },
+        : addLeagueXp(
+            {
+              ...p,
+              coins: p.coins + economy.duel.win,
+              duels: { ...p.duels, [sessionKey]: "win" },
+            },
+            LEAGUE_XP.onlineWin,
+          ),
     );
   }, [wonByForfeit, sessionKey, update]);
 

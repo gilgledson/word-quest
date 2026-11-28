@@ -76,6 +76,7 @@ import { resumeMusic } from "./services/music";
 import { MusicController } from "./components/MusicController";
 import { Toasts } from "./components/ResumeMatchToast";
 import { PlayGamesSync } from "./features/PlayGamesCard";
+import { LeaguePage, LeagueSync } from "./features/League";
 import {
   installErrorReporting,
   trackAppReady,
@@ -194,6 +195,7 @@ function App() {
             <Toasts />
             <MusicController />
             <PlayGamesSync />
+            <LeagueSync />
             <ScreenTracker />
             <LinkFollower />
             <ReminderSync />
@@ -209,6 +211,7 @@ function App() {
                   <Route path="profile" element={<Profile />} />
                   <Route path="credits" element={<Credits />} />
                   <Route path="loja" element={<Shop />} />
+                  <Route path="liga" element={<LeaguePage />} />
                   <Route path="play/:id" element={<GameRoute />} />
                   <Route path="online" element={<OnlineRoute />} />
                   <Route path="online/nova" element={<OnlineRoute setup />} />

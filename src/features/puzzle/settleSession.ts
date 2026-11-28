@@ -11,6 +11,7 @@ import {
   type GameRecord,
   type Player,
 } from "../../services/repository";
+import { addLeagueXp, xpFor } from "../../game/league";
 
 interface Context {
   engine: PuzzleEngine;
@@ -21,16 +22,19 @@ interface Context {
   /** Duelo ao vivo: a derrota não tira moedas (ver `duelCoins`). */
   online?: boolean;
   date: string;
+  /** Instante da jogada (ms), para a semana da liga; padrão: agora. */
+  now?: number;
 }
 /**
  * Grava a sessão no jogador, cobra `cost` moedas e, quando a grade acaba pela primeira vez,
- * paga a recompensa do duelo (uma vez por fase e nível) e libera a próxima fase.
+ * paga a recompensa do duelo (uma vez por fase e nível) e libera a próxima fase. O que a jogada
+ * rendeu (palavras, vitória, estrelas, diário) também soma XP na liga da semana.
  */
 export function settleSession(
   p: Player,
   next: Session,
   cost: number,
-  { engine, puzzleId, sessionKey, daily, casual, online, date }: Context,
+  { engine, puzzleId, sessionKey, daily, casual, online, date, now }: Context,
 ): Player {
   const settled = { ...next };
   if (p.coins < cost) return p;
@@ -77,7 +81,7 @@ export function settleSession(
     ].slice(0, HISTORY_MAX);
     settled.claimed = true;
   }
-  return {
+  const after: Player = {
     ...p,
     coins,
     stars,
@@ -88,6 +92,7 @@ export function settleSession(
     wordsFound,
     sessions: { ...p.sessions, [sessionKey]: settled },
   };
+  return addLeagueXp(after, xpFor(p, after, { online }), now);
 }
 /**
  * Palavras que o jogador fechou nesta jogada (ao menos uma casa nova dela é dele), ainda não
