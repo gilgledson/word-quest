@@ -62,6 +62,10 @@ async function create(): Promise<Particles | undefined> {
   const canvas = app.canvas;
   canvas.className = "fx-particles";
   canvas.setAttribute("aria-hidden", "true");
+  // Sem partículas, a tela WebGL sai da página: uma camada transparente do tamanho da tela por cima
+  // de tudo, misturada a cada quadro, fazia telas inteiras piscarem em branco em celulares mais
+  // fracos (a GPU descarta e redesenha as camadas de baixo). Ela volta só enquanto há animação.
+  canvas.style.display = "none";
   document.body.append(canvas);
 
   // Texturas desenhadas uma vez: estrela, brilho redondo suave e papel de confete.
@@ -105,7 +109,10 @@ async function create(): Promise<Particles | undefined> {
     if (blend) sprite.blendMode = "add";
     layer.addChild(sprite);
     live.push({ ...p, sprite, age: 0 });
-    if (!app.ticker.started) app.ticker.start();
+    if (!app.ticker.started) {
+      canvas.style.display = "";
+      app.ticker.start();
+    }
   };
 
   app.ticker.add((ticker) => {
@@ -161,7 +168,10 @@ async function create(): Promise<Particles | undefined> {
         live.splice(i, 1);
       }
     }
-    if (!live.length) app.ticker.stop();
+    if (!live.length) {
+      app.ticker.stop();
+      canvas.style.display = "none";
+    }
   });
 
   const later = (ms: number, fn: () => void) => window.setTimeout(fn, ms);
