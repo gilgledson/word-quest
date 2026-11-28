@@ -13,7 +13,7 @@
   padding: 6px;
 }
 .app-playing .board {
-  --grid-line: #5b7473;
+  --grid-line: var(--board-grid, #5b7473);
   display: grid;
   flex-shrink: 0;
   width: auto;
@@ -387,8 +387,8 @@
 }
 /* Higher contrast on the board: darker grid lines, saturated clue cells, owner-tinted letters. */
 .app-playing .board {
-  border: 2px solid #1f3a3d;
-  background: #1f3a3d;
+  border: 2px solid var(--board-line, #1f3a3d);
+  background: var(--board-line, #1f3a3d);
 }
 .app-playing .cell {
   border-right: 1px solid var(--grid-line);
@@ -397,31 +397,34 @@
 .app-playing .blocked {
   background: repeating-linear-gradient(
     135deg,
-    #8da99c,
-    #8da99c 5px,
-    #82a092 5px,
-    #82a092 6px
+    var(--blocked-a, #8da99c),
+    var(--blocked-a, #8da99c) 5px,
+    var(--blocked-b, #82a092) 5px,
+    var(--blocked-b, #82a092) 6px
   );
   opacity: 1;
 }
 .app-playing .clue {
-  background: linear-gradient(#bfe3ad, #9fd088);
-  color: #08200f;
+  background: linear-gradient(
+    var(--clue-top, #bfe3ad),
+    var(--clue-bottom, #9fd088)
+  );
+  color: var(--clue-ink, #08200f);
 }
 .app-playing .clue span {
   font-size: clamp(6.5px, calc(var(--cell) * 0.2), 14px);
   font-weight: 900;
-  color: #08200f;
+  color: var(--clue-ink, #08200f);
 }
 .app-playing .clue.double .clue-half span {
   font-size: clamp(6px, calc(var(--cell) * 0.18), 11px);
 }
 .app-playing .clue b {
-  color: #0a5a2a;
+  color: var(--clue-mark, #0a5a2a);
   font-weight: 900;
 }
 .app-playing .clue.double .clue-half + .clue-half {
-  border-top: 1px solid #3f7a4d;
+  border-top: 1px solid var(--clue-divider, #3f7a4d);
 }
 .app-playing .selected-clue,
 .app-playing .selected-clue span,
@@ -1329,7 +1332,7 @@
   translate: -50% 0;
 }
 .app-playing .clue-half {
-  color: #0a5a2a;
+  color: var(--clue-mark, #0a5a2a);
 }
 .app-playing .clue-half.selected-clue {
   color: #fff;
@@ -1755,4 +1758,73 @@ button.duelist-frame.claim {
   50% {
     transform: scale(1.25);
   }
+}
+
+/* Tabuleiros à venda (game/boards.ts; docs/planos/tabuleiros-a-venda.md): cada tema troca as cores
+   da grade e põe a moldura em volta (arte esticada pelas bordas, os enfeites ficam nos cantos). As
+   casas de letra continuam brancas; o alto contraste do Perfil vale por cima do tema. */
+[data-board="vila"] {
+  --board-line: #4a2e14;
+  --board-grid: #7a5a3a;
+  --clue-top: #c8e7b2;
+  --clue-bottom: #a3d38a;
+  --clue-ink: #0e2208;
+  --clue-mark: #1f5a12;
+  --clue-divider: #5f8a42;
+  --blocked-a: #b9a07a;
+  --blocked-b: #ad9470;
+}
+[data-board="floresta"] {
+  --board-line: #2f3a1c;
+  --board-grid: #5d6b3e;
+  --clue-top: #d4ebb0;
+  --clue-bottom: #b2d681;
+  --clue-ink: #12230a;
+  --clue-mark: #2f5512;
+  --clue-divider: #6c8c3e;
+  --blocked-a: #7f9468;
+  --blocked-b: #74895d;
+}
+[data-board="deserto"] {
+  --board-line: #5a3416;
+  --board-grid: #9a6a3e;
+  --clue-top: #fbe5b8;
+  --clue-bottom: #f1c987;
+  --clue-ink: #3a1d06;
+  --clue-mark: #7a3e0a;
+  --clue-divider: #b07a3a;
+  --blocked-a: #d8b98a;
+  --blocked-b: #ccab7a;
+}
+[data-board="reino"] {
+  --board-line: #3a1f5c;
+  --board-grid: #6d559a;
+  --clue-top: #ece2ff;
+  --clue-bottom: #d3bff7;
+  --clue-ink: #22104a;
+  --clue-mark: #4b1f96;
+  --clue-divider: #8a6cc2;
+  --blocked-a: #b9a9d8;
+  --blocked-b: #ad9ccf;
+}
+/* A moldura: uma camada por cima da grade, que avança --frame-inset para fora dela. A arte é
+   cortada em 9 fatias (32% de cada lado): os cantos enfeitados ficam inteiros e as bordas esticam
+   para qualquer grade. Não recebe toques. */
+.board-wrap {
+  position: relative;
+  display: grid;
+}
+.board-wrap.framed {
+  --frame-inset: 22px;
+  --frame-art: 60px;
+}
+.board-frame-art {
+  position: absolute;
+  inset: calc(var(--frame-inset) * -1);
+  z-index: 7;
+  border: var(--frame-art) solid transparent;
+  border-image-source: var(--board-frame);
+  border-image-slice: 32%;
+  border-image-repeat: stretch;
+  pointer-events: none;
 }

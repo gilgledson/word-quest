@@ -49,6 +49,10 @@ export interface Player {
   frames?: string[];
   /** Moldura em uso em volta do avatar (uma das compradas); ausente = sem moldura. */
   frame?: string;
+  /** Tabuleiros comprados (ids de `BOARD_IDS`, game/boards). */
+  boards?: string[];
+  /** Tabuleiro em uso na partida (um dos comprados); ausente = o tabuleiro de sempre. */
+  board?: string;
   /** Itens da loja no inventário (usos restantes de cada um). */
   items?: Partial<Record<"curinga" | "vogal", number>>;
   /** Apostas reservadas em duelos ao vivo ainda não acertados (código da sala → moedas). */

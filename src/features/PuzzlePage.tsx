@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { currentFrame, type FrameId } from "../game/frames";
+import { BOARD_FRAME_INSET, boardArt, currentBoard } from "../game/boards";
 import { createPortal } from "react-dom";
 import { useLetterDrag } from "../hooks/useLetterDrag";
 import { TileFlights, useTileFlights } from "../hooks/useTileFlights";
@@ -164,6 +165,8 @@ export function Duel({
   online?: OnlineDuel;
 }) {
   const { player, update } = usePlayer();
+  // Tabuleiro comprado na loja: moldura, cores da grade e cenário (game/boards).
+  const board = currentBoard(player);
   const sfx = (name: EffectName, count?: number) => {
     playSfx(player.sound, name, count);
     buzz(player.vibration, name);
@@ -239,7 +242,13 @@ export function Duel({
   }, [message]);
   const [swapping, setSwapping] = useState<string[] | null>(null);
   const [boardMode, setBoardMode] = useState<BoardMode>(readMode);
-  const grid = useFitGrid(puzzle?.cols ?? 8, puzzle?.rows ?? 10, boardMode);
+  // Com tabuleiro comprado, a grade encolhe para a moldura caber em volta (BOARD_FRAME_INSET de cada lado).
+  const grid = useFitGrid(
+    puzzle?.cols ?? 8,
+    puzzle?.rows ?? 10,
+    boardMode,
+    board ? 2 + 2 * BOARD_FRAME_INSET : 2,
+  );
   const turnBoard = () => {
     const next = grid.rotated ? "upright" : "rotated";
     setBoardMode(next);
@@ -1316,9 +1325,10 @@ export function Duel({
           }
         />
       </section>
-      <div className="board-card" ref={cardRef}>
+      <div className="board-card" ref={cardRef} data-board={board}>
         <ScoreFloats floats={floats} bursts={bursts} trails={trails} />
         <Board
+          boardFrame={board ? boardArt(board) : undefined}
           puzzle={puzzle}
           engine={engine}
           session={session}
