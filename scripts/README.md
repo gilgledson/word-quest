@@ -195,3 +195,25 @@ node scripts/publish-content.mjs --lang en            # confere; com --deploy pu
 O conteúdo publicado do inglês fica em `content-en/` no Realtime Database (o português segue em
 `content/`, que os apps antigos leem). `src/tests/i18n-conteudo.test.tsx` valida o conteúdo em inglês
 e joga cada grade até o fim.
+
+## Conteúdo em espanhol (`--lang es`)
+
+Mesmo caminho do inglês: entradas em `scripts/data/es/` e conteúdo do app em `src/data/es/`. Plano em
+`docs/planos/versao-espanhol.md`.
+
+- **Dicionário:** RLA-ES (Santiago Bosio e colaboradores), variante `es_MX`, da pasta `es` de
+  <https://github.com/LibreOffice/dictionaries>. Licença tripla à escolha: **GPLv3**, **LGPLv3** ou
+  **MPL 1.1**. Não é versionado: baixe `es_MX.dic` e `es_MX.aff` (fora do projeto) e rode
+  `node scripts/build-dictionary.mjs --lang es <es_MX.dic> <es_MX.aff>`.
+- **Ñ:** é uma letra própria. Os acentos saem (Á vira A, Ü vira U), mas o Ñ fica, nos scripts
+  (`strip` em `scripts/lib/lang.mjs`) e no app (`normalize` em `src/game/engine/grid.ts`). O gerador
+  indexa 27 letras (A–Z e Ñ).
+- **Temas:** `animales`, `alimentos`, `naturaleza`, `hogar`, `deportes`, `oficios`, `cuerpo`, `escuela`
+  (a arte é a mesma dos outros idiomas). Os ids não podem repetir os do português (`comida`, `casa`):
+  o progresso do Casual é guardado pelo id da grade.
+
+```sh
+node scripts/check-clues.mjs --lang es
+node scripts/catalogo.mjs --lang es --add novas.txt     # linhas PALABRA|pista|nivel|tipo|dica
+node scripts/catalogo.mjs --lang es --resumo
+```

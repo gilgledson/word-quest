@@ -85,7 +85,14 @@ import { HomeShopCard, HomeVideoCard } from "./HomeCards";
 import { onlineAvailable } from "../services/online";
 import { appVersion } from "../services/liveUpdate";
 import { canRateInStore, openStoreRating } from "../services/review";
-import { changeLang, htmlLang, lang, LANGS, locale, type Lang } from "../i18n";
+import {
+  changeLang,
+  choosableLangs,
+  htmlLang,
+  lang,
+  locale,
+  type Lang,
+} from "../i18n";
 import { campaignT, casualT, dailyT, homeT, profileT } from "../i18n/screens";
 export function Home() {
   const wins = usePlayer(
@@ -838,7 +845,11 @@ function ProfileSettings() {
   );
 }
 /** Nome de cada idioma escrito nele mesmo: quem não lê o idioma atual acha o seu. */
-const LANG_NAMES: Record<Lang, string> = { pt: "Português", en: "English" };
+const LANG_NAMES: Record<Lang, string> = {
+  pt: "Português",
+  en: "English",
+  es: "Español",
+};
 /** Idioma do jogo: trocar grava a escolha e reabre o app na tela inicial. */
 function LanguageSetting() {
   const current = lang();
@@ -853,7 +864,7 @@ function LanguageSetting() {
         {profileT.language}
       </span>
       <div className="online-choices">
-        {LANGS.map((l) => (
+        {choosableLangs().map((l) => (
           <button
             key={l}
             type="button"

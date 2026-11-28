@@ -68,10 +68,11 @@ const PROFILE = {
 };
 // Cinco fases por mundo, na ordem do mapa.
 // Ids dos mundos de cada idioma (os mesmos de worlds.json): o inglês tem os seus.
-const WORLD_IDS =
-  LANG === "en"
-    ? ["village", "forest", "desert", "kingdom", "islands"]
-    : ["vila", "floresta", "deserto", "reino", "ilhas"];
+const WORLD_IDS = {
+  pt: ["vila", "floresta", "deserto", "reino", "ilhas"],
+  en: ["village", "forest", "desert", "kingdom", "islands"],
+  es: ["aldea", "bosque", "desierto", "castillo", "islas"],
+}[LANG];
 const worldOf = (n) => WORLD_IDS[Math.min(4, Math.floor((n - 1) / 5))];
 const OBSCURE = new Set("URU GNU IPE OSA OVA FEL AVO UAI HUM EGO".split(" "));
 const { valid } = validateClues();

@@ -1,23 +1,28 @@
-// Deriva a lista de palavras (sem acentos, 2–9 letras) a partir do dicionário VERO (Hunspell pt_BR),
-// expandindo os afixos do .aff (o .dic só traz lemas; "casa", "mesa" etc. vêm das regras).
-// Uso: node scripts/build-dictionary.mjs <pt_BR.dic> <pt_BR.aff> [saida]
+// Deriva a lista de palavras (sem acentos, 2–9 letras) a partir de um dicionário Hunspell, expandindo
+// os afixos do .aff (o .dic só traz lemas; "casa", "mesa" etc. vêm das regras).
+// Português: VERO (pt_BR). Espanhol (`--lang es`): RLA-ES (es_MX), com o Ñ mantido como letra.
+// Uso: node scripts/build-dictionary.mjs [--lang es] <dic> <aff> [saida]
 // O dicionário bruto e a lista expandida NÃO entram no repositório (ver scripts/README.md).
 import fs from "node:fs";
+import path from "node:path";
+import { LANG, scriptData, strip } from "./lib/lang.mjs";
 
-const [, , dicPath, affPath, output = "scripts/data/dictionary.txt"] =
-  process.argv;
+const args = process.argv
+  .slice(2)
+  .filter((a, i, all) => a !== "--lang" && all[i - 1] !== "--lang");
+const [dicPath, affPath, output = path.join(scriptData, "dictionary.txt")] =
+  args;
 if (!dicPath || !affPath) {
   console.error(
-    "Uso: node scripts/build-dictionary.mjs <pt_BR.dic> <pt_BR.aff> [saida]",
+    "Uso: node scripts/build-dictionary.mjs [--lang es] <dic> <aff> [saida]",
   );
   process.exit(1);
 }
-const strip = (s) => s.normalize("NFD").replace(/[̀-ͯ]/g, "");
-const BLOCKED = new Set(
-  "porra caralho puta puto merda foder fodido buceta cu cuzao viado bicha boceta pinto piroca punheta cacete bosta xoxota rola estupro nazismo".split(
-    " ",
-  ),
-);
+const BLOCKED_BY_LANG = {
+  pt: "porra caralho puta puto merda foder fodido buceta cu cuzao viado bicha boceta pinto piroca punheta cacete bosta xoxota rola estupro nazismo",
+  es: "puta puto putas putos putita mierda joder jodido jodida coño cojones cojon verga vergas pinche pendejo pendeja pendejos culero culera culo culos chingar chingada chingado chinga mamon mamona marica maricon maricona maricones polla pollas zorra zorras cabron cabrona cabrones carajo concha conchas pija pijas pajero pajera paja ojete orto choto chota boludo boluda pelotudo pelotuda huevon huevona gilipollas follar follando follada culiar culiao malparido malparida gonorrea hijueputa violar violacion violador nazi nazis porno puton putero",
+};
+const BLOCKED = new Set((BLOCKED_BY_LANG[LANG] ?? "").split(" "));
 
 // --- afixos ---------------------------------------------------------------
 const rules = { SFX: new Map(), PFX: new Map() }; // flag -> { cross, list: [{strip, add, cont, re}] }
@@ -74,7 +79,7 @@ const words = new Set();
 const keep = (w) => {
   if (w !== w.toLowerCase()) return;
   const s = strip(w);
-  if (/^[a-z]{2,9}$/.test(s) && !BLOCKED.has(s)) words.add(s.toUpperCase());
+  if (/^[a-zñ]{2,9}$/.test(s) && !BLOCKED.has(s)) words.add(s.toUpperCase());
 };
 const lines = fs
   .readFileSync(dicPath, "utf8")

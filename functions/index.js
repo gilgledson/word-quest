@@ -52,7 +52,7 @@ async function send(notice) {
   // Um envio por idioma (cada aparelho guarda o seu).
   const byLang = new Map();
   for (const [key, v] of entries) {
-    const lang = v.lang === "en" ? "en" : "pt";
+    const lang = v.lang === "en" || v.lang === "es" ? v.lang : "pt";
     byLang.set(lang, [...(byLang.get(lang) ?? []), { key, token: v.token }]);
   }
   for (const [lang, list] of byLang) {

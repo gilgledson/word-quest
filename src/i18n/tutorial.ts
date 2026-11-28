@@ -31,6 +31,18 @@ export const coachText = texts({
       `${filled} of ${total} letters`,
     skip: "Skip",
   },
+  es: {
+    region: "Tutorial",
+    complete: "¡Palabra completa!",
+    tapConfirm: "Toca ✓ para confirmar",
+    points: (n: number) => `+${n} ${n === 1 ? "punto" : "puntos"}`,
+    firstWord: "¡Arma tu primera palabra!",
+    dragBefore: "Toca las letras para formar ",
+    dragAfter: ".",
+    nextLetter: "Siguiente letra: ",
+    progress: (filled: number, total: number) => `${filled} de ${total} letras`,
+    skip: "Saltar",
+  },
 });
 
 /** Dica de 4 passos da primeira rodada. */
@@ -56,6 +68,17 @@ export const tipText = texts({
     tapLetter: (letter: string) => `Tap the glowing ${letter} to play`,
     gotIt: "Got it",
     skip: "Skip",
+  },
+  es: {
+    steps: {
+      1: "Toca una letra de tu atril para jugar",
+      2: "Toca Confirmar: correcta +1, incorrecta −1",
+      3: "Turno del rival: las letras moradas son suyas",
+      4: "Tu turno otra vez: gana quien tenga más puntos",
+    } as Record<number, string>,
+    tapLetter: (letter: string) => `Toca la ${letter} que brilla para jugar`,
+    gotIt: "Entendido",
+    skip: "Saltar",
   },
 });
 
@@ -106,5 +129,28 @@ export const tourText = texts({
     jokerTitle: "You got a wild tile ★",
     joker:
       "Place it on any square of the board. You can drag it somewhere else; the right letter only shows when you confirm. You get one per match.",
+  },
+  es: {
+    locale: {
+      back: "Volver",
+      close: "Cerrar",
+      last: "Entendido",
+      next: "Siguiente",
+      nextWithProgress: "Siguiente ({current} de {total})",
+      skip: "Omitir",
+      open: "Abrir",
+    },
+    inicioTitle: "Empieza por la pista",
+    inicio:
+      "La respuesta va en las casillas azules, en el sentido de la flecha. Toca otra pista cuando quieras cambiar.",
+    dueloTitle: "Por turnos",
+    duelo:
+      "Juegan por turnos. Completar una palabra suma la palabra entera. ¡Gana quien tenga más puntos al final!",
+    trocarTitle: "Cambiar y Ayuda",
+    trocar:
+      "¿Sin letras útiles? Cambiar renueva las letras de tu atril por unas monedas. La Ayuda pone una de tus letras en la casilla correcta; confirma para sumar el punto.",
+    jokerTitle: "Llegó el comodín ★",
+    joker:
+      "Ponlo en cualquier casilla del tablero. Puedes arrastrarlo a otro lugar; la letra correcta solo aparece al confirmar. Recibes uno por partida.",
   },
 });

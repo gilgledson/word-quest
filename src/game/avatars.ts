@@ -102,7 +102,7 @@ export const DEFAULT_AVATAR = PLAYER_AVATARS[0].id;
 export const DEFAULT_NAME = "Explorador";
 /** Nome padrão em cada idioma (o jogador em inglês começa como "Explorer"). */
 export const DEFAULT_NAMES = [DEFAULT_NAME, "Explorer"];
-export const defaultName = () => tr(DEFAULT_NAME, "Explorer");
+export const defaultName = () => tr(DEFAULT_NAME, "Explorer", "Explorador");
 /** Tamanho do nome que o amigo vê no duelo ao vivo. */
 export const NAME_MIN = 2;
 export const NAME_MAX = 20;

@@ -107,6 +107,20 @@ const FIRST_NAMES: Record<Lang, Record<Gender, readonly string[]>> = {
     f: ["Priya", "Neha", "Anjali", "Joy", "Mae", "Aisha", "Kim", "Grace"],
     m: ["Arjun", "Rahul", "Rohan", "Paolo", "Ravi", "Sam", "Jay", "Mark"],
   },
+  // América Latina (México, Colômbia, Peru, Argentina, Chile).
+  es: {
+    f: [
+      "Sofía",
+      "Valentina",
+      "Camila",
+      "Lupita",
+      "Majo",
+      "Dani",
+      "Vale",
+      "Fer",
+    ],
+    m: ["Diego", "Mateo", "Santi", "Andrés", "Javi", "Nico", "Emilio", "Toño"],
+  },
 };
 /**
  * Gênero de cada avatar de pessoa (docs/referencias/avatares). Os bichos (gatinho, panda) servem

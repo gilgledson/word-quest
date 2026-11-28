@@ -69,6 +69,39 @@ export const resultText = texts({
     nextLevelVs: (rival: string) => `Next level · vs ${rival}`,
     share: "Share",
   },
+  es: {
+    win: "¡Ganaste!",
+    draw: "¡Empate!",
+    loss: (rival: string) => `${rival} ganó`,
+    back: "Volver",
+    otherTheme: "Otro tema",
+    rematch: "Revancha",
+    rematchRetry: "Revancha: intentar de nuevo",
+    rematchReplay: "Revancha: jugar de nuevo",
+    sheet: "Resultado de la partida",
+    viewBoard: "Ver tablero",
+    viewResult: (title: string) => `Ver resultado: ${title}`,
+    finalScore: "Marcador final",
+    pts: "pts",
+    lossCost: (n: number) =>
+      `La derrota costó ${n} ${n === 1 ? "moneda" : "monedas"}`,
+    dailyReward: (n: number) =>
+      `Recompensa diaria: ${n} ${n === 1 ? "moneda" : "monedas"}`,
+    duelReward: (n: number) =>
+      `Recompensa del duelo: ${n} ${n === 1 ? "moneda" : "monedas"}`,
+    coins: (n: number) => (n === 1 ? "moneda" : "monedas"),
+    achievements: (n: number) => (n === 1 ? "Logro" : "Logros"),
+    claimInProfile: ". Reclámalo en tu Perfil.",
+    newWorld: "¡Nuevo mundo desbloqueado: ",
+    newWorldEnd: "!",
+    dailyHint: "Vence a tu rival para completar el desafío diario.",
+    inviteLabel: "Desafiar a un amigo en línea",
+    invite: "Desafía a un amigo: ",
+    bestWord: "Mejor palabra",
+    nextLevel: "Siguiente nivel",
+    nextLevelVs: (rival: string) => `Siguiente nivel · vs ${rival}`,
+    share: "Compartir",
+  },
 });
 
 /** Botão de compartilhar e a folha do sistema (`ShareResultButton`, `shareText`). */
@@ -82,6 +115,11 @@ export const shareUiText = texts({
     shareResult: "Share result",
     copied: "Result copied! Just paste it into a chat.",
     sendInvite: "Send invite",
+  },
+  es: {
+    shareResult: "Compartir resultado",
+    copied: "¡Resultado copiado! Solo pégalo en el chat.",
+    sendInvite: "Enviar invitación",
   },
 });
 
@@ -127,6 +165,24 @@ export const sharedText = texts({
     boardLegend: (rival: string) => `Filled: my letters · Outlined: ${rival}`,
     best: (word: string) => `🔥 Best word: ${word}`,
   },
+  es: {
+    win: (rival: string) => `⚔️ ¡Victoria contra ${rival}!`,
+    draw: (rival: string) => `🤝 ¡Empate con ${rival}!`,
+    loss: (rival: string) => `😤 Derrota ante ${rival}`,
+    dailyTitle: (day: string, month: string) =>
+      `🏆 WordQuest · Desafío del ${day}/${month}`,
+    myLetters: (mine: number, rival: string, theirs: number) =>
+      `🟦 mis letras: ${mine} · 🟥 ${rival}: ${theirs}`,
+    score: (p: number, ai: number) => `🎯 Puntuación: ${p} × ${ai}`,
+    misses: (n: number) => `❌ ${count(n, "error", "errores")}`,
+    noMisses: "✅ sin errores",
+    hints: (n: number) => `💡 ${count(n, "ayuda", "ayudas")}`,
+    noHints: "💡 sin ayudas",
+    streak: (n: number) => `🔥 ${n} días seguidos`,
+    beatMe: "¿Puedes ganarme?",
+    boardLegend: (rival: string) => `Rellenas: mis letras · Vacías: ${rival}`,
+    best: (word: string) => `🔥 Mejor palabra: ${word}`,
+  },
 });
 
 /** Baú aberto na tela inicial (`ChestReward`). */
@@ -138,5 +194,9 @@ export const chestText = texts({
   en: {
     opened: "Chest opened!",
     coins: (n: number) => (n === 1 ? "coin" : "coins"),
+  },
+  es: {
+    opened: "¡Cofre abierto!",
+    coins: (n: number) => (n === 1 ? "moneda" : "monedas"),
   },
 });

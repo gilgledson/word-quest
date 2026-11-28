@@ -26,12 +26,13 @@ export const BUNDLED_CONTENT: GameContent = {
 };
 /**
  * Conteúdo que vem no app para cada idioma. O português é o de sempre (dentro do pacote principal); o
- * inglês (src/data/en) só é baixado por quem joga em inglês.
+ * inglês (src/data/en) e o espanhol (src/data/es) só são baixados por quem joga no idioma.
  */
 async function bundledFor(l: Lang): Promise<GameContent> {
   if (l === "pt") return BUNDLED_CONTENT;
-  const en = await import("../data/en");
-  return { ...BUNDLED_CONTENT, catalog: en.catalog, cast: en.cast };
+  const own =
+    l === "es" ? await import("../data/es") : await import("../data/en");
+  return { ...BUNDLED_CONTENT, catalog: own.catalog, cast: own.cast };
 }
 /** O conteúdo do app no idioma em uso (o português até `startContent` rodar). */
 let bundled: GameContent = BUNDLED_CONTENT;

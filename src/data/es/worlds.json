@@ -1,0 +1,32 @@
+[
+  {
+    "id": "aldea",
+    "nome": "Aldea de las Letras",
+    "art": "/art/map-straight-v1.jpg",
+    "start": "Tu viaje empieza aquí"
+  },
+  {
+    "id": "bosque",
+    "nome": "Bosque de los Enigmas",
+    "art": "/art/map-forest-v1.jpg",
+    "start": "Rumbo al bosque"
+  },
+  {
+    "id": "desierto",
+    "nome": "Dunas del Misterio",
+    "art": "/art/map-desert-v1.jpg",
+    "start": "Rumbo a las dunas"
+  },
+  {
+    "id": "castillo",
+    "nome": "Reino de los Sabios",
+    "art": "/art/map-kingdom-v1.jpg",
+    "start": "Rumbo al reino"
+  },
+  {
+    "id": "islas",
+    "nome": "Islas de las Maravillas",
+    "art": "/art/map-islands-v1.jpg",
+    "start": "¡A navegar!"
+  }
+]

@@ -60,6 +60,33 @@ export const shellT = texts({
     errorRetry: "Try again",
     errorHome: "Back to home",
   },
+  es: {
+    logoAlt: "WordQuest — El Viaje de las Palabras",
+    walletShop: (coins: number) => `${coins} monedas: abrir la tienda`,
+    musicOff: "Apagar música",
+    musicOn: "Encender música",
+    backToMenu: "Volver al menú principal",
+    settings: "Ajustes",
+    footer1: "Una palabra. Un nuevo camino.",
+    footer2: "Hecho para explorar, a tu ritmo.",
+    mainNav: "Navegación principal",
+    navAdventure: "Aventura",
+    navCasual: "Casual",
+    navDaily: "Diario",
+    navProfile: "Perfil",
+    toClaim: (n: number) => `${n} ${plural(n, "logro", "logros")} por reclamar`,
+    openingLevel: "Abriendo el nivel…",
+    openingDuel: "Abriendo el duelo…",
+    preparing: "Preparando tu aventura…",
+    splash: "Abriendo WordQuest, un juego de Lunara Games",
+    scenery:
+      "Aldea de fantasía con casas de techo naranja, puente de piedra, arroyo y montañas",
+    errorTitle: "Uy, algo salió mal",
+    errorText:
+      "Tu progreso está guardado en este dispositivo. Inténtalo de nuevo.",
+    errorRetry: "Intentar de nuevo",
+    errorHome: "Volver al inicio",
+  },
 });
 
 /** Faixa da versão web (baixar o app / pôr na Tela de Início). */
@@ -82,6 +109,16 @@ export const webBarT = texts({
     iosText:
       "Tap Share, then “Add to Home Screen” so you don't lose your progress.",
     close: "Dismiss",
+  },
+  es: {
+    label: "WordQuest en tu celular",
+    androidTitle: "Descarga la app gratis",
+    androidText:
+      "Tu progreso guardado e invitaciones que abren directo en el juego.",
+    iosTitle: "Agrega el juego a tu pantalla de inicio",
+    iosText:
+      "Toca Compartir y luego “Agregar a inicio” para no perder tu progreso.",
+    close: "Cerrar aviso",
   },
 });
 
@@ -173,6 +210,47 @@ export const homeT = texts({
     shopOpen: "Open shop",
     shopLabel: "Shop: new items and more. Open shop",
   },
+  es: {
+    titleStart: "¡Tu aventura comienza!",
+    titleGoing: "¡Tu aventura continúa!",
+    reviewMap: "Ver el mapa",
+    resumeMatch: "Retomar partida",
+    playFirst: "Jugar el primer nivel",
+    continueAdventure: "Continuar aventura",
+    seeMap: (world: string) => `Ver el mapa: ${world}`,
+    worldPill: (n: string) => `MUNDO ${n}`,
+    stepOf: (i: number, n: number) => `Nivel ${i} de ${n}`,
+    adventureDone: "¡Aventura completa!",
+    worldDone: "¡Mundo completo!",
+    trail: "Niveles del mundo",
+    stepDone: "completado",
+    stepCurrent: "el siguiente",
+    stepPending: "todavía no",
+    step: (i: number, state: string) => `Nivel ${i}: ${state}`,
+    adventureTotal: (wins: number, total: number) =>
+      `Aventura: ${wins}/${total} niveles`,
+    chestsReady: (n: number) => `¡${n} cofres listos!`,
+    chestReady: "¡Cofre listo! Tócalo",
+    chestIn: (n: number) => `Cofre en ${n} ${plural(n, "palabra", "palabras")}`,
+    openChest: (coins: number) => `Abrir cofre: ${coins} monedas`,
+    chestClosed: "Cofre cerrado: descubre más palabras para abrirlo",
+    chestOpened: "Cofre abierto",
+    continue: "Continuar",
+    duelTitle: "Duelo en línea",
+    duelBadge: "En línea",
+    duelSub: "Encuentra un rival y juega ya",
+    duelPlay: "Jugar ya",
+    duelPlayLabel: "Duelo en línea: jugar ya (buscar rival)",
+    duelInvite: "Invitar a un amigo",
+    videoTitle: "Gana monedas gratis",
+    videoSub: "Mira un video",
+    videoWatch: "Ver",
+    videoEarned: (coins: number) => `¡+${coins} monedas!`,
+    shopTitle: "Tienda",
+    shopSub: "Objetos, avatares y marcos",
+    shopOpen: "Abrir tienda",
+    shopLabel: "Tienda: novedades y objetos. Abrir tienda",
+  },
 });
 
 /** Janela da recompensa diária e convite para o lembrete. */
@@ -210,6 +288,23 @@ export const dailyRewardT = texts({
       "We'll let you know once a day, late in the afternoon, when the daily challenge is in and your reward is ready.",
     reminderYes: "Yes, remind me",
     reminderNo: "Not now",
+  },
+  es: {
+    title: "Recompensa diaria",
+    sub: "Vuelve cada día y gana más monedas",
+    dayLabel: (day: number, coins: number, state: "got" | "today" | "locked") =>
+      `Día ${day}: ${coins} monedas${
+        state === "got" ? ", ya reclamado" : state === "today" ? ", hoy" : ""
+      }`,
+    day: (day: number) => `Día ${day}`,
+    claim: (coins: number) => `Reclamar +${coins} monedas`,
+    tomorrow: (coins: number) => `Mañana: +${coins} monedas`,
+    reminderLabel: "Recordatorio diario",
+    reminderTitle: "¿Quieres un recordatorio?",
+    reminderText:
+      "Te avisamos una vez al día, al final de la tarde, cuando llegue el desafío del día y tu recompensa esté lista.",
+    reminderYes: "Sí, avísame",
+    reminderNo: "Ahora no",
   },
 });
 
@@ -250,6 +345,24 @@ export const campaignT = texts({
     here: "You're here",
     boss: "Boss",
     locked: "Locked",
+  },
+  es: {
+    enter: "Entrar",
+    newWorlds: "Nuevos mundos",
+    remaining: (n: number, stars: number, max: number) =>
+      `${plural(n, "Falta", "Faltan")} ${n} ${plural(n, "nivel", "niveles")} · ★ ${stars}/${max}`,
+    soon: "Muy pronto",
+    level: (
+      n: number,
+      boss: string | undefined,
+      stars: number,
+      unlocked: boolean,
+    ) =>
+      `Nivel ${n}${boss !== undefined ? `, jefe ${boss}` : ""}${stars ? `, ${stars} ${plural(stars, "estrella", "estrellas")}` : unlocked ? ", disponible" : ", bloqueado"}`,
+    bossTag: (name: string | undefined) => `Jefe: ${name}`,
+    here: "Estás aquí",
+    boss: "Jefe",
+    locked: "Bloqueado",
   },
 });
 
@@ -302,6 +415,30 @@ export const casualT = texts({
     randomHint: "Your rival is picked at random when you start. No bet.",
     start: "Start match",
   },
+  es: {
+    eyebrow: "MODO CASUAL",
+    title: "Elige un tema",
+    sub: "Un duelo rápido en un crucigrama lleno de palabras del tema.",
+    themes: "Temas",
+    won: (done: number, total: number) =>
+      `${done} de ${total} tableros ganados`,
+    progress: (theme: string) => `Progreso en ${theme}`,
+    playTheme: (theme: string) => `Jugar el tema ${theme}`,
+    play: "Jugar",
+    playFriend: "Jugar con un amigo",
+    setupTitle: "Configurar partida",
+    you: "Tú",
+    random: "Al azar",
+    theme: "Tema:",
+    surprise: "Sorpresa",
+    change: "cambiar",
+    rival: "Rival",
+    randomLabel: "Al azar: cualquier rival",
+    any: "Cualquiera",
+    against: (name: string) => `Partida contra ${name}, sin apuesta.`,
+    randomHint: "Tu rival se elige al azar al empezar. Sin apuesta.",
+    start: "Empezar partida",
+  },
 });
 
 /** Desafio do dia: calendário e sequência. */
@@ -349,6 +486,28 @@ export const dailyT = texts({
     legendSoon: "coming soon",
     revisit: "Revisit challenge",
     playToday: "Play today's challenge",
+  },
+  es: {
+    eyebrow: "UN PEQUEÑO RITUAL DE DESCUBRIMIENTOS",
+    title: "Desafío diario",
+    sub: "Vuelve cada día para un nuevo camino.",
+    streak: (n: number) => `${n} días seguidos`,
+    completed: (n: number) =>
+      `${n} ${plural(n, "desafío completado", "desafíos completados")}`,
+    wonToday: "Ganado hoy ✓",
+    prize: (coins: number) => `+${coins} al ganar`,
+    weekdays: ["D", "L", "M", "M", "J", "V", "S"],
+    day: (n: number, state: string) => `Día ${n}: ${state}`,
+    dayDone: "completado",
+    dayToday: "disponible hoy",
+    dayFuture: "aún no disponible",
+    dayMissed: "no ganado",
+    legendWon: "ganado",
+    legendToday: "hoy",
+    legendMissed: "no ganado",
+    legendSoon: "muy pronto",
+    revisit: "Volver a ver el desafío",
+    playToday: "Jugar el desafío de hoy",
   },
 });
 
@@ -477,6 +636,65 @@ export const profileT = texts({
     prizeLabel: (coins: number) => `Prize: ${coins} coins`,
     coins: (coins: number) => `${coins} ${plural(coins, "coin", "coins")}`,
   },
+  es: {
+    you: "Tú",
+    editAvatar: "Editar avatar y nombre",
+    eyebrow: "TU PERFIL",
+    defaultName: "Explorador",
+    summary: (done: number, total: number, stars: number, coins: number) =>
+      `${done} de ${total} niveles · ${stars} ${plural(stars, "estrella", "estrellas")} · ${coins} ${plural(coins, "moneda", "monedas")}`,
+    tabs: {
+      resumo: "Resumen",
+      conquistas: "Logros",
+      rivais: "Rivales",
+      ajustes: "Ajustes",
+    },
+    tabList: "Secciones del perfil",
+    ready: (n: number) => `${n} ${plural(n, "listo", "listos")}`,
+    tabPanel: (label: string) => `Pestaña ${label}`,
+    editTitle: "Editar perfil",
+    yourAvatar: "Tu avatar",
+    avatars: "Avatares",
+    nameLabel: "Nombre del explorador",
+    done: "Listo",
+    rivals: "Rivales",
+    bossPrefix: "Jefe · ",
+    settings: "Ajustes",
+    sound: "Efectos de sonido",
+    music: "Música",
+    vibration: "Vibración",
+    animations: "Animaciones",
+    contrast: "Alto contraste en el tablero",
+    reminder: "Recordatorio diario (6:30 p. m.)",
+    timer: "Reloj del turno (25 s)",
+    testSound: "Probar sonido",
+    replayTutorial: "Volver a ver el tutorial",
+    tutorialOn: "Tutorial activo",
+    rate: "Calificar el juego",
+    credits: "Créditos y licencias",
+    language: "Idioma / Language",
+    progress: "Tu progreso",
+    adventure: "Aventura",
+    levels: "Niveles",
+    stars: "Estrellas",
+    dailies: "Desafíos diarios",
+    duels: "Duelos",
+    wins: "Victorias",
+    draws: "Empates",
+    losses: "Derrotas",
+    claimed: (n: number, total: number) => `${n}/${total} reclamados`,
+    claimAllLabel: (coins: number, n: number) =>
+      `Reclamar todo: ${coins} monedas de ${n} logros`,
+    claimAll: "Reclamar todo",
+    achievements: "Logros",
+    achievementProgress: (title: string) => `Progreso de ${title}`,
+    claimedOne: "Reclamado ✓",
+    claimLabel: (coins: number, title: string) =>
+      `Reclamar ${coins} monedas de ${title}`,
+    claim: "Reclamar",
+    prizeLabel: (coins: number) => `Premio: ${coins} monedas`,
+    coins: (coins: number) => `${coins} ${plural(coins, "moneda", "monedas")}`,
+  },
 });
 
 /** Cartão e aviso do Google Play Games. */
@@ -512,6 +730,22 @@ export const playGamesT = texts({
       "Sign in with Google Play Games to save your progress to your account and show up on the leaderboard.",
     signIn: "Sign in",
   },
+  es: {
+    saveDescription: (won: number, total: number) =>
+      `${won} de ${total} niveles`,
+    toast: "Conectado a Google Play Games",
+    toastAs: (name: string) => ` como ${name}`,
+    connected: "Conectado",
+    as: " como ",
+    savedInAccount: "Tu progreso se guarda en tu cuenta de Google.",
+    achievements: "Logros",
+    leaderboard: "Clasificación",
+    signedOut: (name: string) =>
+      `Cerraste sesión en ${name}. Vuelve a iniciar sesión para guardar tu progreso en tu cuenta.`,
+    signInText:
+      "Inicia sesión con Google Play Games para guardar tu progreso en tu cuenta y aparecer en la clasificación.",
+    signIn: "Iniciar sesión",
+  },
 });
 
 /** Loja de itens. */
@@ -546,6 +780,22 @@ export const shopT = texts({
     tipBefore: "In a match, tap ",
     tipItems: "Items",
     tipAfter: " to use them!",
+  },
+  es: {
+    bought: (item: string) =>
+      `¡${item} comprado! En la partida, toca Objetos para usarlo.`,
+    title: "Tienda",
+    balance: "Tu saldo",
+    coins: "monedas",
+    forSale: "Objetos a la venta",
+    usesPerBuy: (n: number) => `+${n} usos por compra`,
+    youHave: (n: number) => `Tienes: ${n} ${plural(n, "uso", "usos")}`,
+    buyLabel: (item: string, price: number) =>
+      `Comprar ${item} por ${price} monedas`,
+    buy: "Comprar",
+    tipBefore: "En la partida, toca ",
+    tipItems: "Objetos",
+    tipAfter: " para usarlos.",
   },
 });
 
@@ -687,6 +937,74 @@ export const framesT = texts({
     boardDefault: "Use the default board",
     boardDefaultSet: "Default board is back.",
   },
+  es: {
+    tabItems: "Objetos",
+    tabAvatars: "Avatares",
+    tabFrames: "Marcos",
+    filterLabel: "Filtrar",
+    allFrames: "Todos",
+    tabsLabel: "Secciones de la tienda",
+    previewTitle: "Vista previa en el duelo",
+    previewHint: "¡Mira cómo se ven tu avatar y tu marco en la partida!",
+    listTitle: "Marcos de perfil",
+    names: {
+      bronze: "Bronce sencillo",
+      prata: "Plata con estrellitas",
+      floresta: "Hojas del Bosque",
+      deserto: "Arena del Desierto",
+      ilhas: "Mar de las Islas",
+      ouro: "Oro con laureles",
+      coroa: "Corona del Reino",
+      lendaria: "Legendario",
+      ferro: "Hierro forjado",
+      cacador: "Cazador",
+      runica: "Piedra rúnica",
+      tempestade: "Tormenta",
+      lava: "Lava del volcán",
+      fogo: "Anillo de fuego",
+      dragao: "Escamas de dragón",
+      cavaleiro: "Acero del caballero",
+    } as Record<string, string>,
+    classic: "Clásicos",
+    rustic: "Rústicos",
+    buy: "Comprar",
+    use: "Usar",
+    inUse: "En uso",
+    remove: "Quitar marco",
+    missing: (n: number) => `${plural(n, "Falta", "Faltan")} ${n}`,
+    buyLabel: (name: string, price: number) =>
+      `Comprar el marco ${name} por ${price} monedas`,
+    useLabel: (name: string) => `Usar el marco ${name}`,
+    bought: (name: string) => `¡Marco ${name} comprado y en uso!`,
+    using: (name: string) => `Ahora usas el marco ${name}.`,
+    removed: "Marco quitado.",
+    you: "Tú",
+    avatarsTitle: "Avatares premium",
+    avatarBuyLabel: (name: string, price: number) =>
+      `Comprar el avatar ${name} por ${price} monedas`,
+    avatarUseLabel: (name: string) => `Usar el avatar ${name}`,
+    avatarBought: (name: string) => `¡Avatar ${name} comprado y en uso!`,
+    avatarUsing: (name: string) => `Ahora eres ${name}.`,
+    tabBoards: "Tableros",
+    boardsTitle: "Tableros",
+    boardPreviewTitle: "Vista previa del tablero",
+    boardsHint: "Marco, colores y escenario nuevos en la partida.",
+    boardNames: {
+      vila: "Aldea",
+      floresta: "Bosque",
+      deserto: "Desierto",
+      reino: "Reino",
+    },
+    boardPreview: (name: string) => `Vista previa del tablero ${name}`,
+    boardDefaultPreview: "Vista previa del tablero predeterminado",
+    boardBuyLabel: (name: string, price: number) =>
+      `Comprar el tablero ${name} por ${price} monedas`,
+    boardUseLabel: (name: string) => `Usar el tablero ${name}`,
+    boardBought: (name: string) => `¡Tablero ${name} comprado y en uso!`,
+    boardUsing: (name: string) => `Ahora juegas en el tablero ${name}.`,
+    boardDefault: "Usar el tablero predeterminado",
+    boardDefaultSet: "Volvió el tablero predeterminado.",
+  },
 });
 
 /** Créditos e licenças. */
@@ -739,6 +1057,30 @@ export const creditsT = texts({
     software: "Open-source software",
     capacitor: "Capacitor (core, Android and haptics), vite-plugin-pwa",
   },
+  es: {
+    eyebrow: "QUIÉN AYUDÓ A HACER ESTE JUEGO",
+    title: "Créditos y licencias",
+    deck: "Créditos",
+    back: "Volver al perfil",
+    studio: "Estudio",
+    studioText: "WordQuest es un juego de Lunara Games.",
+    vocabulary: "Vocabulario",
+    vocabBefore: "Las palabras se verifican con ",
+    vocabName:
+      "ENABLE (Enhanced North American Benchmark Lexicon), de dominio público",
+    vocabAfter: ". Las pistas se escribieron para el juego.",
+    music: "Música",
+    musicText:
+      "“Where the River Bends”: pista creada con inteligencia artificial (el archivo incluye credenciales de contenido C2PA de Google).",
+    art: "Arte",
+    artText:
+      "Los escenarios, mapas, personajes, íconos y el logo se crearon con herramientas de inteligencia artificial (Leonardo.ai, ChatGPT y un generador de imágenes integrado) y se ajustaron para el juego.",
+    font: "Fuente",
+    fontText:
+      "Nunito, de Vernon Adams y colaboradores, bajo la SIL Open Font License 1.1 (distribuida por Fontsource).",
+    software: "Software libre",
+    capacitor: "Capacitor (núcleo, Android y vibración), vite-plugin-pwa",
+  },
 });
 
 /** Vídeo premiado (opcional): loja, atalho de quem não tem moedas e fim do duelo. */
@@ -777,6 +1119,24 @@ export const rewardedT = texts({
     simWait: (s: number) => `Reward in ${s} s…`,
     simDone: "Reward earned! You can close it.",
     simClose: "Close video",
+  },
+  es: {
+    cardTitle: "Monedas gratis",
+    cardShort: "¿Sin monedas?",
+    cardLeft: (left: number) =>
+      `Video corto · ${left === 1 ? "queda 1 hoy" : `quedan ${left} hoy`}`,
+    watch: (coins: number) => `Ver video: +${coins} monedas`,
+    double: (coins: number) => `Duplicar monedas: video +${coins}`,
+    doubleLabel: (coins: number) =>
+      `Ver un video para duplicar tus monedas: ${coins} más`,
+    loading: "Abriendo el video…",
+    earned: (coins: number) => `¡+${coins} monedas! Gracias por mirar.`,
+    closedEarly: "Mira el video hasta el final para ganar las monedas.",
+    failed: "El video no se pudo abrir ahora. Inténtalo más tarde.",
+    simTitle: "Video de prueba (simulado)",
+    simWait: (s: number) => `La recompensa llega en ${s} s…`,
+    simDone: "¡Recompensa asegurada! Ya puedes cerrarlo.",
+    simClose: "Cerrar video",
   },
 });
 
@@ -890,5 +1250,52 @@ export const leagueT = texts({
     finished: (n: number) => `You finished ${enOrdinal(n)}`,
     coins: (n: number) => `+${n} coins`,
     continue: "Continue",
+  },
+  es: {
+    title: "Ligas semanales",
+    tiers: {
+      bronze: "Bronce",
+      prata: "Plata",
+      ouro: "Oro",
+      cristal: "Cristal",
+      diamante: "Diamante",
+    },
+    tiersLabel: "Ligas, de la más baja a la más alta",
+    current: "Tu liga",
+    league: (tier: string) => `Liga ${tier}`,
+    topRise: (n: number, next: string) =>
+      n === 1
+        ? `El 1.º lugar sube a la Liga ${next}`
+        : `Los ${n} primeros suben a la Liga ${next}`,
+    topLeague: "Estás en la liga más alta. ¡Lucha por el podio!",
+    endsIn: (ms: number) => `Termina en ${left(ms, "d")}`,
+    endsShort: (ms: number) => `Termina en ${left(ms, "d").split(" ")[0]}`,
+    leftShort: (ms: number) => left(ms, "d").split(" ")[0],
+    rank: "Puesto",
+    player: "Jugador",
+    xp: "XP de la semana",
+    xpValue: (n: number) => `${n.toLocaleString("es-419")} XP`,
+    weekXp: (n: number) =>
+      `Tu XP esta semana: ${n.toLocaleString("es-419")} XP`,
+    you: "Tú",
+    groupLabel: "Clasificación de tu grupo",
+    promo: "Zona de ascenso",
+    demo: "Zona de descenso",
+    joinHint: "Juega una partida para entrar a la liga de esta semana.",
+    howXp: "Palabras, estrellas y duelos dan XP",
+    offline:
+      "Ahora no hay conexión con la liga. Tu XP queda guardado y se suma cuando vuelva internet.",
+    loading: "Cargando la liga…",
+    place: (n: number) => `Vas en el puesto ${n}`,
+    seeLeague: "Ver liga",
+    cardJoin: "Juega para entrar a la liga",
+    weekOver: "Fin de la semana",
+    resultUp: "Subiste a la",
+    resultStay: "Sigues en la",
+    resultDown: "Esta semana pasas a la",
+    resultDownNote: "No pasa nada: ¡solo juega para volver a subir!",
+    finished: (n: number) => `Terminaste en el puesto ${n}`,
+    coins: (n: number) => `+${n} monedas`,
+    continue: "Continuar",
   },
 });
