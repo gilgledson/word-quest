@@ -99,7 +99,10 @@ interface SyncDeps {
 export function syncLeague(deps: SyncDeps): Promise<void> {
   if (!leagueAvailable()) return Promise.resolve();
   running ??= sendOnce(deps)
-    .catch(() => {})
+    .catch((e) => {
+      // Sem internet ou recusado: o XP fica guardado. No desenvolvimento, mostra o motivo.
+      if (import.meta.env.DEV) console.warn("liga: envio falhou", e);
+    })
     .finally(() => (running = undefined));
   return running;
 }
