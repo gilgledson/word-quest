@@ -601,7 +601,11 @@ describe("telas do duelo ao vivo", () => {
     ).toBeInTheDocument();
     expect(mem.rooms.get(code)!.endedBy).toBe(ROOM_EXPIRED);
     expect(usePlayer.getState().player.coins).toBe(before);
-    expect(usePlayer.getState().player.onlineMatches ?? []).toEqual([]);
+    // A sala sai de "Minhas partidas" um render depois do aviso (quando o encerramento volta do
+    // servidor): no CI, mais lento, a conferência direta às vezes chegava antes.
+    await waitFor(() =>
+      expect(usePlayer.getState().player.onlineMatches ?? []).toEqual([]),
+    );
   });
   it("prazo: quem não joga em 48 h perde, e quem esperou vence com as moedas", async () => {
     const code = await createRoom();
