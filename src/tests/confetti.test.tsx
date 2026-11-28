@@ -15,13 +15,18 @@ import { usePlayer } from "../stores/player";
 
 const fire = vi.fn();
 const reset = vi.fn();
+const create = vi.fn();
 vi.mock("canvas-confetti", () => ({
-  default: Object.assign((o: unknown) => fire(o), { reset: () => reset() }),
+  create: (canvas: unknown, opts: unknown) => {
+    create(canvas, opts);
+    return Object.assign((o: unknown) => fire(o), { reset: () => reset() });
+  },
 }));
 afterEach(cleanup);
 beforeEach(() => {
   fire.mockClear();
   reset.mockClear();
+  create.mockClear();
 });
 
 describe("Confete da vitória", () => {
@@ -41,10 +46,17 @@ describe("Confete da vitória", () => {
       const { celebrate, CONFETTI_MAX_MS } =
         await import("../services/confetti");
       await celebrate(true);
+      // Canvas do próprio app, sem Worker (o OffscreenCanvas do Worker travava no moto g14).
+      expect(create).toHaveBeenCalledWith(expect.any(HTMLCanvasElement), {
+        resize: true,
+        useWorker: false,
+      });
+      expect(document.querySelectorAll("canvas.fx-confetti")).toHaveLength(1);
       vi.advanceTimersByTime(CONFETTI_MAX_MS - 1);
       expect(reset).not.toHaveBeenCalled();
       vi.advanceTimersByTime(1);
       expect(reset).toHaveBeenCalledTimes(1);
+      expect(document.querySelectorAll("canvas.fx-confetti")).toHaveLength(0);
     } finally {
       vi.useRealTimers();
     }

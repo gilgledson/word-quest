@@ -58,7 +58,9 @@ async function create(): Promise<Particles | undefined> {
     // inteira, o que faltava para o resto da página em celulares mais fracos.
     antialias: false,
     autoDensity: true,
-    resolution: Math.min(window.devicePixelRatio || 1, 2),
+    // Resolução 1: as partículas são borradas por natureza, e a tela de 2× ocupava 4 vezes mais
+    // memória de vídeo, que faltava para o resto da página em celulares mais fracos.
+    resolution: 1,
     preference: "webgl",
   });
   const canvas = app.canvas;
