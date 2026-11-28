@@ -76,7 +76,7 @@ describe("Espanhol", () => {
     expect(document.title).toBe("WordQuest — La Jornada de las Palabras");
     expect(num(1234)).toBe((1234).toLocaleString("es-419"));
     expect(tr("a", "b", "c")).toBe("c");
-    expect(logoSrc()).toMatch(/^\/art\/wordquest-logo/);
+    expect(logoSrc()).toBe("/art/wordquest-logo-es-v1.webp");
   });
 
   it("a tela inicial e o menu de baixo em espanhol", () => {

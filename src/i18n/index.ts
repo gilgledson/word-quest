@@ -97,13 +97,12 @@ const HTML_LANGS: Record<Lang, string> = {
   en: "en",
   es: "es-419",
 };
-/** Logo com o subtítulo do idioma ("A Jornada das Palavras" / "The Word Journey"). */
+/** Logo com o subtítulo do idioma ("A Jornada das Palavras", "The Word Journey", "La Jornada de las Palabras"). */
 export const logoSrc = () => LOGOS[lang()];
 const LOGOS: Record<Lang, string> = {
   pt: "/art/wordquest-logo-v1.webp",
   en: "/art/wordquest-logo-en-v1.webp",
-  // Até o logo "La Jornada de las Palabras" existir, o do inglês.
-  es: "/art/wordquest-logo-en-v1.webp",
+  es: "/art/wordquest-logo-es-v1.webp",
 };
 /** Título da aba (o do index.html é o do português). */
 const TITLES: Record<Lang, string> = {
