@@ -157,6 +157,31 @@ describe("fechamento da semana", () => {
       result: { rank: 3, moved: "stay", coins: 40 },
     });
   });
+  it("aceita os grupos como lista, do jeito que o banco devolve chaves numéricas", () => {
+    // O Realtime Database transforma { "1": {...}, "2": {...} } em [null, {...}, {...}].
+    const updates = closeWeekUpdates(WEEK, {
+      bronze: [
+        null,
+        { a: { xp: 300, at: 1 }, b: { xp: 100, at: 2 } },
+        { c: { xp: 50, at: 3 } },
+      ],
+    });
+    expect(Object.keys(updates).sort()).toEqual([
+      "leagueState/a",
+      "leagueState/b",
+      "leagueState/c",
+    ]);
+    expect(updates["leagueState/a"].result).toMatchObject({
+      group: "1",
+      rank: 1,
+      moved: "up",
+    });
+    expect(updates["leagueState/c"].result).toMatchObject({
+      group: "2",
+      rank: 1,
+      size: 1,
+    });
+  });
   it("na semana seguinte quem subiu entra na liga nova e recebe o prêmio uma vez", async () => {
     const server = memoryLeague(() => clock.now);
     const gil = device(server, "gil");
