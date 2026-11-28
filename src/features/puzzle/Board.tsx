@@ -40,6 +40,8 @@ interface Props {
   onChoose: (wordId: string, cell?: string) => void;
   /** Devolve ao banco a letra pendente da casa. */
   onUnplace: (cell: string) => void;
+  /** Arte da moldura do tabuleiro comprado (game/boards); sem ela, a grade de sempre. */
+  boardFrame?: string;
 }
 /** Grade 8×10 com as pistas, as letras e a interação por toque e arrasto. */
 export function Board({
@@ -61,6 +63,7 @@ export function Board({
   flying,
   onChoose,
   onUnplace,
+  boardFrame,
 }: Props) {
   const { ref: gridRef, cell: cellSize, rotated } = grid;
   const pending = (cell: string) =>
@@ -94,100 +97,110 @@ export function Board({
   return (
     <div className="board-area" ref={gridRef}>
       <div
-        className="board"
+        className={`board-wrap ${boardFrame ? "framed" : ""}`}
         style={
-          {
-            "--cell": `${cellSize}px`,
-            gridTemplateColumns: `repeat(${rotated ? puzzle.rows : puzzle.cols}, ${cellSize}px)`,
-            gridTemplateRows: `repeat(${rotated ? puzzle.cols : puzzle.rows}, ${cellSize}px)`,
-          } as CSSProperties
+          boardFrame
+            ? ({ "--board-frame": `url(${boardFrame})` } as CSSProperties)
+            : undefined
         }
       >
-        {engine.matrix().map((cell) => {
-          const { row: r, col: c, key: ck } = cell;
-          if (cell.kind === "clue") {
-            // Na casa dupla, a pista que aponta para a direita (na tela) fica em cima.
-            const halves = [...cell.words].sort(
-              (a, b) =>
-                Number(arrowTo(a.arrow) === "down") -
-                Number(arrowTo(b.arrow) === "down"),
-            );
-            return (
-              <div
-                className={`cell clue ${halves.length > 1 ? "double" : ""}`}
-                key={ck}
-                style={place(r, c)}
-              >
-                {halves.map(clueHalf)}
-              </div>
-            );
+        <div
+          className="board"
+          style={
+            {
+              "--cell": `${cellSize}px`,
+              gridTemplateColumns: `repeat(${rotated ? puzzle.rows : puzzle.cols}, ${cellSize}px)`,
+              gridTemplateRows: `repeat(${rotated ? puzzle.cols : puzzle.rows}, ${cellSize}px)`,
+            } as CSSProperties
           }
-          const belongs =
-            cell.kind === "letter"
-              ? puzzle.words.filter((w) => cell.wordIds.includes(w.id))
-              : [];
-          if (!belongs.length)
+        >
+          {engine.matrix().map((cell) => {
+            const { row: r, col: c, key: ck } = cell;
+            if (cell.kind === "clue") {
+              // Na casa dupla, a pista que aponta para a direita (na tela) fica em cima.
+              const halves = [...cell.words].sort(
+                (a, b) =>
+                  Number(arrowTo(a.arrow) === "down") -
+                  Number(arrowTo(b.arrow) === "down"),
+              );
+              return (
+                <div
+                  className={`cell clue ${halves.length > 1 ? "double" : ""}`}
+                  key={ck}
+                  style={place(r, c)}
+                >
+                  {halves.map(clueHalf)}
+                </div>
+              );
+            }
+            const belongs =
+              cell.kind === "letter"
+                ? puzzle.words.filter((w) => cell.wordIds.includes(w.id))
+                : [];
+            if (!belongs.length)
+              return (
+                <div
+                  className="cell blocked"
+                  key={ck}
+                  style={place(r, c)}
+                  aria-hidden="true"
+                />
+              );
+            const isActive = active.some((p) => p.key === ck);
+            const locked = session.locked.includes(ck);
+            const owner = session.owners[ck];
+            // Casa 2×/3× letra: grande no meio da casa vazia; com letra (pendente ou travada), no canto.
+            const mult = engine.rack.bonus[ck];
+            const botLetter = session.letters[ck] ? undefined : botReveal?.[ck];
+            const filled = !!(session.letters[ck] ?? botLetter);
             return (
-              <div
-                className="cell blocked"
+              <button
+                {...(mine && pending(ck)
+                  ? letterDrag.bind(
+                      tileOf(ck)?.id ?? "",
+                      hiddenJoker(ck) ? "★" : session.letters[ck],
+                    )
+                  : {})}
+                className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${lastBotCells?.includes(ck) ? `last-bot ${lastBotPing ? "ping" : ""}` : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${hiddenJoker(ck) ? "joker-hidden" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${mult ? `mult mult-${mult}${filled ? " filled" : ""}` : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
+                data-cell={ck}
+                style={
+                  {
+                    ...place(r, c),
+                    "--i": active.findIndex((a) => a.key === ck),
+                    "--flash-i": Math.max(0, flash.indexOf(ck)),
+                  } as CSSProperties
+                }
+                data-words={belongs.map((w) => w.id).join(" ")}
                 key={ck}
-                style={place(r, c)}
-                aria-hidden="true"
-              />
+                aria-label={MT.cellLabel(
+                  r + 1,
+                  c + 1,
+                  hiddenJoker(ck)
+                    ? MT.jokerCell
+                    : (session.letters[ck] ?? botLetter ?? MT.empty),
+                )}
+                onClick={(event) => {
+                  if (!letterDrag.clickAllowed(event.detail === 0)) return;
+                  if (mine && pending(ck)) onUnplace(ck);
+                  else
+                    onChoose(
+                      (belongs.find((w) => w.id !== selected) ?? belongs[0]).id,
+                      ck,
+                    );
+                }}
+              >
+                {hiddenJoker(ck) ? "★" : (session.letters[ck] ?? botLetter)}
+                {locked && <i />}
+                {mult && (
+                  <em className="mult-tag" aria-hidden="true">
+                    {mult}×
+                  </em>
+                )}
+              </button>
             );
-          const isActive = active.some((p) => p.key === ck);
-          const locked = session.locked.includes(ck);
-          const owner = session.owners[ck];
-          // Casa 2×/3× letra: grande no meio da casa vazia; com letra (pendente ou travada), no canto.
-          const mult = engine.rack.bonus[ck];
-          const botLetter = session.letters[ck] ? undefined : botReveal?.[ck];
-          const filled = !!(session.letters[ck] ?? botLetter);
-          return (
-            <button
-              {...(mine && pending(ck)
-                ? letterDrag.bind(
-                    tileOf(ck)?.id ?? "",
-                    hiddenJoker(ck) ? "★" : session.letters[ck],
-                  )
-                : {})}
-              className={`cell letter ${isActive ? "active sweep" : ""} ${currentKey === ck ? "cursor" : ""} ${locked ? "correct" : ""} ${owner ? `owner-${owner}` : ""} ${botLetter ? "bot-reveal owner-ai" : ""} ${lastBotCells?.includes(ck) ? `last-bot ${lastBotPing ? "ping" : ""}` : ""} ${tileOf(ck)?.joker ? "joker-cell" : ""} ${hiddenJoker(ck) ? "joker-hidden" : ""} ${flying?.has(tileOf(ck)?.id ?? "") ? "in-flight" : ""} ${pending(ck) ? "pending" : ""} ${flash.includes(ck) ? "flash" : ""} ${mult ? `mult mult-${mult}${filled ? " filled" : ""}` : ""} ${placedCells.has(ck) ? "just-placed" : ""} ${revealedCells.has(ck) ? "just-revealed" : ""} ${letterDrag.drag?.tileId === tileOf(ck)?.id && pending(ck) ? "drag-source" : ""}`}
-              data-cell={ck}
-              style={
-                {
-                  ...place(r, c),
-                  "--i": active.findIndex((a) => a.key === ck),
-                  "--flash-i": Math.max(0, flash.indexOf(ck)),
-                } as CSSProperties
-              }
-              data-words={belongs.map((w) => w.id).join(" ")}
-              key={ck}
-              aria-label={MT.cellLabel(
-                r + 1,
-                c + 1,
-                hiddenJoker(ck)
-                  ? MT.jokerCell
-                  : (session.letters[ck] ?? botLetter ?? MT.empty),
-              )}
-              onClick={(event) => {
-                if (!letterDrag.clickAllowed(event.detail === 0)) return;
-                if (mine && pending(ck)) onUnplace(ck);
-                else
-                  onChoose(
-                    (belongs.find((w) => w.id !== selected) ?? belongs[0]).id,
-                    ck,
-                  );
-              }}
-            >
-              {hiddenJoker(ck) ? "★" : (session.letters[ck] ?? botLetter)}
-              {locked && <i />}
-              {mult && (
-                <em className="mult-tag" aria-hidden="true">
-                  {mult}×
-                </em>
-              )}
-            </button>
-          );
-        })}
+          })}
+        </div>
+        {boardFrame && <i className="board-frame-art" aria-hidden="true" />}
       </div>
     </div>
   );

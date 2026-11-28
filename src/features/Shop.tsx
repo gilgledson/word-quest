@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { ShopAvatars, ShopFrames } from "./ShopFrames";
-import { Crown, Package, ShoppingBag, UserRound } from "lucide-react";
+import { ShopAvatars, ShopBoards, ShopFrames } from "./ShopFrames";
+import {
+  Crown,
+  LayoutGrid,
+  Package,
+  ShoppingBag,
+  UserRound,
+} from "lucide-react";
 import { CoinIcon } from "../components/CoinIcon";
 import { buyItem, itemCount, SHOP_ITEMS, type ItemId } from "../game/shop";
 import { usePlayer } from "../stores/player";
@@ -28,7 +34,7 @@ function ItemArt({ id }: { id: ItemId }) {
   );
 }
 
-type ShopTab = "itens" | "avatares" | "molduras";
+type ShopTab = "itens" | "avatares" | "molduras" | "tabuleiros";
 
 /**
  * Loja em 3 abas (referência: docs/referencias/loja/loja-abas-chatgpt.png): Itens da partida,
@@ -41,9 +47,11 @@ export function Shop() {
   const tab: ShopTab =
     aba === "molduras"
       ? "molduras"
-      : aba === "avatares" || aba === "perfil"
-        ? "avatares"
-        : "itens";
+      : aba === "tabuleiros"
+        ? "tabuleiros"
+        : aba === "avatares" || aba === "perfil"
+          ? "avatares"
+          : "itens";
   const player = usePlayer((s) => s.player);
   const update = usePlayer((s) => s.update);
   const [note, setNote] = useState("");
@@ -96,6 +104,7 @@ export function Shop() {
             ["itens", framesT.tabItems, ShoppingBag],
             ["avatares", framesT.tabAvatars, UserRound],
             ["molduras", framesT.tabFrames, Crown],
+            ["tabuleiros", framesT.tabBoards, LayoutGrid],
           ] as const
         ).map(([id, label, Icon]) => (
           <button
@@ -126,6 +135,8 @@ export function Shop() {
           <ShopAvatars onNote={setNote} />
         ) : tab === "molduras" ? (
           <ShopFrames onNote={setNote} />
+        ) : tab === "tabuleiros" ? (
+          <ShopBoards onNote={setNote} />
         ) : (
           <>
             <ul className="shop-list" aria-label={t.forSale}>

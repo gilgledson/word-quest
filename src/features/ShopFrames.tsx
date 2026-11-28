@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useState, type CSSProperties, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { CoinIcon } from "../components/CoinIcon";
 import { FramedAvatar } from "../components/FrameArt";
@@ -22,6 +22,16 @@ import {
   wearFrame,
   type FrameId,
 } from "../game/frames";
+import {
+  BOARD_IDS,
+  BOARD_PRICES,
+  boardArt,
+  buyBoard,
+  currentBoard,
+  ownsBoard,
+  wearBoard,
+  type BoardId,
+} from "../game/boards";
 import { opponentById } from "../game/opponents";
 import { deviceCountry, isIndia } from "../game/region";
 import { playSfx } from "../services/sound";
@@ -306,6 +316,119 @@ export function ShopFrames({ onNote }: { onNote: (text: string) => void }) {
           onClick={() => use(undefined)}
         >
           {t.remove}
+        </button>
+      )}
+    </>
+  );
+}
+
+/** Casas da mini grade de exemplo: pista, letra (vazia ou com letra) e bloqueada. */
+const SWATCH = [
+  ["b", "c", "c", "b"],
+  ["c", "S", "O", "L"],
+  ["c", "l", "l", "b"],
+  ["c", "M", "l", "l"],
+] as const;
+
+/** Mini grade de 4×4 com as cores e a moldura do tabuleiro (ou o padrão, sem `board`). */
+export function BoardSwatch({
+  board,
+  size,
+}: {
+  board?: BoardId;
+  size: "big" | "small";
+}) {
+  return (
+    <span
+      className={`board-swatch ${size}`}
+      data-board={board}
+      style={
+        board
+          ? ({ "--board-frame": `url(${boardArt(board)})` } as CSSProperties)
+          : undefined
+      }
+      aria-hidden="true"
+    >
+      <span className="board-swatch-grid">
+        {SWATCH.flat().map((k, i) => (
+          <i
+            key={i}
+            className={k === "b" ? "blocked" : k === "c" ? "clue" : "letter"}
+          >
+            {k.length === 1 && k !== "b" && k !== "c" && k !== "l" ? k : ""}
+          </i>
+        ))}
+      </span>
+      {board && <i className="board-swatch-frame" />}
+    </span>
+  );
+}
+
+/** Aba "Tabuleiros": os 4 temas de mesa, com a prévia da mini grade no topo. */
+export function ShopBoards({ onNote }: { onNote: (text: string) => void }) {
+  const player = usePlayer((s) => s.player);
+  const update = usePlayer((s) => s.update);
+  const inUse = currentBoard(player);
+  const [preview, setPreview] = useState<BoardId | undefined>(inUse);
+  const buy = (id: BoardId) => {
+    const price = BOARD_PRICES[id];
+    if (player.coins < price || ownsBoard(player, id)) return;
+    update((p) => buyBoard(p, id));
+    playSfx(player.sound, "buy");
+    track("board_bought", {
+      board: id,
+      price,
+      country: deviceCountry() ?? "unknown",
+    });
+    setPreview(id);
+    onNote(t.boardBought(t.boardNames[id]));
+  };
+  const use = (id: BoardId | undefined) => {
+    update((p) => wearBoard(p, id));
+    track("board_used", { board: id ?? "padrao" });
+    setPreview(id);
+    onNote(id ? t.boardUsing(t.boardNames[id]) : t.boardDefaultSet);
+  };
+  return (
+    <>
+      <section
+        className="boards-preview"
+        aria-label={
+          preview
+            ? t.boardPreview(t.boardNames[preview])
+            : t.boardDefaultPreview
+        }
+      >
+        <h2>{t.boardPreviewTitle}</h2>
+        <BoardSwatch board={preview} size="big" />
+        <p>{t.boardsHint}</p>
+      </section>
+      <ul className="frames-list boards-list" aria-label={t.boardsTitle}>
+        {BOARD_IDS.map((id) => (
+          <ShopCard
+            key={id}
+            name={t.boardNames[id]}
+            art={<BoardSwatch board={id} size="small" />}
+            price={BOARD_PRICES[id]}
+            owned={ownsBoard(player, id)}
+            inUse={inUse === id}
+            previewing={preview === id}
+            coins={player.coins}
+            buyLabel={t.boardBuyLabel(t.boardNames[id], BOARD_PRICES[id])}
+            useLabel={t.boardUseLabel(t.boardNames[id])}
+            onPreview={() => setPreview(id)}
+            onBuy={() => buy(id)}
+            onUse={() => use(id)}
+          />
+        ))}
+      </ul>
+      {inUse && (
+        <button
+          type="button"
+          className="frames-remove"
+          onClick={() => use(undefined)}
+        >
+          {t.boardDefault}
         </button>
       )}
     </>

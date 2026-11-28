@@ -1,4 +1,5 @@
 import { NavLink, Link, Outlet, useLocation } from "react-router-dom";
+import { BOARD_SCENERY, currentBoard } from "../game/boards";
 import { isPlayPath } from "../game/routes";
 import { Scenery } from "./Scenery";
 import { ResumeMatchToast } from "./ResumeMatchToast";
@@ -83,6 +84,11 @@ export function Layout() {
   const myTurn = pathname.startsWith("/online")
     ? undefined
     : turns.find((m) => m.state === "yourTurn");
+  // Cenário do tabuleiro comprado (game/boards), só na partida.
+  const themeScenery = usePlayer((s) => {
+    const b = currentBoard(s.player);
+    return b ? BOARD_SCENERY[b] : undefined;
+  });
   const home = pathname === "/";
   const playing = isPlayPath(pathname);
   const map = pathname.startsWith("/map");
@@ -93,7 +99,7 @@ export function Layout() {
     >
       {(home || playing || secondary) && (
         <div className="home-landscape" aria-hidden="true">
-          <Scenery />
+          <Scenery src={playing ? themeScenery : undefined} />
         </div>
       )}
       <header>

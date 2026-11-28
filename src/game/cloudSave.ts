@@ -1,4 +1,5 @@
 import { isFrameId } from "./frames";
+import { isBoardId } from "./boards";
 import { isPremiumAvatar } from "./avatars";
 import {
   initialPlayer,
@@ -35,6 +36,9 @@ export interface CloudSave {
   /** Molduras de perfil compradas e a em uso (comprar num aparelho vale no outro). */
   frames?: string[];
   frame?: string;
+  /** Tabuleiros comprados e o em uso (comprar num aparelho vale no outro). */
+  boards?: string[];
+  board?: string;
 }
 
 export function toCloud(p: Player): CloudSave {
@@ -60,6 +64,8 @@ export function toCloud(p: Player): CloudSave {
     ...(p.avatars?.length ? { avatars: p.avatars } : {}),
     ...(p.frames?.length ? { frames: p.frames } : {}),
     ...(p.frame ? { frame: p.frame } : {}),
+    ...(p.boards?.length ? { boards: p.boards } : {}),
+    ...(p.board ? { board: p.board } : {}),
   };
 }
 
@@ -114,6 +120,9 @@ export function parseCloud(text: string | null | undefined) {
   const frames = strings(raw.frames).filter(isFrameId);
   if (frames.length) save.frames = frames;
   if (isFrameId(raw.frame)) save.frame = raw.frame;
+  const boards = strings(raw.boards).filter(isBoardId);
+  if (boards.length) save.boards = boards;
+  if (isBoardId(raw.board)) save.board = raw.board;
   if (
     isRecord(raw.rewarded) &&
     typeof raw.rewarded.date === "string" &&
@@ -198,6 +207,13 @@ export function mergeCloud(local: Player, cloud: CloudSave): Player {
       : {}),
     ...(local.frame || cloud.frame
       ? { frame: local.frame ?? cloud.frame }
+      : {}),
+    // Tabuleiros: a união dos comprados; o em uso é o do aparelho (ou o da nuvem, se não há nenhum).
+    ...(local.boards?.length || cloud.boards?.length
+      ? { boards: union(local.boards ?? [], cloud.boards ?? []) }
+      : {}),
+    ...(local.board || cloud.board
+      ? { board: local.board ?? cloud.board }
       : {}),
   };
 }

@@ -112,12 +112,13 @@ describe("Loja em 3 abas", () => {
       </MemoryRouter>,
     );
   };
-  it("abas Itens, Avatares e Molduras; o antigo ?aba=perfil abre os avatares", () => {
+  it("abas Itens, Avatares, Molduras e Tabuleiros; o antigo ?aba=perfil abre os avatares", () => {
     open(300, "/loja?aba=perfil");
     expect(screen.getAllByRole("tab").map((t) => t.textContent)).toEqual([
       "Itens",
       "Avatares",
       "Molduras",
+      "Tabuleiros",
     ]);
     expect(screen.getByRole("tab", { name: "Avatares" })).toHaveAttribute(
       "aria-selected",

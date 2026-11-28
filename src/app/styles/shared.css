@@ -2334,3 +2334,134 @@ footer {
 .league-zone-row {
   padding: 0 2px;
 }
+
+/* Aba "Tabuleiros" da loja: mini grade 4×4 com as cores e a moldura do tema (game/boards). As
+   cores vêm das mesmas variáveis do tabuleiro da partida (board.css, .board-card[data-board]). */
+.board-swatch {
+  --swatch-cell: 34px;
+  --frame-inset: 16px;
+  --frame-art: 44px;
+  position: relative;
+  display: inline-grid;
+}
+.board-swatch.small {
+  --swatch-cell: 13px;
+  --frame-inset: 7px;
+  --frame-art: 19px;
+}
+.board-swatch-grid {
+  display: grid;
+  grid-template-columns: repeat(4, var(--swatch-cell));
+  grid-template-rows: repeat(4, var(--swatch-cell));
+  gap: 1px;
+  padding: 1px;
+  border-radius: 3px;
+  background: var(--board-line, #1f3a3d);
+}
+.board-swatch-grid i {
+  display: grid;
+  place-items: center;
+  font-style: normal;
+  font-weight: 900;
+  font-size: calc(var(--swatch-cell) * 0.55);
+  color: #08142b;
+}
+.board-swatch-grid .letter {
+  background: #fff;
+}
+.board-swatch-grid .clue {
+  background: linear-gradient(
+    var(--clue-top, #bfe3ad),
+    var(--clue-bottom, #9fd088)
+  );
+}
+.board-swatch-grid .blocked {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--blocked-a, #8da99c),
+    var(--blocked-a, #8da99c) 3px,
+    var(--blocked-b, #82a092) 3px,
+    var(--blocked-b, #82a092) 4px
+  );
+}
+.board-swatch-frame {
+  position: absolute;
+  inset: calc(var(--frame-inset) * -1);
+  border: var(--frame-art) solid transparent;
+  border-image-source: var(--board-frame);
+  border-image-slice: 32%;
+  border-image-repeat: stretch;
+  pointer-events: none;
+}
+.boards-preview {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 12px 12px 14px;
+  border: 3px solid #f3d27a;
+  border-radius: 22px;
+  background: #fffaf0;
+  color: #15365e;
+  text-align: center;
+}
+.boards-preview h2 {
+  margin: 0;
+  font-size: 18px;
+}
+.boards-preview .board-swatch {
+  margin: 18px 0 14px;
+}
+.boards-preview p {
+  margin: 0;
+  color: #4d5c6e;
+  font-size: 13px;
+  font-weight: 700;
+}
+.boards-list .frames-item-art {
+  display: grid;
+  place-items: center;
+}
+/* 4 abas (Itens, Avatares, Molduras, Tabuleiros) numa linha: ícone em cima do nome. */
+.shop-tabs {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+}
+.shop-tabs button {
+  flex-direction: column;
+  gap: 2px;
+  min-height: 54px;
+  padding: 4px 2px;
+  font-size: 12.5px;
+}
+@media (max-width: 374px) {
+  .shop-tabs button {
+    min-height: 40px;
+    font-size: 11.5px;
+  }
+}
+/* 4 tabuleiros: 2 por linha no celular (cards maiores), os 4 numa linha a partir de 600 px. */
+.frames-list.boards-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.boards-list .board-swatch.small {
+  --swatch-cell: 17px;
+  --frame-inset: 9px;
+  --frame-art: 24px;
+}
+@media (min-width: 600px) {
+  .frames-list.boards-list {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+.boards-list .frames-item-art {
+  height: auto;
+  min-height: 0;
+  padding: 12px 0;
+}
+@media (max-width: 374px) {
+  .boards-preview .board-swatch.big {
+    --swatch-cell: 24px;
+    --frame-inset: 12px;
+    --frame-art: 32px;
+  }
+}
