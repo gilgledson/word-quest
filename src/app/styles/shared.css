@@ -1831,3 +1831,506 @@ footer {
 .duelist-frame.has-frame {
   border-color: transparent;
 }
+
+/* Ligas semanais (/liga; referência: docs/referencias/ligas/ligas-chatgpt.png). */
+.league-page {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 560px);
+  margin: 0 auto;
+  padding-bottom: 16px;
+}
+.league-heading {
+  padding: 8px 0 0;
+}
+.league-tiers {
+  display: grid;
+  border-radius: 20px;
+  background: #fffaf0e6;
+  box-shadow: 0 4px 12px #2a1d0522;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 4px;
+  margin: 0;
+  padding: 8px 4px;
+  list-style: none;
+}
+.league-tiers li {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  color: #4d5c6e;
+  font-size: clamp(11px, 3.2vw, 14px);
+  font-weight: 800;
+}
+.league-tiers .league-emblem {
+  width: clamp(42px, 13vw, 64px);
+  height: auto;
+  opacity: 0.75;
+  filter: drop-shadow(0 3px 4px #3b260033);
+}
+.league-tiers li.current .league-emblem {
+  opacity: 1;
+  transform: scale(1.14);
+}
+.league-tiers li.current span {
+  padding: 1px 10px;
+  white-space: nowrap;
+  border-radius: 999px;
+  background: #1f5fc2;
+  color: #fff;
+}
+.league-info,
+.league-board {
+  border: 3px solid #f3d27a;
+  border-radius: 22px;
+  background: #fffaf0;
+  box-shadow: inset 0 0 0 2px #fffdf6;
+  color: #15365e;
+}
+.league-info {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  padding: 10px 14px 12px;
+  text-align: center;
+}
+.league-info h2 {
+  margin: 0;
+  font-size: clamp(20px, 5.6vw, 26px);
+}
+.league-info p {
+  margin: 0;
+  color: #4d5c6e;
+  font-size: 14px;
+  font-weight: 700;
+}
+.league-ends {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  padding: 3px 14px;
+  border: 2px solid #f0d58a;
+  border-radius: 999px;
+  background: #fff3cf;
+  font-size: 14px;
+  font-weight: 800;
+}
+.league-board {
+  padding: 8px 8px 10px;
+}
+.league-board-head,
+.league-row {
+  display: grid;
+  grid-template-columns: 34px 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+}
+.league-board-head {
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  color: #6a7889;
+  font-size: 12px;
+  font-weight: 800;
+}
+.league-board-head span:nth-child(2) {
+  padding-left: 44px;
+}
+.league-rows {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.league-row {
+  border-radius: 12px;
+  font-weight: 800;
+}
+.league-row + .league-row {
+  border-top: 1px solid #f1e6c8;
+}
+.league-row.mine {
+  background: #cfe3ff;
+  border-color: transparent;
+}
+.league-rank {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-weight: 900;
+}
+.league-rank.r1 {
+  background: radial-gradient(circle at 40% 35%, #fff0a6, #f2b51c);
+  box-shadow: 0 2px 0 #b07c00;
+}
+.league-rank.r2 {
+  background: radial-gradient(circle at 40% 35%, #ffffff, #b8c3d1);
+  box-shadow: 0 2px 0 #7f8b99;
+}
+.league-rank.r3 {
+  background: radial-gradient(circle at 40% 35%, #ffd3a8, #d27c3a);
+  box-shadow: 0 2px 0 #92501f;
+}
+.league-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.league-xp {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.league-zone {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 4px 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.league-zone.promo {
+  order: 9;
+  background: linear-gradient(#5fd06a, #2fa83d);
+}
+.league-zone.demo {
+  order: -1;
+  background: linear-gradient(#ff8f8f, #e45656);
+}
+.league-empty {
+  display: grid;
+  gap: 6px;
+  margin: 8px 4px;
+  text-align: center;
+  font-weight: 800;
+}
+.league-empty small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.league-empty small,
+.league-offline {
+  color: #5d6b7c;
+  font-size: 13px;
+  font-weight: 700;
+}
+.league-offline {
+  margin: 8px 4px 0;
+  text-align: center;
+}
+/* Folha "Fim da semana". */
+.league-dialog {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.league-dialog h2 {
+  margin: 0;
+}
+.league-dialog .league-ribbon {
+  display: grid;
+  margin: 0;
+  padding: 8px 22px;
+  border-radius: 16px;
+  background: linear-gradient(#8a55e6, #6a35c9);
+  box-shadow: 0 4px 0 #4b2496;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+}
+.league-ribbon b {
+  color: #ffe27a;
+  font-size: 26px;
+  font-weight: 900;
+}
+.league-dialog .league-emblem {
+  width: min(150px, 38vw);
+  height: auto;
+  filter: drop-shadow(0 6px 10px #3b260055);
+}
+.league-dialog .league-finished,
+.league-dialog .league-coins {
+  margin: 0;
+  color: #15365e;
+  font-size: 18px;
+  font-weight: 900;
+}
+.league-dialog .league-coins {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #a86f00;
+}
+.league-dialog .league-down-note {
+  margin: 0;
+  color: #5d6b7c;
+  font-weight: 700;
+}
+.league-continue {
+  min-width: 200px;
+}
+@media (max-width: 374px) {
+  .league-row {
+    grid-template-columns: 28px 36px minmax(0, 1fr) auto;
+    gap: 4px;
+    padding-inline: 4px;
+    font-size: 14px;
+  }
+  .league-board-head {
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    gap: 4px;
+    padding-inline: 4px;
+  }
+  .league-board-head span:nth-child(2) {
+    padding-left: 40px;
+  }
+  .league-tiers li.current span {
+    padding-inline: 5px;
+  }
+}
+
+/* Ligas, versão da referência melhorada (docs/referencias/ligas/telas-melhoradas-chatgpt.png). */
+.league-tiers li.current .league-emblem {
+  filter: drop-shadow(0 0 10px #ffd86b) drop-shadow(0 3px 4px #3b260033);
+}
+.league-info {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "emblem title"
+    "emblem text"
+    "emblem ends";
+  justify-items: start;
+  column-gap: 12px;
+  text-align: left;
+}
+.league-info .league-emblem {
+  grid-area: emblem;
+  width: clamp(64px, 20vw, 88px);
+  height: auto;
+  align-self: center;
+  filter: drop-shadow(0 4px 6px #3b260040);
+}
+.league-info h2 {
+  grid-area: title;
+}
+.league-info p {
+  grid-area: text;
+}
+.league-info .league-ends {
+  grid-area: ends;
+}
+.league-row {
+  padding-block: 2px;
+}
+.league-row .framed-avatar {
+  justify-self: center;
+}
+/* Folha "Fim da semana": confete em volta, brilho atrás do emblema e as moedas num destaque. */
+.league-dialog {
+  overflow: hidden;
+}
+.league-trophy {
+  display: grid;
+  place-items: center;
+  width: min(190px, 46vw);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    #fff6c8 0 30%,
+    #ffe48a55 50%,
+    transparent 70%
+  );
+}
+.league-dialog.up .league-ribbon b {
+  font-size: 30px;
+}
+.league-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.league-confetti i {
+  position: absolute;
+  width: 10px;
+  height: 18px;
+  border-radius: 3px;
+  background: var(--c);
+  transform: rotate(var(--r));
+}
+.league-confetti i:nth-child(1) {
+  --c: #ffb703;
+  --r: 20deg;
+  top: 18%;
+  left: 8%;
+}
+.league-confetti i:nth-child(2) {
+  --c: #4cc9f0;
+  --r: -30deg;
+  top: 30%;
+  left: 4%;
+}
+.league-confetti i:nth-child(3) {
+  --c: #f15bb5;
+  --r: 50deg;
+  top: 44%;
+  left: 10%;
+}
+.league-confetti i:nth-child(4) {
+  --c: #9b5de5;
+  --r: -15deg;
+  top: 58%;
+  left: 5%;
+}
+.league-confetti i:nth-child(5) {
+  --c: #00bb7d;
+  --r: 35deg;
+  top: 24%;
+  left: 18%;
+}
+.league-confetti i:nth-child(6) {
+  --c: #ff6b6b;
+  --r: -45deg;
+  top: 52%;
+  left: 15%;
+}
+.league-confetti i:nth-child(7) {
+  --c: #4cc9f0;
+  --r: 25deg;
+  top: 18%;
+  right: 9%;
+}
+.league-confetti i:nth-child(8) {
+  --c: #ffb703;
+  --r: -35deg;
+  top: 32%;
+  right: 4%;
+}
+.league-confetti i:nth-child(9) {
+  --c: #9b5de5;
+  --r: 40deg;
+  top: 46%;
+  right: 11%;
+}
+.league-confetti i:nth-child(10) {
+  --c: #f15bb5;
+  --r: -20deg;
+  top: 60%;
+  right: 5%;
+}
+.league-confetti i:nth-child(11) {
+  --c: #00bb7d;
+  --r: 15deg;
+  top: 26%;
+  right: 18%;
+}
+.league-confetti i:nth-child(12) {
+  --c: #ff6b6b;
+  --r: -50deg;
+  top: 54%;
+  right: 16%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .league-confetti i {
+    animation: league-fall 2.4s ease-in-out infinite alternate;
+  }
+  .league-confetti i:nth-child(even) {
+    animation-delay: -1.2s;
+  }
+}
+@keyframes league-fall {
+  to {
+    transform: translateY(14px) rotate(calc(var(--r) * -1));
+  }
+}
+.league-dialog .league-coins {
+  padding: 4px 22px 4px 6px;
+  border: 2px solid #f0c24a;
+  border-radius: 999px;
+  background: linear-gradient(#fff8dc, #ffe9a6);
+  box-shadow: 0 3px 0 #d9a321;
+  color: #6b4400;
+  font-size: 22px;
+}
+.league-dialog .league-coins img {
+  width: 52px;
+  height: auto;
+  margin-block: -10px;
+}
+/* Lista mais justa: na referência os 12 jogadores aparecem sem rolar. */
+.league-page {
+  gap: 8px;
+}
+.league-heading h1 {
+  margin: 0;
+}
+.league-tiers {
+  padding-block: 6px;
+}
+.league-tiers .league-emblem {
+  width: clamp(38px, 11vw, 56px);
+}
+.league-info {
+  padding: 8px 12px;
+  row-gap: 2px;
+}
+.league-info .league-emblem {
+  width: clamp(52px, 15vw, 72px);
+}
+.league-info h2 {
+  font-size: clamp(19px, 5.2vw, 24px);
+}
+.league-info p {
+  font-size: 13px;
+  line-height: 1.3;
+}
+.league-info .league-ends {
+  margin-top: 2px;
+  padding: 1px 12px;
+  font-size: 13px;
+}
+.league-board {
+  padding: 4px 6px 6px;
+}
+.league-row {
+  grid-template-columns: 30px 34px minmax(0, 1fr) auto;
+  min-height: 34px;
+  padding-block: 1px;
+  font-size: 15px;
+}
+.league-rank {
+  width: 24px;
+  height: 24px;
+  font-size: 14px;
+}
+.league-zone {
+  margin: 2px 0;
+  padding-block: 2px;
+}
+@media (max-width: 374px) {
+  .league-row {
+    grid-template-columns: 26px 32px minmax(0, 1fr) auto;
+    gap: 4px;
+    font-size: 14px;
+  }
+}
+/* A folha de resultado põe os filhos em `position: relative`; o confete cobre a folha inteira. */
+.result-dialog.league-dialog > .league-confetti {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.league-zone-row {
+  padding: 0 2px;
+}

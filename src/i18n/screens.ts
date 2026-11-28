@@ -128,7 +128,7 @@ export const homeT = texts({
     videoWatch: "Assistir",
     videoEarned: (coins: number) => `+${coins} moedas!`,
     shopTitle: "Loja",
-    shopSub: "Novidades e itens",
+    shopSub: "Itens, avatares e molduras",
     shopOpen: "Abrir loja",
     shopLabel: "Loja: novidades e itens. Abrir loja",
   },
@@ -169,7 +169,7 @@ export const homeT = texts({
     videoWatch: "Watch",
     videoEarned: (coins: number) => `+${coins} coins!`,
     shopTitle: "Shop",
-    shopSub: "New items and more",
+    shopSub: "Items, avatars and frames",
     shopOpen: "Open shop",
     shopLabel: "Shop: new items and more. Open shop",
   },
@@ -739,5 +739,118 @@ export const rewardedT = texts({
     simWait: (s: number) => `Reward in ${s} s…`,
     simDone: "Reward earned! You can close it.",
     simClose: "Close video",
+  },
+});
+
+const enOrdinal = (n: number) => {
+  const s =
+    n % 100 >= 11 && n % 100 <= 13
+      ? "th"
+      : (["th", "st", "nd", "rd"][n % 10] ?? "th");
+  return `${n}${s}`;
+};
+/** Tempo que falta: "3d 14h", "5h 20min" ou "12min". */
+const left = (ms: number, d: string) => {
+  const min = Math.max(1, Math.floor(ms / 60_000));
+  const days = Math.floor(min / 1440);
+  const hours = Math.floor((min % 1440) / 60);
+  if (days) return `${days}${d} ${hours}h`;
+  return hours ? `${hours}h ${min % 60}min` : `${min}min`;
+};
+
+/** Ligas semanais (tela /liga, card da tela inicial e resultado da semana). */
+export const leagueT = texts({
+  pt: {
+    title: "Ligas semanais",
+    tiers: {
+      bronze: "Bronze",
+      prata: "Prata",
+      ouro: "Ouro",
+      cristal: "Cristal",
+      diamante: "Diamante",
+    },
+    tiersLabel: "Ligas, da mais baixa à mais alta",
+    current: "Sua liga",
+    league: (tier: string) => `Liga ${tier}`,
+    topRise: (n: number, next: string) =>
+      n === 1
+        ? `O 1º lugar sobe para a Liga ${next}`
+        : `Os ${n} primeiros sobem para a Liga ${next}`,
+    topLeague: "Você está na liga mais alta. Brigue pelo pódio!",
+    endsIn: (ms: number) => `Termina em ${left(ms, "d")}`,
+    endsShort: (ms: number) => `Termina em ${left(ms, "d").split(" ")[0]}`,
+    leftShort: (ms: number) => left(ms, "d").split(" ")[0],
+    rank: "Posição",
+    player: "Jogador",
+    xp: "XP da semana",
+    xpValue: (n: number) => `${n.toLocaleString("pt-BR")} XP`,
+    weekXp: (n: number) =>
+      `Seu XP nesta semana: ${n.toLocaleString("pt-BR")} XP`,
+    you: "Você",
+    groupLabel: "Classificação do seu grupo",
+    promo: "Zona de promoção",
+    demo: "Zona de rebaixamento",
+    joinHint: "Jogue uma partida para entrar na liga desta semana.",
+    howXp: "Palavras, estrelas e duelos valem XP",
+    offline:
+      "Sem conexão com a liga agora. Seu XP fica guardado e entra quando a internet voltar.",
+    loading: "Carregando a liga…",
+    place: (n: number) => `Você está em ${n}º`,
+    seeLeague: "Ver liga",
+    cardJoin: "Jogue para entrar na liga",
+    weekOver: "Fim da semana",
+    resultUp: "Você subiu para a",
+    resultStay: "Você continua na",
+    resultDown: "Nesta semana você vai para a",
+    resultDownNote: "Sem problema: é só jogar para subir de novo!",
+    finished: (n: number) => `Você terminou em ${n}º lugar`,
+    coins: (n: number) => `+${n} moedas`,
+    continue: "Continuar",
+  },
+  en: {
+    title: "Weekly leagues",
+    tiers: {
+      bronze: "Bronze",
+      prata: "Silver",
+      ouro: "Gold",
+      cristal: "Crystal",
+      diamante: "Diamond",
+    },
+    tiersLabel: "Leagues, from lowest to highest",
+    current: "Your league",
+    league: (tier: string) => `${tier} League`,
+    topRise: (n: number, next: string) =>
+      n === 1
+        ? `1st place moves up to ${next} League`
+        : `Top ${n} move up to ${next} League`,
+    topLeague: "You're in the top league. Fight for the podium!",
+    endsIn: (ms: number) => `Ends in ${left(ms, "d")}`,
+    endsShort: (ms: number) => `Ends in ${left(ms, "d").split(" ")[0]}`,
+    leftShort: (ms: number) => left(ms, "d").split(" ")[0],
+    rank: "Rank",
+    player: "Player",
+    xp: "Weekly XP",
+    xpValue: (n: number) => `${n.toLocaleString("en-US")} XP`,
+    weekXp: (n: number) => `Your XP this week: ${n.toLocaleString("en-US")} XP`,
+    you: "You",
+    groupLabel: "Your group's standings",
+    promo: "Promotion zone",
+    demo: "Demotion zone",
+    joinHint: "Play a match to join this week's league.",
+    howXp: "Words, stars and duels earn XP",
+    offline:
+      "Can't reach the league right now. Your XP is saved and counts when you're back online.",
+    loading: "Loading the league…",
+    place: (n: number) => `You're ${enOrdinal(n)}`,
+    seeLeague: "View league",
+    cardJoin: "Play to join the league",
+    weekOver: "Week over",
+    resultUp: "You moved up to",
+    resultStay: "You're staying in",
+    resultDown: "This week you're in",
+    resultDownNote: "No worries: just play to climb back up!",
+    finished: (n: number) => `You finished ${enOrdinal(n)}`,
+    coins: (n: number) => `+${n} coins`,
+    continue: "Continue",
   },
 });

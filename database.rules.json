@@ -39,6 +39,49 @@
           ".validate": "newData.hasChildren(['token', 'at']) && newData.child('token').isString() && newData.child('token').val().length < 4096 && newData.child('at').isNumber()"
         }
       }
+    },
+    "leagues": {
+      "$week": {
+        "$tier": {
+          "$group": {
+            ".read": "auth != null",
+            "$uid": {
+              ".write": "auth != null && auth.uid === $uid && newData.exists() && !root.child('leagueClosed/' + $week).exists() && root.child('leagueSeat/' + $week + '/' + $uid + '/tier').val() === $tier && root.child('leagueSeat/' + $week + '/' + $uid + '/group').val() === $group",
+              ".validate": "newData.hasChildren(['name', 'avatar', 'xp', 'at']) && newData.child('xp').isNumber() && newData.child('at').val() === now && ((!data.exists() && newData.child('xp').val() > 0 && newData.child('xp').val() <= 600) || (data.exists() && newData.child('xp').val() >= data.child('xp').val() && newData.child('xp').val() - data.child('xp').val() <= 600 && now - data.child('at').val() >= 20000))",
+              "name": {
+                ".validate": "newData.isString() && newData.val().length <= 30"
+              },
+              "avatar": {
+                ".validate": "newData.isString() && newData.val().length <= 40"
+              },
+              "frame": {
+                ".validate": "newData.isString() && newData.val().length <= 40"
+              },
+              "xp": {
+                ".validate": "newData.isNumber()"
+              },
+              "at": {
+                ".validate": "newData.isNumber()"
+              },
+              "$other": {
+                ".validate": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "leagueSeat": {
+      "$week": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid"
+        }
+      }
+    },
+    "leagueState": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid"
+      }
     }
   }
 }

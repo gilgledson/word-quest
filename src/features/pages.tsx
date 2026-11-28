@@ -79,6 +79,7 @@ import { playSfx } from "../services/sound";
 import { buzz } from "../services/haptics";
 import { PlayGamesCard } from "./PlayGamesCard";
 import { DuelCard } from "./DuelCard";
+import { LeagueHomeCard, LeagueResultFlow } from "./League";
 import { WorldCard } from "./WorldCard";
 import { HomeShopCard, HomeVideoCard } from "./HomeCards";
 import { onlineAvailable } from "../services/online";
@@ -96,6 +97,7 @@ export function Home() {
       {/* O título fica só para leitores de tela: a arte do mundo já abre a tela. */}
       <h1 className="sr-only">{wins ? homeT.titleGoing : homeT.titleStart}</h1>
       {onlineAvailable() && <DuelCard avatar={avatar} />}
+      {onlineAvailable() && <LeagueHomeCard />}
       <WorldCard />
       {/* Vídeo premiado e loja: uma faixa própria (deitado, os dois ficam lado a lado). */}
       <div className="home-extras">
@@ -103,6 +105,7 @@ export function Home() {
         <HomeShopCard />
       </div>
       <DailyRewardFlow />
+      <LeagueResultFlow />
     </>
   );
 }
